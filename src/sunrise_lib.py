@@ -20,20 +20,24 @@ import requests
 
 #from tzlocal import get_localzone # $ pip install tzlocal
 
-HOME = str(Path.home())
-FNAME = '/dev/shm/solar.txt'
-FNAME_MASTER = HOME + '/.config/solar/master'
-CPU_FREQ_APP = '/root/bin/cpu-freq.sh'
-HOURS_DELTA = 2.5
-MIN_WEATHER = 0.4
-DIR_TMP='/tmp/'
-DIR_XMRIG=HOME + '/progs/crypto/xmr/xmrig/b'
+from python_json_config import ConfigBuilder
 
-LAT=53
-LON=10
+config_builder = ConfigBuilder()
+config = config_builder.parse_config('config.json')
 
-TESTING = False
-#TESTING = True
+HOME = str(Path.home()) # TODO: move this in config.json too?
+FNAME = config.sunrise_lib.FNAME
+FNAME_MASTER = HOME + config.sunrise_lib.FNAME_MASTER
+CPU_FREQ_APP = config.sunrise_lib.CPU_FREQ_APP
+HOURS_DELTA = config.sunrise_lib.HOURS_DELTA
+MIN_WEATHER = config.sunrise_lib.MIN_WEATHER
+DIR_TMP = config.sunrise_lib.DIR_TMP
+DIR_XMRIG = HOME + config.sunrise_lib.DIR_XMRIG
+
+LAT = config.sunrise_lib.LAT
+LON = config.sunrise_lib.LON
+
+TESTING = config.sunrise_lib.TESTING
 
 def write_file(fname, val):
     with open(fname, 'w') as fout:

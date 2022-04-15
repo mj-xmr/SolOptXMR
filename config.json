@@ -1,0 +1,26 @@
+{
+    "sunrise_lib": {
+        "HOME": "/foo/bar",
+        "FNAME": "/dev/shm/solar.txt",
+        "FNAME_MASTER": "/.config/solar/master",
+        "CPU_FREQ_APP": "/root/bin/cpu-freq.sh",
+        "HOURS_DELTA": 2.5,
+        "MIN_WEATHER": 0.4,
+        "DIR_TMP": "/tmp",
+        "DIR_XMRIG": "/progs/crypto/xmr/xmrig/b",
+        "LAT": 53,
+        "LON": 10,
+        "TESTING": false
+    },
+    "generator": {
+        "ELEVATION_KEY": "elevation",
+        "MIN_POWER": 0,
+        "MAX_POWER": 40,
+        "MAX_USAGE": 11,
+        "MIN_CAPACITY": 0,
+        "MAX_CAPACITY": 20,
+        "MUL_POWER_2_CAPACITY": 0.1,
+        "T_DELTA_HOURS": 1,
+        "PATH_POSITIONS": "/solar_pos.dat"
+    }
+}
