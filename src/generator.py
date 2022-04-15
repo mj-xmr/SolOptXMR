@@ -20,17 +20,22 @@ from matplotlib import pyplot as plt
 
 import sunrise_lib
 
-ELEVATION_KEY = 'elevation'
+from python_json_config import ConfigBuilder
+
+config_builder = ConfigBuilder()
+config = config_builder.parse_config('config.json')
+
+ELEVATION_KEY = config.generator.ELEVATION_KEY
 
 # Not changable: system params
-MIN_POWER = 0
-MAX_POWER = 40
-MAX_USAGE = 11
-#MIN_CAPACITY = 0
-MAX_CAPACITY = 20
-MUL_POWER_2_CAPACITY = 0.1
-T_DELTA_HOURS = 1
-PATH_POSITIONS = sunrise_lib.DIR_TMP + "/solar_pos.dat" # TODO: Parametrize based on keys
+MIN_POWER = config.generator.MIN_POWER
+MAX_POWER = config.generator.MAX_POWER
+MAX_USAGE = config.generator.MAX_USAGE
+#MIN_CAPACITY = config.generator.MIN_CAPACITY
+MAX_CAPACITY = config.generator.MAX_CAPACITY
+MUL_POWER_2_CAPACITY = config.generator.MUL_POWER_2_CAPACITY
+T_DELTA_HOURS = config.generator.T_DELTA_HOURS
+PATH_POSITIONS = config.sunrise_lib.DIR_TMP + config.generator.PATH_POSITIONS # TODO: Parametrize based on keys
 
 
 def get_sun_positions():
