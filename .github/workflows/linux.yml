@@ -1,0 +1,46 @@
+name: ci-debian
+
+on:
+  push:
+    paths-ignore:
+      - '**.md'
+  pull_request:
+    paths-ignore:
+      - '**.md'
+
+# The below variables reduce repetitions across similar targets
+env:
+  APT_SET_CONF: |
+        echo "Acquire::Retries       \"3\";"   | sudo tee -a /etc/apt/apt.conf.d/80-custom
+        echo "Acquire::http::Timeout \"120\";" | sudo tee -a /etc/apt/apt.conf.d/80-custom
+        echo "Acquire::ftp::Timeout  \"120\";" | sudo tee -a /etc/apt/apt.conf.d/80-custom
+
+jobs:
+  build-ubuntu:
+    runs-on: ubuntu-latest
+    env:
+      CCACHE_TEMPDIR: /tmp/.ccache-temp
+    strategy:
+      fail-fast: false
+    steps:
+    - uses: actions/checkout@v1
+      with:
+        submodules: recursive
+    - name: prepare environment
+      run: util/prep-env.sh
+    - name: set apt conf
+      run: ${{env.APT_SET_CONF}}
+    - name: install dependencies
+      run: util/deps-pull.sh
+    - name: build & install the unmanaged dependencies
+      run: util/deps-build.sh
+    - name: build
+      run: ./ci-default
+    - name: run demo
+      run: ./ci-default
+# It doesn't make sense for now, since we're not linking Boost statically yet.
+    - uses: actions/upload-artifact@v3
+      with:
+        name: SolOptXMR-ubuntu-latest
+        path: /home/runner/work/SolOptXMR/SolOptXMR/build/*.png
+

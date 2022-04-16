@@ -28,6 +28,7 @@ config_builder = ConfigBuilder()
 config = config_builder.parse_config('config.json')
 
 ELEVATION_KEY = config.generator.ELEVATION_KEY
+BUILD_DIR='build/'  # TODO: Config
 
 # Not changable: system params
 MIN_POWER = config.generator.MIN_POWER
@@ -77,6 +78,10 @@ def plot_sun(name, elev, bat, usage):
     plt.plot(list_to_pd([MAX_USAGE]      * len(elev), elev))
     plt.grid()
     plt.legend(['sun input', 'bat capacity', 'power usage', 'max cap', 'half cap', 'max usage'])
+    os.makedirs(BUILD_DIR, exist_ok=True)
+    fout_rel_path = "{}/fig-{}.png".format(BUILD_DIR, name)
+    print("Saving figure to:",fout_rel_path)
+    plt.savefig(fout_rel_path)
     plt.show()
 
 def proc_data(pos):
@@ -213,7 +218,7 @@ def get_usage_endor_example(available):
         hashrates.append(hashrate)
         usage.append(use)
 
-    return "Endor's", hashrates, usage, loads, bat_sim, incomes, costs, effs
+    return "Endor", hashrates, usage, loads, bat_sim, incomes, costs, effs
 
 def get_usage_simple(available):
     usage_exp = [MAX_USAGE] * len(available)
@@ -255,17 +260,17 @@ def print_profits(incomes, costs):
     print(f"Total cost = {cost:.2f} USD")
     print(f"Total profit = {profit:.2f} USD")
     print(f"Profitability = {profitability:.2f} %")
-    
-def get_usage(available):
-    name, hashrates, usage, bat, bat_sim, incomes, costs, effs  = get_usage_simple(available)
-    #name, hashrates, usage, bat, bat_sim, incomes, costs, effs = get_usage_endor_example(available)
-    print("Algo name: ", name)
+
+def get_usage(available, algo):
+    name, hashrates, usage, bat, bat_sim, incomes, costs, effs  = algo(available)
+    print("\nAlgo name: ", name)
     bat_sim.print_stats(len(available))
     print_hashes(hashrates)
     print_profits(incomes, costs)
-    # print(effs)  # Check if efficiency is reasonable
+    #print(effs)  # Check if efficiency is reasonable
     # return name, list_to_pd(usage, available), list_to_pd(incomes, available), list_to_pd(costs, available), list_to_pd(bat, available)
-    return name, list_to_pd(usage, available), list_to_pd(bat, available)
+    return name, list_to_pd(usage, available), list_to_pd(bat, available) 
+
 
 def list_to_pd(listt, df):
     return pd.DataFrame(listt, index=df.index.copy())
@@ -277,11 +282,18 @@ def simul_weather(pos):
 
     return pos
 
+def run_main(elev):
+    run_algo(elev, get_usage_simple)
+    run_algo(elev, get_usage_endor_example)
+
+def run_algo(elev, algo):
+    name, usage, bat = get_usage(elev, algo)
+    plot_sun(name, elev, bat, usage)
+
 pos = get_sun_positions()
 #print(pos)
 
 proc = proc_data(pos)
 elev = extr_data(proc)
-name, usage, bat = get_usage(elev)
-# name, usage, incomes, costs, bat = get_usage(elev)
-plot_sun(name, elev, bat, usage)
+run_main(elev)
+
