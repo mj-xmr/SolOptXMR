@@ -19,6 +19,8 @@ from pytz import timezone
 from matplotlib import pyplot as plt
 
 import sunrise_lib
+import kraken
+from profitability import POW_Coin
 
 from python_json_config import ConfigBuilder
 
@@ -36,6 +38,9 @@ MAX_CAPACITY = config.generator.MAX_CAPACITY
 MUL_POWER_2_CAPACITY = config.generator.MUL_POWER_2_CAPACITY
 T_DELTA_HOURS = config.generator.T_DELTA_HOURS
 PATH_POSITIONS = config.sunrise_lib.DIR_TMP + config.generator.PATH_POSITIONS # TODO: Parametrize based on keys
+ELECTRICITY_PRICE = config.generator.ELECTRICITY_PRICE
+POOL_FEE = config.generator.POOL_FEE / 100  # Must be a float!
+TARGET_PRICE = config.generator.TARGET_PRICE
 
 
 def get_sun_positions():
@@ -175,13 +180,25 @@ def get_usage_endor_example(available):
     usage = []
     hashrates = []
     loads = []
+    incomes = []
+    costs = []
+    effs = []
+    coin_data = POW_Coin(kraken.coin.XMR)
     comp = Computer()
     bat_sim = BatterySimulator()
     for avail in available:
         freq = avail / 2
         cores = 2
-        hashrate = comp.get_hashrate(cores, freq)
-        use = comp.get_usage(cores, freq)
+        hashrate = comp.get_hashrate(cores, freq)  # H/s
+        use = comp.get_usage(cores, freq)  # W
+        # profitability_data = coin_data.profitability(kraken.fiat.USD, hashrate, use, ELECTRICITY_PRICE, POOL_FEE, TARGET_PRICE)
+        profitability_data = coin_data.profitability(kraken.fiat.USD, hashrate, use, ELECTRICITY_PRICE, POOL_FEE, TARGET_PRICE, reward=1.8, difficulty=150e9) # Rough values in 2020
+        energy_used = avail * T_DELTA_HOURS / 1000  # W * h / 1000 W/kW = kWh
+        income = energy_used * profitability_data["expected_fiat_income_kwh"]  # kWh * $/kWh
+        cost = energy_used * ELECTRICITY_PRICE  # kWh * $/kWh
+        incomes.append(income)
+        costs.append(cost)
+        effs.append(hashrate / use if use != 0 else 0)  # H/Ws - not needed, only useful for simulation sanity check
 
         if bat_sim.get_load() < bat_sim.MIN_LOAD:
             use = 0
@@ -196,7 +213,7 @@ def get_usage_endor_example(available):
         hashrates.append(hashrate)
         usage.append(use)
 
-    return "Endor's", hashrates, usage, loads, bat_sim
+    return "Endor's", hashrates, usage, loads, bat_sim, incomes, costs, effs
 
 def get_usage_simple(available):
     usage_exp = [MAX_USAGE] * len(available)
@@ -218,13 +235,33 @@ def get_usage_simple(available):
 def print_hashes(hashrates):
     HASH_UNIT = 1e6
     print("Total hashes =", round(np.sum(hashrates) / HASH_UNIT, 2), "MH")
+
+def print_profits(incomes, costs):
+    income = round(np.nansum(incomes), 2)
+    cost = round(np.nansum(costs), 2)
+    profit = income - cost
+    if profit > 0:
+        profitability = 100 * profit / cost if cost != 0 else np.PINF
+    elif profit < 0:
+        profitability = 100 * profit / income if income != 0 else np.NINF
+    elif profit == 0:
+        profitability = 0
+    else:
+        raise Exception("Wait, what?")
+    print(f"Total income = {income:.2f} USD")
+    print(f"Total cost = {cost:.2f} USD")
+    print(f"Total profit = {profit:.2f} USD")
+    print(f"Profitability = {profitability:.2f} %")
     
 def get_usage(available):
     name, hashrates, usage, bat, bat_sim = get_usage_simple(available)
-    #name, hashrates, usage, bat, bat_sim = get_usage_endor_example(available)
+    # name, hashrates, usage, bat, bat_sim, incomes, costs = get_usage_endor_example(available)
     print("Algo name: ", name)
     bat_sim.print_stats(len(available))
     print_hashes(hashrates)
+    # print_profits(incomes, costs)
+    # print(effs)  # Check if efficiency is reasonable
+    # return name, list_to_pd(usage, available), list_to_pd(incomes, available), list_to_pd(costs, available), list_to_pd(bat, available)
     return name, list_to_pd(usage, available), list_to_pd(bat, available)
 
 def list_to_pd(listt, df):
@@ -243,4 +280,5 @@ pos = get_sun_positions()
 proc = proc_data(pos)
 elev = extr_data(proc)
 name, usage, bat = get_usage(elev)
+# name, usage, incomes, costs, bat = get_usage(elev)
 plot_sun(name, elev, bat, usage)
