@@ -220,6 +220,9 @@ def get_usage_simple(available):
     hashrates = [usage_exp[0] * 0.5] * len(available)
     loads = []
     usage = []
+    incomes = [0]* len(available)
+    costs = [0]* len(available)
+    effs = [0]* len(available)
     bat_sim = BatterySimulator()
     for i, use_exp in enumerate(usage_exp):
         if bat_sim.get_load() > bat_sim.MIN_LOAD:
@@ -230,7 +233,7 @@ def get_usage_simple(available):
         load_i = bat_sim.iter_get_load(available[i], use)
         loads.append(load_i)
 
-    return "Simple", hashrates, usage, loads, bat_sim
+    return "Simple", hashrates, usage, loads, bat_sim, incomes, costs, effs
 
 def print_hashes(hashrates):
     HASH_UNIT = 1e6
@@ -254,12 +257,12 @@ def print_profits(incomes, costs):
     print(f"Profitability = {profitability:.2f} %")
     
 def get_usage(available):
-    name, hashrates, usage, bat, bat_sim = get_usage_simple(available)
-    # name, hashrates, usage, bat, bat_sim, incomes, costs = get_usage_endor_example(available)
+    name, hashrates, usage, bat, bat_sim, incomes, costs, effs  = get_usage_simple(available)
+    #name, hashrates, usage, bat, bat_sim, incomes, costs, effs = get_usage_endor_example(available)
     print("Algo name: ", name)
     bat_sim.print_stats(len(available))
     print_hashes(hashrates)
-    # print_profits(incomes, costs)
+    print_profits(incomes, costs)
     # print(effs)  # Check if efficiency is reasonable
     # return name, list_to_pd(usage, available), list_to_pd(incomes, available), list_to_pd(costs, available), list_to_pd(bat, available)
     return name, list_to_pd(usage, available), list_to_pd(bat, available)
