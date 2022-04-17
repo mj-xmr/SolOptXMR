@@ -5,7 +5,9 @@ import os
 import json
 import sunrise_lib
 
-DIR_JSON = 'ui-menus/'
+PATH_THIS = os.path.dirname(os.path.realpath(__file__))
+
+DIR_JSON = PATH_THIS + '/ui-menus/'
 KEY_SUBMENUS = 'submenus'
 
 def read_json(fpath):
