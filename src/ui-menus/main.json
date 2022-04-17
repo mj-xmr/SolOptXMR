@@ -1,5 +1,6 @@
 {
     "submenus": [
+      "installation",
       "geo",
       "inputs",
       "miners",
