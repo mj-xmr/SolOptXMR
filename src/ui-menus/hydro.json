@@ -1,0 +1,9 @@
+{
+"hydro": [
+      {
+        "name": "small",
+        "watt_max": 5.0,
+        "constant": false
+      }
+    ]
+}

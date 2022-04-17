@@ -1,0 +1,9 @@
+{
+"batteries": [
+       "calcium:\tSimplest and durable, but break when < 50%.",
+       "lead-acid:\tSimple & cheap, but not can burn skin and break when < 50%.",
+       "li-ion:\t\tLimited number of cycles and when they explode, they explode.",
+       "gel:\t\tDeep cycle. Durable but expensive.",
+       "hydro:\t\tPumping excess power upwards. Require some decent pressure."
+    ]
+}

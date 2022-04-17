@@ -2,6 +2,7 @@
   "submenus": [
       "panels",
       "wind",
+      "hydro",
       "kinetic",
       "other"
     ]
