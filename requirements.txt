@@ -27,3 +27,4 @@ scipy==1.8.0
 six==1.16.0
 urllib3==1.26.9
 asciimatics==1.13.0
+curses-menu==0.5.0

@@ -1,0 +1,16 @@
+{
+    "habits": [
+      {
+        "name": "Morning coffee",
+        "time": 6.0,
+        "ampere": 2.00,
+        "duration": 0.40
+      },
+      {
+        "name": "Evening punch",
+        "time": 18.00,
+        "ampere": 0,
+        "duration": 0
+      }
+    ]
+}

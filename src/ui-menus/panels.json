@@ -1,0 +1,12 @@
+{
+"panels": [
+      {
+        "name": "Leftmost",
+        "watt_max": 200.00
+      },
+      {
+        "name": "Middle",
+        "watt_max": 150.00
+      }
+    ]
+}
