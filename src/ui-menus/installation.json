@@ -1,0 +1,8 @@
+{
+  "installation": [
+      "island: isolated from the grid completely",
+      "sell: you're a net producer and are able to sell to the grid",
+      "buy: you produce >= 0 but any shortages can be bought from the grid",
+      "buy-sell: you can buy from as well as sell to the grid"
+    ]
+}
