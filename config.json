@@ -21,7 +21,7 @@
         "MAX_CAPACITY": 20,
         "MUL_POWER_2_CAPACITY": 0.1,
         "T_DELTA_HOURS": 1,
-        "PATH_POSITIONS": "/solar_pos.dat",
+        "PATH_POSITIONS": "/solar_pos",
         "ELECTRICITY_PRICE": 0.1,
         "POOL_FEE": 0,
         "TARGET_PRICE": 300

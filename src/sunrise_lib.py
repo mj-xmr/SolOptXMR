@@ -34,6 +34,7 @@ MIN_WEATHER = config.sunrise_lib.MIN_WEATHER
 DIR_TMP = config.sunrise_lib.DIR_TMP
 DIR_XMRIG = HOME + config.sunrise_lib.DIR_XMRIG
 
+DATE_NOW = datetime.datetime.now()
 LAT = config.sunrise_lib.LAT
 LON = config.sunrise_lib.LON
 
@@ -66,6 +67,25 @@ class StatefulBool:
 
     def get(self):
         return self._prev
+
+def test_stateful_bool():
+    print("Test stateful bool")
+    false = StatefulBool(False)
+    assert false != False
+    assert false != True
+
+    assert false.get() == False
+    assert false.get() != True
+
+    assert false.update_is_changed(False) == False
+    assert false.update_is_changed(False) == False
+    assert false.update_is_changed(True) == True
+    assert false.get() == True
+    assert false.update_is_changed(True) == False
+    assert false.get() == True
+
+def test():
+    test_stateful_bool()
 
 #LOCAL_TIMEZONE = datetime.datetime.now(datetime.timezone.utc).astimezone().tzname
 #print(LOCAL_TIMEZONE)

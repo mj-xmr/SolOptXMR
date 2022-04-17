@@ -24,8 +24,7 @@ from profitability import POW_Coin
 
 from python_json_config import ConfigBuilder
 
-config_builder = ConfigBuilder()
-config = config_builder.parse_config('config.json')
+config = sunrise_lib.config
 
 ELEVATION_KEY = config.generator.ELEVATION_KEY
 BUILD_DIR='build/'  # TODO: Config
@@ -38,7 +37,8 @@ MAX_USAGE = config.generator.MAX_USAGE
 MAX_CAPACITY = config.generator.MAX_CAPACITY
 MUL_POWER_2_CAPACITY = config.generator.MUL_POWER_2_CAPACITY
 T_DELTA_HOURS = config.generator.T_DELTA_HOURS
-PATH_POSITIONS = config.sunrise_lib.DIR_TMP + config.generator.PATH_POSITIONS # TODO: Parametrize based on keys
+DATE_NOW = sunrise_lib.DATE_NOW
+PATH_POSITIONS_BASE = config.sunrise_lib.DIR_TMP + config.generator.PATH_POSITIONS # TODO: Parametrize based on keys
 ELECTRICITY_PRICE = config.generator.ELECTRICITY_PRICE
 POOL_FEE = config.generator.POOL_FEE / 100  # Must be a float!
 TARGET_PRICE = config.generator.TARGET_PRICE
@@ -46,9 +46,11 @@ TARGET_PRICE = config.generator.TARGET_PRICE
 
 def get_sun_positions():
     a = datetime.datetime.now()
-    if os.path.isfile(PATH_POSITIONS):
-        print("Reading from", PATH_POSITIONS)
-        with open(PATH_POSITIONS, "rb") as handle:
+    start_date = datetime.datetime(2020, 1, 1)
+    path_positions = f"{PATH_POSITIONS_BASE}-{start_date.year}-{start_date.month}-{start_date.day}.dat"
+    if os.path.isfile(path_positions):
+        print("Reading from:", path_positions)
+        with open(path_positions, "rb") as handle:
             pos = pickle.load(handle)
             b = datetime.datetime.now()
     else:
@@ -58,14 +60,15 @@ def get_sun_positions():
         pos = pvlib.solarposition.get_solarposition(dti, sunrise_lib.LAT, sunrise_lib.LON)
         b = datetime.datetime.now()
         
-        with open(PATH_POSITIONS, "wb") as handle:
+        with open(path_positions, "wb") as handle:
+            print("Dumping data to:", path_positions)
             pickle.dump(pos, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
     c = b - a
     print("Prepared data in", c.total_seconds(), "s")
     return pos
 
-def plot_sun(name, elev, bat, usage):
+def plot_sun(name, elev, bat, usage, show_plots):
     #print(elev)
     plt.title("Algo: " + name)
     plt.xlabel("Time")
@@ -82,7 +85,8 @@ def plot_sun(name, elev, bat, usage):
     fout_rel_path = "{}/fig-{}.png".format(BUILD_DIR, name)
     print("Saving figure to:",fout_rel_path)
     plt.savefig(fout_rel_path)
-    plt.show()
+    if show_plots:
+        plt.show()
 
 def proc_data(pos):
     pos = simul_weather(pos)
@@ -282,18 +286,22 @@ def simul_weather(pos):
 
     return pos
 
-def run_main(elev):
-    run_algo(elev, get_usage_simple)
-    run_algo(elev, get_usage_endor_example)
+def run_main(elev, show_plots):
+    run_algo(elev, show_plots, get_usage_simple)
+    run_algo(elev, show_plots, get_usage_endor_example)
 
-def run_algo(elev, algo):
+def run_algo(elev, show_plots, algo):
     name, usage, bat = get_usage(elev, algo)
-    plot_sun(name, elev, bat, usage)
+    plot_sun(name, elev, bat, usage, show_plots)
 
-pos = get_sun_positions()
-#print(pos)
 
-proc = proc_data(pos)
-elev = extr_data(proc)
-run_main(elev)
+def test(show_plots=False):
+    pos = get_sun_positions()
+    #print(pos)
 
+    proc = proc_data(pos)
+    elev = extr_data(proc)
+    run_main(elev, show_plots)
+
+if __name__ == "__main__":
+    test(True)

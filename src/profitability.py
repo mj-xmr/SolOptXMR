@@ -73,7 +73,10 @@ class POW_Coin:
         data["breakeven_efficiency"] = (data["difficulty"] * electricity_cost) / (data["price"] * data["reward"] * 1000 * 3600 * (1 - pool_fee))
         return data
 
-if __name__ == "__main__":
+def test():
     a = POW_Coin(coin.XMR)
     b = a.profitability(fiat.USD, 20000, 200, 0.1)
-    print(b)
+    print(b)   
+
+if __name__ == "__main__":
+    test()
