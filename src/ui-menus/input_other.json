@@ -1,0 +1,9 @@
+{
+"input_other": [
+      {
+        "name": "Portable-Nuclear1",
+        "watt_max": 2.0,
+        "constant": true
+      }
+    ]
+}

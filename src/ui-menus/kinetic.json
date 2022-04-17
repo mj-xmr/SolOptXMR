@@ -1,0 +1,12 @@
+{
+"kinetic": [
+      {
+        "name": "Bike1",
+        "watt_max": 100.00
+      },
+      {
+        "name": "Hand1",
+        "watt_max": 30.00
+      }
+    ]
+}

@@ -1,0 +1,16 @@
+{
+    "miners": [
+      {
+        "name": "EPYC",
+        "watt_max": 200.00,
+        "watt_idle": 50.00,
+        "watt_sleep": 2.00
+      },
+      {
+        "name": "MiniPC",
+        "watt_max":  30.00,
+        "watt_idle": 10.00,
+        "watt_sleep": 0.50
+      }
+    ]
+}
