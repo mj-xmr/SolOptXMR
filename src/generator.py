@@ -106,7 +106,7 @@ def adj_losses(pos):
 class Computer:
     def __init__(self):
         self.cores = 4
-        self.WATT_PER_CORE = 5
+        self.WATT_PER_CORE = 30
 
     def get_hashrate(self, cores, freq_ghz=1):
         HASH_PER_CORE = 250 * freq_ghz
