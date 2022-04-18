@@ -18,6 +18,12 @@ It will accommodate for issues such as:
 
 # Screenshots
 
+## First model
+A plot of the energetic balance, based on real astronomic data and contrived weather distortions, simulating the battery drainage with a horizon of 3 days:
+
+![plot-1st](https://user-images.githubusercontent.com/63722585/163774847-7c3f522a-a6b9-43bf-b133-6ba0c6e007f8.png)
+
+
 ## Console interactive UI
 Accessible via `ssh`/`putty`, based on `curses`.
 
