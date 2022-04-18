@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import ui_lib
+import sunrise_lib
 from cursesmenu import *
 from cursesmenu.items import *
 
@@ -9,7 +10,7 @@ def cmenu():
     # Create the menu
     main_menu = ui_lib.read_main_menu()
     
-    menu = CursesMenu("SolOptXMR", "Main menu")
+    menu = CursesMenu(sunrise_lib.PROJECT_NAME + ": " + sunrise_lib.PROJECT_SUB_NAME, "Main menu")
 
     # Create some items
 
@@ -22,7 +23,7 @@ def cmenu():
             pass
             ssub_menu = sub_menu[ui_lib.KEY_SUBMENUS]
             sselection_menu = SelectionMenu(ssub_menu)
-            submenu_item = SubmenuItem(sub_name, sselection_menu, menu)
+            submenu_item = SubmenuItem(sub_name, sselection_menu, menu,)
             menu.items.append(submenu_item)
         else:
             if sub_name in sub_menu:
@@ -31,7 +32,7 @@ def cmenu():
             #else:
                 
             
-            selection_menu = SelectionMenu(sub_menu)
+            selection_menu = SelectionMenu(sub_menu, sunrise_lib.PROJECT_NAME, sub_name)
             submenu_item = SubmenuItem(sub_name, selection_menu, menu)
             menu.items.append(submenu_item)
         
