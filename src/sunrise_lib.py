@@ -25,6 +25,9 @@ from python_json_config import ConfigBuilder
 config_builder = ConfigBuilder()
 config = config_builder.parse_config('config.json')
 
+PROJECT_NAME = "SolOptXMR"
+PROJECT_SUB_NAME = "Solar Optimal mining of XMR"
+
 HOME = str(Path.home()) # TODO: move this in config.json too?
 FNAME = config.sunrise_lib.FNAME
 FNAME_MASTER = HOME + config.sunrise_lib.FNAME_MASTER
