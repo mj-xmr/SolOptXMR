@@ -32,3 +32,18 @@ Accessible via `ssh`/`putty`, based on `curses`.
 ![image](https://user-images.githubusercontent.com/63722585/163773424-64711673-ce88-4a49-a1fc-0c16526e623d.png)
 
 ![image](https://user-images.githubusercontent.com/63722585/163773989-c00c180a-43ab-408d-be97-5624c099d148.png)
+
+## Profitability calculation
+
+```
+Algo name:  Endor
+Undervolted initial =  0.64%
+Undervolted =  4.32%
+Overvolted  =  25.99%
+Total hashes = 175.83 MH
+Total income = 34.64 USD
+Total cost = 6.29 USD
+Total profit = 28.35 USD
+Profitability = 450.72 %
+Saving figure to: build//fig-Endor.png
+```
