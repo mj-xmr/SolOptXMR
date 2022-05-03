@@ -26,6 +26,26 @@ jobs:
     - uses: actions/checkout@v1
       with:
         submodules: recursive
+        # Volatile cache
+    - name: ccache
+      uses: actions/cache@v2
+      with:
+        path: ~/.ccache
+        key:          ccache01-${{ runner.os }}-${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.linkage }}-build-${{ github.sha }}
+        restore-keys: ccache01-${{ runner.os }}-${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.linkage }}-build-
+    # Less volatile cache
+    - name: data cache
+      uses: actions/cache@v2
+      with:
+        path: externals/tsqsim/build/data/data/txt
+        key:          data-${{ hashFiles('externals/tsqsim/data/data/txt/**/*') }}
+        restore-keys: data-${{ hashFiles('externals/tsqsim/data/data/txt/**/*') }}
+#    - name: deps cache
+#      uses: actions/cache@v2
+#      with:
+#        path: build/deps/dload
+#        key:          deps-${{ hashFiles('build/deps/dload/*') }}
+#        restore-keys: deps-${{ hashFiles('build/deps/dload/*') }}
     - name: prepare environment
       run: util/prep-env.sh
     - name: set apt conf
