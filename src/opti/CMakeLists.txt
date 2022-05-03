@@ -8,7 +8,7 @@ file( GLOB SRCS src/*.cpp */*.h */*.hpp)
 add_executable(${PROJECT_NAME} ${SRCS})
 enjoSetupTarget(${PROJECT_NAME})
 
-target_link_libraries(${PROJECT_NAME} tsqsim-lib)
+target_link_libraries(${PROJECT_NAME} tsqsim-lib opti-lib)
 
 # Make sure the compiler can find include files for our Hello library
 # when other libraries or executables link to Hello
