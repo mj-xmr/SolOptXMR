@@ -11,10 +11,11 @@ class IPeriod;
 class PredictorFactory;
 enum class PredictorType;
 
+class OptiEnProfitDataModel;
 class OptiSubjectEnProfit : public EnjoLib::OptiMultiSubject // IOptiSubject
 {
     public:
-        OptiSubjectEnProfit();
+        OptiSubjectEnProfit(const OptiEnProfitDataModel & dataModel);
         virtual ~OptiSubjectEnProfit();
 
         double GetGoal() const;
@@ -29,6 +30,8 @@ class OptiSubjectEnProfit : public EnjoLib::OptiMultiSubject // IOptiSubject
     protected:
 
     private:
+        const OptiEnProfitDataModel & m_dataModel;
+
         std::vector<OptiVarF> m_optiFloat;
         std::vector<OptiVarF> m_optiFloatResult;
 

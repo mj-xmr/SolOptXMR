@@ -26,6 +26,8 @@
 #include "MatplotACF.h"
 #include "PredictorOutputType.h"
 #include "CLIResult.h"
+#include "OptimizerEnProfit.h"
+#include "OptiEnProfitDataModel.h"
 
 #include <Ios/Cin.hpp>
 #include <Util/Trim.hpp>
@@ -52,33 +54,7 @@ void App::Run(const CLIResult & cliResultCmdLine) const
         confSym.UpdateFromOther(cliResultCmdLine.m_confSym);
         confTS.UpdateFromOther(cliResultCmdLine.m_confTS);
 
-        VecStr symbols = {confSym.symbol};
-        VecStr periods = {confSym.period};
-
-        const SymbolFactoryClean symFact;
-        //VecUPtr<ISymbol> symbolsVec = IMainTester::Create(symFact, &confTF2, &confSym)->GetSymbolMT(symbols, periods);
-        //const IPeriod & per = symbolsVec.at(0)->GetPeriod(periods.at(0));
-        CorPtr<ISymbol> symbol = IMainTester::Create(symFact, &confTF2, &confSym)->GetSymbol(confSym.symbol, periods);
-        const IPeriod & per = symbol->GetPeriod(periods.at(0));
-
-        switch (confOpti.GetOperationType())
-        {
-        case OptiType::OPTI_TYPE_FIND:
-            {
-                Optim(*symbol, per);
-                CorPtr<ISimulatorTS> sim = TSUtil().GetSim(per);
-            }
-        break;
-        case OptiType::OPTI_TYPE_NONE:
-        case OptiType::OPTI_TYPE_USE:
-            {
-            }
-        break;
-        case OptiType::OPTI_TYPE_XVALID:
-              //  XValid(*symbol, per);
-        break;
-        }
-        {LOGL << confSym.GetDateFromToStr(false) << Nl;}
+        Optim();
 
         if (confTF.REPEAT)
         {
@@ -95,17 +71,15 @@ void App::Run(const CLIResult & cliResultCmdLine) const
     //LOGL << "Plugin name = " << plugin << Nl;
 }
 
-void App::Optim(const ISymbol & sym, const IPeriod & per) const
+void App::Optim() const
+//void App::Optim(const ISymbol & sym, const IPeriod & per) const
 {
     {LOGL << "Optim\n"; }
     const TSFunFactory tsFunFact;
     const TSFunType tsFunType = TSFunType::TXT; /// TODO: make user's choice
 
-    //OptimizerTS optiTS(tsFunType, sym, per, tsFunFact); /// TODO: Opti goal: stationarity statistics
-    //optiTS();
-    const ConfigTS & confTS   = *gcfgMan.cfgTS.get(); /// TODO: Allow override via console
-    const PredictorFactory predFact;
-    const PredictorType predType = confTS.GetPredType();
-    OptimizerPred optiPred(predType, sym, per, predFact);
-    optiPred();
+    OptiEnProfitDataModel dataModel;
+
+    OptimizerEnProfit optimizer(dataModel);
+    optimizer();
 }

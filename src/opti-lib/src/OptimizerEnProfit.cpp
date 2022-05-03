@@ -9,6 +9,9 @@
 #include "OptiVarVec.h"
 #include "OptiType.h"
 //#include "OptiGoalFactory.h"
+#include "OptiEnProfitSubject.h"
+#include "OptiEnProfitDataModel.h"
+
 
 #include <Math/MultiDimIter/MultiDimIterTpl.hpp>
 #include <Math/Opti/OptiMultiNelderMead.hpp>
@@ -26,13 +29,91 @@
 using namespace std;
 using namespace EnjoLib;
 
-OptimizerEnProfit::OptimizerEnProfit()
+OptimizerEnProfit::OptimizerEnProfit(const OptiEnProfitDataModel & dataModel)
+: m_dataModel(dataModel)
 {
 }
 OptimizerEnProfit::~OptimizerEnProfit(){}
 
+/// TODO: The basic multi-dim-iter interaction should go to upper library
+void OptimizerEnProfit::operator()()
+{
+    ELO
+    MultiDimIterTpl multiDimIter;
+    const MultiDimIterTpl::VVt data = m_dataModel.GetData();
+
+    float goal = 0;
+
+    OptiSubjectEnProfit osub(m_dataModel);
+    const Result<VecD> res = OptiMultiBinSearch().Run(osub, 3, 100);
+    LOG << "Res = " << res.isSuccess << ", val = " << res.value.Print() << Nl;
+
+    //multiDimIter.StartIteration(data, *this);
+    /*
+    const size_t numVars = GetOptiFloat().size();
+    for (unsigned iVar = 0; iVar < numVars; ++iVar)
+    {
+        const OptiVarF & var = GetOptiFloat().at(iVar);
+        if (gcfgMan.cfgOpti->IsSearchFloatingPoint() && var.fp)
+            continue;
+        data.push_back(var.GetSpace().Data());
+    }
+    if (gcfgMan.cfgOpti->IsSearchRandom())
+    {
+        const long int maxSamples = gcfgMan.cfgOpti->OPTI_RANDOM_SAMPLES_NUM;
+        const MultiDimIterTpl::VVt & dataT = data.T();
+        MultiDimIterTpl::VVt dataNewT; // Shorten the data down to the requested number of samples
+        /// TODO: Unit Test. Crucial element
+        for (unsigned i = 0; i < maxSamples && i < dataT.size() ; ++i)
+        {
+            dataNewT.Add(dataT.at(i));
+        }
+        for (unsigned i = 0; i < dataNewT.size(); ++i)
+        {
+            Consume(dataNewT.at(i));
+            if (gcfgMan.cfgOpti->OPTI_RANDOM_EARLY_STOP && IsEarlyStop())
+            {
+                LOGL << "Early stop. The recent variance changes were less than " << gcfgMan.cfgOpti->OPTI_RANDOM_MIN_DIFF_PROMILE << " ‰ after " << i << " iterations.\n";
+                break;
+            }
+        }
+    }
+    else
+    {
+        multiDimIter.StartIteration(data, *this);
+    }
+
+    //Assertions::Throw("maxRows", data.size(), "Empty variable in OptimizerBase");
+    //LOGL << "size = " << data.size() << Endl;
+
+
+
+    for (OptiVarF v : GetOptiFloatResult())
+    {
+        for (const IPeriod * period : GetPeriods())
+            v.StoreVariable(*period);
+    }
+
+    if (gcfgMan.cfgOpti->OPTI_VERBOSE && m_isVerbose)
+        if (not gcfgMan.cfgOpti->IsXValid())
+        {
+            LOGL << Endl;
+        }
+
+    //cout << id << endl;
+    PrintCurrentResults();
+    PrintStatsSummary();
+    */
+}
+
+void OptimizerEnProfit::AddSpace(const EnjoLib::VecD & data)
+{
+    m_data.push_back(data);
+}
+
 void OptimizerEnProfit::Consume(const EnjoLib::VecD & data)
 {
+    ELO
     //++m_iter;
     //const EnjoLib::Str & idd = m_period.GetSymbolPeriodId();
 
@@ -43,6 +124,10 @@ void OptimizerEnProfit::Consume(const EnjoLib::VecD & data)
 
     //LOGL << "Data = " << data.Print() << Nl;
     float goal = 0;
+
+    OptiSubjectEnProfit osub(m_dataModel);
+    const Result<VecD> res = OptiMultiBinSearch().Run(osub, 3, 100);
+    LOG << "Res = " << res.isSuccess << ", val = " << res.value.Print() << Nl;
 
     //CorPtr<IPosition> pos = IPosition::Create(m_period.GetSymbolName());
     switch (gcfgMan.cfgOpti->GetMethod())

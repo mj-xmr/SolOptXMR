@@ -1,4 +1,4 @@
-#include "OptiSubjectEnProfit.h"
+#include "OptiEnProfitSubject.h"
 #include "OptiSubjectTSUtil.h"
 #include "PredictorFactory.h"
 #include "IPeriod.h"
@@ -6,6 +6,7 @@
 #include "ConfigMan.h"
 #include "ConfigOpti.h"
 #include "ConfigDirs.h"
+#include "OptiEnProfitDataModel.h"
 
 //#include "GnuplotMan.h"
 
@@ -14,8 +15,8 @@
 
 using namespace EnjoLib;
 
-OptiSubjectEnProfit::OptiSubjectEnProfit()
-//: m_sym(sym)
+OptiSubjectEnProfit::OptiSubjectEnProfit(const OptiEnProfitDataModel & dataModel)
+: m_dataModel(dataModel)
 {
 }
 
@@ -80,5 +81,12 @@ EnjoLib::VecD OptiSubjectEnProfit::GetStep() const
 }
 EnjoLib::Array<EnjoLib::OptiMultiSubject::Bounds> OptiSubjectEnProfit::GetBounds() const
 {
-    return OptiSubjectTSUtil().GetBoundsProt(m_optiFloat);
+    const Matrix mat = m_dataModel.GetData();
+    EnjoLib::Array<EnjoLib::OptiMultiSubject::Bounds> ret;
+    for (const VecD & dim : mat)
+    {
+        EnjoLib::OptiMultiSubject::Bounds bound(dim.First(), dim.Last());
+        ret.push_back(bound);
+    }
+    return ret;
 }

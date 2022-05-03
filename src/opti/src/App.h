@@ -17,7 +17,9 @@ class App
         virtual ~App(){}
 
         void Run(const CLIResult & cliResult) const;
-        void Optim(const ISymbol & sym, const IPeriod & per) const;
+        //void Optim(const ISymbol & sym, const IPeriod & per) const;
+        void Optim() const;
+
 
     protected:
 
