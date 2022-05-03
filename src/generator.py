@@ -183,6 +183,35 @@ class BatterySimulator:
         if self.num_overused > 0:
             print("Overused    = ", print_relative(self.num_overused, relative))
         
+class BatterySimulatorCpp(BatterySimulator): 
+    def iter_get_load(self, inp, out, hours=T_DELTA_HOURS):
+        discharge = hours * self.DISCHARGE_PER_HOUR
+        balance = inp - out - discharge
+        change = balance * MUL_POWER_2_CAPACITY
+        if change > MAX_USAGE:
+        #if out > MAX_USAGE: # A valid possibility
+            self.num_overused += 1
+            change = MAX_USAGE
+        #print(change)
+        self.load += change
+
+        if self.load > self.MAX_CAPACITY:
+            self.load = self.MAX_CAPACITY
+            self.num_overvolted += 1
+
+        if self.load < self.MIN_LOAD:
+            if self.initial_load:
+                self.num_undervolted_initial += 1
+            else:
+                self.num_undervolted += 1
+        if self.load < 0:
+            self.load = 0
+                
+        if self.initial_load:
+            if self.load > self.MIN_LOAD:
+                self.initial_load = False
+
+        return self.get_load()
 
 def get_usage_endor_example(available):
     # TODO: use the available power wisely
