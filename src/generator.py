@@ -45,19 +45,17 @@ TARGET_PRICE = config.generator.TARGET_PRICE
 
 path_positions_txt = f"{PATH_POSITIONS_BASE}.txt"
 
-def get_sun_positions():
+def get_sun_positions(start_date, days_horizon=3):
     a = datetime.datetime.now()
-    start_date = datetime.datetime(2020, 1, 1)
-    path_positions_file_name = f"{PATH_POSITIONS_BASE}-{start_date.year}-{start_date.month}-{start_date.day}"
+    path_positions_file_name = f"{PATH_POSITIONS_BASE}-{start_date.year}-{start_date.month}-{start_date.day}-{days_horizon}"
     path_positions = path_positions_file_name + ".dat"
     if os.path.isfile(path_positions):
         print("Reading from:", path_positions)
         with open(path_positions, "rb") as handle:
             pos = pickle.load(handle)
             b = datetime.datetime.now()
-    else:
-        start = datetime.datetime(2020, 1, 1)
-        dti = pd.date_range(start, periods=30 * 8 * 24, freq="H")
+    else:    
+        dti = pd.date_range(start_date, periods=days_horizon * 24, freq="H")
         
         pos = pvlib.solarposition.get_solarposition(dti, sunrise_lib.LAT, sunrise_lib.LON)
         b = datetime.datetime.now()
@@ -330,7 +328,9 @@ def run_algo(elev, show_plots, algo):
 
 
 def test(show_plots=False):
-    pos = get_sun_positions()
+    start_date = datetime.datetime(2020, 1, 1)
+    days_horizon = 30 * 9
+    pos = get_sun_positions(start_date, days_horizon)
     #print(pos)
 
     proc = proc_data(pos)
