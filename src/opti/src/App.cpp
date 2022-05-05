@@ -26,6 +26,7 @@
 #include "MatplotACF.h"
 #include "PredictorOutputType.h"
 #include "CLIResult.h"
+#include "CLIResultSol.h"
 #include "OptimizerEnProfit.h"
 #include "OptiEnProfitDataModel.h"
 
@@ -39,46 +40,32 @@ using namespace EnjoLib;
 
 App::App(){}
 
-void App::Run(const CLIResult & cliResultCmdLine) const
+void App::Run(const CLIResultSol & cliResultCmdLine) const
 {
-    const ConfigTF  & confTF    = *gcfgMan.cfgTF.get();
-    do
+    //const ConfigSol  & confSol    = *gcfgMan.cfgTF.get();
+    //do
     {
-        gcfgMan.Read();
-
-        ConfigTS & confTS     = *gcfgMan.cfgTS.get();
-        const ConfigTF2 & confTF2   = *gcfgMan.cfgTF2.get();
-        const ConfigOpti & confOpti = *gcfgMan.cfgOpti.get();
-        ConfigSym & confSym         = *gcfgMan.cfgSym.get();
-
-        confSym.UpdateFromOther(cliResultCmdLine.m_confSym);
-        confTS.UpdateFromOther(cliResultCmdLine.m_confTS);
-
-        Optim();
-
-        if (confTF.REPEAT)
-        {
-            LOGL << "q to quit" << Endl;
-            EnjoLib::Str line;
-            EnjoLib::Cin cinn;
-            EnjoLib::GetLine(cinn, line);
-            line = EnjoLib::Trim().trim(line);
-            if (line == "q")
-                break;
-        }
-
-    } while (confTF.REPEAT);
+        Optim(cliResultCmdLine);
+    } //while (confTF.REPEAT);
     //LOGL << "Plugin name = " << plugin << Nl;
 }
 
-void App::Optim() const
+void App::Optim(const CLIResultSol & cliSol) const
 //void App::Optim(const ISymbol & sym, const IPeriod & per) const
 {
-    {LOGL << "Optim\n"; }
-    const TSFunFactory tsFunFact;
-    const TSFunType tsFunType = TSFunType::TXT; /// TODO: make user's choice
+    {LOGL << "Optim\n"
+        << "Horizon = " << cliSol.m_confSol.DAYS_HORIZON << Nl
+        << "Start day = "  << cliSol.m_confSol.DAYS_START << Nl
+        ;}
 
-    OptiEnProfitDataModel dataModel(3, 24 * 10);
+    int horizon = cliSol.m_confSol.DAYS_HORIZON;
+
+    if (horizon <= 0)
+    {
+        horizon = 3;
+    }
+
+    OptiEnProfitDataModel dataModel(horizon, 24 * cliSol.m_confSol.DAYS_START);
 
     OptimizerEnProfit optimizer(dataModel);
     optimizer();

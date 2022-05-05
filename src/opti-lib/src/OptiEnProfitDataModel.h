@@ -12,7 +12,9 @@ class OptiEnProfitDataModel
         virtual ~OptiEnProfitDataModel();
 
         EnjoLib::Matrix GetData() const;
-        const EnjoLib::VecD & GetPowerProduction() const;
+        const EnjoLib::VecD & GetPowerProductionData() const;
+        double GetPowerProduction(int i) const;
+        //const VecD & powerProd = m_dataModel.GetPowerProduction();
         int GetHorizonHours() const { return m_horizonHours; }
         int GetStartingPoint() const { return m_statingPoint; }
 

@@ -104,8 +104,8 @@ double OptiSubjectEnProfit::GetVerbose(const double * inp, int n, bool verbose)
     BatterySimulation battery;
     double sum = 0;
     double penalitySum = 0;
-    const VecD & powerProd = m_dataModel.GetPowerProduction();
-    const int START_AT = m_dataModel.GetStartingPoint();
+    //const VecD & powerProd = m_dataModel.GetPowerProduction();
+    //const int START_AT = m_dataModel.GetStartingPoint();
     //Assertions::SizesEqual(powerProd.size(), (size_t)n, "powr prod");
     //VecD hashes, loads, penalityUnder, input, prod;
     //VecD input, prod, loads;
@@ -123,7 +123,7 @@ double OptiSubjectEnProfit::GetVerbose(const double * inp, int n, bool verbose)
 
            usage = comp.GetUsage(val);
         }
-       const double load = battery.iter_get_load(powerProd[i + START_AT], usage);
+       const double load = battery.iter_get_load(m_dataModel.GetPowerProduction(i), usage);
        //const double pentalityUndervolted = load < 0 ? GMat().Fabs(load * load * load) : 0;
        const double pentalityUndervolted = battery.num_undervolted;
        //const double pentalityOvervolted = battery.num_overvolted;
@@ -198,11 +198,11 @@ double OptiSubjectEnProfit::GetVerbose(const double * inp, int n, bool verbose)
 
                    const double usage = comp.GetUsage(val);
 
-                   const double load = batteryCopy.iter_get_load(powerProd[i + START_AT], usage);
+                   const double load = batteryCopy.iter_get_load(m_dataModel.GetPowerProduction(i), usage);
 
                    input.Add(val);
        loads.Add(load);
-        prod.Add(powerProd[i + START_AT]);
+        prod.Add(m_dataModel.GetPowerProduction(i));
         hashes.Add(sum);
         hashrateBonus.Add(HashrateBonus(i % 24));
                 }

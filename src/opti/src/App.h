@@ -1,5 +1,5 @@
-#ifndef APP_H
-#define APP_H
+#ifndef APPSOL_H
+#define APPSOL_H
 
 #include <Util/Str.hpp>
 
@@ -7,7 +7,7 @@ class ConfigTS;
 class ConfigSym;
 class ISymbol;
 class IPeriod;
-class CLIResult;
+class CLIResultSol;
 class ISimulatorTS;
 
 class App
@@ -16,9 +16,9 @@ class App
         App();
         virtual ~App(){}
 
-        void Run(const CLIResult & cliResult) const;
+        void Run(const CLIResultSol & cliResult) const;
         //void Optim(const ISymbol & sym, const IPeriod & per) const;
-        void Optim() const;
+        void Optim(const CLIResultSol & cliResult) const;
 
 
     protected:

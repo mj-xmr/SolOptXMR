@@ -27,11 +27,15 @@ OptiEnProfitDataModel::~OptiEnProfitDataModel()
 {
 }
 
-const EnjoLib::VecD & OptiEnProfitDataModel::GetPowerProduction() const
+const EnjoLib::VecD & OptiEnProfitDataModel::GetPowerProductionData() const
 {
     return m_power;
 }
 
+double OptiEnProfitDataModel::GetPowerProduction(int i) const
+{
+    return m_power.at(i + m_statingPoint);
+}
 
 template <int bits>
 VecD ToBinary(int number)

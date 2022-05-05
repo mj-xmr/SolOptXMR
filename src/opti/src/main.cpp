@@ -1,7 +1,7 @@
 #include "App.h"
 
-#include "CLITsq.h"
-#include "CLIResult.h"
+#include "CLISol.h"
+#include "CLIResultSol.h"
 #include "RInitDeinit.h"
 
 #include <Util/CoutBuf.hpp>
@@ -17,8 +17,8 @@ int main(int argc, char ** argv)
     try
     {
         RInitDeinit rinit;
-        const CLITsq cli;
-        const EnjoLib::Result<CLIResult> & result = cli.GetConfigs(argc, argv);
+        const CLISol cli;
+        const EnjoLib::Result<CLIResultSol> & result = cli.GetConfigs(argc, argv);
 
         if (not result.isSuccess)
         {
