@@ -43,11 +43,13 @@ ELECTRICITY_PRICE = config.generator.ELECTRICITY_PRICE
 POOL_FEE = config.generator.POOL_FEE / 100  # Must be a float!
 TARGET_PRICE = config.generator.TARGET_PRICE
 
+path_positions_txt = f"{PATH_POSITIONS_BASE}.txt"
 
 def get_sun_positions():
     a = datetime.datetime.now()
     start_date = datetime.datetime(2020, 1, 1)
-    path_positions = f"{PATH_POSITIONS_BASE}-{start_date.year}-{start_date.month}-{start_date.day}.dat"
+    path_positions_file_name = f"{PATH_POSITIONS_BASE}-{start_date.year}-{start_date.month}-{start_date.day}"
+    path_positions = path_positions_file_name + ".dat"
     if os.path.isfile(path_positions):
         print("Reading from:", path_positions)
         with open(path_positions, "rb") as handle:
@@ -92,6 +94,9 @@ def proc_data(pos):
     pos = simul_weather(pos)
     pos = adj_losses(pos)
 
+    print("Dumping data to:", path_positions_txt)
+    np.savetxt(path_positions_txt, pos[ELEVATION_KEY])
+    
     return pos
 
 def extr_data(pos):

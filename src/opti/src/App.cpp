@@ -78,7 +78,7 @@ void App::Optim() const
     const TSFunFactory tsFunFact;
     const TSFunType tsFunType = TSFunType::TXT; /// TODO: make user's choice
 
-    OptiEnProfitDataModel dataModel;
+    OptiEnProfitDataModel dataModel(3, 24 * 10);
 
     OptimizerEnProfit optimizer(dataModel);
     optimizer();

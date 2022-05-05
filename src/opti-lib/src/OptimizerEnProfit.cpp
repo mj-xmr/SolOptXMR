@@ -11,18 +11,23 @@
 //#include "OptiGoalFactory.h"
 #include "OptiEnProfitSubject.h"
 #include "OptiEnProfitDataModel.h"
-
+#include "GnuplotIOSWrap.h"
 
 #include <Math/MultiDimIter/MultiDimIterTpl.hpp>
 #include <Math/Opti/OptiMultiNelderMead.hpp>
 #include <Math/Opti/OptiMultiBinSearch.hpp>
+//#include "OptiMultiBinSearch01.hpp"
 #include <Math/GeneralMath.hpp>
 #include <Util/ProgressMonit.hpp>
+#include <Util/CharManipulations.hpp>
 #include <Util/ToolsMixed.hpp>
 #include <Util/Except.hpp>
 #include <Util/CoutBuf.hpp>
 #include <Statistical/Statistical.hpp>
 #include <Template/CorradePointer.h>
+
+#include <Math/RandomMath.hpp>
+#include <Math/GeneralMath.hpp>
 
 #include <STD/VectorCpp.hpp>
 
@@ -35,19 +40,134 @@ OptimizerEnProfit::OptimizerEnProfit(const OptiEnProfitDataModel & dataModel)
 }
 OptimizerEnProfit::~OptimizerEnProfit(){}
 
+
 /// TODO: The basic multi-dim-iter interaction should go to upper library
 void OptimizerEnProfit::operator()()
 {
     ELO
     MultiDimIterTpl multiDimIter;
-    const MultiDimIterTpl::VVt data = m_dataModel.GetData();
+    //const MultiDimIterTpl::VVt data = m_dataModel.GetData();
+    const MultiDimIterTpl::VVt data;
 
     float goal = 0;
 
-    OptiSubjectEnProfit osub(m_dataModel);
-    const Result<VecD> res = OptiMultiBinSearch().Run(osub, 3, 100);
-    LOG << "Res = " << res.isSuccess << ", val = " << res.value.Print() << Nl;
+    //OptiSubjectEnProfit osub(m_dataModel);
+    //const Result<VecD> res = OptiMultiBinSearch01().Run01(osub, 3, 1000);
+    //LOG << "Res = " << res.isSuccess << ", val = " << res.value.Print() << Nl;
+    //GnuplotPlotTerminal1d(res.value, "hashes", 1, 0.5);
 
+    /// TODO: Generalize and upstream this:
+    const long int maxSamples = 200;
+    //const bool randomSearch = false;
+    const bool randomSearch = true;
+    //if (gcfgMan.cfgOpti->IsSearchRandom())
+    if (randomSearch)
+    {
+        //const long int maxSamples = gcfgMan.cfgOpti->OPTI_RANDOM_SAMPLES_NUM;
+        const MultiDimIterTpl::VVt & dataT = data.T();
+        MultiDimIterTpl::VVt dataNewT; // Shorten the data down to the requested number of samples
+        /// TODO: Unit Test. Crucial element
+        for (unsigned i = 0; i < maxSamples && i < dataT.size() ; ++i)
+        {
+            //dataNewT.Add(dataT.at(i));
+        }
+        //for (unsigned i = 0; i < dataNewT.size(); ++i)
+        {
+            //LOGL << "Iter " << i << "/" << dataNewT.size() << Nl;
+            //Consume(dataNewT.at(i));
+            //if (gcfgMan.cfgOpti->OPTI_RANDOM_EARLY_STOP && IsEarlyStop())
+            {
+                //LOGL << "Early stop. The recent variance changes were less than " << gcfgMan.cfgOpti->OPTI_RANDOM_MIN_DIFF_PROMILE << " ‰ after " << i << " iterations.\n";
+                //break;
+            }
+        }
+        for (unsigned i = 0; i < data.size(); ++i)
+        {
+            //LOGL << "Iter " << i << "/" << data.size() << Nl;
+            //Consume(data.at(i));
+        }
+        const int horizonHours = m_dataModel.GetHorizonHours();
+        RandomMath rmath;
+        rmath.RandSeed();
+        const VecD binaryZero(horizonHours);
+        VecD binary = binaryZero;
+        VecD binarBest = binary;
+
+    const int maxEl = 10e8;
+    short bit = 1;
+    for (int i = 0; i < maxEl; ++i)
+    {
+        const int minHoursTogether = 2;
+        bool cont = false;
+        const int index = GMat().round(rmath.Rand(0, horizonHours-0.999));
+        //binary[index] = binary[index] == 0 ? 1 : 0;
+        if (binary[index] == bit)
+        {
+            //cont = true;
+        }
+        binary[index] = bit;
+        if (bit == 1)
+        {
+            for (int j = index - minHoursTogether; j <= index + minHoursTogether; ++j)
+            {
+                if (j < 0 || j >= horizonHours)
+                {
+                    continue;
+                }
+                binary[j] = bit;
+            }
+        }
+
+        if (binary.Sum() == binary.size())
+        {
+            //bit = 0;
+            binary = binaryZero;
+            //LOGL << "switch to " << bit << ", bin = " << binary.Print() << Nl;
+        }
+        if (binary.Sum() == 0)
+        {
+            bit = 1;
+            //LOGL << "switch to " << bit << ", bin = " << binary.Print() << Nl;
+            //break;
+        }
+        if (cont)
+        {
+            continue;
+        }
+    if (i % 10000 == 0)
+        {
+                //LOGL << "created " << i << "/" << maxEl << ", val = " << binary.Print() << Nl;
+        }
+        //LOGL << binary << Nl;
+
+        //VecD vec;
+        //for (int b = 0; b < horizonHours; ++b)
+        {
+            //vec.Add(binary[b]);
+        }
+        if (Consume2(binary))
+        {
+            m_numFailed = 0;
+            binarBest = binary;
+
+        }
+        else
+        {
+                ++m_numFailed;
+        }
+        const int MAX_FAILED = 1000000;
+        if (m_numFailed >= MAX_FAILED)
+        {
+            LOGL << "Early stop after " << m_numFailed << " failed attempts." << Nl;
+            break;
+        }
+    }
+        GnuplotPlotTerminal1d(binarBest, "Best solution", 1, 0.5);
+    }
+    else
+    {
+        //multiDimIter.StartIteration(data, *this);
+    }
     //multiDimIter.StartIteration(data, *this);
     /*
     const size_t numVars = GetOptiFloat().size();
@@ -113,7 +233,11 @@ void OptimizerEnProfit::AddSpace(const EnjoLib::VecD & data)
 
 void OptimizerEnProfit::Consume(const EnjoLib::VecD & data)
 {
-    ELO
+
+}
+bool OptimizerEnProfit::Consume2(const EnjoLib::VecD & data)
+{
+    //ELO
     //++m_iter;
     //const EnjoLib::Str & idd = m_period.GetSymbolPeriodId();
 
@@ -121,13 +245,13 @@ void OptimizerEnProfit::Consume(const EnjoLib::VecD & data)
     //const OptiGoalType type = gcfgMan.cfgOpti->GetGoalType();
     //const CorPtr<IOptiGoal> pgoal = OptiGoalFactory::Create(type);
     //const IOptiGoal & igoal = *pgoal;
-
-    //LOGL << "Data = " << data.Print() << Nl;
-    float goal = 0;
-
+    //ELO
+    //LOG << "Data = " << data.Print() << Nl;
     OptiSubjectEnProfit osub(m_dataModel);
-    const Result<VecD> res = OptiMultiBinSearch().Run(osub, 3, 100);
-    LOG << "Res = " << res.isSuccess << ", val = " << res.value.Print() << Nl;
+    float goal = osub.GetVerbose(data.data(), data.size());
+    //const Result<VecD> res = OptiMultiBinSearch().Run(osub, 3, 100);
+    //const Result<VecD> res = OptiMultiBinSearch01().Run01(osub, 3, 100);
+    //LOGL << "Res = " << res.isSuccess << ", val = " << res.value.Print() << Nl;
 
     //CorPtr<IPosition> pos = IPosition::Create(m_period.GetSymbolName());
     switch (gcfgMan.cfgOpti->GetMethod())
@@ -184,12 +308,23 @@ void OptimizerEnProfit::Consume(const EnjoLib::VecD & data)
     //AddGoal(goal);
     //const bool verbose = gcfgMan.cfgOpti->OPTI_VERBOSE && m_isVerbose;
     //if (IsGoalReached(goal))
+    //LOGL << "goal = " << goal << Nl;
+    if (goal > m_goal)
     {
+        m_goal = goal;
+        m_numFailed = 0;
+            LOGL << "New score = " << goal << Nl;
+
+            osub.GetVerbose(data.data(), data.size(), true);
+        return true;
+
     }
-    //else
+    else
     {
+        return false;
 
         //GnuplotMan().PlotGnuplot(pos.GetProfitsCalc().GetProfits(), true); /// test
+
     }
 }
 

@@ -28,6 +28,7 @@ class OptimizerEnProfit : public EnjoLib::IMultiDimIterConsumerTpl //OptimizerBa
 
         void Consume(const EnjoLib::VecD & data) override; // IMultiDimIterConsumerTpl
 
+        bool Consume2(const EnjoLib::VecD & data);
         void AddSpace(const EnjoLib::VecD & data);
 
     protected:
@@ -37,6 +38,9 @@ class OptimizerEnProfit : public EnjoLib::IMultiDimIterConsumerTpl //OptimizerBa
     private:
         const OptiEnProfitDataModel & m_dataModel;
         EnjoLib::Matrix m_data;
+
+        double m_goal = -1000000;
+        int m_numFailed = 0;
 };
 
 #endif // OPTIMIZER_H

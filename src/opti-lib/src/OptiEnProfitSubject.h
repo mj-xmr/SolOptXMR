@@ -3,6 +3,7 @@
 
 #include "IOptiSubject.h"
 #include "StartEnd.h"
+#include <Util/VecD.hpp>
 
 #include <STD/Vector.hpp>
 
@@ -10,6 +11,27 @@ class ISymbol;
 class IPeriod;
 class PredictorFactory;
 enum class PredictorType;
+
+
+struct BatterySimulation
+{
+    double MAX_USAGE = 11; /// TODO: Rename to discharge
+	double MUL_POWER_2_CAPACITY = 0.1;
+			static constexpr double T_DELTA_HOURS = 1;
+				double MAX_CAPACITY = 60;
+        double MIN_LOAD = MAX_CAPACITY / 2; //# Assuming a lead-acid
+        //double load = MIN_LOAD * 0.95;
+        double load = MIN_LOAD * 1.1;
+        double DISCHARGE_PER_HOUR = 0.1;
+        double initial_load = true;
+        double num_undervolted = 0;
+        double num_undervolted_initial = 0;
+        double num_overvolted = 0;
+        double num_overused = 0;
+
+    double iter_get_load(double inp, double out, double hours=T_DELTA_HOURS);
+};
+
 
 class OptiEnProfitDataModel;
 class OptiSubjectEnProfit : public EnjoLib::OptiMultiSubject // IOptiSubject
@@ -21,11 +43,16 @@ class OptiSubjectEnProfit : public EnjoLib::OptiMultiSubject // IOptiSubject
         double GetGoal() const;
 
         double Get(const double * in, int n) override;
+        double GetVerbose(const double * in, int n, bool verbose =false);
         EnjoLib::VecD GetStart() const override;
         EnjoLib::VecD GetStep() const override;
         EnjoLib::Array<EnjoLib::OptiMultiSubject::Bounds> GetBounds() const override;
 
         //STDFWD::vector<OptiVarF> GetOptiVarsResult() override { return m_optiFloatResult; }
+        void UpdateOutput();
+        EnjoLib::VecD m_hashes, m_loads, m_penalityUnder, m_input, m_prod, m_hashrateBonus;
+
+        double HashrateBonus(int hour) const;
 
     protected:
 
@@ -36,7 +63,6 @@ class OptiSubjectEnProfit : public EnjoLib::OptiMultiSubject // IOptiSubject
         std::vector<OptiVarF> m_optiFloatResult;
 
         //EnjoLib::VecD m_iterData;
-
         float m_sumMax = 0;
 };
 
