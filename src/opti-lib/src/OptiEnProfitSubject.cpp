@@ -261,11 +261,11 @@ double OptiSubjectEnProfit::HashrateBonus(int hour) const
 {
     if (hour > 10 && hour < 16)
     {
-        return 0.85;
+        return 0.90;
     }
     else if (hour > 18)
     {
-        return 1.15;
+        return 1.10;
     }
     else
     {

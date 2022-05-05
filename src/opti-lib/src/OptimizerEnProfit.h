@@ -31,6 +31,8 @@ class OptimizerEnProfit : public EnjoLib::IMultiDimIterConsumerTpl //OptimizerBa
         bool Consume2(const EnjoLib::VecD & data);
         void AddSpace(const EnjoLib::VecD & data);
 
+        bool IsUseHash() const;
+
     protected:
         //STDFWD::vector<const IPeriod *> GetPeriods() const override;
         //void PrintStats() const override;

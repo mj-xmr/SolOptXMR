@@ -59,13 +59,22 @@ void App::Optim(const CLIResultSol & cliSol) const
         ;}
 
     int horizon = cliSol.m_confSol.DAYS_HORIZON;
-
     if (horizon <= 0)
     {
-        horizon = 3;
+        /// TODO: Write a validator, put to EL and use in ConfigSol
+        const int defaultVal = 3;
+        LOGL << "Correcting horizon of " << horizon << " to " << defaultVal << Nl;
+        horizon = defaultVal;
     }
-
-    OptiEnProfitDataModel dataModel(horizon, 24 * cliSol.m_confSol.DAYS_START);
+    int daysStart = cliSol.m_confSol.DAYS_START;
+    if (daysStart < 0)
+    {
+        const int defaultVal = 0;
+        LOGL << "Correcting start days of " << daysStart << " to " << defaultVal << Nl;
+        daysStart = defaultVal;
+    }
+    const int hourStart = 24 * daysStart;
+    OptiEnProfitDataModel dataModel(horizon, hourStart);
 
     OptimizerEnProfit optimizer(dataModel);
     optimizer();

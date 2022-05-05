@@ -30,6 +30,8 @@
 #include <Math/GeneralMath.hpp>
 
 #include <STD/VectorCpp.hpp>
+#include <STD/Set.hpp>
+#include <STD/String.hpp>
 
 using namespace std;
 using namespace EnjoLib;
@@ -40,6 +42,15 @@ OptimizerEnProfit::OptimizerEnProfit(const OptiEnProfitDataModel & dataModel)
 }
 OptimizerEnProfit::~OptimizerEnProfit(){}
 
+bool OptimizerEnProfit::IsUseHash() const
+{
+    return true;
+    //return false;
+
+    const int MIN_HOURS_HASHMAP = 2 * 24;
+    const int hours = m_dataModel.GetHorizonHours();
+    return hours > MIN_HOURS_HASHMAP;
+}
 
 /// TODO: The basic multi-dim-iter interaction should go to upper library
 void OptimizerEnProfit::operator()()
@@ -90,22 +101,33 @@ void OptimizerEnProfit::operator()()
         RandomMath rmath;
         rmath.RandSeed();
         const VecD binaryZero(horizonHours);
+        std::string hashStr, hashStrZero;
+        for (int i = 0; i < horizonHours; ++i)
+        {
+            hashStrZero.push_back('0');
+        }
+        hashStr = hashStrZero;
         VecD binary = binaryZero;
         VecD binarBest = binary;
 
+        const bool useHash = IsUseHash();
     const int maxEl = 10e8;
     short bit = 1;
+    char bitC = '1';
+    std::set<std::string> usedCombinations;
+    int alreadyCombined = 0;
     for (int i = 0; i < maxEl; ++i)
     {
         const int minHoursTogether = 2;
         bool cont = false;
         const int index = GMat().round(rmath.Rand(0, horizonHours-0.999));
         //binary[index] = binary[index] == 0 ? 1 : 0;
-        if (binary[index] == bit)
+        //if (binary.at(index) == bit)
         {
             //cont = true;
         }
-        binary[index] = bit;
+        binary[index]  = bit;
+        hashStr[index] = bitC;
         if (bit == 1)
         {
             for (int j = index - minHoursTogether; j <= index + minHoursTogether; ++j)
@@ -115,16 +137,22 @@ void OptimizerEnProfit::operator()()
                     continue;
                 }
                 binary[j] = bit;
+                hashStr.at(j) = bitC;
             }
         }
-
-        if (binary.Sum() == binary.size())
+        int sum = 0;
+        for (int l = 0; l < binary.size(); ++l)
+        {
+            sum += binary[l];
+        }
+        if (sum == binary.size())
         {
             //bit = 0;
             binary = binaryZero;
+            hashStr = hashStrZero;
             //LOGL << "switch to " << bit << ", bin = " << binary.Print() << Nl;
         }
-        if (binary.Sum() == 0)
+        if (sum == 0)
         {
             bit = 1;
             //LOGL << "switch to " << bit << ", bin = " << binary.Print() << Nl;
@@ -145,24 +173,83 @@ void OptimizerEnProfit::operator()()
         {
             //vec.Add(binary[b]);
         }
-        if (Consume2(binary))
+        bool found = false;
+        if (useHash)
         {
-            m_numFailed = 0;
-            binarBest = binary;
-
+            found = usedCombinations.count(hashStr);
+        }
+        //const bool found = false;
+        if (found)
+        {
+            ++alreadyCombined;
+            //continue;
+            ++m_numFailed;
         }
         else
         {
+            if (useHash)
+            {
+                usedCombinations.insert(hashStr);
+            }
+            if (Consume2(binary))
+            {
+                m_numFailed = 0;
+                binarBest = binary;
+
+            }
+            else
+            {
                 ++m_numFailed;
+            }
         }
+
         const int MAX_FAILED = 1000000;
         if (m_numFailed >= MAX_FAILED)
         {
-            LOGL << "Early stop after " << m_numFailed << " failed attempts." << Nl;
+            LOGL << "Early stop after " << m_numFailed << " last failed attempts." << Nl
+            << "Repeated combinations = " << alreadyCombined << Nl;
             break;
         }
     }
         GnuplotPlotTerminal1d(binarBest, "Best solution", 1, 0.5);
+        ELO
+        LOG << "Computer start schedule:\n";
+        LOG << binarBest.Print() << Nl;
+        int lastHourOn = -1;
+        int lastDayOn = -1;
+        for (int i = 1; i < horizonHours; ++i)
+        {
+            const int hour = i % 24;
+            const int day  = GMat().round(i / 24.0);
+            const int dayPrev  = GMat().round((i-1) / 24.0);
+            if (day != dayPrev)
+            {
+                LOG << Nl;
+            }
+
+            const bool onPrev = binarBest.at(i-1);
+            const bool onCurr = binarBest.at(i);
+            if (not onPrev && onCurr)
+            {
+                lastHourOn = hour;
+                lastDayOn = day;
+            }
+            if (lastHourOn > 0)
+            {
+                if (not onCurr) // Switch off
+                {
+                    const int hourPrev = (i - 1) % 24;
+                    LOG << "day " << lastDayOn << ", hour " << lastHourOn << "-" << hourPrev << Nl;
+                    lastHourOn = -1;
+                }
+                else if (i == horizonHours - 1)
+                {
+                    LOG << "day " << lastDayOn << ", hour " << lastHourOn << "-.." << Nl;
+                }
+            }
+
+
+        }
     }
     else
     {
