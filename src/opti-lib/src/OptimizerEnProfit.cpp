@@ -24,6 +24,7 @@
 #include <Util/Except.hpp>
 #include <Util/CoutBuf.hpp>
 #include <Statistical/Statistical.hpp>
+#include <Statistical/Distrib.hpp>
 #include <Template/CorradePointer.h>
 
 #include <Math/RandomMath.hpp>
@@ -195,7 +196,6 @@ void OptimizerEnProfit::operator()()
             {
                 m_numFailed = 0;
                 binarBest = binary;
-
             }
             else
             {
@@ -211,10 +211,19 @@ void OptimizerEnProfit::operator()()
             break;
         }
     }
-        GnuplotPlotTerminal1d(binarBest, "Best solution", 1, 0.5);
+
+
+        GnuplotPlotTerminal1d(binarBest, "Best solution = " + CharManipulations().ToStr(m_goal), 1, 0.5);
+        const Distrib distr;
+        const DistribData & distribDat = distr.GetDistrib(m_goals);
+        if (distribDat.IsValid())
+        {
+            GnuplotPlotTerminal2d(distribDat.data, "Solution distribution", 1, 0.5);
+        }
         ELO
         LOG << "Computer start schedule:\n";
         LOG << binarBest.Print() << Nl;
+
         int lastHourOn = -1;
         int lastDayOn = -1;
         for (int i = 1; i < horizonHours; ++i)
@@ -396,6 +405,7 @@ bool OptimizerEnProfit::Consume2(const EnjoLib::VecD & data)
     //const bool verbose = gcfgMan.cfgOpti->OPTI_VERBOSE && m_isVerbose;
     //if (IsGoalReached(goal))
     //LOGL << "goal = " << goal << Nl;
+    m_goals.Add(goal);
     if (goal > m_goal)
     {
         m_goal = goal;

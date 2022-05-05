@@ -42,6 +42,7 @@ class OptimizerEnProfit : public EnjoLib::IMultiDimIterConsumerTpl //OptimizerBa
         EnjoLib::Matrix m_data;
 
         double m_goal = -1000000;
+        EnjoLib::VecD m_goals;
         int m_numFailed = 0;
 };
 
