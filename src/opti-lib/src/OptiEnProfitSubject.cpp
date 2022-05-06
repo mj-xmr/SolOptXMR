@@ -10,6 +10,7 @@
 
 #include "GnuplotIOSWrap.h"
 
+#include <Ios/Ofstream.hpp>
 #include <Math/GeneralMath.hpp>
 #include <Util/CoutBuf.hpp>
 #include <Util/ToolsMixed.hpp>
@@ -29,8 +30,8 @@ OptiSubjectEnProfit::~OptiSubjectEnProfit()
 
 struct Computer
 {
-	double cores = 1;
-	double wattPerCore = 10;
+	double cores = 2;
+	double wattPerCore = 11.5;
 	double hashPerCore = 250;
 	double scalingFactor = 0.85;
 	double GetHashRate(double freqGhz) const
@@ -100,7 +101,7 @@ double OptiSubjectEnProfit::GetVerbose(const double * inp, int n, bool verbose)
     CorPtr<ISimulatorTS> psim = TSUtil().GetSimPred(m_period, fun->GetOptiVec(), m_startEndFrame);
     */
     //LOG << n << Nl;
-    Computer comp;
+    Computer comp; /// TODO: This has to become an array of computers, configurable by the User.
     BatterySimulation battery;
     double sum = 0;
     double penalitySum = 0;
@@ -186,7 +187,7 @@ double OptiSubjectEnProfit::GetVerbose(const double * inp, int n, bool verbose)
                 LOGL << ": New goal = " << sumAdjusted << ", m_sumMax = " << m_sumMax << ", penality = " << penality << ", after " << 0 << " iterations\n";
 
                 BatterySimulation batteryCopy;
-                VecD hashes, loads, penalityUnder, input, prod, hashrateBonus;
+                VecD hashes, loads, penalityUnder, input, prod, hashrateBonus, usages;
                 for (int i = 0; i < n; ++i)
                 {
                     /// TODO: Remove duplication
@@ -200,23 +201,29 @@ double OptiSubjectEnProfit::GetVerbose(const double * inp, int n, bool verbose)
 
                    const double load = batteryCopy.iter_get_load(m_dataModel.GetPowerProduction(i), usage);
 
+                    usages.Add(usage);
                    input.Add(val);
        loads.Add(load);
         prod.Add(m_dataModel.GetPowerProduction(i));
         hashes.Add(sum);
         hashrateBonus.Add(HashrateBonus(i % 24));
                 }
+                m_usages = usages;
                 m_input = input;
                 m_loads = loads;
                 m_prod = prod;
                 m_hashes = hashes;
                 m_hashrateBonus = hashrateBonus;
                 //ToolsMixed().SystemCallWarn("clear", __PRETTY_FUNCTION__);
-                GnuplotPlotTerminal1d(hashes, "hashes", 1, 0.5);
-                GnuplotPlotTerminal1d(loads, "battery", 1, 0.5);
+                OutputVar(hashes, "hashrates");
+                OutputVar(loads, "battery");
+                OutputVar(usages, "usage", false);
+
                 //GnuplotPlotTerminal1d(input, "input", 1, 0.5);
                 GnuplotPlotTerminal1d(prod, "prod", 1, 0.5);
                 GnuplotPlotTerminal1d(hashrateBonus, "hashrateBonus", 1, 0.5);
+
+
 
             }
         }
@@ -224,6 +231,17 @@ double OptiSubjectEnProfit::GetVerbose(const double * inp, int n, bool verbose)
 
     return sumAdjusted;
     //return -sum;
+}
+
+void OptiSubjectEnProfit::OutputVar(const EnjoLib::VecD & data, const EnjoLib::Str & descr, bool plot) const
+{
+    if (plot)
+    {
+
+    GnuplotPlotTerminal1d(data, descr, 1, 0.5);
+    }
+    Ofstream fout("/tmp/soloptout-" + descr + ".txt");
+    fout << data.Print() << Nl;
 }
 
 /*
@@ -259,13 +277,14 @@ EnjoLib::Array<EnjoLib::OptiMultiSubject::Bounds> OptiSubjectEnProfit::GetBounds
 
 double OptiSubjectEnProfit::HashrateBonus(int hour) const
 {
+    /// TODO: This is meant to be dynamically read from tsqsim
     if (hour > 10 && hour < 16)
     {
-        return 0.90;
+        return 0.97;
     }
     else if (hour > 18)
     {
-        return 1.10;
+        return 1.03;
     }
     else
     {

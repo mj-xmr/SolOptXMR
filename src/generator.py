@@ -45,19 +45,17 @@ TARGET_PRICE = config.generator.TARGET_PRICE
 
 path_positions_txt = f"{PATH_POSITIONS_BASE}.txt"
 
-def get_sun_positions():
+def get_sun_positions(start_date, days_horizon=3, unpickle=True):
     a = datetime.datetime.now()
-    start_date = datetime.datetime(2020, 1, 1)
-    path_positions_file_name = f"{PATH_POSITIONS_BASE}-{start_date.year}-{start_date.month}-{start_date.day}"
+    path_positions_file_name = f"{PATH_POSITIONS_BASE}-{start_date.year}-{start_date.month}-{start_date.day}-{days_horizon}"
     path_positions = path_positions_file_name + ".dat"
-    if os.path.isfile(path_positions):
+    if unpickle and os.path.isfile(path_positions):
         print("Reading from:", path_positions)
         with open(path_positions, "rb") as handle:
             pos = pickle.load(handle)
             b = datetime.datetime.now()
-    else:
-        start = datetime.datetime(2020, 1, 1)
-        dti = pd.date_range(start, periods=30 * 8 * 24, freq="H")
+    else:    
+        dti = pd.date_range(start_date, periods=days_horizon * 24, freq="H")
         
         pos = pvlib.solarposition.get_solarposition(dti, sunrise_lib.LAT, sunrise_lib.LON)
         b = datetime.datetime.now()
@@ -187,36 +185,6 @@ class BatterySimulator:
             print("Overvolted  = ", print_relative(self.num_overvolted, relative))
         if self.num_overused > 0:
             print("Overused    = ", print_relative(self.num_overused, relative))
-        
-class BatterySimulatorCpp(BatterySimulator): 
-    def iter_get_load(self, inp, out, hours=T_DELTA_HOURS):
-        discharge = hours * self.DISCHARGE_PER_HOUR
-        balance = inp - out - discharge
-        change = balance * MUL_POWER_2_CAPACITY
-        if change > MAX_USAGE:
-        #if out > MAX_USAGE: # A valid possibility
-            self.num_overused += 1
-            change = MAX_USAGE
-        #print(change)
-        self.load += change
-
-        if self.load > self.MAX_CAPACITY:
-            self.load = self.MAX_CAPACITY
-            self.num_overvolted += 1
-
-        if self.load < self.MIN_LOAD:
-            if self.initial_load:
-                self.num_undervolted_initial += 1
-            else:
-                self.num_undervolted += 1
-        if self.load < 0:
-            self.load = 0
-                
-        if self.initial_load:
-            if self.load > self.MIN_LOAD:
-                self.initial_load = False
-
-        return self.get_load()
 
 def get_usage_endor_example(available):
     # TODO: use the available power wisely
@@ -330,7 +298,9 @@ def run_algo(elev, show_plots, algo):
 
 
 def test(show_plots=False):
-    pos = get_sun_positions()
+    start_date = datetime.datetime(2020, 1, 1)
+    days_horizon = 30 * 9
+    pos = get_sun_positions(start_date, days_horizon)
     #print(pos)
 
     proc = proc_data(pos)
