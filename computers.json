@@ -1,0 +1,34 @@
+{
+    "computers": [
+    	  {
+    	  	"name" : "Fanless Intel, 4 core",
+    	  	"number" : 2,
+    	  	"cores" : 4,
+    	  	"hash_per_core" : 100,
+    	  	"watt_per_core" : 8,
+    	  	"watt_idle" : 5,
+    	  	"watt_asleep" : 1,
+    	  	"min_run_hours" : 2
+    	  },
+    	  {
+    	  	"name" : "Fanless Ryzen, 2 core",
+    	  	"number" : 1,
+    	  	"cores" : 2,
+    	  	"hash_per_core" : 100,
+    	  	"watt_per_core" : 15,
+    	  	"watt_idle" : 8,
+    	  	"watt_asleep" : 1,
+    	  	"min_run_hours" : 2
+    	  },
+    	  {
+    	  	"name" : "Ryzen 7, 8 cores",
+    	  	"number" : 1,
+    	  	"cores" : 8,
+    	  	"hash_per_core" : 350,
+    	  	"watt_per_core" : 15,
+    	  	"watt_idle" : 20,
+    	  	"watt_asleep" : 1,
+    	  	"min_run_hours" : 4
+    	  }
+    ]
+}
