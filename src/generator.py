@@ -45,11 +45,11 @@ TARGET_PRICE = config.generator.TARGET_PRICE
 
 path_positions_txt = f"{PATH_POSITIONS_BASE}.txt"
 
-def get_sun_positions(start_date, days_horizon=3):
+def get_sun_positions(start_date, days_horizon=3, unpickle=True):
     a = datetime.datetime.now()
     path_positions_file_name = f"{PATH_POSITIONS_BASE}-{start_date.year}-{start_date.month}-{start_date.day}-{days_horizon}"
     path_positions = path_positions_file_name + ".dat"
-    if os.path.isfile(path_positions):
+    if unpickle and os.path.isfile(path_positions):
         print("Reading from:", path_positions)
         with open(path_positions, "rb") as handle:
             pos = pickle.load(handle)
@@ -185,36 +185,6 @@ class BatterySimulator:
             print("Overvolted  = ", print_relative(self.num_overvolted, relative))
         if self.num_overused > 0:
             print("Overused    = ", print_relative(self.num_overused, relative))
-        
-class BatterySimulatorCpp(BatterySimulator): 
-    def iter_get_load(self, inp, out, hours=T_DELTA_HOURS):
-        discharge = hours * self.DISCHARGE_PER_HOUR
-        balance = inp - out - discharge
-        change = balance * MUL_POWER_2_CAPACITY
-        if change > MAX_USAGE:
-        #if out > MAX_USAGE: # A valid possibility
-            self.num_overused += 1
-            change = MAX_USAGE
-        #print(change)
-        self.load += change
-
-        if self.load > self.MAX_CAPACITY:
-            self.load = self.MAX_CAPACITY
-            self.num_overvolted += 1
-
-        if self.load < self.MIN_LOAD:
-            if self.initial_load:
-                self.num_undervolted_initial += 1
-            else:
-                self.num_undervolted += 1
-        if self.load < 0:
-            self.load = 0
-                
-        if self.initial_load:
-            if self.load > self.MIN_LOAD:
-                self.initial_load = False
-
-        return self.get_load()
 
 def get_usage_endor_example(available):
     # TODO: use the available power wisely

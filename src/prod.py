@@ -26,27 +26,6 @@ from profitability import POW_Coin
 
 from python_json_config import ConfigBuilder
 
-config = sunrise_lib.config
-
-ELEVATION_KEY = config.generator.ELEVATION_KEY
-BUILD_DIR='build/'  # TODO: Config
-
-# Not changable: system params
-MIN_POWER = config.generator.MIN_POWER
-MAX_POWER = config.generator.MAX_POWER
-MAX_USAGE = config.generator.MAX_USAGE
-#MIN_CAPACITY = config.generator.MIN_CAPACITY
-MAX_CAPACITY = config.generator.MAX_CAPACITY
-MUL_POWER_2_CAPACITY = config.generator.MUL_POWER_2_CAPACITY
-T_DELTA_HOURS = config.generator.T_DELTA_HOURS
-DATE_NOW = sunrise_lib.DATE_NOW
-PATH_POSITIONS_BASE = config.sunrise_lib.DIR_TMP + config.generator.PATH_POSITIONS # TODO: Parametrize based on keys
-ELECTRICITY_PRICE = config.generator.ELECTRICITY_PRICE
-POOL_FEE = config.generator.POOL_FEE / 100  # Must be a float!
-TARGET_PRICE = config.generator.TARGET_PRICE
-
-path_positions_txt = f"{PATH_POSITIONS_BASE}.txt"
-
 DATE_NOW_STR = sunrise_lib.DATE_NOW.isoformat()
 DEFAULT_HORIZON_DAYS = 3
 
@@ -58,42 +37,31 @@ def get_args():
     return parser.parse_args()
 
         
-class BatterySimulatorCpp(generator.BatterySimulator): 
-    def iter_get_load(self, inp, out, hours=T_DELTA_HOURS):
-        discharge = hours * self.DISCHARGE_PER_HOUR
-        balance = inp - out - discharge
-        change = balance * MUL_POWER_2_CAPACITY
-        if change > MAX_USAGE:
-        #if out > MAX_USAGE: # A valid possibility
-            self.num_overused += 1
-            change = MAX_USAGE
-        #print(change)
-        self.load += change
+class BatterySimulatorCpp(generator.BatterySimulator):
+    def __init(self):
+        pass
+    
+    def run(self):
+        basePath = 'build/src/opti/opti' # TODO: Pass on days horizon
+        path = basePath
+        if not os.path.isfile(path):
+            path = '../' + path    
+        result = sunrise_lib.run_cmd(path, True)
+        if result.returncode != 0:
+            raise RuntimeError("Failed to run opti")
 
-        if self.load > self.MAX_CAPACITY:
-            self.load = self.MAX_CAPACITY
-            self.num_overvolted += 1
+        basePathIn = "/tmp/soloptout-{}.txt"
 
-        if self.load < self.MIN_LOAD:
-            if self.initial_load:
-                self.num_undervolted_initial += 1
-            else:
-                self.num_undervolted += 1
-        if self.load < 0:
-            self.load = 0
-                
-        if self.initial_load:
-            if self.load > self.MIN_LOAD:
-                self.initial_load = False
-
-        return self.get_load()
-
+        self.hashrates  = np.loadtxt(basePathIn.format('hashrates'))
+        self.loads      = np.loadtxt(basePathIn.format('battery'))
+        self.usage      = np.loadtxt(basePathIn.format('usage'))
 
 def get_usage_prod(available):
-    bat_sim = generator.BatterySimulatorCpp()
-    hashrates = [usage_exp[0] * 0.5] * len(available)
-    loads = []
-    usage = []
+    bat_sim = BatterySimulatorCpp()
+    bat_sim.run()
+    hashrates = bat_sim.hashrates
+    loads = bat_sim.loads
+    usage = bat_sim.usage
     incomes = [0]* len(available)
     costs = [0]* len(available)
     effs = [0]* len(available)
@@ -107,7 +75,7 @@ def run_main(elev, show_plots):
 
 def main(args):
     start_date = dateutil.parser.parse(args.start_date)
-    pos = generator.get_sun_positions(start_date, args.days_horizon)
+    pos = generator.get_sun_positions(start_date, args.days_horizon, unpickle=False)
     #print(pos)
     show_plots = True
     proc = generator.proc_data(pos)

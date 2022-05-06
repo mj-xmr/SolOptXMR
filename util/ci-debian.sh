@@ -28,3 +28,7 @@ export R_HOME=/usr/lib/R && export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$R_HOME/lib
 src/opti/opti --help
 src/opti/opti --horizon-days 3 --start-day 30
 src/opti/opti --help
+
+echo "Testing the entire production chain:"
+cd ..
+python3 src/prod.py
