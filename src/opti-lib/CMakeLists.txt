@@ -12,7 +12,7 @@ find_package(Boost QUIET REQUIRED COMPONENTS system)
 add_library (${PROJECT_NAME} ${LINK_TYPE} ${SRCS})
 enjoSetupTarget(${PROJECT_NAME})
 target_include_directories(${PROJECT_NAME} PUBLIC ${LUA_INCLUDE_DIR})
-target_link_libraries(${PROJECT_NAME} lib-base ${LUA_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} lib-base ${Boost_SYSTEM_LIBRARY} ${LUA_LIBRARIES})
 
 # TODO: Rather copy than symlink?
 enjoSymlink(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/static ${CMAKE_BINARY_DIR}/../static)
