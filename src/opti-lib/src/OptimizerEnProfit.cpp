@@ -12,6 +12,7 @@
 #include "OptiEnProfitSubject.h"
 #include "OptiEnProfitDataModel.h"
 #include "GnuplotIOSWrap.h"
+#include "JsonReader.h"
 
 #include <Math/MultiDimIter/MultiDimIterTpl.hpp>
 #include <Math/Opti/OptiMultiNelderMead.hpp>

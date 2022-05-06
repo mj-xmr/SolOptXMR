@@ -3,7 +3,6 @@
 //#define BOOST_JSON_STACK_BUFFER_SIZE 1024
 //#include <boost/json/src.hpp>
 //#include <boost/json.hpp>
-#include <rapidjson/document.h>
 
 #include <Ios/Ifstream.hpp>
 #include <Util/VecD.hpp>
