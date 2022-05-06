@@ -24,6 +24,10 @@ EnjoLib::Array<Computer> JsonReader::ReadComputers(bool verbose) const
     {
         path = "../../../" + fileJson;
     }
+    if (not FileUtils().FileExists(path))
+    {
+        path = "../" + fileJson;
+    }
     Ifstream fcomps(path);
     const Tokenizer tok;
     const VecStr & lines = tok.GetLines(fcomps);
