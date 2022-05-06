@@ -17,7 +17,7 @@ It will accommodate for issues such as:
 
 
 # Quickstart
-In case these instructions become outdated, please refer to the steps of the [CI](.github/workflows/build.yml).
+In case these instructions become outdated, please refer to the steps of the [CI](.github/workflows/linux.yml).
 
 ## Preparation
 Please run the below scripts. They are meant to be non-interactive and will require root permissions (via `sudo`). 
