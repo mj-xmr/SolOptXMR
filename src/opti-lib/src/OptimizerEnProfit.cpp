@@ -119,7 +119,8 @@ void OptimizerEnProfit::operator()()
     int alreadyCombined = 0;
     for (int i = 0; i < maxEl; ++i)
     {
-        const int minHoursTogether = 2;
+        const int minHoursTogether = 3; /// TODO: This should be computer's parameter or user's tolerance
+        const int minHoursTogetherHalf = GMat().round(minHoursTogether/2.0);
         bool cont = false;
         const int index = GMat().round(rmath.Rand(0, horizonHours-0.999));
         //binary[index] = binary[index] == 0 ? 1 : 0;
@@ -131,7 +132,7 @@ void OptimizerEnProfit::operator()()
         hashStr[index] = bitC;
         if (bit == 1)
         {
-            for (int j = index - minHoursTogether; j <= index + minHoursTogether; ++j)
+            for (int j = index - minHoursTogetherHalf; j <= index + minHoursTogetherHalf; ++j)
             {
                 if (j < 0 || j >= horizonHours)
                 {
