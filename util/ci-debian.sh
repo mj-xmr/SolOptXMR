@@ -19,5 +19,4 @@ python3 src/tests.py
 util/build-debian.sh
 
 echo "Testing the entire production chain:"
-cd ..
 python3 src/prod.py
