@@ -1,5 +1,9 @@
 #include "OptiEnProfitDataModel.h"
 
+//#define BOOST_JSON_STACK_BUFFER_SIZE 1024
+//#include <boost/json/src.hpp>
+#include <boost/json.hpp>
+
 #include <Ios/Ifstream.hpp>
 #include <Util/VecD.hpp>
 #include <Util/CoutBuf.hpp>

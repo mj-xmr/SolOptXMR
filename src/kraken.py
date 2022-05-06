@@ -59,8 +59,13 @@ def test(year=DATE_NOW.year, month=DATE_NOW.month, day=DATE_NOW.day):
     import pandas as pd
     fi = fiat.EUR
     co = coin.XMR
-    a = kraken.get_price(co, fi)
-    b = kraken.get_prices(co)
+    try:
+        a = kraken.get_price(co, fi)
+        b = kraken.get_prices(co)
+    except Exception:
+        print("Failed to connect to kraken!")
+        return
+    
     ohlc, last = kraken.get_ohlc(co, fi, interval=15, since=datetime.timestamp(datetime(year, month, day, 0, 0, 0)), ascending=True)
     ohlc.set_index("time")
     print(a)
