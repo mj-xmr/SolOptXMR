@@ -64,7 +64,7 @@ void App::Optim(const CLIResultSol & cliSol) const
     if (horizon <= 0)
     {
         /// TODO: Write a validator, put to EL and use in ConfigSol
-        const int defaultVal = 3;
+        const int defaultVal = 2;
         LOGL << "Correcting horizon of " << horizon << " to " << defaultVal << Nl;
         horizon = defaultVal;
     }

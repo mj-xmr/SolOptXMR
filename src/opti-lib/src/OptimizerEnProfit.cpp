@@ -149,7 +149,8 @@ void OptimizerEnProfit::RandomSearch()
     RandomMath rmath;
     rmath.RandSeed();
     const VecD binaryZero(horizonHours);
-    std::string hashStr, hashStrZero(horizonHours, '0');
+    const int numComputers = 1; /// TODO: Read from comps!
+    std::string hashStr, hashStrZero(horizonHours * numComputers, '0');
     hashStr = hashStrZero;
     VecD binary = binaryZero;
     VecD binarBest = binary;
@@ -160,13 +161,14 @@ void OptimizerEnProfit::RandomSearch()
     char bitC = '1';
     std::set<std::string> usedCombinations;
     int alreadyCombined = 0;
+    const GMat gmat;
     for (int i = 0; i < maxEl; ++i)
     {
         const int minHoursTogether = 3; /// TODO: This should be computer's parameter or user's tolerance
-        const int minHoursTogetherHalf = GMat().round(minHoursTogether/2.0);
-        const int index = GMat().round(rmath.Rand(0, horizonHours-0.999));
-        binary [index] = bit;
-        hashStr[index] = bitC;
+        const int minHoursTogetherHalf = gmat.round(minHoursTogether/2.0);
+        const int index = gmat.round(rmath.Rand(0, horizonHours-0.999));
+        //binary [index] = bit;
+        //hashStr[index] = bitC;
         if (bit == 1)
         {
             for (int j = index - minHoursTogetherHalf; j <= index + minHoursTogetherHalf; ++j)
@@ -175,16 +177,16 @@ void OptimizerEnProfit::RandomSearch()
                 {
                     continue;
                 }
-                binary[j] = bit;
-                hashStr.at(j) = bitC;
+                binary[j] = bit; /// Each computer gets its own binary.
+                hashStr.at(j) = bitC; /// TODO: j * (1 + computerIDX)
             }
         }
         int sum = 0;
-        for (int l = 0; l < binary.size(); ++l)
+        for (int l = 0; l < horizonHours; ++l)
         {
             sum += binary[l];
         }
-        if (sum == binary.size())
+        if (sum == horizonHours)
         {
             binary = binaryZero;
             hashStr = hashStrZero;
@@ -371,6 +373,7 @@ bool OptimizerEnProfit::Consume2(const EnjoLib::VecD & data)
         LOGL << "New score = " << goal << Nl;
 
         osub.GetVerbose(data.data(), data.size(), true);
+        //osub.GetVerbose(data.data(), data.size(), false);
         return true;
 
     }
