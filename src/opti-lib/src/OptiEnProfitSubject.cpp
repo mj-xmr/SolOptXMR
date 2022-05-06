@@ -1,6 +1,7 @@
 #include "OptiEnProfitSubject.h"
 #include "OptiSubjectTSUtil.h"
 #include "PredictorFactory.h"
+#include "Computer.h"
 #include "IPeriod.h"
 #include "OptiVarVec.h"
 #include "ConfigMan.h"
@@ -27,24 +28,6 @@ OptiSubjectEnProfit::~OptiSubjectEnProfit()
 {
     //dtor
 }
-
-struct Computer
-{
-	double cores = 2;
-	double wattPerCore = 11.5;
-	double hashPerCore = 250;
-	double scalingFactor = 0.85;
-	double GetHashRate(double freqGhz) const
-	{
-		double hashes = hashPerCore * cores * freqGhz; // minus scaling factor
-		return hashes;
-	}
-	double GetUsage(double freqGhz) const
-	{
-	    return cores * freqGhz * wattPerCore;
-	}
-};
-
 
 double BatterySimulation::iter_get_load(double inp, double out, double hours)
        {

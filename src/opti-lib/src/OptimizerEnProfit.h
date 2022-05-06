@@ -34,6 +34,7 @@ class OptimizerEnProfit : public EnjoLib::IMultiDimIterConsumerTpl //OptimizerBa
         bool IsUseHash() const;
 
     protected:
+        void RandomSearch();
         //STDFWD::vector<const IPeriod *> GetPeriods() const override;
         //void PrintStats() const override;
         //void PrintStatsSummary() const override;

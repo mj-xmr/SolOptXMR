@@ -29,6 +29,7 @@
 #include "CLIResultSol.h"
 #include "OptimizerEnProfit.h"
 #include "OptiEnProfitDataModel.h"
+#include "JsonReader.h"
 
 #include <Ios/Cin.hpp>
 #include <Util/Trim.hpp>
@@ -42,6 +43,7 @@ App::App(){}
 
 void App::Run(const CLIResultSol & cliResultCmdLine) const
 {
+    ReadJson();
     //const ConfigSol  & confSol    = *gcfgMan.cfgTF.get();
     //do
     {
@@ -62,7 +64,7 @@ void App::Optim(const CLIResultSol & cliSol) const
     if (horizon <= 0)
     {
         /// TODO: Write a validator, put to EL and use in ConfigSol
-        const int defaultVal = 3;
+        const int defaultVal = 2;
         LOGL << "Correcting horizon of " << horizon << " to " << defaultVal << Nl;
         horizon = defaultVal;
     }
@@ -78,4 +80,11 @@ void App::Optim(const CLIResultSol & cliSol) const
 
     OptimizerEnProfit optimizer(dataModel);
     optimizer();
+}
+
+void App::ReadJson() const
+{
+    LOGL << "Read Json\n";
+    const JsonReader reader;
+    reader.ReadComputers(true);
 }

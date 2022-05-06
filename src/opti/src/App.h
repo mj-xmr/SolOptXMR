@@ -19,7 +19,7 @@ class App
         void Run(const CLIResultSol & cliResult) const;
         //void Optim(const ISymbol & sym, const IPeriod & per) const;
         void Optim(const CLIResultSol & cliResult) const;
-
+        void ReadJson() const;
 
     protected:
 
