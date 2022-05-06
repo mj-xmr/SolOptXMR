@@ -18,6 +18,8 @@ class POW_Coin:
         self.coin = coin
         self.node_url = dict_config["profitability"][coin.name]["node"]
         self.blocktime = dict_config["profitability"][coin.name]["blocktime"]
+        self._height = None
+        self._height_last_fetched = now
         self._price = None
         self._price_last_fetched = now
         self._difficulty = None
@@ -29,28 +31,30 @@ class POW_Coin:
     def price(self):
         now = datetime.now()
         if self._price is None or now - self._price_last_fetched > timedelta(minutes=config.profitability.refresh_delta_mins):
-            # print("Fetching price")
             self._price = kraken.get_prices(self.coin)
             self._price_last_fetched = now
-        # print("Already fetched price")
         return self._price
     
     @property
     def difficulty(self) -> int:
         now = datetime.now()
         if self._difficulty is None or now - self._difficulty_last_fetched > timedelta(minutes=config.profitability.refresh_delta_mins):
-            req_data = {"jsonrpc": "2.0", "id": "0", "method": "get_info"}
-            data = requests.post(self.node_url, json=req_data).json()
-            self._difficulty = int(data["result"]["difficulty"])
-            self._difficulty_last_fetched = now
+            self.get_info()
         return self._difficulty
+    
+    @property
+    def height(self) -> int:
+        now = datetime.now()
+        if self._height is None or now - self._height_last_fetched > timedelta(minutes=config.profitability.refresh_delta_mins):
+            self.get_info()
+        return self._height
     
     @property
     def reward(self):
         now = datetime.now()
         if self._reward is None or now - self._reward_last_fetched > timedelta(minutes=config.profitability.refresh_delta_mins):
             req_data = {"jsonrpc": "2.0", "id": "0", "method": "get_last_block_header"}
-            data = requests.post(self.node_url, json=req_data).json()
+            data = requests.post(f"{self.node_url}/json_rpc", json=req_data).json()
             self._reward = int(data["result"]["block_header"]["reward"]) / 1e12
             self._reward_last_fetched = now
         return self._reward
@@ -72,11 +76,31 @@ class POW_Coin:
         data["profitability"] = 100 * (data["expected_fiat_income_s"] - data["mining_cost_s"]) / data["mining_cost_s"] if data["mining_cost_s"] != 0 else math.inf
         data["breakeven_efficiency"] = (data["difficulty"] * electricity_cost) / (data["price"] * data["reward"] * 1000 * 3600 * (1 - pool_fee))
         return data
-
+    
+    def get_info(self):
+        now = datetime.now()
+        json_req = { "jsonrpc": "2.0", "id": "0", "method": "get_info"}
+        try:
+            data = requests.get(f"{self.node_url}/json_rpc", json=json_req).json()
+        except Exception as e:
+            print("Error!", e)
+            pass
+        else:
+            self._height = data["result"]["height"]
+            self._height_last_fetched = now
+            self._difficulty = data["result"]["difficulty"]
+            self._difficulty_last_fetched = now
+    
 def test():
+    import time
     a = POW_Coin(coin.XMR)
     b = a.profitability(fiat.USD, 20000, 200, 0.1)
-    print(b)   
+    print(b)
+    print(a.difficulty)
+    print(a._difficulty_last_fetched)
+    time.sleep(2)
+    print(a.height)
+    print(a._height_last_fetched)  # Must match a._difficulty_last_fetched
 
 if __name__ == "__main__":
     test()
