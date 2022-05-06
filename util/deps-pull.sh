@@ -1,8 +1,5 @@
 #!/bin/sh -e
 
-
-
-
 cd externals/tsqsim/
 ./util/deps-pull.sh
 cd ../..

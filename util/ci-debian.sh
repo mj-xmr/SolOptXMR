@@ -14,15 +14,15 @@ GEN="CodeBlocks - Unix Makefiles"
 #./ci-default
 #cd ../..
 
-#python3 src/tests.py
+python3 src/tests.py
 # Now test unpickling:
-#python3 src/tests.py
+python3 src/tests.py
 
 mkdir -p build && cd build
 cmake .. -G "${GEN}" -D BUILD_QT=OFF
 make
 
-# TODO: Make optional & derive from tsqsim/util/build.py:
+# TODO: Make optional & derive a build script from tsqsim/util/build.py:
 export R_HOME=/usr/lib/R && export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$R_HOME/lib
 
 src/opti/opti --help
