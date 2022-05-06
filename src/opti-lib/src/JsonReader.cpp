@@ -3,6 +3,7 @@
 
 #include <Ios/Ifstream.hpp>
 #include <Util/CoutBuf.hpp>
+#include <Util/FileUtils.hpp>
 #include <Util/Tokenizer.hpp>
 #include <Util/CharManipulations.hpp>
 #include <rapidjson/document.h>
@@ -17,7 +18,13 @@ JsonReader::~JsonReader(){}
 EnjoLib::Array<Computer> JsonReader::ReadComputers(bool verbose) const
 {
     std::vector<Computer> ret;
-    Ifstream fcomps("../../../computers.json");
+    const Str & fileJson = "computers.json";
+    Str path = fileJson;
+    if (not FileUtils().FileExists(path))
+    {
+        path = "../../../" + fileJson;
+    }
+    Ifstream fcomps(path);
     const Tokenizer tok;
     const VecStr & lines = tok.GetLines(fcomps);
     Str wholeJson;
