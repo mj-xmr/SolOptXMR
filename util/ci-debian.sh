@@ -14,9 +14,9 @@ GEN="CodeBlocks - Unix Makefiles"
 #./ci-default
 #cd ../..
 
-python3 src/tests.py
+#python3 src/tests.py
 # Now test unpickling:
-python3 src/tests.py
+#python3 src/tests.py
 
 mkdir -p build && cd build
 cmake .. -G "${GEN}" -D BUILD_QT=OFF
