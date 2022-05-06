@@ -16,6 +16,25 @@ It will accommodate for issues such as:
 [Full description on Monero Community Crowdfunding System](https://ccs.getmonero.org/proposals/soloptxmr-mj-endor-2022.html)
 
 
+# Quickstart
+In case these instructions become outdated, please refer to the steps of the [CI](.github/workflows/build.yml).
+
+## Preparation
+Please run the below scripts. They are meant to be non-interactive and will require root permissions (via `sudo`). 
+When in doubt, please view their contents with `cat` for an objective assessment of their functionalities.
+```bash
+git clone --recursive https://github.com/mj-xmr/SolOptXMR.git # Clone this repo (assuming it's not a fork)
+cd SolOptXMR		# Enter the cloned repo's dir
+./util/prep-env.sh	# Prepare the environment - downloads example data and creates useful symlinks
+./util/deps-pull.sh	# Download the maintaned dependencies
+./util/deps-build.sh	# Build and install the unmanaged dependencies (uses sudo for installation)
+```
+
+## Building & running
+```bash
+./ci-default 	# Build and run the demo
+```
+
 # Screenshots
 
 ## First model
