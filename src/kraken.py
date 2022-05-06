@@ -65,9 +65,8 @@ def test(year=DATE_NOW.year, month=DATE_NOW.month, day=DATE_NOW.day):
     except Exception:
         print("Failed to connect to kraken!")
         return
-    
     ohlc, last = kraken.get_ohlc(co, fi, interval=15, since=datetime.timestamp(datetime(year, month, day, 0, 0, 0)), ascending=True)
-    ohlc.set_index("time")
+    ohlc.set_index("time", inplace=True)
     print(a)
     print(b)
     # print(ohlc)
@@ -79,14 +78,19 @@ def test(year=DATE_NOW.year, month=DATE_NOW.month, day=DATE_NOW.day):
         # Maybe keep them all, but in "parallel" dataframes? One for each time resolution.
         # And when fetching data, look for the closest timestamp with the smallest resolution for best accuracy.
         ohlc_old = pd.read_pickle(path)
+        # ohlc_old.set_index("time", inplace=True)
+        # ohlc_old.drop_duplicates()
     except FileNotFoundError:
         print(f"{path} does not exist. Creating...")
         pass
     else:
         print(f"{path} already exists. Loaded...")
-        ohlc = pd.merge_ordered(ohlc, ohlc_old, how="outer")
+        ohlc = ohlc.combine_first(ohlc_old)
     ohlc.to_pickle(path)
     print(ohlc)
+    # import matplotlib.pyplot as plt
+    # ohlc.plot(y="close", use_index=True, kind="line")
+    # plt.show()
 
 if __name__ == "__main__":
     test(2013, 1, 1)
