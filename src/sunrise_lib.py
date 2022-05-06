@@ -51,9 +51,10 @@ def read_file(fname):
     with open(fname) as fin:
         return fin.read()
         
-def run_cmd(cmd):
+def run_cmd(cmd, print_result=False):
     result = run(cmd, stdout=PIPE, stderr=PIPE, universal_newlines=True)
-    #print(result.returncode, result.stdout, result.stderr)
+    if print_result:
+        print(result.returncode, result.stdout, result.stderr)
     return result
 
 # get local timezone    
