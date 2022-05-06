@@ -280,7 +280,7 @@ double OptiSubjectEnProfit::HashrateBonus(int hour) const
     /// TODO: This is meant to be dynamically read from tsqsim
     if (hour > 10 && hour < 16)
     {
-        return 0.97
+        return 0.97;
     }
     else if (hour > 18)
     {
