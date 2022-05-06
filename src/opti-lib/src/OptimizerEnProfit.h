@@ -35,6 +35,7 @@ class OptimizerEnProfit : public EnjoLib::IMultiDimIterConsumerTpl //OptimizerBa
 
     protected:
         void RandomSearch();
+        void PrintSolution(const EnjoLib::VecD & best) const;
         //STDFWD::vector<const IPeriod *> GetPeriods() const override;
         //void PrintStats() const override;
         //void PrintStatsSummary() const override;

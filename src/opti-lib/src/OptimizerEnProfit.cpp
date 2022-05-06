@@ -145,39 +145,11 @@ void OptimizerEnProfit::RandomSearch()
     const JsonReader reader;
     const EnjoLib::Array<Computer> & comps = reader.ReadComputers();
 
-    const MultiDimIterTpl::VVt data;
-    //const long int maxSamples = gcfgMan.cfgOpti->OPTI_RANDOM_SAMPLES_NUM;
-    const MultiDimIterTpl::VVt & dataT = data.T();
-    MultiDimIterTpl::VVt dataNewT; // Shorten the data down to the requested number of samples
-    /// TODO: Unit Test. Crucial element
-    //for (unsigned i = 0; i < maxSamples && i < dataT.size() ; ++i)
-    {
-        //dataNewT.Add(dataT.at(i));
-    }
-    //for (unsigned i = 0; i < dataNewT.size(); ++i)
-    {
-        //LOGL << "Iter " << i << "/" << dataNewT.size() << Nl;
-        //Consume(dataNewT.at(i));
-        //if (gcfgMan.cfgOpti->OPTI_RANDOM_EARLY_STOP && IsEarlyStop())
-        {
-            //LOGL << "Early stop. The recent variance changes were less than " << gcfgMan.cfgOpti->OPTI_RANDOM_MIN_DIFF_PROMILE << " ‰ after " << i << " iterations.\n";
-            //break;
-        }
-    }
-    for (unsigned i = 0; i < data.size(); ++i)
-    {
-        //LOGL << "Iter " << i << "/" << data.size() << Nl;
-        //Consume(data.at(i));
-    }
     const int horizonHours = m_dataModel.GetHorizonHours();
     RandomMath rmath;
     rmath.RandSeed();
     const VecD binaryZero(horizonHours);
-    std::string hashStr, hashStrZero;
-    for (int i = 0; i < horizonHours; ++i)
-    {
-        hashStrZero.push_back('0');
-    }
+    std::string hashStr, hashStrZero(horizonHours, '0');
     hashStr = hashStrZero;
     VecD binary = binaryZero;
     VecD binarBest = binary;
@@ -192,14 +164,8 @@ void OptimizerEnProfit::RandomSearch()
     {
         const int minHoursTogether = 3; /// TODO: This should be computer's parameter or user's tolerance
         const int minHoursTogetherHalf = GMat().round(minHoursTogether/2.0);
-        bool cont = false;
         const int index = GMat().round(rmath.Rand(0, horizonHours-0.999));
-        //binary[index] = binary[index] == 0 ? 1 : 0;
-        //if (binary.at(index) == bit)
-        {
-            //cont = true;
-        }
-        binary[index]  = bit;
+        binary [index] = bit;
         hashStr[index] = bitC;
         if (bit == 1)
         {
@@ -220,42 +186,18 @@ void OptimizerEnProfit::RandomSearch()
         }
         if (sum == binary.size())
         {
-            //bit = 0;
             binary = binaryZero;
             hashStr = hashStrZero;
-            //LOGL << "switch to " << bit << ", bin = " << binary.Print() << Nl;
-        }
-        if (sum == 0)
-        {
             bit = 1;
-            //LOGL << "switch to " << bit << ", bin = " << binary.Print() << Nl;
-            //break;
-        }
-        if (cont)
-        {
-            continue;
-        }
-        if (i % 10000 == 0)
-        {
-            //LOGL << "created " << i << "/" << maxEl << ", val = " << binary.Print() << Nl;
-        }
-        //LOGL << binary << Nl;
-
-        //VecD vec;
-        //for (int b = 0; b < horizonHours; ++b)
-        {
-            //vec.Add(binary[b]);
         }
         bool found = false;
         if (useHash)
         {
             found = usedCombinations.count(hashStr);
         }
-        //const bool found = false;
         if (found)
         {
             ++alreadyCombined;
-            //continue;
             ++m_numFailed;
         }
         else
@@ -284,8 +226,12 @@ void OptimizerEnProfit::RandomSearch()
         }
     }
 
+    PrintSolution(binarBest);
+}
 
-    GnuplotPlotTerminal1d(binarBest, "Best solution = " + CharManipulations().ToStr(m_goal), 1, 0.5);
+void OptimizerEnProfit::PrintSolution(const EnjoLib::VecD & best) const
+{
+    GnuplotPlotTerminal1d(best, "Best solution = " + CharManipulations().ToStr(m_goal), 1, 0.5);
     const Distrib distr;
     const DistribData & distribDat = distr.GetDistrib(m_goals);
     if (distribDat.IsValid())
@@ -294,10 +240,11 @@ void OptimizerEnProfit::RandomSearch()
     }
     ELO
     LOG << "Computer start schedule:\n";
-    LOG << binarBest.Print() << Nl;
+    LOG << best.Print() << Nl;
 
     int lastHourOn = -1;
     int lastDayOn = -1;
+    const int horizonHours = m_dataModel.GetHorizonHours();
     for (int i = 1; i < horizonHours; ++i)
     {
         const int hour = i % 24;
@@ -308,8 +255,8 @@ void OptimizerEnProfit::RandomSearch()
             LOG << Nl;
         }
 
-        const bool onPrev = binarBest.at(i-1);
-        const bool onCurr = binarBest.at(i);
+        const bool onPrev = best.at(i-1);
+        const bool onCurr = best.at(i);
         if (not onPrev && onCurr)
         {
             lastHourOn = hour;
