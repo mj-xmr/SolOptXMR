@@ -277,13 +277,14 @@ EnjoLib::Array<EnjoLib::OptiMultiSubject::Bounds> OptiSubjectEnProfit::GetBounds
 
 double OptiSubjectEnProfit::HashrateBonus(int hour) const
 {
+    /// TODO: This is meant to be dynamically read from tsqsim
     if (hour > 10 && hour < 16)
     {
-        return 0.90;
+        return 0.97
     }
     else if (hour > 18)
     {
-        return 1.10;
+        return 1.03;
     }
     else
     {
