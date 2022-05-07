@@ -1,6 +1,8 @@
 from kraken import coin, fiat, kraken
 from datetime import date, datetime, timedelta
+import pandas as pd
 import requests
+import warnings
 import math
 
 from python_json_config import ConfigBuilder
@@ -8,6 +10,7 @@ from python_json_config import ConfigBuilder
 config_builder = ConfigBuilder()
 config = config_builder.parse_config('config.json')
 dict_config = config.to_dict()
+DIR_TMP = config.sunrise_lib.DIR_TMP
 
 
 class POW_Coin:
@@ -95,6 +98,79 @@ class POW_Coin:
             self._difficulty_last_fetched = now
         return data["result"]
     
+    def _request_headers_range(self, start_height:int, end_height:int) -> pd.DataFrame:
+        json_req = {
+            "jsonrpc": "2.0",
+            "id": "0",
+            "method": "get_block_headers_range",
+            "params": {"start_height": start_height, "end_height": end_height}
+        }
+        data = requests.post(f"{self.node_url}/json_rpc", json=json_req).json()
+        result = pd.DataFrame(data["result"]["headers"], columns=["height", "timestamp", "difficulty", "reward"])
+        result.set_index("height", inplace=True)
+        return result
+    
+    def _request_headers_batcher(self, start_height:int, end_height:int, batch_size:int=1000) -> pd.DataFrame:
+        # if (end_height - start_height) >= batch_size, send a batch request then
+        # evaluate again with start_height = start_height + batch_size
+        # if it's false request the last range from start_height to end_height
+        results = []
+        while (end_height - start_height >= batch_size):
+            print(f"Downloading headers from {start_height} to {start_height + batch_size - 1}")
+            results.append(self._request_headers_range(start_height, start_height + batch_size - 1))
+            start_height = start_height + batch_size
+        print(f"Downloading headers from {start_height} to {end_height}")
+        results.append(self._request_headers_range(start_height, end_height))
+        result = pd.concat(results, axis=0)
+        return result
+    
+    def historical_diff(self, height:int=None, timestamp:datetime=None, batch_size:int=1000) -> int:
+        if height and timestamp:
+            warnings.warn("Both height and timestamp present: ignoring timestamp", UserWarning)
+        
+        path = f"{DIR_TMP}/diff_{self.coin.name}.pkl"
+        try: # If we have previous saved data, merge with the new data
+            diff = pd.read_pickle(path)
+        except FileNotFoundError:
+            print(f"{path} does not exist. Creating...")
+            # diff = self._request_headers_batcher(0, self.height, batch_size=batch_size)
+            diff = self._request_headers_batcher(0, height, batch_size=batch_size)
+            diff.to_pickle(path)
+            print(diff)
+            pass
+        
+        last_known_height = diff.index[-1]
+        last_known_timestamp = datetime.fromtimestamp(diff["timestamp"].iloc[-1])
+        print(last_known_timestamp)
+        
+        if height:
+            if height > self.height:
+                raise ValueError("Requested height is in the future")
+            if height < 0:
+                raise ValueError("Cannot have a negative height")
+            if height > last_known_height:  # Need to update
+                # diff_new = self._request_headers_batcher(last_known_block + 1, self.height, batch_size=batch_size)
+                diff_new = self._request_headers_batcher(last_known_height + 1, height, batch_size=batch_size)
+                diff = pd.concat([diff, diff_new], axis=0)
+                diff.to_pickle(path)
+            return diff.at[height, "difficulty"]
+        elif timestamp:
+            raise NotImplementedError("WIP")
+            if timestamp > datetime.now():
+                raise ValueError("Requested timestamp is in the future")
+            if timestamp < datetime.fromtimestamp(0):
+                raise ValueError("Cannot have a negative timestamp")
+            if timestamp > last_known_timestamp:  # Need to update
+                target_height = min(self.height, last_known_height + (timestamp - last_known_timestamp) / 120)
+                # diff_new = self._request_headers_batcher(last_known_height + 1, self.height, batch_size=batch_size)
+                diff_new = self._request_headers_batcher(last_known_height + 1, target_height, batch_size=batch_size)
+            # search timestamps and find nearest-previous height index
+            height = diff.loc[diff.index.get_loc(timestamp, method="nearest")]
+            return diff.at[height, "difficulty"]
+        else:  # not height and not timestamp:
+            raise TypeError("Need a height or a timestamp")
+
+
 def test():
     import time
     a = POW_Coin(coin.XMR)
@@ -106,6 +182,18 @@ def test():
     print(a.height)
     print(a._height_last_fetched)  # Must match a._difficulty_last_fetched
     print(a.get_info())
+    # h1 = a._request_headers_range(2500000,2500004)
+    # h2 = a._request_headers_range(2500003,2500005)
+    # h3 = pd.concat([h1, h2], axis=0)
+    # h4 = h1.combine_first(h2)
+    # print(h1)
+    # print(h2)
+    # print(h3)
+    # print(h4)
+    # h5 = a._request_headers_batcher(2500000, 2500001, batch_size=1)
+    # print(h5)
+    # print(a.historical_diff(height=10))
+    print(a.historical_diff(timestamp=datetime.fromtimestamp(1397818225)))
 
 if __name__ == "__main__":
     test()
