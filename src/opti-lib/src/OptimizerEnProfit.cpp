@@ -231,6 +231,8 @@ void OptimizerEnProfit::RandomSearch()
 
 void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat) const
 {
+    OptiSubjectEnProfit osub(m_dataModel);
+    osub.GetVerbose(bestMat, true);
     for (int i = 0; i < bestMat.size(); ++i)
     {
         GnuplotPlotTerminal1d(bestMat.at(i), "Best solution = " + CharManipulations().ToStr(m_goal), 1, 0.5);
@@ -378,8 +380,8 @@ bool OptimizerEnProfit::Consume2(const EnjoLib::Matrix & dataMat)
         m_numFailed = 0;
         LOGL << "New score = " << goal << Nl;
 
-        osub.GetVerbose(dataMat, true);
-        //osub.GetVerbose(dataMat, false);
+        //osub.GetVerbose(dataMat, true);
+        osub.GetVerbose(dataMat, false);
         return true;
 
     }

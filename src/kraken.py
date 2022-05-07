@@ -73,7 +73,7 @@ def test(year=DATE_NOW.year, month=DATE_NOW.month, day=DATE_NOW.day):
     # print(ohlc)
     print(last)
     pair = kraken.pairs[fi][co]
-    path = f"{DIR_TMP}/{pair}-{year}-{month}-{day}.pkl"
+    path = f"{DIR_TMP}/{pair}.pkl"
     try: # If we have previous saved data, merge with the new data
         # TODO: choose which values to keep for equal timestamps covering different time intervals
         # Maybe keep them all, but in "parallel" dataframes? One for each time resolution.

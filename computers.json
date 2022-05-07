@@ -8,7 +8,7 @@
     	  	"watt_per_core" : 11.5,
     	  	"watt_idle" : 5,
     	  	"watt_asleep" : 1,
-    	  	"min_run_hours" : 2,
+    	  	"min_run_hours" : 3,
     	  	"max_temp_celcius" : 51
     	  },
     	  {
@@ -18,7 +18,7 @@
     	  	"watt_per_core" : 15,
     	  	"watt_idle" : 8,
     	  	"watt_asleep" : 1,
-    	  	"min_run_hours" : 2,
+    	  	"min_run_hours" : 3,
     	  	"max_temp_celcius" : 51
     	  },
     	  {
