@@ -14,6 +14,7 @@ class POW_Coin:
     def __init__(self, coin : coin):
         # TODO: figure out a way to use the abstract base class as a dispatcher for the specialized
         # subclasses/overridden methods based on the "coin" enum
+        # TODO: implement daemon RPC calls using monero-python (pip install monero)
         now = datetime.now()
         self.coin = coin
         self.node_url = dict_config["profitability"][coin.name]["node"]
@@ -28,7 +29,7 @@ class POW_Coin:
         self._reward_last_fetched = now
     
     @property
-    def price(self):
+    def price(self) -> float:
         now = datetime.now()
         if self._price is None or now - self._price_last_fetched > timedelta(minutes=config.profitability.refresh_delta_mins):
             self._price = kraken.get_prices(self.coin)
@@ -50,7 +51,7 @@ class POW_Coin:
         return self._height
     
     @property
-    def reward(self):
+    def reward(self) -> float:
         now = datetime.now()
         if self._reward is None or now - self._reward_last_fetched > timedelta(minutes=config.profitability.refresh_delta_mins):
             req_data = {"jsonrpc": "2.0", "id": "0", "method": "get_last_block_header"}
@@ -59,7 +60,9 @@ class POW_Coin:
             self._reward_last_fetched = now
         return self._reward
     
-    def profitability(self, fiat: fiat, hashrate: int, power_consumption: int, electricity_cost: float, pool_fee=0, price=None, reward=None, difficulty=None):
+    def profitability(self, fiat: fiat, hashrate: int, power_consumption: int, electricity_cost: float, pool_fee:float=0, price:float=None, reward:float=None, difficulty:int=None):
+        if pool_fee < 0 or pool_fee > 1:
+            raise ValueError("Invalid pool fee!")
         # nethash = self.difficulty / self.blocktime
         data = {
             "coin": self.coin.name,
@@ -77,7 +80,7 @@ class POW_Coin:
         data["breakeven_efficiency"] = (data["difficulty"] * electricity_cost) / (data["price"] * data["reward"] * 1000 * 3600 * (1 - pool_fee))
         return data
     
-    def get_info(self):
+    def get_info(self) -> dict:
         now = datetime.now()
         json_req = { "jsonrpc": "2.0", "id": "0", "method": "get_info"}
         try:
@@ -90,6 +93,7 @@ class POW_Coin:
             self._height_last_fetched = now
             self._difficulty = data["result"]["difficulty"]
             self._difficulty_last_fetched = now
+        return data["result"]
     
 def test():
     import time
@@ -101,6 +105,7 @@ def test():
     time.sleep(2)
     print(a.height)
     print(a._height_last_fetched)  # Must match a._difficulty_last_fetched
+    print(a.get_info())
 
 if __name__ == "__main__":
     test()
