@@ -13,7 +13,7 @@
     	  },
     	  {
     	  	"name" : "Fanless Ryzen, 2 core",
-    	  	"cores" : 2,
+    	  	"cores" : 1,
     	  	"hash_per_core" : 100,
     	  	"watt_per_core" : 15,
     	  	"watt_idle" : 8,
