@@ -70,7 +70,7 @@ def get_usage_prod(available):
 
 def run_main(elev, show_plots):
     generator.run_algo(elev, show_plots, get_usage_prod)
-    generator.run_algo(elev, show_plots, generator.get_usage_simple)
+    #generator.run_algo(elev, show_plots, generator.get_usage_simple)
 
 
 def main(args):

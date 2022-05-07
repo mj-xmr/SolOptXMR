@@ -54,7 +54,24 @@ class OptiSubjectEnProfit : public EnjoLib::OptiMultiSubject // IOptiSubject
         EnjoLib::VecD m_hashes, m_loads, m_penalityUnder, m_input, m_prod, m_hashrateBonus, m_usages;
 
         double HashrateBonus(int hour) const;
+        double HashrateBonusNonCached(int hour) const;
         void OutputVar(const EnjoLib::VecD & data, const EnjoLib::Str & descr, bool plot = true) const;
+
+
+        struct SimResult
+        {
+            double sumHashes = 0;
+            double sumPowerUsage = 0;
+
+            void Add(const SimResult & other)
+            {
+                sumHashes += other.sumHashes;
+                sumPowerUsage += other.sumPowerUsage;
+            }
+        };
+
+        SimResult Simulate(int i, const EnjoLib::Matrix & dataMat, double bonusMul) const;
+
 
     protected:
 

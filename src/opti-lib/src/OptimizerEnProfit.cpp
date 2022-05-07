@@ -279,7 +279,7 @@ bool OptimizerEnProfit::Consume2(const EnjoLib::Matrix & dataMat)
 
         RecalcComputationCosts();
 
-        LOGL << "New score = " << goal << " ->\t"
+        LOGL << "\nNew score = " << goal << " ->\t"
         << GMat().round(relChangePositive * 100) << "%" << " costing: "
         << GMat().round(m_relChangeNegative * 100) << "%" << ", pos2neg: "
         << GMat().round(m_relPos2Neg * 100) << "%" << Nl;
