@@ -143,15 +143,14 @@ void OptimizerEnProfit::RandomSearch()
 {
     const int horizonHours = m_dataModel.GetHorizonHours();
     const EnjoLib::Array<Computer> & comps = m_dataModel.GetComputers();
-    const int numComputers = 1; /// TODO: Read from comps!
+    const int numComputers = comps.size(); /// TODO: Read from comps!
     const RandomMath rmath;
     rmath.RandSeed();
     const VecD binaryZero(horizonHours);
     const std::string hashStrZero(horizonHours * numComputers, '0');
     std::string hashStr = hashStrZero;
     Matrix binaryMat;
-    binaryMat.Add(binaryZero);
-    VecD & binary = binaryMat.at(0);
+    for (int i = 0; i < numComputers; ++i) binaryMat.Add(binaryZero);
     Matrix binarBest = binaryMat;
 
     const bool useHash = IsUseHash();
@@ -165,29 +164,41 @@ void OptimizerEnProfit::RandomSearch()
     const int minHoursTogetherHalf = gmat.round(minHoursTogether/2.0);
     for (int i = 0; i < maxEl; ++i)
     {
-        const int index = gmat.round(rmath.Rand(0, horizonHours-0.999));
-        if (bit == 1)
+        for (int icomp = 0; icomp < numComputers; ++icomp)
         {
-            for (int j = index - minHoursTogetherHalf; j <= index + minHoursTogetherHalf; ++j)
+            VecD & binary = binaryMat.at(icomp);
+            const int compIdxMul = 1 + icomp;
+            const int index = gmat.round(rmath.Rand(0, horizonHours-0.999));
+            if (bit == 1)
             {
-                if (j < 0 || j >= horizonHours)
+                for (int j = index - minHoursTogetherHalf; j <= index + minHoursTogetherHalf; ++j)
                 {
-                    continue;
+                    if (j < 0 || j >= horizonHours)
+                    {
+                        continue;
+                    }
+                    binary[j] = bit; /// Each computer gets its own binary.
+                    hashStr.at(j * compIdxMul) = bitC; /// TODO: j * (1 + computerIDX)
                 }
-                binary[j] = bit; /// Each computer gets its own binary.
-                hashStr.at(j) = bitC; /// TODO: j * (1 + computerIDX)
             }
-        }
-        int sum = 0;
-        for (int l = 0; l < horizonHours; ++l)
-        {
-            sum += binary[l];
-        }
-        if (sum == horizonHours)
-        {
-            binary = binaryZero;
-            hashStr = hashStrZero;
-            bit = 1;
+            int sum = 0;
+            for (int l = 0; l < horizonHours; ++l)
+            {
+                sum += binary[l];
+            }
+            if (sum == horizonHours)
+            {
+                binary = binaryZero;
+                for (int j = horizonHours * icomp; j < horizonHours * (icomp + 1); ++j)
+                {
+                    hashStr.at(j) = '0'; /// TODO: Something is wrong here
+                }
+                //ELO
+                //LOG << "Hash pre: " << hashStr << Nl;
+                //hashStr = hashStrZero;
+                //bit = 1;
+                //LOG << "\nHash post: " << hashStr << Nl;
+            }
         }
         bool found = false;
         if (useHash)
@@ -248,6 +259,7 @@ void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat) const
     LOG << "Computer start schedule:\n";
     for (int i = 0; i < bestMat.size(); ++i)
     {
+        LOG << m_dataModel.GetComputers().at(i).name << Nl;
         const VecD & best = bestMat.at(i);
         LOG << best.Print() << Nl;
 
@@ -261,7 +273,7 @@ void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat) const
             const int dayPrev  = GMat().round((i-1) / 24.0);
             if (day != dayPrev)
             {
-                LOG << Nl;
+                //LOG << Nl;
             }
 
             const bool onPrev = best.at(i-1);
@@ -286,6 +298,7 @@ void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat) const
             }
 
         }
+        LOG << Nl;
     }
 }
 

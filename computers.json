@@ -2,8 +2,8 @@
     "computers": [
     	  {
     	  	"name" : "Fanless Intel, 4 core",
-    	  	"count" : 2,
-    	  	"cores" : 2,
+    	  	"count" : 0,
+    	  	"cores" : 4,
     	  	"hash_per_core" : 250,
     	  	"watt_per_core" : 11.5,
     	  	"watt_idle" : 5,

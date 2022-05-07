@@ -76,8 +76,8 @@ double OptiSubjectEnProfit::Get(const double * inp, int n)
 double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool verbose)
 {
     //ELO
-    const VecD & inp = dataMat.at(0);
-    const size_t n = inp.size();
+    //const VecD & inp = dataMat.at(0);
+    const size_t n = dataMat.at(0).size();
     /*
     CorPtr<IPredictor> fun = m_fact.Create(m_period, m_type);
     IPredictor & strat = *(fun.get());
@@ -87,10 +87,13 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
     */
     //LOG << n << Nl;
     const EnjoLib::Array<Computer> & comps = m_dataModel.GetComputers();
-    const Computer & comp = comps.at(0); /// TODO: This has to become an array of computers, configurable by the User.
+
     BatterySimulation battery;
     double sum = 0;
     double penalitySum = 0;
+
+    //const Computer & comp = comps.at(0); /// TODO: This has to become an array of computers, configurable by the User.
+
     //const VecD & powerProd = m_dataModel.GetPowerProduction();
     //const int START_AT = m_dataModel.GetStartingPoint();
     //Assertions::SizesEqual(powerProd.size(), (size_t)n, "powr prod");
@@ -103,20 +106,22 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
        //LOG << "i = " << i << ", val = " << inp[i] << Nl;
        //if (not battery.initial_load)
        //if (false)
+       for (int ic = 0; ic < comps.size(); ++ic)
        {
-           double  val = inp[i];
+           const Computer & comp = comps.at(ic);
+           const VecD & inp = dataMat.at(ic);
+           const double val = inp[i];
            const double hashe = comp.GetHashRate(val) * bonusMul;
            sum += hashe;
-
-           usage = comp.GetUsage(val);
+           usage += comp.GetUsage(val);
         }
        const double load = battery.iter_get_load(m_dataModel.GetPowerProduction(i), usage);
        //const double pentalityUndervolted = load < 0 ? GMat().Fabs(load * load * load) : 0;
        const double pentalityUndervolted = battery.num_undervolted;
-       //const double pentalityOvervolted = battery.num_overvolted;
+       const double pentalityOvervolted = battery.num_overvolted;
        //penalityUnder.Add(pentalityUndervolted);
        penalitySum += pentalityUndervolted;
-       //penalitySum += pentalityOvervolted;
+       penalitySum += pentalityOvervolted;
 
         //input.Add(val);
         if (false)
@@ -137,9 +142,10 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
     //GnuplotPlotTerminal1dSubplots(data, "Hashes, loads", 1, 0.5); /// TODO: segfaults
 		 //psim->GetScorePred();
     //const double pentalityUndervolted = m_battery.num_undervolted * m_battery.num_undervolted;
-    const double pentalityUndervolted = penalitySum * 10000;
-    const double pentalityOvervolted = battery.num_overvolted;
-    const double penality = pentalityUndervolted;// + pentalityOvervolted;
+    //const double pentalityUndervolted = penalitySum * 10000;
+    //const double pentalityOvervolted = battery.num_overvolted;
+    const double penality = penalitySum * 10000; /// TODO: Penalize overvoltage differently than undervoltage
+    /// TODO: The undervoltage / overvoltage penality should be non-linear.
     const double bonusNetworkDiff = 0;
     //const double sumAdjusted = sum - penality + bonusNetworkDiff;
     double sumAdjusted = sum + bonusNetworkDiff - penality;
@@ -178,17 +184,23 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
                 {
                     /// TODO: Remove duplication
                     const double bonusMul = HashrateBonus(i % 24);
-                    double val = inp[i];
+                    double usage = 0;
                    //LOG << "i = " << i << ", val = " << inp[i] << Nl;
-                   const double hashe = comp.GetHashRate(val) * bonusMul;
-                   sum += hashe;
-
-                   const double usage = comp.GetUsage(val);
-
+                   //if (not battery.initial_load)
+                   //if (false)
+                   for (int ic = 0; ic < comps.size(); ++ic)
+                   {
+                       const Computer & comp = comps.at(ic);
+                       const VecD & inp = dataMat.at(ic);
+                       const double val = inp[i];
+                       const double hashe = comp.GetHashRate(val) * bonusMul;
+                       sum += hashe;
+                       usage += comp.GetUsage(val);
+                    }
                    const double load = batteryCopy.iter_get_load(m_dataModel.GetPowerProduction(i), usage);
 
                     usages.Add(usage);
-                   input.Add(val);
+                   //input.Add(val);
        loads.Add(load);
         prod.Add(m_dataModel.GetPowerProduction(i));
         hashes.Add(sum);
