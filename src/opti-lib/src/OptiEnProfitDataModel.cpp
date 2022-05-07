@@ -1,5 +1,7 @@
 #include "OptiEnProfitDataModel.h"
 
+#include "JsonReader.h"
+
 //#define BOOST_JSON_STACK_BUFFER_SIZE 1024
 //#include <boost/json/src.hpp>
 //#include <boost/json.hpp>
@@ -18,6 +20,7 @@ using namespace EnjoLib;
 OptiEnProfitDataModel::OptiEnProfitDataModel(int horizonDays, int statingPoint)
 : m_horizonHours(horizonDays * 24)
 , m_statingPoint(statingPoint)
+, m_comps(JsonReader().ReadComputers())
 {
     const char * fname = "/tmp/solar_pos.txt";
     {Ifstream solPosIn(fname);}

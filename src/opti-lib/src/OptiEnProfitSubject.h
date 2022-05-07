@@ -4,6 +4,7 @@
 #include "IOptiSubject.h"
 #include "StartEnd.h"
 #include <Util/VecD.hpp>
+#include <Statistical/Matrix.hpp>
 
 #include <STD/Vector.hpp>
 
@@ -43,7 +44,7 @@ class OptiSubjectEnProfit : public EnjoLib::OptiMultiSubject // IOptiSubject
         double GetGoal() const;
 
         double Get(const double * in, int n) override;
-        double GetVerbose(const double * in, int n, bool verbose =false);
+        double GetVerbose(const EnjoLib::Matrix & dataMat, bool verbose =false);
         EnjoLib::VecD GetStart() const override;
         EnjoLib::VecD GetStep() const override;
         EnjoLib::Array<EnjoLib::OptiMultiSubject::Bounds> GetBounds() const override;

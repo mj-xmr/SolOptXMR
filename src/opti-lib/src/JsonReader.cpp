@@ -63,10 +63,14 @@ EnjoLib::Array<Computer> JsonReader::ReadComputers(bool verbose) const
         {
             count = comp["count"].GetInt();
         }
-
+        if (count == 0)
+        {
+            continue; // Disabled computer, yet still registered.
+        }
         ret.push_back(compObj);
         if (count > 1)
         {
+            // Multiple instances of the same type.
             for (int i = 1; i < count; ++i)
             {
                 Computer compObjNext = compObj;

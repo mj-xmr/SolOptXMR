@@ -3,9 +3,9 @@
     	  {
     	  	"name" : "Fanless Intel, 4 core",
     	  	"count" : 2,
-    	  	"cores" : 4,
-    	  	"hash_per_core" : 100,
-    	  	"watt_per_core" : 8,
+    	  	"cores" : 2,
+    	  	"hash_per_core" : 250,
+    	  	"watt_per_core" : 11.5,
     	  	"watt_idle" : 5,
     	  	"watt_asleep" : 1,
     	  	"min_run_hours" : 2,

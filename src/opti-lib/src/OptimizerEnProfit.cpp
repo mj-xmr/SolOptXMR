@@ -12,7 +12,6 @@
 #include "OptiEnProfitSubject.h"
 #include "OptiEnProfitDataModel.h"
 #include "GnuplotIOSWrap.h"
-#include "JsonReader.h"
 
 #include <Math/MultiDimIter/MultiDimIterTpl.hpp>
 #include <Math/Opti/OptiMultiNelderMead.hpp>
@@ -142,18 +141,18 @@ void OptimizerEnProfit::operator()()
 
 void OptimizerEnProfit::RandomSearch()
 {
-    const JsonReader reader;
-    const EnjoLib::Array<Computer> & comps = reader.ReadComputers();
-
     const int horizonHours = m_dataModel.GetHorizonHours();
-    RandomMath rmath;
+    const EnjoLib::Array<Computer> & comps = m_dataModel.GetComputers();
+    const int numComputers = 1; /// TODO: Read from comps!
+    const RandomMath rmath;
     rmath.RandSeed();
     const VecD binaryZero(horizonHours);
-    const int numComputers = 1; /// TODO: Read from comps!
-    std::string hashStr, hashStrZero(horizonHours * numComputers, '0');
-    hashStr = hashStrZero;
-    VecD binary = binaryZero;
-    VecD binarBest = binary;
+    const std::string hashStrZero(horizonHours * numComputers, '0');
+    std::string hashStr = hashStrZero;
+    Matrix binaryMat;
+    binaryMat.Add(binaryZero);
+    VecD & binary = binaryMat.at(0);
+    Matrix binarBest = binaryMat;
 
     const bool useHash = IsUseHash();
     const int maxEl = 10e8;
@@ -207,10 +206,10 @@ void OptimizerEnProfit::RandomSearch()
             {
                 //usedCombinations.insert(hashStr);
             }
-            if (Consume2(binary))
+            if (Consume2(binaryMat))
             {
                 m_numFailed = 0;
-                binarBest = binary;
+                binarBest = binaryMat;
             }
             else
             {
@@ -230,54 +229,61 @@ void OptimizerEnProfit::RandomSearch()
     PrintSolution(binarBest);
 }
 
-void OptimizerEnProfit::PrintSolution(const EnjoLib::VecD & best) const
+void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat) const
 {
-    GnuplotPlotTerminal1d(best, "Best solution = " + CharManipulations().ToStr(m_goal), 1, 0.5);
+    for (int i = 0; i < bestMat.size(); ++i)
+    {
+        GnuplotPlotTerminal1d(bestMat.at(i), "Best solution = " + CharManipulations().ToStr(m_goal), 1, 0.5);
+    }
     const Distrib distr;
     const DistribData & distribDat = distr.GetDistrib(m_goals);
     if (distribDat.IsValid())
     {
         GnuplotPlotTerminal2d(distribDat.data, "Solution distribution", 1, 0.5);
     }
+
     ELO
     LOG << "Computer start schedule:\n";
-    LOG << best.Print() << Nl;
-
-    int lastHourOn = -1;
-    int lastDayOn = -1;
-    const int horizonHours = m_dataModel.GetHorizonHours();
-    for (int i = 1; i < horizonHours; ++i)
+    for (int i = 0; i < bestMat.size(); ++i)
     {
-        const int hour = i % 24;
-        const int day  = GMat().round(i / 24.0);
-        const int dayPrev  = GMat().round((i-1) / 24.0);
-        if (day != dayPrev)
-        {
-            LOG << Nl;
-        }
+        const VecD & best = bestMat.at(i);
+        LOG << best.Print() << Nl;
 
-        const bool onPrev = best.at(i-1);
-        const bool onCurr = best.at(i);
-        if (not onPrev && onCurr)
+        int lastHourOn = -1;
+        int lastDayOn = -1;
+        const int horizonHours = m_dataModel.GetHorizonHours();
+        for (int i = 1; i < horizonHours; ++i)
         {
-            lastHourOn = hour;
-            lastDayOn = day;
-        }
-        if (lastHourOn > 0)
-        {
-            if (not onCurr) // Switch off
+            const int hour = i % 24;
+            const int day  = GMat().round(i / 24.0);
+            const int dayPrev  = GMat().round((i-1) / 24.0);
+            if (day != dayPrev)
             {
-                const int hourPrev = (i - 1) % 24;
-                LOG << "day " << lastDayOn << ", hour " << lastHourOn << "-" << hourPrev << Nl;
-                lastHourOn = -1;
+                LOG << Nl;
             }
-            else if (i == horizonHours - 1)
+
+            const bool onPrev = best.at(i-1);
+            const bool onCurr = best.at(i);
+            if (not onPrev && onCurr)
             {
-                LOG << "day " << lastDayOn << ", hour " << lastHourOn << "-.." << Nl;
+                lastHourOn = hour;
+                lastDayOn = day;
             }
+            if (lastHourOn > 0)
+            {
+                if (not onCurr) // Switch off
+                {
+                    const int hourPrev = (i - 1) % 24;
+                    LOG << "day " << lastDayOn << ", hour " << lastHourOn << "-" << hourPrev << Nl;
+                    lastHourOn = -1;
+                }
+                else if (i == horizonHours - 1)
+                {
+                    LOG << "day " << lastDayOn << ", hour " << lastHourOn << "-.." << Nl;
+                }
+            }
+
         }
-
-
     }
 }
 
@@ -290,8 +296,9 @@ void OptimizerEnProfit::Consume(const EnjoLib::VecD & data)
 {
 
 }
-bool OptimizerEnProfit::Consume2(const EnjoLib::VecD & data)
+bool OptimizerEnProfit::Consume2(const EnjoLib::Matrix & dataMat)
 {
+    const VecD & data = dataMat.at(0);
     //ELO
     //++m_iter;
     //const EnjoLib::Str & idd = m_period.GetSymbolPeriodId();
@@ -303,7 +310,7 @@ bool OptimizerEnProfit::Consume2(const EnjoLib::VecD & data)
     //ELO
     //LOG << "Data = " << data.Print() << Nl;
     OptiSubjectEnProfit osub(m_dataModel);
-    float goal = osub.GetVerbose(data.data(), data.size());
+    float goal = osub.GetVerbose(dataMat);
     //const Result<VecD> res = OptiMultiBinSearch().Run(osub, 3, 100);
     //const Result<VecD> res = OptiMultiBinSearch01().Run01(osub, 3, 100);
     //LOGL << "Res = " << res.isSuccess << ", val = " << res.value.Print() << Nl;
@@ -371,8 +378,8 @@ bool OptimizerEnProfit::Consume2(const EnjoLib::VecD & data)
         m_numFailed = 0;
         LOGL << "New score = " << goal << Nl;
 
-        //osub.GetVerbose(data.data(), data.size(), true);
-        osub.GetVerbose(data.data(), data.size(), false);
+        osub.GetVerbose(dataMat, true);
+        //osub.GetVerbose(dataMat, false);
         return true;
 
     }

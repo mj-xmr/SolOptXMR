@@ -28,14 +28,14 @@ class OptimizerEnProfit : public EnjoLib::IMultiDimIterConsumerTpl //OptimizerBa
 
         void Consume(const EnjoLib::VecD & data) override; // IMultiDimIterConsumerTpl
 
-        bool Consume2(const EnjoLib::VecD & data);
+        bool Consume2(const EnjoLib::Matrix & data);
         void AddSpace(const EnjoLib::VecD & data);
 
         bool IsUseHash() const;
 
     protected:
         void RandomSearch();
-        void PrintSolution(const EnjoLib::VecD & best) const;
+        void PrintSolution(const EnjoLib::Matrix & best) const;
         //STDFWD::vector<const IPeriod *> GetPeriods() const override;
         //void PrintStats() const override;
         //void PrintStatsSummary() const override;

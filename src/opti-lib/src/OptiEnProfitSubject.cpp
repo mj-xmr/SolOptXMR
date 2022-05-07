@@ -73,9 +73,11 @@ double OptiSubjectEnProfit::Get(const double * inp, int n)
 {
     return 0;
 }
-double OptiSubjectEnProfit::GetVerbose(const double * inp, int n, bool verbose)
+double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool verbose)
 {
     //ELO
+    const VecD & inp = dataMat.at(0);
+    const size_t n = inp.size();
     /*
     CorPtr<IPredictor> fun = m_fact.Create(m_period, m_type);
     IPredictor & strat = *(fun.get());
@@ -84,7 +86,8 @@ double OptiSubjectEnProfit::GetVerbose(const double * inp, int n, bool verbose)
     CorPtr<ISimulatorTS> psim = TSUtil().GetSimPred(m_period, fun->GetOptiVec(), m_startEndFrame);
     */
     //LOG << n << Nl;
-    Computer comp; /// TODO: This has to become an array of computers, configurable by the User.
+    const EnjoLib::Array<Computer> & comps = m_dataModel.GetComputers();
+    const Computer & comp = comps.at(0); /// TODO: This has to become an array of computers, configurable by the User.
     BatterySimulation battery;
     double sum = 0;
     double penalitySum = 0;
