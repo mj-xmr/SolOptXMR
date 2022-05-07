@@ -2,6 +2,7 @@
 #define OptiEnProfitDataModel_H
 
 #include "Computer.h"
+#include "BatteryParams.h"
 
 #include <Statistical/Matrix.hpp>
 #include <Util/VecD.hpp>
@@ -21,6 +22,7 @@ class OptiEnProfitDataModel
         int GetStartingPoint() const { return m_statingPoint; }
 
         const EnjoLib::Array<Computer> & GetComputers() const { return m_comps; }
+        const BatteryParams & GetBatPars() const { return m_batPars; }
 
     protected:
 
@@ -29,6 +31,7 @@ class OptiEnProfitDataModel
         int m_statingPoint = 0;
         EnjoLib::VecD m_power;
         EnjoLib::Array<Computer> m_comps;
+        BatteryParams m_batPars;
 };
 
 #endif // OptiEnProfitDataModel_H
