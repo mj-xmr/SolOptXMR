@@ -29,6 +29,7 @@
 #include "CLIResultSol.h"
 #include "OptimizerEnProfit.h"
 #include "OptiEnProfitDataModel.h"
+#include "JsonReader.h"
 
 #include <Ios/Cin.hpp>
 #include <Util/Trim.hpp>
@@ -42,6 +43,7 @@ App::App(){}
 
 void App::Run(const CLIResultSol & cliResultCmdLine) const
 {
+    ReadJson();
     //const ConfigSol  & confSol    = *gcfgMan.cfgTF.get();
     //do
     {
@@ -78,4 +80,11 @@ void App::Optim(const CLIResultSol & cliSol) const
 
     OptimizerEnProfit optimizer(dataModel);
     optimizer();
+}
+
+void App::ReadJson() const
+{
+    LOGL << "Read Json\n";
+    const JsonReader reader;
+    reader.ReadComputers(true);
 }

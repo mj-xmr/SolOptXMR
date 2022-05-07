@@ -59,8 +59,13 @@ def test(year=DATE_NOW.year, month=DATE_NOW.month, day=DATE_NOW.day):
     import pandas as pd
     fi = fiat.EUR
     co = coin.XMR
-    a = kraken.get_price(co, fi)
-    b = kraken.get_prices(co)
+    try:
+        a = kraken.get_price(co, fi)
+        b = kraken.get_prices(co)
+    except Exception:
+        print("Failed to connect to kraken!")
+        return
+    
     ohlc, last = kraken.get_ohlc(co, fi, interval=15, since=datetime.timestamp(datetime(year, month, day, 0, 0, 0)), ascending=True)
     ohlc.set_index("time")
     print(a)
@@ -68,7 +73,7 @@ def test(year=DATE_NOW.year, month=DATE_NOW.month, day=DATE_NOW.day):
     # print(ohlc)
     print(last)
     pair = kraken.pairs[fi][co]
-    path = f"{DIR_TMP}/{pair}-{year}-{month}-{day}.pkl"
+    path = f"{DIR_TMP}/{pair}.pkl"
     try: # If we have previous saved data, merge with the new data
         # TODO: choose which values to keep for equal timestamps covering different time intervals
         # Maybe keep them all, but in "parallel" dataframes? One for each time resolution.

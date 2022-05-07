@@ -13,12 +13,9 @@
 #include "OptiEnProfitDataModel.h"
 #include "GnuplotIOSWrap.h"
 
-#include <Math/MultiDimIter/MultiDimIterTpl.hpp>
-#include <Math/Opti/OptiMultiNelderMead.hpp>
-#include <Math/Opti/OptiMultiBinSearch.hpp>
-//#include "OptiMultiBinSearch01.hpp"
 #include <Math/GeneralMath.hpp>
 #include <Util/ProgressMonit.hpp>
+#include <Util/ProgressMonitHigh.hpp>
 #include <Util/CharManipulations.hpp>
 #include <Util/ToolsMixed.hpp>
 #include <Util/Except.hpp>
@@ -37,18 +34,22 @@
 using namespace std;
 using namespace EnjoLib;
 
+const int OptimizerEnProfit::HOURS_IN_DAY = 24;
+const int OptimizerEnProfit::MAX_FAILED_COMBINATIONS = 600000;
+const double OptimizerEnProfit::MIN_POS_2_NEG_CHANGE_RATIO = 0.01;
+
 OptimizerEnProfit::OptimizerEnProfit(const OptiEnProfitDataModel & dataModel)
-: m_dataModel(dataModel)
+    : m_dataModel(dataModel)
 {
 }
-OptimizerEnProfit::~OptimizerEnProfit(){}
+OptimizerEnProfit::~OptimizerEnProfit() {}
 
 bool OptimizerEnProfit::IsUseHash() const
 {
     return true;
     //return false;
 
-    const int MIN_HOURS_HASHMAP = 2 * 24;
+    const int MIN_HOURS_HASHMAP = 2 * HOURS_IN_DAY;
     const int hours = m_dataModel.GetHorizonHours();
     return hours > MIN_HOURS_HASHMAP;
 }
@@ -57,188 +58,171 @@ bool OptimizerEnProfit::IsUseHash() const
 void OptimizerEnProfit::operator()()
 {
     ELO
-    MultiDimIterTpl multiDimIter;
-    //const MultiDimIterTpl::VVt data = m_dataModel.GetData();
-    const MultiDimIterTpl::VVt data;
-
     float goal = 0;
-
-    //OptiSubjectEnProfit osub(m_dataModel);
-    //const Result<VecD> res = OptiMultiBinSearch01().Run01(osub, 3, 1000);
-    //LOG << "Res = " << res.isSuccess << ", val = " << res.value.Print() << Nl;
-    //GnuplotPlotTerminal1d(res.value, "hashes", 1, 0.5);
-
-    /// TODO: Generalize and upstream this:
-    const long int maxSamples = 200;
     //const bool randomSearch = false;
     const bool randomSearch = true;
-    //if (gcfgMan.cfgOpti->IsSearchRandom())
     if (randomSearch)
     {
-        //const long int maxSamples = gcfgMan.cfgOpti->OPTI_RANDOM_SAMPLES_NUM;
-        const MultiDimIterTpl::VVt & dataT = data.T();
-        MultiDimIterTpl::VVt dataNewT; // Shorten the data down to the requested number of samples
-        /// TODO: Unit Test. Crucial element
-        for (unsigned i = 0; i < maxSamples && i < dataT.size() ; ++i)
-        {
-            //dataNewT.Add(dataT.at(i));
-        }
-        //for (unsigned i = 0; i < dataNewT.size(); ++i)
-        {
-            //LOGL << "Iter " << i << "/" << dataNewT.size() << Nl;
-            //Consume(dataNewT.at(i));
-            //if (gcfgMan.cfgOpti->OPTI_RANDOM_EARLY_STOP && IsEarlyStop())
-            {
-                //LOGL << "Early stop. The recent variance changes were less than " << gcfgMan.cfgOpti->OPTI_RANDOM_MIN_DIFF_PROMILE << " ‰ after " << i << " iterations.\n";
-                //break;
-            }
-        }
-        for (unsigned i = 0; i < data.size(); ++i)
-        {
-            //LOGL << "Iter " << i << "/" << data.size() << Nl;
-            //Consume(data.at(i));
-        }
-        const int horizonHours = m_dataModel.GetHorizonHours();
-        RandomMath rmath;
-        rmath.RandSeed();
-        const VecD binaryZero(horizonHours);
-        std::string hashStr, hashStrZero;
-        for (int i = 0; i < horizonHours; ++i)
-        {
-            hashStrZero.push_back('0');
-        }
-        hashStr = hashStrZero;
-        VecD binary = binaryZero;
-        VecD binarBest = binary;
+        RandomSearch();
+    }
+    else
+    {
+        //multiDimIter.StartIteration(data, *this);
+    }
+}
 
-        const bool useHash = IsUseHash();
-    const int maxEl = 10e8;
+void OptimizerEnProfit::RandomSearch()
+{
+    const int horizonHours = m_dataModel.GetHorizonHours();
+    const EnjoLib::Array<Computer> & comps = m_dataModel.GetComputers();
+    const int numComputers = comps.size();
+    const RandomMath rmath;
+    rmath.RandSeed();
+    const VecD binaryZero(horizonHours);
+    const std::string hashStrZero(horizonHours * numComputers, '0');
+    std::string hashStr = hashStrZero;
+    Matrix binaryMat;
+    VecT<int> minHoursTogetherHalfVec;
+    for (const Computer & comp : comps)
+    {
+        binaryMat.Add(binaryZero);
+        const int minHoursTogetherHalf = GMat().round(comp.minRunHours/2.0);
+        minHoursTogetherHalfVec.push_back(minHoursTogetherHalf);
+    }
+    Matrix binarBest = binaryMat;
+
+    const bool useHash = IsUseHash();
+    const int maxEl = 1e7;
     short bit = 1;
     char bitC = '1';
     std::set<std::string> usedCombinations;
     int alreadyCombined = 0;
+    const GMat gmat;
+    ProgressMonitHigh progressMonitor;
     for (int i = 0; i < maxEl; ++i)
     {
-        const int minHoursTogether = 3; /// TODO: This should be computer's parameter or user's tolerance
-        const int minHoursTogetherHalf = GMat().round(minHoursTogether/2.0);
-        bool cont = false;
-        const int index = GMat().round(rmath.Rand(0, horizonHours-0.999));
-        //binary[index] = binary[index] == 0 ? 1 : 0;
-        //if (binary.at(index) == bit)
+        progressMonitor.PrintProgressBarTime(i, maxEl);
+        const int icomp = gmat.round(rmath.Rand(0, numComputers-1));
+        //for (int icomp = 0; icomp < numComputers; ++icomp)
         {
-            //cont = true;
-        }
-        binary[index]  = bit;
-        hashStr[index] = bitC;
-        if (bit == 1)
-        {
-            for (int j = index - minHoursTogetherHalf; j <= index + minHoursTogetherHalf; ++j)
+            //LOGL << "icomp = " << icomp << Nl;
+            VecD & binary = binaryMat.at(icomp);
+            const int minHoursTogetherHalf = minHoursTogetherHalfVec.at(icomp);
+            const int compIdxMul = 1 + icomp;
+            const int index = gmat.round(rmath.Rand(0, horizonHours-1));
+            //if (bit == 1)
             {
-                if (j < 0 || j >= horizonHours)
+                for (int j = index - minHoursTogetherHalf; j <= index + minHoursTogetherHalf; ++j)
                 {
-                    continue;
+                    if (j < 0 || j >= horizonHours)
+                    {
+                        continue;
+                    }
+                    binary[j] = bit; /// Each computer gets its own binary.
+                    hashStr.at(j * compIdxMul) = bitC; /// TODO: j * (1 + computerIDX)
                 }
-                binary[j] = bit;
-                hashStr.at(j) = bitC;
             }
-        }
-        int sum = 0;
-        for (int l = 0; l < binary.size(); ++l)
-        {
-            sum += binary[l];
-        }
-        if (sum == binary.size())
-        {
-            //bit = 0;
-            binary = binaryZero;
-            hashStr = hashStrZero;
-            //LOGL << "switch to " << bit << ", bin = " << binary.Print() << Nl;
-        }
-        if (sum == 0)
-        {
-            bit = 1;
-            //LOGL << "switch to " << bit << ", bin = " << binary.Print() << Nl;
-            //break;
-        }
-        if (cont)
-        {
-            continue;
-        }
-    if (i % 10000 == 0)
-        {
-                //LOGL << "created " << i << "/" << maxEl << ", val = " << binary.Print() << Nl;
-        }
-        //LOGL << binary << Nl;
-
-        //VecD vec;
-        //for (int b = 0; b < horizonHours; ++b)
-        {
-            //vec.Add(binary[b]);
+            int sum = 0;
+            for (int l = 0; l < horizonHours; ++l)
+            {
+                sum += binary[l];
+            }
+            if (sum == horizonHours)
+            {
+                binary = binaryZero;
+                for (int j = horizonHours * icomp; j < horizonHours * (icomp + 1); ++j)
+                {
+                    hashStr.at(j) = '0'; /// TODO: Something is wrong here
+                }
+                //ELO
+                //LOG << "Hash pre: " << hashStr << Nl;
+                //hashStr = hashStrZero;
+                //bit = 1;
+                //LOG << "\nHash post: " << hashStr << Nl;
+            }
         }
         bool found = false;
         if (useHash)
         {
-            found = usedCombinations.count(hashStr);
+            found = not usedCombinations.insert(hashStr).second;
+            //found = usedCombinations.count(hashStr);
         }
-        //const bool found = false;
         if (found)
         {
             ++alreadyCombined;
-            //continue;
             ++m_numFailed;
         }
         else
         {
-            if (useHash)
-            {
-                usedCombinations.insert(hashStr);
-            }
-            if (Consume2(binary))
+            if (Consume2(binaryMat))
             {
                 m_numFailed = 0;
-                binarBest = binary;
+                binarBest = binaryMat;
+                m_uniqueSolutionsPrev = m_uniqueSolutions;
+                m_uniqueSolutions = usedCombinations.size();
             }
             else
             {
                 ++m_numFailed;
             }
+            RecalcComputationCosts();
         }
-
-        const int MAX_FAILED = 1000000;
-        if (m_numFailed >= MAX_FAILED)
+        const int maxFail = MAX_FAILED_COMBINATIONS;
+        const bool changeLargeEnough = m_relPos2Neg == 0 || m_relPos2Neg > MIN_POS_2_NEG_CHANGE_RATIO;
+        const bool exceededNumFailed = m_numFailed >= maxFail;
+        //if (exceededNumFailed && not changeLargeEnough)
+        if (exceededNumFailed)
         {
-            LOGL << "Early stop after " << m_numFailed << " last failed attempts." << Nl
-            << "Repeated combinations = " << alreadyCombined << Nl;
+            LOGL << "Early stop after " << m_numFailed << " last failed attempts "
+                 // << and last change of " << m_relPos2Neg << " < " << MIN_POS_2_NEG_CHANGE_RATIO << Nl
+                 << Nl
+                 << "Repeated combinations = " << alreadyCombined << " of " << maxFail << ": " << GMat().round(alreadyCombined/double(maxFail) * 100) << "%" << Nl
+                 << "Unique   combinations = " << usedCombinations.size() << " of " << maxFail << ": " << GMat().round(usedCombinations.size()/double(maxFail) * 100) << "%" << Nl;
             break;
         }
     }
 
+    PrintSolution(binarBest);
+}
 
-        GnuplotPlotTerminal1d(binarBest, "Best solution = " + CharManipulations().ToStr(m_goal), 1, 0.5);
-        const Distrib distr;
-        const DistribData & distribDat = distr.GetDistrib(m_goals);
-        if (distribDat.IsValid())
-        {
-            GnuplotPlotTerminal2d(distribDat.data, "Solution distribution", 1, 0.5);
-        }
-        ELO
-        LOG << "Computer start schedule:\n";
-        LOG << binarBest.Print() << Nl;
+void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat) const
+{
+    OptiSubjectEnProfit osub(m_dataModel);
+    osub.GetVerbose(bestMat, true);
+    for (int i = 0; i < bestMat.size(); ++i)
+    {
+        //GnuplotPlotTerminal1d(bestMat.at(i), "Best solution = " + CharManipulations().ToStr(m_goal), 1, 0.5);
+    }
+    const Distrib distr;
+    const DistribData & distribDat = distr.GetDistrib(m_goals);
+    if (distribDat.IsValid())
+    {
+        //GnuplotPlotTerminal2d(distribDat.data, "Solution distribution", 1, 0.5);
+    }
+
+    ELO
+    LOG << "\nComputer start schedule:\n";
+    for (int i = 0; i < bestMat.size(); ++i)
+    {
+        LOG << m_dataModel.GetComputers().at(i).name << Nl;
+        const VecD & best = bestMat.at(i);
+        LOG << best.Print() << Nl;
 
         int lastHourOn = -1;
         int lastDayOn = -1;
+        const int horizonHours = m_dataModel.GetHorizonHours();
         for (int i = 1; i < horizonHours; ++i)
         {
-            const int hour = i % 24;
-            const int day  = GMat().round(i / 24.0);
-            const int dayPrev  = GMat().round((i-1) / 24.0);
+            const int hour = i % HOURS_IN_DAY;
+            const int day  = GMat().round(i / static_cast<double>(HOURS_IN_DAY));
+            const int dayPrev  = GMat().round((i-1) / static_cast<double>(HOURS_IN_DAY));
             if (day != dayPrev)
             {
-                LOG << Nl;
+                //LOG << Nl;
             }
 
-            const bool onPrev = binarBest.at(i-1);
-            const bool onCurr = binarBest.at(i);
+            const bool onPrev = best.at(i-1);
+            const bool onCurr = best.at(i);
             if (not onPrev && onCurr)
             {
                 lastHourOn = hour;
@@ -248,7 +232,7 @@ void OptimizerEnProfit::operator()()
             {
                 if (not onCurr) // Switch off
                 {
-                    const int hourPrev = (i - 1) % 24;
+                    const int hourPrev = (i - 1) % HOURS_IN_DAY;
                     LOG << "day " << lastDayOn << ", hour " << lastHourOn << "-" << hourPrev << Nl;
                     lastHourOn = -1;
                 }
@@ -258,69 +242,9 @@ void OptimizerEnProfit::operator()()
                 }
             }
 
-
         }
+        LOG << Nl;
     }
-    else
-    {
-        //multiDimIter.StartIteration(data, *this);
-    }
-    //multiDimIter.StartIteration(data, *this);
-    /*
-    const size_t numVars = GetOptiFloat().size();
-    for (unsigned iVar = 0; iVar < numVars; ++iVar)
-    {
-        const OptiVarF & var = GetOptiFloat().at(iVar);
-        if (gcfgMan.cfgOpti->IsSearchFloatingPoint() && var.fp)
-            continue;
-        data.push_back(var.GetSpace().Data());
-    }
-    if (gcfgMan.cfgOpti->IsSearchRandom())
-    {
-        const long int maxSamples = gcfgMan.cfgOpti->OPTI_RANDOM_SAMPLES_NUM;
-        const MultiDimIterTpl::VVt & dataT = data.T();
-        MultiDimIterTpl::VVt dataNewT; // Shorten the data down to the requested number of samples
-        /// TODO: Unit Test. Crucial element
-        for (unsigned i = 0; i < maxSamples && i < dataT.size() ; ++i)
-        {
-            dataNewT.Add(dataT.at(i));
-        }
-        for (unsigned i = 0; i < dataNewT.size(); ++i)
-        {
-            Consume(dataNewT.at(i));
-            if (gcfgMan.cfgOpti->OPTI_RANDOM_EARLY_STOP && IsEarlyStop())
-            {
-                LOGL << "Early stop. The recent variance changes were less than " << gcfgMan.cfgOpti->OPTI_RANDOM_MIN_DIFF_PROMILE << " ‰ after " << i << " iterations.\n";
-                break;
-            }
-        }
-    }
-    else
-    {
-        multiDimIter.StartIteration(data, *this);
-    }
-
-    //Assertions::Throw("maxRows", data.size(), "Empty variable in OptimizerBase");
-    //LOGL << "size = " << data.size() << Endl;
-
-
-
-    for (OptiVarF v : GetOptiFloatResult())
-    {
-        for (const IPeriod * period : GetPeriods())
-            v.StoreVariable(*period);
-    }
-
-    if (gcfgMan.cfgOpti->OPTI_VERBOSE && m_isVerbose)
-        if (not gcfgMan.cfgOpti->IsXValid())
-        {
-            LOGL << Endl;
-        }
-
-    //cout << id << endl;
-    PrintCurrentResults();
-    PrintStatsSummary();
-    */
 }
 
 void OptimizerEnProfit::AddSpace(const EnjoLib::VecD & data)
@@ -332,98 +256,49 @@ void OptimizerEnProfit::Consume(const EnjoLib::VecD & data)
 {
 
 }
-bool OptimizerEnProfit::Consume2(const EnjoLib::VecD & data)
+
+static double GMatRatio(double val, double valRef)
 {
-    //ELO
-    //++m_iter;
-    //const EnjoLib::Str & idd = m_period.GetSymbolPeriodId();
-
-    //const OptiGoalType type = OptiGoalType::SHARPE;
-    //const OptiGoalType type = gcfgMan.cfgOpti->GetGoalType();
-    //const CorPtr<IOptiGoal> pgoal = OptiGoalFactory::Create(type);
-    //const IOptiGoal & igoal = *pgoal;
-    //ELO
-    //LOG << "Data = " << data.Print() << Nl;
-    OptiSubjectEnProfit osub(m_dataModel);
-    float goal = osub.GetVerbose(data.data(), data.size());
-    //const Result<VecD> res = OptiMultiBinSearch().Run(osub, 3, 100);
-    //const Result<VecD> res = OptiMultiBinSearch01().Run01(osub, 3, 100);
-    //LOGL << "Res = " << res.isSuccess << ", val = " << res.value.Print() << Nl;
-
-    //CorPtr<IPosition> pos = IPosition::Create(m_period.GetSymbolName());
-    switch (gcfgMan.cfgOpti->GetMethod())
+    if (valRef == 0)
     {
-        case OptiMethod::OPTI_METHOD_BISECTION:
-        {
-            /*
-            SafePtrThin<IOptiSubjectTF> osub(IOptiSubjectTF::Create(m_sym, m_period, m_stratType, m_stratFact, igoal, GetOptiFloat(), data));
-            //Result<VecD> res = OptiMultiNelderMead().Run(*osub, 0.1, 10, 10);
-            Result<VecD> res = OptiMultiBinSearch().Run(*osub, 3, 100); /// TODO: Make multithreaded
-            if (not res.isSuccess)
-            {
-                LOGL << idd << ": Failed Nelder-Mead" << Nl;
-                //return;
-            }
-            //pos->CopyFrom(osub->GetPosition());
-
-            //const ProfitsCalc & profits = pos->GetProfitsCalc();
-            //float sum = igoal.GetGoal(profits);
-            LOGL << idd << ": Nelder-Mead sum = " << sum << Nl;
-
-            //PrintArgs(os.GetOptiVarsResult());
-            //if (IsOptiGoalReached(profits))
-            {
-                GetOptiFloatResult() = osub->GetOptiVarsResult();
-            }
-            */
-        }
-        break;
-        case OptiMethod::OPTI_METHOD_MONTECARLO:
-        case OptiMethod::OPTI_METHOD_GRID:
-        {
-            /*
-            const TSInput tsin(m_period, *gcfgMan.cfgTS.get());
-            CorPtr<ITSFun> fun = m_funFact.Create(tsin, m_funType);
-            fun->UpdateOptiVars(data);
-            CorPtr<ISimulatorTS> psim = TSUtil().GetSim(m_period, *fun, m_startEndFrame);
-
-            goal = psim->GetScoreStationarity();
-
-            if (IsGoalReached(goal))
-            {
-                OnGoalReached(fun.get());
-            }
-            */
-            /// TODO: MonteCarlo early stop if goal's variance stops changing
-            //ToolsMixed().SystemCallWarn("clear", __PRETTY_FUNCTION__); PrintCurrentResults();
-        }
+        return 0;
     }
+    return val / valRef;
+}
 
-    //const ProfitsCalc & profits = pos->GetProfitsCalc();
-    //m_calcs.Add(profits);
-    //m_goals.Add(igoal.GetGoal(profits));
-    //AddGoal(goal);
-    //const bool verbose = gcfgMan.cfgOpti->OPTI_VERBOSE && m_isVerbose;
-    //if (IsGoalReached(goal))
+bool OptimizerEnProfit::Consume2(const EnjoLib::Matrix & dataMat)
+{
+    OptiSubjectEnProfit osub(m_dataModel);
+    float goal = osub.GetVerbose(dataMat);
     //LOGL << "goal = " << goal << Nl;
     m_goals.Add(goal);
     if (goal > m_goal)
     {
+        const double relChangePositive = GMat().RelativeChange(goal, m_goal);
+        m_relChangePositive = relChangePositive;
+
+        RecalcComputationCosts();
+
+        LOGL << "\nNew score = " << goal << " ->\t"
+        << GMat().round(relChangePositive * 100) << "%" << " costing: "
+        << GMat().round(m_relChangeNegative * 100) << "%" << ", pos2neg: "
+        << GMat().round(m_relPos2Neg * 100) << "%" << Nl;
+//        << GMat().round(relNeg2Pos * 100) << "%" << Nl;
+
+        //osub.GetVerbose(dataMat, true);
+        osub.GetVerbose(dataMat, false);
         m_goal = goal;
-        m_numFailed = 0;
-            LOGL << "New score = " << goal << Nl;
 
-            osub.GetVerbose(data.data(), data.size(), true);
         return true;
-
     }
     else
     {
         return false;
-
-        //GnuplotMan().PlotGnuplot(pos.GetProfitsCalc().GetProfits(), true); /// test
-
     }
 }
 
-
+void OptimizerEnProfit::RecalcComputationCosts()
+{
+    m_relChangeNegative = GMat().RelativeChange(m_uniqueSolutions, m_uniqueSolutionsPrev);
+    m_relPos2Neg = GMatRatio(m_relChangePositive, m_relChangeNegative);
+}
