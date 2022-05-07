@@ -13,12 +13,9 @@
 #include "OptiEnProfitDataModel.h"
 #include "GnuplotIOSWrap.h"
 
-#include <Math/MultiDimIter/MultiDimIterTpl.hpp>
-#include <Math/Opti/OptiMultiNelderMead.hpp>
-#include <Math/Opti/OptiMultiBinSearch.hpp>
-//#include "OptiMultiBinSearch01.hpp"
 #include <Math/GeneralMath.hpp>
 #include <Util/ProgressMonit.hpp>
+#include <Util/ProgressMonitHigh.hpp>
 #include <Util/CharManipulations.hpp>
 #include <Util/ToolsMixed.hpp>
 #include <Util/Except.hpp>
@@ -95,15 +92,16 @@ void OptimizerEnProfit::RandomSearch()
     Matrix binarBest = binaryMat;
 
     const bool useHash = IsUseHash();
-    const int maxEl = 10e8;
+    const int maxEl = 1e7;
     short bit = 1;
     char bitC = '1';
     std::set<std::string> usedCombinations;
     int alreadyCombined = 0;
     const GMat gmat;
-
+    ProgressMonitHigh progressMonitor;
     for (int i = 0; i < maxEl; ++i)
     {
+        progressMonitor.PrintProgressBarTime(i, maxEl);
         const int icomp = gmat.round(rmath.Rand(0, numComputers-1));
         //for (int icomp = 0; icomp < numComputers; ++icomp)
         {
