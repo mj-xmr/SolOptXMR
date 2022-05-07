@@ -162,13 +162,11 @@ void OptimizerEnProfit::RandomSearch()
     std::set<std::string> usedCombinations;
     int alreadyCombined = 0;
     const GMat gmat;
+    const int minHoursTogether = 3; /// TODO: This should be computer's parameter or user's tolerance
+    const int minHoursTogetherHalf = gmat.round(minHoursTogether/2.0);
     for (int i = 0; i < maxEl; ++i)
     {
-        const int minHoursTogether = 3; /// TODO: This should be computer's parameter or user's tolerance
-        const int minHoursTogetherHalf = gmat.round(minHoursTogether/2.0);
         const int index = gmat.round(rmath.Rand(0, horizonHours-0.999));
-        //binary [index] = bit;
-        //hashStr[index] = bitC;
         if (bit == 1)
         {
             for (int j = index - minHoursTogetherHalf; j <= index + minHoursTogetherHalf; ++j)
@@ -195,7 +193,8 @@ void OptimizerEnProfit::RandomSearch()
         bool found = false;
         if (useHash)
         {
-            found = usedCombinations.count(hashStr);
+            found = not usedCombinations.insert(hashStr).second;
+            //found = usedCombinations.count(hashStr);
         }
         if (found)
         {
@@ -206,7 +205,7 @@ void OptimizerEnProfit::RandomSearch()
         {
             if (useHash)
             {
-                usedCombinations.insert(hashStr);
+                //usedCombinations.insert(hashStr);
             }
             if (Consume2(binary))
             {
@@ -372,8 +371,8 @@ bool OptimizerEnProfit::Consume2(const EnjoLib::VecD & data)
         m_numFailed = 0;
         LOGL << "New score = " << goal << Nl;
 
-        osub.GetVerbose(data.data(), data.size(), true);
-        //osub.GetVerbose(data.data(), data.size(), false);
+        //osub.GetVerbose(data.data(), data.size(), true);
+        osub.GetVerbose(data.data(), data.size(), false);
         return true;
 
     }
