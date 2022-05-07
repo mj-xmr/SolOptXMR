@@ -38,7 +38,7 @@ using namespace std;
 using namespace EnjoLib;
 
 const int OptimizerEnProfit::HOURS_IN_DAY = 24;
-const int OptimizerEnProfit::MAX_FAILED_COMBINATIONS = 400000;
+const int OptimizerEnProfit::MAX_FAILED_COMBINATIONS = 600000;
 const double OptimizerEnProfit::MIN_POS_2_NEG_CHANGE_RATIO = 0.01;
 
 OptimizerEnProfit::OptimizerEnProfit(const OptiEnProfitDataModel & dataModel)
@@ -104,12 +104,14 @@ void OptimizerEnProfit::RandomSearch()
 
     for (int i = 0; i < maxEl; ++i)
     {
-        for (int icomp = 0; icomp < numComputers; ++icomp)
+        const int icomp = gmat.round(rmath.Rand(0, numComputers-1));
+        //for (int icomp = 0; icomp < numComputers; ++icomp)
         {
+            //LOGL << "icomp = " << icomp << Nl;
             VecD & binary = binaryMat.at(icomp);
             const int minHoursTogetherHalf = minHoursTogetherHalfVec.at(icomp);
             const int compIdxMul = 1 + icomp;
-            const int index = gmat.round(rmath.Rand(0, horizonHours-0.999));
+            const int index = gmat.round(rmath.Rand(0, horizonHours-1));
             //if (bit == 1)
             {
                 for (int j = index - minHoursTogetherHalf; j <= index + minHoursTogetherHalf; ++j)
@@ -154,10 +156,6 @@ void OptimizerEnProfit::RandomSearch()
         }
         else
         {
-            if (useHash)
-            {
-                //usedCombinations.insert(hashStr);
-            }
             if (Consume2(binaryMat))
             {
                 m_numFailed = 0;
@@ -272,78 +270,8 @@ static double GMatRatio(double val, double valRef)
 
 bool OptimizerEnProfit::Consume2(const EnjoLib::Matrix & dataMat)
 {
-    const VecD & data = dataMat.at(0);
-    //ELO
-    //++m_iter;
-    //const EnjoLib::Str & idd = m_period.GetSymbolPeriodId();
-
-    //const OptiGoalType type = OptiGoalType::SHARPE;
-    //const OptiGoalType type = gcfgMan.cfgOpti->GetGoalType();
-    //const CorPtr<IOptiGoal> pgoal = OptiGoalFactory::Create(type);
-    //const IOptiGoal & igoal = *pgoal;
-    //ELO
-    //LOG << "Data = " << data.Print() << Nl;
     OptiSubjectEnProfit osub(m_dataModel);
     float goal = osub.GetVerbose(dataMat);
-    //const Result<VecD> res = OptiMultiBinSearch().Run(osub, 3, 100);
-    //const Result<VecD> res = OptiMultiBinSearch01().Run01(osub, 3, 100);
-    //LOGL << "Res = " << res.isSuccess << ", val = " << res.value.Print() << Nl;
-
-    //CorPtr<IPosition> pos = IPosition::Create(m_period.GetSymbolName());
-    switch (gcfgMan.cfgOpti->GetMethod())
-    {
-    case OptiMethod::OPTI_METHOD_BISECTION:
-    {
-        /*
-        SafePtrThin<IOptiSubjectTF> osub(IOptiSubjectTF::Create(m_sym, m_period, m_stratType, m_stratFact, igoal, GetOptiFloat(), data));
-        //Result<VecD> res = OptiMultiNelderMead().Run(*osub, 0.1, 10, 10);
-        Result<VecD> res = OptiMultiBinSearch().Run(*osub, 3, 100); /// TODO: Make multithreaded
-        if (not res.isSuccess)
-        {
-            LOGL << idd << ": Failed Nelder-Mead" << Nl;
-            //return;
-        }
-        //pos->CopyFrom(osub->GetPosition());
-
-        //const ProfitsCalc & profits = pos->GetProfitsCalc();
-        //float sum = igoal.GetGoal(profits);
-        LOGL << idd << ": Nelder-Mead sum = " << sum << Nl;
-
-        //PrintArgs(os.GetOptiVarsResult());
-        //if (IsOptiGoalReached(profits))
-        {
-            GetOptiFloatResult() = osub->GetOptiVarsResult();
-        }
-        */
-    }
-    break;
-    case OptiMethod::OPTI_METHOD_MONTECARLO:
-    case OptiMethod::OPTI_METHOD_GRID:
-    {
-        /*
-        const TSInput tsin(m_period, *gcfgMan.cfgTS.get());
-        CorPtr<ITSFun> fun = m_funFact.Create(tsin, m_funType);
-        fun->UpdateOptiVars(data);
-        CorPtr<ISimulatorTS> psim = TSUtil().GetSim(m_period, *fun, m_startEndFrame);
-
-        goal = psim->GetScoreStationarity();
-
-        if (IsGoalReached(goal))
-        {
-            OnGoalReached(fun.get());
-        }
-        */
-        /// TODO: MonteCarlo early stop if goal's variance stops changing
-        //ToolsMixed().SystemCallWarn("clear", __PRETTY_FUNCTION__); PrintCurrentResults();
-    }
-    }
-
-    //const ProfitsCalc & profits = pos->GetProfitsCalc();
-    //m_calcs.Add(profits);
-    //m_goals.Add(igoal.GetGoal(profits));
-    //AddGoal(goal);
-    //const bool verbose = gcfgMan.cfgOpti->OPTI_VERBOSE && m_isVerbose;
-    //if (IsGoalReached(goal))
     //LOGL << "goal = " << goal << Nl;
     m_goals.Add(goal);
     if (goal > m_goal)
@@ -368,9 +296,6 @@ bool OptimizerEnProfit::Consume2(const EnjoLib::Matrix & dataMat)
     else
     {
         return false;
-
-        //GnuplotMan().PlotGnuplot(pos.GetProfitsCalc().GetProfits(), true); /// test
-
     }
 }
 
