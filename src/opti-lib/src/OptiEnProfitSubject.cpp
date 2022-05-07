@@ -8,6 +8,7 @@
 #include "ConfigOpti.h"
 #include "ConfigDirs.h"
 #include "OptiEnProfitDataModel.h"
+#include "BatteryParams.h"
 
 #include "GnuplotIOSWrap.h"
 
@@ -28,30 +29,54 @@ OptiSubjectEnProfit::~OptiSubjectEnProfit()
 {
 }
 
+struct BatterySimulation
+{
+    BatterySimulation(const BatteryParams & batPars);
+    const BatteryParams & pars;
+    //state:
+    //double load = MIN_LOAD * 0.95;
+    double load = 0;
+    static constexpr double T_DELTA_HOURS = 1;
+
+    double initial_load = true;
+    double num_undervolted = 0;
+    double num_undervolted_initial = 0;
+    double num_overvolted = 0;
+    double num_overused = 0;
+
+    double iter_get_load(double inp, double out, double hours=T_DELTA_HOURS);
+};
+
+BatterySimulation::BatterySimulation(const BatteryParams & batPars)
+: pars(batPars)
+{
+    load = pars.MIN_LOAD_AMPH * 1.1; /// TODO: Read the parameter from user input, later from the measurements
+}
+
 double BatterySimulation::iter_get_load(double inp, double out, double hours)
 {
     if (initial_load)
     {
         //out = 0; // dangerous
     }
-    double discharge = hours * DISCHARGE_PER_HOUR; /// TODO: Percentual
+    double discharge = hours * pars.DISCHARGE_PER_HOUR_PERCENT / 100.0 * load;
     double balance = inp - out - discharge;
-    double change = balance * MUL_POWER_2_CAPACITY;
-    if (change > MAX_USAGE)
+    double change = balance * pars.MUL_POWER_2_CAPACITY;
+    if (change > pars.MAX_CAPACITY_AMPH)
     {
-        //if out > MAX_USAGE: # A valid possibility
+        //if out > pars.MAX_CAPACITY_AMPH: # A valid possibility
         num_overused += 1;
-        change = MAX_USAGE;
+        change = pars.MAX_CAPACITY_AMPH;
     }
     //#print(change)
     load += change;
 
-    if (load > MAX_CAPACITY)
+    if (load > pars.MAX_CAPACITY_AMPH)
     {
-        load = MAX_CAPACITY;
+        load = pars.MAX_CAPACITY_AMPH;
         num_overvolted += 1;
     }
-    if (load < MIN_LOAD)
+    if (load < pars.MIN_LOAD_AMPH)
     {
         //if (initial_load)
         //  num_undervolted_initial += 1;
@@ -63,7 +88,7 @@ double BatterySimulation::iter_get_load(double inp, double out, double hours)
     //  load = 0;
 
     if (initial_load)
-        if (load > MIN_LOAD)
+        if (load > pars.MIN_LOAD_AMPH)
             initial_load = false;
 
     return load;
@@ -80,7 +105,7 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
     const size_t n = dataMat.at(0).size();
     const EnjoLib::Array<Computer> & comps = m_dataModel.GetComputers();
 
-    BatterySimulation battery;
+    BatterySimulation battery(m_dataModel.GetBatPars());
     double penalitySum = 0;
 
     SimResult simResult{};
@@ -129,7 +154,7 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
                 LOGL << ": New goal = " << sumAdjusted << ", m_sumMax = " << m_sumMax << ", penality = " << penality << ", after " << 0 << " iterations\n";
 
                 SimResult resVisual{};
-                BatterySimulation batteryCopy;
+                BatterySimulation batteryCopy(m_dataModel.GetBatPars());
                 VecD hashes, loads, penalityUnder, input, prod, hashrateBonus, usages;
                 for (int i = 0; i < n; ++i)
                 {

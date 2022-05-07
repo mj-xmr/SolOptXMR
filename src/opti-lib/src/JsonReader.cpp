@@ -15,31 +15,67 @@ using namespace EnjoLib;
 JsonReader::JsonReader(){}
 JsonReader::~JsonReader(){}
 
-EnjoLib::Array<Computer> JsonReader::ReadComputers(bool verbose) const
+EnjoLib::Array<BatteryParams> JsonReader::ReadBatteries(bool verbose) const
 {
-    std::vector<Computer> ret;
-    const Str & fileJson = "computers.json";
-    Str path = fileJson;
-    if (not FileUtils().FileExists(path))
-    {
-        path = "../../../" + fileJson;
-    }
-    if (not FileUtils().FileExists(path))
-    {
-        path = "../" + fileJson;
-    }
-    Ifstream fcomps(path);
-    const Tokenizer tok;
-    const VecStr & lines = tok.GetLines(fcomps);
-    Str wholeJson;
-    for (const Str & line : lines ) wholeJson += line;
+    std::vector<BatteryParams> ret;
+    const Str & wholeJson = GetJson("batteries.json");
 
     const CharManipulations cman;
     rapidjson::Document d;
     d.Parse(wholeJson.c_str());
 
+    const rapidjson::Value& batteriesVal = d["batteries"];
+    for (auto objIt = batteriesVal.Begin(); objIt != batteriesVal.End(); ++objIt)
+    {
+        /// TODO: Until here this could be abstracted
+
+        BatteryParams batObj;
+        int count = 1;
+        const rapidjson::Value & bat = *objIt;
+        ELO
+
+        batObj.MAX_DISCHARGE_AMP = bat["max_discharge_amp"].GetDouble();
+        batObj.MAX_CAPACITY_AMPH = bat["max_capacity_amph"].GetDouble();
+        batObj.MIN_LOAD_AMPH = bat["min_load_amph"].GetDouble();
+        batObj.DISCHARGE_PER_HOUR_PERCENT = bat["discharge_per_hour_percent"].GetDouble();
+        //batObj.name = bat["name"].GetString();
+        //LOG <<  << Nl;
+        if (bat.HasMember("count")) /// TODO: Repeated pattern
+        {
+            count = bat["count"].GetInt();
+        }
+        if (count == 0)
+        {
+            continue; // Disabled computer, yet still registered.
+        }
+        ret.push_back(batObj);
+        if (count > 1)
+        {
+            batObj.MAX_CAPACITY_AMPH *= count;
+            batObj.MIN_LOAD_AMPH *= count;
+        }
+    }
+    if (verbose)
+    {
+        ELO
+        LOG << "Available batteries:\n";
+        for (const BatteryParams & bat : ret)
+        {
+            LOG << bat.Print() << Nl;
+        }
+    }
+    return ret;
+}
+
+EnjoLib::Array<Computer> JsonReader::ReadComputers(bool verbose) const
+{
+    std::vector<Computer> ret;
+    const Str & wholeJson = GetJson("computers.json");
+    const CharManipulations cman;
+    rapidjson::Document d;
+    d.Parse(wholeJson.c_str());
+
     const rapidjson::Value& computersVal = d["computers"];
-    //const auto & computers = computersVal.
     for (auto compIt = computersVal.Begin(); compIt != computersVal.End(); ++compIt)
     {
         Computer compObj;
@@ -50,6 +86,7 @@ EnjoLib::Array<Computer> JsonReader::ReadComputers(bool verbose) const
         compObj.cores = comp["cores"].GetInt();
         compObj.wattPerCore = comp["watt_per_core"].GetDouble();
         compObj.hashPerCore = comp["hash_per_core"].GetDouble();
+        /// TODO: hash per core scaling factor
         //compObj.scalingFactor = 0.85;
 
         compObj.hashPerCore = comp["hash_per_core"].GetDouble();
@@ -91,6 +128,26 @@ EnjoLib::Array<Computer> JsonReader::ReadComputers(bool verbose) const
         }
     }
     return ret;
+}
+
+EnjoLib::Str JsonReader::GetJson(const EnjoLib::Str & fileName) const
+{
+    Str path = fileName;
+    if (not FileUtils().FileExists(path))
+    {
+        path = "../../../" + fileName; /// TODO: This is an ugly mess.
+    }
+    if (not FileUtils().FileExists(path))
+    {
+        path = "../" + fileName;
+    }
+    Ifstream fcomps(path);
+    const Tokenizer tok;
+    const VecStr & lines = tok.GetLines(fcomps);
+    Str wholeJson;
+    for (const Str & line : lines ) wholeJson += line;
+
+    return wholeJson;
 }
 
 /*
