@@ -192,7 +192,7 @@ void OptimizerEnProfit::RandomSearch()
 void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat) const
 {
     OptiSubjectEnProfit osub(m_dataModel);
-    //osub.GetVerbose(bestMat, true);
+    osub.GetVerbose(bestMat, true);
     for (int i = 0; i < bestMat.size(); ++i)
     {
         //GnuplotPlotTerminal1d(bestMat.at(i), "Best solution = " + CharManipulations().ToStr(m_goal), 1, 0.5);
