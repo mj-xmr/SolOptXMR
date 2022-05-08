@@ -32,8 +32,8 @@ DEFAULT_BATTERY_STATE = 0
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-b', '--battery-charge', default=DEFAULT_BATTERY_STATE, type=float, help="Initial battery charge [Ah] (default: {})".format(DEFAULT_BATTERY_STATE))
-    parser.add_argument('-s', '--start-date',    default=DATE_NOW_STR, type=str, help="Start date, ISO format (default: {})".format(DATE_NOW_STR))
+    parser.add_argument('-b', '--battery-charge', default=DEFAULT_BATTERY_STATE, type=float, help="Initial battery charge [Ah] (default: {} which means: minimal charge)".format(DEFAULT_BATTERY_STATE))
+    parser.add_argument('-s', '--start-date',    default=DATE_NOW_STR, type=str, help="Start date, ISO format (parsed) (default: {})".format(DATE_NOW_STR))
     parser.add_argument('-d', '--days-horizon',  default=DEFAULT_HORIZON_DAYS, type=int, help="Horizon in days (default: {})".format(DEFAULT_HORIZON_DAYS))
     #parser.add_argument('-v', '--verbose',      default=TESTING, action='store_true', help="Test (default: OFF)")
     return parser.parse_args()
@@ -48,7 +48,7 @@ class BatterySimulatorCpp(generator.BatterySimulator):
         path = basePath
         if not os.path.isfile(path):
             path = '../' + path
-        cmd = path + " {}".format(battery_charge)
+        cmd = path + " --battery-charge {}".format(battery_charge)
         result = sunrise_lib.run_cmd(cmd, True)
         if result.returncode != 0:
             raise RuntimeError("Failed to run opti")
@@ -88,4 +88,4 @@ def main(args):
 
 if __name__ == "__main__":
     args = get_args()
-    main(args)    
+    main(args)

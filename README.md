@@ -32,7 +32,9 @@ cd SolOptXMR		# Enter the cloned repo's dir
 
 ## Building & running
 ```bash
-./ci-default 	# Build and run the demo
+./ci-default 					# Build and run the tests
+./soloptxmr.py 				# Run the prediction with default parameters  
+./soloptxmr.py --help # Print all the available options 
 ```
 
 # Screenshots
