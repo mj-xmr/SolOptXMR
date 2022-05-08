@@ -76,7 +76,7 @@ void App::Optim(const CLIResultSol & cliSol) const
         daysStart = defaultVal;
     }
     const int hourStart = 24 * daysStart;
-    OptiEnProfitDataModel dataModel(horizon, hourStart);
+    OptiEnProfitDataModel dataModel(cliSol.m_confSol, horizon, hourStart);
 
     OptimizerEnProfit optimizer(dataModel);
     optimizer();

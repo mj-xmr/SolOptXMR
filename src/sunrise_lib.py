@@ -70,7 +70,7 @@ def read_file(fname):
         
 def run_cmd(cmd, print_result=False):
     print("Running command:\n" + cmd)
-    result = run(cmd, stdout=PIPE, stderr=PIPE, universal_newlines=True)
+    result = run(cmd.split(), stdout=PIPE, stderr=PIPE, universal_newlines=True)
     if print_result:
         print(result.returncode, result.stdout, result.stderr)
     return result

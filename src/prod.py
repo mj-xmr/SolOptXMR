@@ -28,11 +28,13 @@ from python_json_config import ConfigBuilder
 
 DATE_NOW_STR = sunrise_lib.DATE_NOW.isoformat()
 DEFAULT_HORIZON_DAYS = 3
+DEFAULT_BATTERY_STATE = 0
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-s', '--start-date',   default=DATE_NOW_STR, type=str, help="Start date, ISO format (default: {})".format(DATE_NOW_STR))
-    parser.add_argument('-d', '--days-horizon', default=DEFAULT_HORIZON_DAYS, type=int, help="Horizon in days (default: {})".format(DEFAULT_HORIZON_DAYS))
+    parser.add_argument('-b', '--battery-charge', default=DEFAULT_BATTERY_STATE, type=float, help="Initial battery charge [Ah] (default: {})".format(DEFAULT_BATTERY_STATE))
+    parser.add_argument('-s', '--start-date',    default=DATE_NOW_STR, type=str, help="Start date, ISO format (default: {})".format(DATE_NOW_STR))
+    parser.add_argument('-d', '--days-horizon',  default=DEFAULT_HORIZON_DAYS, type=int, help="Horizon in days (default: {})".format(DEFAULT_HORIZON_DAYS))
     #parser.add_argument('-v', '--verbose',      default=TESTING, action='store_true', help="Test (default: OFF)")
     return parser.parse_args()
 
@@ -41,12 +43,13 @@ class BatterySimulatorCpp(generator.BatterySimulator):
     def __init(self):
         pass
     
-    def run(self):
+    def run(self, battery_charge):
         basePath = 'build/src/opti/opti' # TODO: Pass on days horizon
         path = basePath
         if not os.path.isfile(path):
-            path = '../' + path    
-        result = sunrise_lib.run_cmd(path, True)
+            path = '../' + path
+        cmd = path + " {}".format(battery_charge)
+        result = sunrise_lib.run_cmd(cmd, True)
         if result.returncode != 0:
             raise RuntimeError("Failed to run opti")
 
@@ -56,9 +59,9 @@ class BatterySimulatorCpp(generator.BatterySimulator):
         self.loads      = np.loadtxt(basePathIn.format('battery'))
         self.usage      = np.loadtxt(basePathIn.format('usage'))
 
-def get_usage_prod(available):
+def get_usage_prod(available, battery_charge):
     bat_sim = BatterySimulatorCpp()
-    bat_sim.run()
+    bat_sim.run(battery_charge)
     hashrates = bat_sim.hashrates
     loads = bat_sim.loads
     usage = bat_sim.usage
@@ -68,8 +71,8 @@ def get_usage_prod(available):
     
     return "Production", hashrates, usage, loads, bat_sim, incomes, costs, effs
 
-def run_main(elev, show_plots):
-    generator.run_algo(elev, show_plots, get_usage_prod)
+def run_main(elev, show_plots, battery_charge):
+    generator.run_algo(elev, show_plots, get_usage_prod, battery_charge)
     #generator.run_algo(elev, show_plots, generator.get_usage_simple)
 
 
@@ -81,7 +84,7 @@ def main(args):
     proc = generator.proc_data(pos)
     elev = generator.extr_data(proc)
     print(elev)
-    run_main(elev, show_plots)
+    run_main(elev, show_plots, args.battery_charge)
 
 if __name__ == "__main__":
     args = get_args()

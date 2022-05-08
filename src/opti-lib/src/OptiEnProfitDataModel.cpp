@@ -1,6 +1,7 @@
 #include "OptiEnProfitDataModel.h"
 
 #include "JsonReader.h"
+#include "ConfigSol.h"
 
 //#define BOOST_JSON_STACK_BUFFER_SIZE 1024
 //#include <boost/json/src.hpp>
@@ -17,8 +18,9 @@
 
 using namespace EnjoLib;
 
-OptiEnProfitDataModel::OptiEnProfitDataModel(int horizonDays, int statingPoint)
-: m_horizonHours(horizonDays * 24)
+OptiEnProfitDataModel::OptiEnProfitDataModel(const ConfigSol & confSol, int horizonDays, int statingPoint)
+: m_confSol(confSol)
+, m_horizonHours(horizonDays * 24)
 , m_statingPoint(statingPoint)
 , m_comps(JsonReader().ReadComputers())
 , m_batPars(JsonReader().ReadBatteries().at(0))
