@@ -31,33 +31,20 @@ config_geo = sunrise_lib.config_geo
 
 TESTING = False
 #TESTING = True
-
 # TODO: Extent the prediction to multiple days ahead
 def get_weather(horizon=3):
     try:
         print(config_geo.geo.country)
         print(config_geo.geo.city)
-        url = "https://www.timeanddate.com/weather/{}/{}/ext".format(config_geo.geo.country, config_geo.geo.city)
-        page = requests.get(url)
-        print(page)
-        soup = BeautifulSoup(page.content, "html.parser")
-        results = soup.find(class_="mtt")
-        img_url = results['src']
-        #print(results.prettify())
-        print(img_url)
 
-        #img_url = '//c.tadst.com/gfx/w/svg/wt-33.svg'
-        #img_url = '//c.tadst.com/gfx/w/svg/wt-1.svg'
-        img_url = img_url.replace('//', 'https://')
-        filename = wget.download(img_url, out=sunrise_lib.DIR_TMP)
-        #filename = '/tmp/a/wt-33.svg'
-        print(filename)
+        dnow = sunrise_lib.DATE_NOW
+        fname = 'weather-pic-{}-{}-{}.png'.format(dnow.year, dnow.month, dnow.day)
+        png_file = sunrise_lib.DIR_TMP + '/' + fname
+        if not os.path.isfile(png_file):
+            download_weather(png_file)
+        else:
+            print("File " + png_file + " exists.") 
         
-        svg_code = sunrise_lib.read_file(filename)
-        png_file = sunrise_lib.DIR_TMP + '/output.png'
-        print("Writing to " + png_file)
-        svg2png(bytestring=svg_code, write_to=png_file)
-
         im = Image.open(png_file, 'r')
         width, height = im.size
         pixel_values = list(im.getdata())
@@ -99,6 +86,30 @@ def get_weather(horizon=3):
     except Exception:
         print(traceback.format_exc())
         return 0
+
+# TODO: Create other, alternative implementations
+def download_weather(png_file):
+    url = "https://www.timeanddate.com/weather/{}/{}/ext".format(config_geo.geo.country, config_geo.geo.city)
+    print("Calling:")
+    print(url)
+    page = requests.get(url)
+    #print(page)
+    soup = BeautifulSoup(page.content, "html.parser")
+    results = soup.find(class_="mtt")
+    img_url = results['src']
+    #print(results.prettify())
+    print(img_url)
+
+    #img_url = '//c.tadst.com/gfx/w/svg/wt-33.svg'
+    #img_url = '//c.tadst.com/gfx/w/svg/wt-1.svg'
+    img_url = img_url.replace('//', 'https://')
+    filename = wget.download(img_url, out=sunrise_lib.DIR_TMP)
+    #filename = '/tmp/a/wt-33.svg'
+    print(filename)
+    
+    svg_code = sunrise_lib.read_file(filename)
+    print("Writing to " + png_file)
+    svg2png(bytestring=svg_code, write_to=png_file)
 
 def test():
     get_weather()    
