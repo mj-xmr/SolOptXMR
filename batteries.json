@@ -6,7 +6,7 @@
     	  	"max_discharge_amp" : 11,
     	  	"max_capacity_amph" : 60,
     	  	"min_load_amph" : 30,
-    	  	"discharge_per_hour_percent" : 1.1
+    	  	"discharge_per_hour_percent" : 0.9
     	  }
     ]
 }

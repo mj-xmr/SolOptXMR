@@ -62,11 +62,11 @@ double BatterySimulation::iter_get_load(double inp, double out, double hours)
     double discharge = hours * pars.DISCHARGE_PER_HOUR_PERCENT / 100.0 * load;
     double balance = inp - out - discharge;
     double change = balance * pars.MUL_POWER_2_CAPACITY;
-    if (change > pars.MAX_CAPACITY_AMPH)
+    if (change > pars.MAX_DISCHARGE_AMP)
     {
         //if out > pars.MAX_CAPACITY_AMPH: # A valid possibility
         num_overused += 1;
-        change = pars.MAX_CAPACITY_AMPH;
+        change = pars.MAX_DISCHARGE_AMP;
     }
     //#print(change)
     load += change;
@@ -165,7 +165,7 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
                     const SimResult & resLocal = Simulate(i, dataMat, bonusMul);
                     resVisual.Add(resLocal);
                     const double load = batteryCopy.iter_get_load(m_dataModel.GetPowerProduction(i), resLocal.sumPowerUsage);
-                    usages.Add(resLocal.sumPowerUsage);
+                    usages.Add(resLocal.sumPowerUsage * batteryCopy.pars.MUL_POWER_2_CAPACITY);
                     //input.Add(val);
                     loads.Add(load);
                     prod.Add(m_dataModel.GetPowerProduction(i));
