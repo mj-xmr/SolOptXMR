@@ -2,14 +2,14 @@
     "sunrise_lib": {
         "HOME": "/foo/bar",
         "FNAME": "/dev/shm/solar.txt",
+        "DIR_CFG": ".config/solar",
         "FNAME_MASTER": "/.config/solar/master",
+        "PATH_JSON_GEO": "/.config/solar/geo.json",
         "CPU_FREQ_APP": "/root/bin/cpu-freq.sh",
         "HOURS_DELTA": 2.5,
         "MIN_WEATHER": 0.4,
         "DIR_TMP": "/tmp",
         "DIR_XMRIG": "/progs/crypto/xmr/xmrig/b",
-        "LAT": 53,
-        "LON": 10,
         "TESTING": false
     },
     "generator": {

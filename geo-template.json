@@ -1,0 +1,10 @@
+{
+  "geo":
+  	  {
+  	  	"time_zone" : "Europe/Berlin",
+  	  	"country" : "germany",
+  	  	"city" : "berlin",
+		"lat" : 52.5200,
+		"lon" : 13.4050
+  	  }
+}
