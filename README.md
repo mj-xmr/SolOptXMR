@@ -36,6 +36,27 @@ cd SolOptXMR		# Enter the cloned repo's dir
 ./soloptxmr.py        # Run the prediction with default parameters  
 ./soloptxmr.py --help # Print all the available options 
 ```
+By default the script perfomrs the predictions 3 days ahead of now, assuming the battery charge at its reasonable minimum, set by the `battery.json`.
+
+In order to alter the behavior, the main script can be ran with the following example options:
+```bash
+./soloptxmr.py \
+--battery-charge 55.2 \
+--start-date 2022-02-20T20:22 \
+--days-horizon 5
+```
+or equivalently:
+```bash
+./soloptxmr.py \
+-b 55.2 \
+-s "2022-02-20 20:22" \
+-d 5
+```
+
+## Configuration
+By default, the project will create `$HOME/.config/solar/geo.json`, which is expected to be modified by you, according to the physical location of the solar farm.
+
+The variable `city` is meant to 
 
 # Screenshots
 
