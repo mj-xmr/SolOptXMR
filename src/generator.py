@@ -25,16 +25,18 @@ from profitability import POW_Coin
 from python_json_config import ConfigBuilder
 
 config = sunrise_lib.config
+config_batteries = sunrise_lib.config_batteries
+battery = config_batteries.batteries[0]
 
 ELEVATION_KEY = config.generator.ELEVATION_KEY
 BUILD_DIR='build/'  # TODO: Config
 
-# Not changable: system params
-MIN_POWER = config.generator.MIN_POWER
+MIN_POWER = 0
+# Not changable: solar system params
 MAX_POWER = config.generator.MAX_POWER
-MAX_USAGE = config.generator.MAX_USAGE
-#MIN_CAPACITY = config.generator.MIN_CAPACITY
-MAX_CAPACITY = config.generator.MAX_CAPACITY
+MAX_USAGE = battery['max_discharge_amp']
+MIN_CAPACITY = battery['min_load_amph']
+MAX_CAPACITY = battery['max_capacity_amph']
 MUL_POWER_2_CAPACITY = config.generator.MUL_POWER_2_CAPACITY
 T_DELTA_HOURS = config.generator.T_DELTA_HOURS
 DATE_NOW = sunrise_lib.DATE_NOW

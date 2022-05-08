@@ -24,6 +24,7 @@ from python_json_config import ConfigBuilder
 
 config_builder = ConfigBuilder()
 config = config_builder.parse_config('config.json')
+config_batteries = config_builder.parse_config('batteries.json')
 
 PROJECT_NAME = "SolOptXMR"
 PROJECT_SUB_NAME = "Solar Optimal mining of XMR"

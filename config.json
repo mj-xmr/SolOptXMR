@@ -14,11 +14,6 @@
     },
     "generator": {
         "ELEVATION_KEY": "elevation",
-        "MIN_POWER": 0,
-        "MAX_POWER": 40,
-        "MAX_USAGE": 11,
-        "MIN_CAPACITY": 0,
-        "MAX_CAPACITY": 20,
         "MUL_POWER_2_CAPACITY": 0.1,
         "T_DELTA_HOURS": 1,
         "PATH_POSITIONS": "/solar_pos",
