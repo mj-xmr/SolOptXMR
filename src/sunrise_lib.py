@@ -17,19 +17,35 @@ from pathlib import Path
 
 from pytz import timezone
 import requests
+import shutil
 
 #from tzlocal import get_localzone # $ pip install tzlocal
 
 from python_json_config import ConfigBuilder
 
+
+HOME = str(Path.home()) + "/" # TODO: move this in config.json too?
+
+def get_geo():
+    os.makedirs(HOME + config.sunrise_lib.DIR_CFG, exist_ok=True)
+    geo_path = HOME + config.sunrise_lib.PATH_JSON_GEO
+    if not os.path.isfile(geo_path):
+        geo_cfg_template = 'geo-template.json'
+        print("Not found: " + geo_path)
+        print("Copying " + geo_cfg_template + " to " + geo_path)
+        shutil.copy(geo_cfg_template, geo_path)
+        
+    config_geo = config_builder.parse_config(geo_path)    
+    return config_geo
+
 config_builder = ConfigBuilder()
 config = config_builder.parse_config('config.json')
+config_geo = get_geo()
 config_batteries = config_builder.parse_config('batteries.json')
 
 PROJECT_NAME = "SolOptXMR"
 PROJECT_SUB_NAME = "Solar Optimal mining of XMR"
 
-HOME = str(Path.home()) # TODO: move this in config.json too?
 FNAME = config.sunrise_lib.FNAME
 FNAME_MASTER = HOME + config.sunrise_lib.FNAME_MASTER
 CPU_FREQ_APP = config.sunrise_lib.CPU_FREQ_APP
@@ -39,8 +55,8 @@ DIR_TMP = config.sunrise_lib.DIR_TMP
 DIR_XMRIG = HOME + config.sunrise_lib.DIR_XMRIG
 
 DATE_NOW = datetime.datetime.now()
-LAT = config.sunrise_lib.LAT
-LON = config.sunrise_lib.LON
+LAT = config_geo.geo.lat
+LON = config_geo.geo.lon
 
 TESTING = config.sunrise_lib.TESTING
 

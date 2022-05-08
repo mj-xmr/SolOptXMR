@@ -19,6 +19,7 @@ from pytz import timezone
 from matplotlib import pyplot as plt
 
 import sunrise_lib
+import weather_lib
 import kraken
 from profitability import POW_Coin
 
@@ -91,7 +92,8 @@ def plot_sun(name, elev, bat, usage, show_plots):
         plt.show()
 
 def proc_data(pos):
-    pos = simul_weather(pos)
+    pos = add_weather(pos)
+    #pos = simul_weather(pos)
     pos = adj_losses(pos)
 
     print("Dumping data to:", path_positions_txt)
@@ -288,6 +290,12 @@ def simul_weather(pos):
     pos.loc[::3, [ELEVATION_KEY]] *= 0.8
     pos.loc[::8, [ELEVATION_KEY]] *= 0.3
 
+    return pos
+
+def add_weather(pos):
+    # TODO: Limit the calls to the service via caching
+    weather = weather_lib.get_weather()
+    pos.loc[:, [ELEVATION_KEY]] *= weather
     return pos
 
 def run_main(elev, show_plots):
