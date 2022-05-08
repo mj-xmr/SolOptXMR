@@ -76,14 +76,14 @@ def plot_sun(name, elev, bat, usage, show_plots):
     plt.title("Algo: " + name)
     plt.xlabel("Time")
     plt.ylabel("Energy")
-    plt.plot(elev,  'y')
-    plt.plot(bat,   'g')
-    plt.plot(usage, 'b')
     plt.plot(list_to_pd([MAX_CAPACITY]   * len(elev), elev))
-    plt.plot(list_to_pd([MAX_CAPACITY/2] * len(elev), elev))
-    plt.plot(list_to_pd([MAX_USAGE]      * len(elev), elev))
+    plt.plot(bat,   'g')
+    plt.plot(list_to_pd([MIN_CAPACITY]   * len(elev), elev))
+    plt.plot(elev,  'y')
+    plt.plot(list_to_pd([MAX_USAGE]      * len(elev), elev), 'r')
+    plt.plot(usage, 'b')
     plt.grid()
-    plt.legend(['sun input', 'bat capacity', 'power usage', 'max cap', 'half cap', 'max usage'])
+    plt.legend(['max bat charge', 'bat charge', 'min bat charge', 'sun input', 'max power usage', 'power usage'])
     os.makedirs(BUILD_DIR, exist_ok=True)
     fout_rel_path = "{}/fig-{}.png".format(BUILD_DIR, name)
     print("Saving figure to:",fout_rel_path)
@@ -190,7 +190,7 @@ class BatterySimulator:
         if self.num_overused > 0:
             print("Overused    = ", print_relative(self.num_overused, relative))
 
-def get_usage_endor_example(available):
+def get_usage_endor_example(available, battery_charge):
     # TODO: use the available power wisely
     usage = []
     hashrates = []
@@ -230,7 +230,7 @@ def get_usage_endor_example(available):
 
     return "Endor", hashrates, usage, loads, bat_sim, incomes, costs, effs
 
-def get_usage_simple(available):
+def get_usage_simple(available, battery_charge):
     usage_exp = [MAX_USAGE] * len(available)
     hashrates = [usage_exp[0] * 0.5] * len(available)
     loads = []
@@ -271,8 +271,8 @@ def print_profits(incomes, costs):
     print(f"Total profit = {profit:.2f} USD")
     print(f"Profitability = {profitability:.2f} %")
 
-def get_usage(available, algo):
-    name, hashrates, usage, bat, bat_sim, incomes, costs, effs  = algo(available)
+def get_usage(available, algo, battery_charge=0):
+    name, hashrates, usage, bat, bat_sim, incomes, costs, effs  = algo(available, battery_charge)
     print("\nAlgo name: ", name)
     bat_sim.print_stats(len(available))
     print_hashes(hashrates)
@@ -298,12 +298,12 @@ def add_weather(pos):
     pos.loc[:, [ELEVATION_KEY]] *= weather
     return pos
 
-def run_main(elev, show_plots):
-    run_algo(elev, show_plots, get_usage_simple)
-    run_algo(elev, show_plots, get_usage_endor_example)
+def run_main(elev, show_plots, battery_charge=0):
+    run_algo(elev, show_plots, get_usage_simple, battery_charge)
+    run_algo(elev, show_plots, get_usage_endor_example, battery_charge)
 
-def run_algo(elev, show_plots, algo):
-    name, usage, bat = get_usage(elev, algo)
+def run_algo(elev, show_plots, algo, battery_charge):
+    name, usage, bat = get_usage(elev, algo, battery_charge)
     plot_sun(name, elev, bat, usage, show_plots)
 
 

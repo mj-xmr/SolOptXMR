@@ -35,11 +35,13 @@ EnjoLib::Result<CLIResultSol> CLISol::GetConfigs(int argc, char ** argv) const
 
     const char * OPT_DAYS_HORIZON = "horizon-days";
     const char * OPT_DAYS_START  = "start-day";
+    const char * OPT_BATTERY_CHARGE  = "battery-charge";
 
     EnjoLib::ProgramOptionsState popState;
     ////popState.AddStr(OPT_PLUGIN,    "Plugin name");
-    popState.AddInt(OPT_DAYS_HORIZON, ConfigSol::DESCR_DAYS_HORIZON);
-    popState.AddInt(OPT_DAYS_START,   ConfigSol::DESCR_DAYS_START);
+    popState.AddInt(OPT_DAYS_HORIZON,   ConfigSol::DESCR_DAYS_HORIZON);
+    popState.AddInt(OPT_DAYS_START,     ConfigSol::DESCR_DAYS_START);
+    popState.AddFloat(OPT_BATTERY_CHARGE, ConfigSol::DESCR_BATTERY_CHARGE);
 
     popState.ReadArgs(argc, argv);
     const EnjoLib::ProgramOptions pops(popState);
@@ -71,6 +73,7 @@ EnjoLib::Result<CLIResultSol> CLISol::GetConfigs(int argc, char ** argv) const
 
     confSol.DAYS_HORIZON = pops.GetIntFromMap(OPT_DAYS_HORIZON);
     confSol.DAYS_START 	 = pops.GetIntFromMap(OPT_DAYS_START);
+    confSol.BATTERY_CHARGE = pops.GetFloatFromMap(OPT_BATTERY_CHARGE);
     //confSym.period     		    = pops.GetStrFromMap(OPT_PERIOD);
     //auto pluginName = pops.GetStrFromMap (OPT_PLUGIN);
 
