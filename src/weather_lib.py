@@ -92,7 +92,7 @@ def get_weather(horizon=3):
 
         #print(page.text)
 
-        if yellow_relat == 0:
+        if yellow_relat < 0.1:
             yellow_relat = 0.1
 
         return round(yellow_relat, 4)
