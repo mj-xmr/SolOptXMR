@@ -63,7 +63,7 @@ In such cases, please enter the nearest largest city, until the script stops com
 # Screenshots
 
 ## First production model
-A model with an integrated n-day weather prediction & multiple mining rigs (here: 2).
+A model with an integrated n-day weather prediction & multiple, user-defined mining rigs (here: 2).
 
 ![solopt-prod](https://user-images.githubusercontent.com/63722585/167363580-978d0835-9d6c-40bb-94dd-ffa955bade10.png)
 
