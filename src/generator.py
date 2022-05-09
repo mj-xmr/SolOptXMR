@@ -172,7 +172,7 @@ class BatterySimulator:
         if self.num_overused > 0:
             print("Overused    = ", print_relative(self.num_overused, relative))
 
-def get_usage_endor_example(available, battery_charge):
+def get_usage_endor_example(available, battery_charge, horizon):
     # TODO: use the available power wisely
     usage = []
     hashrates = []
@@ -212,7 +212,7 @@ def get_usage_endor_example(available, battery_charge):
 
     return "Endor", hashrates, usage, loads, bat_sim, incomes, costs, effs
 
-def get_usage_simple(available, battery_charge):
+def get_usage_simple(available, battery_charge, horizon):
     usage_exp = [MAX_USAGE] * len(available)
     hashrates = [usage_exp[0] * 0.5] * len(available)
     loads = []
@@ -253,8 +253,8 @@ def print_profits(incomes, costs):
     print(f"Total profit = {profit:.2f} USD")
     print(f"Profitability = {profitability:.2f} %")
 
-def get_usage(available, algo, battery_charge=0):
-    name, hashrates, usage, bat, bat_sim, incomes, costs, effs  = algo(available, battery_charge)
+def get_usage(available, algo, battery_charge=0, horizon=0):
+    name, hashrates, usage, bat, bat_sim, incomes, costs, effs  = algo(available, battery_charge, horizon)
     print("\nAlgo name: ", name)
     bat_sim.print_stats(len(available))
     print_hashes(hashrates)
@@ -274,8 +274,9 @@ def simul_weather(pos):
 
     return pos
 
-def add_weather(pos):
-    weather = weather_lib.get_weather()
+def add_weather(pos, horizon):
+    print("hori", horizon)
+    weather = weather_lib.get_weather(horizon)
     curr_hour = sunrise_lib.DATE_NOW.hour
     for i in range(0, pos.count()[ELEVATION_KEY]):
         day = math.floor((i+curr_hour) / 24)
@@ -286,12 +287,11 @@ def add_weather(pos):
         pos.at[pos.index[i], ELEVATION_KEY] *= wday
     return pos
 
-def proc_data(pos, is_simul_weather=False):
-    pos = add_weather(pos)
+def proc_data(pos, is_simul_weather=False, horizon=0):
     if is_simul_weather:
         pos = simul_weather(pos)
     else:
-        pos = add_weather(pos)
+        pos = add_weather(pos, horizon)
     pos = adj_losses(pos) # TODO: This will be a solar panel parameter
 
     print("Dumping data to:", path_positions_txt)
@@ -309,12 +309,12 @@ def adj_losses(pos):
     pos.loc[pos[ELEVATION_KEY] > MAX_POWER, [ELEVATION_KEY]] = MAX_POWER
     return pos
 
-def run_main(elev, show_plots, battery_charge=0):
-    run_algo(elev, show_plots, get_usage_simple, battery_charge)
-    run_algo(elev, show_plots, get_usage_endor_example, battery_charge)
+def run_main(elev, show_plots, battery_charge=0, horizon=0):
+    run_algo(elev, show_plots, get_usage_simple, battery_charge, horizon)
+    run_algo(elev, show_plots, get_usage_endor_example, battery_charge, horizon)
 
-def run_algo(elev, show_plots, algo, battery_charge):
-    name, usage, bat = get_usage(elev, algo, battery_charge)
+def run_algo(elev, show_plots, algo, battery_charge, horizon):
+    name, usage, bat = get_usage(elev, algo, battery_charge, horizon)
     plot_sun(name, elev, bat, usage, show_plots)
 
 

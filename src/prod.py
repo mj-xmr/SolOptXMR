@@ -43,12 +43,15 @@ class BatterySimulatorCpp(generator.BatterySimulator):
     def __init(self):
         pass
     
-    def run(self, battery_charge):
+    def run(self, battery_charge, horizon):
         basePath = 'build/src/opti/opti' # TODO: Pass on days horizon
         path = basePath
         if not os.path.isfile(path):
             path = '../' + path
-        cmd = path + " --battery-charge {}".format(battery_charge)
+        cmd = path
+        cmd += " --battery-charge {}".format(battery_charge)
+        cmd += " --horizon-days {}".format(horizon)
+        
         result = sunrise_lib.run_cmd(cmd, True)
         if result.returncode != 0:
             raise RuntimeError("Failed to run opti")
@@ -59,9 +62,9 @@ class BatterySimulatorCpp(generator.BatterySimulator):
         self.loads      = np.loadtxt(basePathIn.format('battery'))
         self.usage      = np.loadtxt(basePathIn.format('usage'))
 
-def get_usage_prod(available, battery_charge):
+def get_usage_prod(available, battery_charge, horizon):
     bat_sim = BatterySimulatorCpp()
-    bat_sim.run(battery_charge)
+    bat_sim.run(battery_charge, horizon)
     hashrates = bat_sim.hashrates
     loads = bat_sim.loads
     usage = bat_sim.usage
@@ -71,8 +74,8 @@ def get_usage_prod(available, battery_charge):
     
     return "Production", hashrates, usage, loads, bat_sim, incomes, costs, effs
 
-def run_main(elev, show_plots, battery_charge):
-    generator.run_algo(elev, show_plots, get_usage_prod, battery_charge)
+def run_main(elev, show_plots, battery_charge, horizon):
+    generator.run_algo(elev, show_plots, get_usage_prod, battery_charge, horizon)
     #generator.run_algo(elev, show_plots, generator.get_usage_simple)
 
 
@@ -81,10 +84,11 @@ def main(args):
     pos = generator.get_sun_positions(start_date, args.days_horizon, unpickle=False)
     #print(pos)
     show_plots = True
-    proc = generator.proc_data(pos)
+    #print('hori', args.days_horizon)
+    proc = generator.proc_data(pos, False, args.days_horizon)
     elev = generator.extr_data(proc)
     print(elev)
-    run_main(elev, show_plots, args.battery_charge)
+    run_main(elev, show_plots, args.battery_charge, args.days_horizon)
 
 if __name__ == "__main__":
     args = get_args()
