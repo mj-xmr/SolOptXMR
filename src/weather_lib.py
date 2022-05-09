@@ -110,6 +110,7 @@ def download_weather(path_template, horizon):
     #print(page)
     soup = BeautifulSoup(page.content, "html.parser")
     results = soup.findAll(class_="mtt")
+    print("Results len =", len(results), "horizon =", horizon)
     assert horizon < len(results)
     for ires in range(0, horizon):
         png_file = path_template.format(get_date_from_now_iso(ires))
