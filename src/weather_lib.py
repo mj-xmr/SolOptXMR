@@ -32,6 +32,7 @@ config_geo = sunrise_lib.config_geo
 TESTING = False
 #TESTING = True
 def get_weather(horizon=3):
+    assert horizon > 0
     MIN_WEATHER = 0.1
     try:
         print(config_geo.geo.country)

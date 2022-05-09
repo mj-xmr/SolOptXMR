@@ -27,7 +27,7 @@ from profitability import POW_Coin
 from python_json_config import ConfigBuilder
 
 DATE_NOW_STR = sunrise_lib.DATE_NOW.isoformat()
-DEFAULT_HORIZON_DAYS = 4
+DEFAULT_HORIZON_DAYS = 3
 DEFAULT_BATTERY_STATE = 0
 
 def get_args():
@@ -84,7 +84,8 @@ def main(args):
     pos = generator.get_sun_positions(start_date, args.days_horizon, unpickle=False)
     #print(pos)
     show_plots = True
-    proc = generator.proc_data(pos, args.days_horizon)
+    #print('hori', args.days_horizon)
+    proc = generator.proc_data(pos, False, args.days_horizon)
     elev = generator.extr_data(proc)
     print(elev)
     run_main(elev, show_plots, args.battery_charge, args.days_horizon)

@@ -275,6 +275,7 @@ def simul_weather(pos):
     return pos
 
 def add_weather(pos, horizon):
+    print("hori", horizon)
     weather = weather_lib.get_weather(horizon)
     curr_hour = sunrise_lib.DATE_NOW.hour
     for i in range(0, pos.count()[ELEVATION_KEY]):
@@ -287,11 +288,10 @@ def add_weather(pos, horizon):
     return pos
 
 def proc_data(pos, is_simul_weather=False, horizon=0):
-    pos = add_weather(pos, horizon)
     if is_simul_weather:
         pos = simul_weather(pos)
     else:
-        pos = add_weather(pos)
+        pos = add_weather(pos, horizon)
     pos = adj_losses(pos) # TODO: This will be a solar panel parameter
 
     print("Dumping data to:", path_positions_txt)
