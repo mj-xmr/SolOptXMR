@@ -56,7 +56,9 @@ or equivalently:
 ## Configuration
 By default, the project will create `$HOME/.config/solar/geo.json`, which is expected to be modified by you, according to the physical location of the solar farm.
 
-The variable `city` is meant to 
+The variable `city` is meant to deliver weather reports.
+It is possible, that your farm's location is so remote, that the city where it belongs, isn't listed on the weather reports.
+In such cases, please enter the nearest largest city, until the script stops complaining.
 
 # Screenshots
 
