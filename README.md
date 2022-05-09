@@ -36,7 +36,7 @@ cd SolOptXMR		# Enter the cloned repo's dir
 ./soloptxmr.py        # Run the prediction with default parameters  
 ./soloptxmr.py --help # Print all the available options 
 ```
-By default the script perfomrs the predictions 3 days ahead of now, assuming the battery charge at its reasonable minimum, set by the `battery.json`.
+By default the script perfomrs the predictions 3 days ahead from now, assuming the battery charge at its reasonable minimum, set by the `battery.json`.
 
 In order to alter the behavior, the main script can be ran with the following example options:
 ```bash
