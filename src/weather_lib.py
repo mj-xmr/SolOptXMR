@@ -43,8 +43,7 @@ def get_weather(horizon=3):
 
         path_template = dirr + '/weather-pic-{}.png'
         if not os.path.isdir(dirr):
-            os.makedirs(dirr)
-            download_weather(path_template, horizon)
+            download_weather(dirr, path_template, horizon)
             # TODO: On error: log error and delete the dirr
 
         #fname = fname_template.format(dnow)
@@ -103,7 +102,7 @@ def get_weather(horizon=3):
         return [MIN_WEATHER] * horizon
 
 # TODO: Create other, alternative implementations
-def download_weather(path_template, horizon):
+def download_weather(dirr, path_template, horizon):
     url = "https://www.timeanddate.com/weather/{}/{}/ext".format(config_geo.geo.country, config_geo.geo.city)
     print("Calling:")
     print(url)
@@ -111,21 +110,28 @@ def download_weather(path_template, horizon):
     #print(page)
     soup = BeautifulSoup(page.content, "html.parser")
     results = soup.findAll(class_="mtt")
+    #print(results.prettify())
     print("Results len =", len(results), "horizon =", horizon)
-    assert horizon < len(results)
-    for ires in range(0, horizon):
-        png_file = path_template.format(get_date_from_now_iso(ires))
-        img_url = results[ires]['src']
-        #print(results.prettify())
+    assert horizon < len(results) 
+    os.makedirs(dirr) # So far all succeeded. Mark this by creating the directory
+    for ele in results:
+        img_url = ele['src']
         print(img_url)
-
+        img_fname = img_url.split('/')[-1]
+        if os.path.isfile(sunrise_lib.DIR_TMP + '/' + img_fname):
+            print("Already downloaded:", img_fname)
+            continue
         #img_url = '//c.tadst.com/gfx/w/svg/wt-33.svg'
         #img_url = '//c.tadst.com/gfx/w/svg/wt-1.svg'
         img_url = img_url.replace('//', 'https://')
-        filename = wget.download(img_url, out=sunrise_lib.DIR_TMP)
+        filenamedload = wget.download(img_url, out=sunrise_lib.DIR_TMP)
         #filename = '/tmp/a/wt-33.svg'
-        print(filename)
+        print(filenamedload)
         
+    for ires in range(0, len(results)):
+        png_file = path_template.format(get_date_from_now_iso(ires))
+        img_url = results[ires]['src']
+        filename = sunrise_lib.DIR_TMP + '/' + img_url.split('/')[-1]
         svg_code = sunrise_lib.read_file(filename)
         print("Writing to " + png_file)
         svg2png(bytestring=svg_code, write_to=png_file)
