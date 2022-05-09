@@ -304,6 +304,7 @@ def extr_data(pos):
     return elev
 
 def adj_losses(pos):
+    # TODO: This will be a solar panel parameter
     pos.loc[pos[ELEVATION_KEY] < MIN_POWER, [ELEVATION_KEY]] = MIN_POWER
     pos.loc[pos[ELEVATION_KEY] > MAX_POWER, [ELEVATION_KEY]] = MAX_POWER
     return pos

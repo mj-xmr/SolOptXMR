@@ -31,7 +31,6 @@ config_geo = sunrise_lib.config_geo
 
 TESTING = False
 #TESTING = True
-# TODO: Extent the prediction to multiple days ahead
 def get_weather(horizon=3):
     MIN_WEATHER = 0.1
     try:
