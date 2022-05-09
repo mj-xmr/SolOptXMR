@@ -31,85 +31,107 @@ config_geo = sunrise_lib.config_geo
 
 TESTING = False
 #TESTING = True
-# TODO: Extent the prediction to multiple days ahead
 def get_weather(horizon=3):
+    MIN_WEATHER = 0.1
     try:
         print(config_geo.geo.country)
         print(config_geo.geo.city)
 
-        dnow = sunrise_lib.DATE_NOW
-        fname = 'weather-pic-{}-{}-{}.png'.format(dnow.year, dnow.month, dnow.day)
-        png_file = sunrise_lib.DIR_TMP + '/' + fname
-        if not os.path.isfile(png_file):
-            download_weather(png_file)
-        else:
-            print("File " + png_file + " exists.") 
-        
-        im = Image.open(png_file, 'r')
-        width, height = im.size
-        pixel_values = list(im.getdata())
+        dnow = sunrise_lib.DATE_NOW.date().isoformat()
+        dirr = sunrise_lib.DIR_TMP + '/weather-pred/{}/'.format(dnow)
 
-        dic = {}
-        for pix in pixel_values:
-            if pix[0] == 0 and pix[1] == 0 and pix[2] == 0:
-                continue
-            if pix[0] == 255 and pix[1] == 255 and pix[2] == 255:
-                continue
-            if pix in dic:
-                dic[pix] += 1
-            else:
-                dic[pix] = 1
-            #print(pix)
+        path_template = dirr + '/weather-pic-{}.png'
+        if not os.path.isdir(dirr):
+            os.makedirs(dirr)
+            download_weather(path_template, horizon)
+            # TODO: On error: log error and delete the dirr
 
-        pix_yellow = 0
+        #fname = fname_template.format(dnow)
+        #return 0
+        #png_file =
+        #if not os.path.isfile(png_file):
+        #    download_weather(png_file)
+        #else:
+        #    print("File " + png_file + " exists.") 
 
-        for pix in dic:
-            val = dic[pix]
-            if val < 20:
-                continue
-            if pix[0] == 255:
-                pix_yellow = val
-            print(pix, dic[pix])
+        ret = []
+        for ires in range(0, horizon):
+            png_file = path_template.format(get_date_from_now_iso(ires))
+            im = Image.open(png_file, 'r')
+            width, height = im.size
+            pixel_values = list(im.getdata())
 
-        max_yellow = 0.34 # based on '//c.tadst.com/gfx/w/svg/wt-1.svg'
+            dic = {}
+            for pix in pixel_values:
+                if pix[0] == 0 and pix[1] == 0 and pix[2] == 0:
+                    continue
+                if pix[0] == 255 and pix[1] == 255 and pix[2] == 255:
+                    continue
+                if pix in dic:
+                    dic[pix] += 1
+                else:
+                    dic[pix] = 1
+                #print(pix)
 
-        wh = width * height
-        yellow_relat = pix_yellow / wh / max_yellow
-        print("Yellow = ", pix_yellow, yellow_relat * 100)
+            pix_yellow = 0
 
-        #print(page.text)
+            for pix in dic:
+                val = dic[pix]
+                if val < 20:
+                    continue
+                if pix[0] == 255:
+                    pix_yellow = val
+                #print(pix, dic[pix])
 
-        if yellow_relat < 0.1:
-            yellow_relat = 0.1
+            max_yellow = 0.34 # based on '//c.tadst.com/gfx/w/svg/wt-1.svg'
 
-        return round(yellow_relat, 4)
+            wh = width * height
+            yellow_relat = pix_yellow / wh / max_yellow
+            #print("Yellow = ", pix_yellow, yellow_relat * 100)
+
+            #print(page.text)
+
+            if yellow_relat < MIN_WEATHER:
+                yellow_relat = MIN_WEATHER
+
+            ret.append(round(yellow_relat, 3))
+        print("Weather pred:", ret)
+        return ret
     except Exception:
         print(traceback.format_exc())
-        return 0
+        return [MIN_WEATHER] * horizon
 
 # TODO: Create other, alternative implementations
-def download_weather(png_file):
+def download_weather(path_template, horizon):
     url = "https://www.timeanddate.com/weather/{}/{}/ext".format(config_geo.geo.country, config_geo.geo.city)
     print("Calling:")
     print(url)
     page = requests.get(url)
     #print(page)
     soup = BeautifulSoup(page.content, "html.parser")
-    results = soup.find(class_="mtt")
-    img_url = results['src']
-    #print(results.prettify())
-    print(img_url)
+    results = soup.findAll(class_="mtt")
+    assert horizon < len(results)
+    for ires in range(0, horizon):
+        png_file = path_template.format(get_date_from_now_iso(ires))
+        img_url = results[ires]['src']
+        #print(results.prettify())
+        print(img_url)
 
-    #img_url = '//c.tadst.com/gfx/w/svg/wt-33.svg'
-    #img_url = '//c.tadst.com/gfx/w/svg/wt-1.svg'
-    img_url = img_url.replace('//', 'https://')
-    filename = wget.download(img_url, out=sunrise_lib.DIR_TMP)
-    #filename = '/tmp/a/wt-33.svg'
-    print(filename)
-    
-    svg_code = sunrise_lib.read_file(filename)
-    print("Writing to " + png_file)
-    svg2png(bytestring=svg_code, write_to=png_file)
+        #img_url = '//c.tadst.com/gfx/w/svg/wt-33.svg'
+        #img_url = '//c.tadst.com/gfx/w/svg/wt-1.svg'
+        img_url = img_url.replace('//', 'https://')
+        filename = wget.download(img_url, out=sunrise_lib.DIR_TMP)
+        #filename = '/tmp/a/wt-33.svg'
+        print(filename)
+        
+        svg_code = sunrise_lib.read_file(filename)
+        print("Writing to " + png_file)
+        svg2png(bytestring=svg_code, write_to=png_file)
+
+def get_date_from_now_iso(ihorizon):
+    dpred = sunrise_lib.DATE_NOW.date() + datetime.timedelta(days=ihorizon)
+    dpred_iso = dpred.isoformat()
+    return dpred_iso
 
 def test():
     get_weather()    

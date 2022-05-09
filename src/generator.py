@@ -14,6 +14,7 @@ import time
 import traceback
 import pickle
 import numpy as np
+import math
 
 from pytz import timezone
 from matplotlib import pyplot as plt
@@ -90,25 +91,6 @@ def plot_sun(name, elev, bat, usage, show_plots):
     plt.savefig(fout_rel_path)
     if show_plots:
         plt.show()
-
-def proc_data(pos):
-    pos = add_weather(pos)
-    #pos = simul_weather(pos)
-    pos = adj_losses(pos)
-
-    print("Dumping data to:", path_positions_txt)
-    np.savetxt(path_positions_txt, pos[ELEVATION_KEY])
-    
-    return pos
-
-def extr_data(pos):
-    elev = pos[ELEVATION_KEY]
-    return elev
-
-def adj_losses(pos):
-    pos.loc[pos[ELEVATION_KEY] < MIN_POWER, [ELEVATION_KEY]] = MIN_POWER
-    pos.loc[pos[ELEVATION_KEY] > MAX_POWER, [ELEVATION_KEY]] = MAX_POWER
-    return pos
 
 class Computer:
     def __init__(self):
@@ -293,9 +275,38 @@ def simul_weather(pos):
     return pos
 
 def add_weather(pos):
-    # TODO: Limit the calls to the service via caching
     weather = weather_lib.get_weather()
-    pos.loc[:, [ELEVATION_KEY]] *= weather
+    curr_hour = sunrise_lib.DATE_NOW.hour
+    for i in range(0, pos.count()[ELEVATION_KEY]):
+        day = math.floor((i+curr_hour) / 24)
+        if day < len(weather):
+            wday = weather[day]
+        else:
+            wday = weather[-1]
+        pos.at[pos.index[i], ELEVATION_KEY] *= wday
+    return pos
+
+def proc_data(pos, is_simul_weather=False):
+    pos = add_weather(pos)
+    if is_simul_weather:
+        pos = simul_weather(pos)
+    else:
+        pos = add_weather(pos)
+    pos = adj_losses(pos) # TODO: This will be a solar panel parameter
+
+    print("Dumping data to:", path_positions_txt)
+    np.savetxt(path_positions_txt, pos[ELEVATION_KEY])
+    
+    return pos
+
+def extr_data(pos):
+    elev = pos[ELEVATION_KEY]
+    return elev
+
+def adj_losses(pos):
+    # TODO: This will be a solar panel parameter
+    pos.loc[pos[ELEVATION_KEY] < MIN_POWER, [ELEVATION_KEY]] = MIN_POWER
+    pos.loc[pos[ELEVATION_KEY] > MAX_POWER, [ELEVATION_KEY]] = MAX_POWER
     return pos
 
 def run_main(elev, show_plots, battery_charge=0):
@@ -313,7 +324,8 @@ def test(show_plots=False):
     pos = get_sun_positions(start_date, days_horizon)
     #print(pos)
 
-    proc = proc_data(pos)
+    proc = proc_data(pos, True)
+    #proc = proc_data(pos)
     elev = extr_data(proc)
     run_main(elev, show_plots)
 
