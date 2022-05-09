@@ -41,16 +41,16 @@ By default the script perfomrs the predictions 3 days ahead from now, assuming t
 In order to alter the behavior, the main script can be ran with the following example options:
 ```bash
 ./soloptxmr.py \
+--days-horizon 5 \
 --battery-charge 55.2 \
---start-date 2022-02-20T20:22 \
---days-horizon 5
+--start-date 2022-02-20T20:22
 ```
 or equivalently:
 ```bash
 ./soloptxmr.py \
+-d 5 \
 -b 55.2 \
--s "2022-02-20 20:22" \
--d 5
+-s "2022-02-20 20:22"
 ```
 
 ## Configuration
