@@ -34,7 +34,7 @@ def get_config(name):
     os.makedirs(HOME + config.sunrise_lib.DIR_CFG, exist_ok=True)
     path_local = HOME + config.sunrise_lib.DIR_CFG + "/{}.json".format(name)
     if not os.path.isfile(path_local):
-        cfg_template =  'system-cfg/{}-template.json'.format(name)
+        cfg_template =  'src/system-cfg/{}-template.json'.format(name)
         print("Not found: " + path_local)
         print("Copying " + cfg_template + " to " + path_local)
         shutil.copy(cfg_template, path_local)
