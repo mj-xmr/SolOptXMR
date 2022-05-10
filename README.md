@@ -39,7 +39,7 @@ pip install -r requirements.txt # Install Python packages (use this command or i
 ```
 By default the script perfomrs the predictions 3 days ahead from now, assuming the battery charge at its reasonable minimum, set by the `battery.json`.
 
-In order to alter the behavior, the main script can be ran with the following example options:
+In order to alter the default behavior, the main script can be ran with the following example options:
 ```bash
 ./soloptxmr.py \
 --days-horizon 5 \
@@ -55,7 +55,9 @@ or equivalently:
 ```
 
 ## Configuration
-By default, the project will create `$HOME/.config/solar/geo.json`, which is expected to be modified by you, according to the physical location of the solar farm.
+By default, the project will create `$HOME/.config/solar/geo.json`, which is expected to be modified by you, according to the physical location of the solar farm. 
+In the same directory other configuration files will be created with some default reasonable values.
+Currently the system doesn't work very well with the number of mining machines larger than 2.
 
 The variable `city` is meant to deliver weather reports.
 It is possible, that your farm's location is so remote, that the city where it belongs, isn't listed on the weather reports.
