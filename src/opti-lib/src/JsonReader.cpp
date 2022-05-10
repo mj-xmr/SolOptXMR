@@ -130,18 +130,22 @@ EnjoLib::Array<Computer> JsonReader::ReadComputers(bool verbose) const
     return ret;
 }
 
+#include <unistd.h>
+#include <sys/types.h>
+#include <pwd.h>
+
 EnjoLib::Str JsonReader::GetJson(const EnjoLib::Str & fileName) const
 {
-    Str path = fileName;
-    if (not FileUtils().FileExists(path))
-    {
-        path = "../../../" + fileName; /// TODO: This is an ugly mess.
+    const char *homedir = nullptr;
+
+    if ((homedir = getenv("HOME")) == NULL) {
+        homedir = getpwuid(getuid())->pw_dir;
     }
-    if (not FileUtils().FileExists(path))
+    if (homedir == nullptr)
     {
-        path = "../" + fileName;
+        Assertions::Throw("Not found home dir", "JsonReader::GetJson");
     }
-    Ifstream fcomps(path);
+    Ifstream fcomps(Str(homedir) + "/.config/solar/" + fileName);
     const Tokenizer tok;
     const VecStr & lines = tok.GetLines(fcomps);
     Str wholeJson;
