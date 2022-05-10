@@ -25,23 +25,26 @@ from python_json_config import ConfigBuilder
 
 
 HOME = str(Path.home()) + "/" # TODO: move this in config.json too?
-
-def get_geo():
-    os.makedirs(HOME + config.sunrise_lib.DIR_CFG, exist_ok=True)
-    geo_path = HOME + config.sunrise_lib.PATH_JSON_GEO
-    if not os.path.isfile(geo_path):
-        geo_cfg_template = 'geo-template.json'
-        print("Not found: " + geo_path)
-        print("Copying " + geo_cfg_template + " to " + geo_path)
-        shutil.copy(geo_cfg_template, geo_path)
-        
-    config_geo = config_builder.parse_config(geo_path)    
-    return config_geo
+DIR_THIS = os.path.basename(os.path.dirname(os.path.realpath(__file__)))
 
 config_builder = ConfigBuilder()
 config = config_builder.parse_config('config.json')
-config_geo = get_geo()
-config_batteries = config_builder.parse_config('batteries.json')
+
+def get_config(name):
+    os.makedirs(HOME + config.sunrise_lib.DIR_CFG, exist_ok=True)
+    path_local = HOME + config.sunrise_lib.DIR_CFG + "/{}.json".format(name)
+    if not os.path.isfile(path_local):
+        cfg_template =  'src/system-cfg/{}-template.json'.format(name)
+        print("Not found: " + path_local)
+        print("Copying " + cfg_template + " to " + path_local)
+        shutil.copy(cfg_template, path_local)
+        
+    config_local = config_builder.parse_config(path_local)    
+    return config_local
+
+config_geo = get_config('geo')
+config_batteries = get_config('batteries')
+config_computers = get_config('computers')
 
 PROJECT_NAME = "SolOptXMR"
 PROJECT_SUB_NAME = "Solar Optimal mining of XMR"
@@ -109,5 +112,8 @@ def test_stateful_bool():
 def test():
     test_stateful_bool()
 
+if __name__ == "__main__":
+    test()
+    
 #LOCAL_TIMEZONE = datetime.datetime.now(datetime.timezone.utc).astimezone().tzname
 #print(LOCAL_TIMEZONE)
