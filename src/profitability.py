@@ -114,6 +114,7 @@ class POW_Coin:
         # if (end_height - start_height) >= batch_size, send a batch request then
         # evaluate again with start_height = start_height + batch_size
         # if it's false request the last range from start_height to end_height
+        # TODO: handle KeyboardCancellation to save partial data
         results = []
         while (end_height - start_height >= batch_size):
             print(f"Downloading headers from {start_height} to {start_height + batch_size - 1}")
@@ -139,9 +140,9 @@ class POW_Coin:
             print(diff)
             pass
         
-        last_known_height = diff.index[-1]
+        last_known_height = int(diff.index[-1])
         last_known_timestamp = datetime.fromtimestamp(diff["timestamp"].iloc[-1])
-        print(last_known_timestamp)
+        # print("last_known_timestamp", last_known_timestamp)
         
         if height:
             if height > self.height:
@@ -155,18 +156,33 @@ class POW_Coin:
                 diff.to_pickle(path)
             return diff.at[height, "difficulty"]
         elif timestamp:
-            raise NotImplementedError("WIP")
-            if timestamp > datetime.now():
+            dt_timestamp = datetime.fromtimestamp(timestamp)
+            # print("dt_timestamp", dt_timestamp)
+            if dt_timestamp > datetime.now():
                 raise ValueError("Requested timestamp is in the future")
-            if timestamp < datetime.fromtimestamp(0):
+            if dt_timestamp < datetime.fromtimestamp(0):
                 raise ValueError("Cannot have a negative timestamp")
-            if timestamp > last_known_timestamp:  # Need to update
-                target_height = min(self.height, last_known_height + (timestamp - last_known_timestamp) / 120)
+            if dt_timestamp > last_known_timestamp:  # Need to update
+                xmr_blocktime_120_height = 1009827
+                xmr_blocktime_120_ts = 1458748658
+                xmr_blocktime_120_dt = datetime.fromtimestamp(xmr_blocktime_120_ts)
+                if dt_timestamp < xmr_blocktime_120_dt:
+                    # print((dt_timestamp - last_known_timestamp).total_seconds() / 60)
+                    target_height = min(self.height, last_known_height + math.ceil((dt_timestamp - last_known_timestamp).total_seconds() / 60))
+                else:
+                    # print((dt_timestamp - xmr_blocktime_120_dt).total_seconds() / 120)
+                    target_height = min(self.height, xmr_blocktime_120_height + math.ceil((dt_timestamp - xmr_blocktime_120_dt).total_seconds() / 120))
+                # print("target_height", target_height)
                 # diff_new = self._request_headers_batcher(last_known_height + 1, self.height, batch_size=batch_size)
                 diff_new = self._request_headers_batcher(last_known_height + 1, target_height, batch_size=batch_size)
+                diff = pd.concat([diff, diff_new], axis=0)
+                diff.to_pickle(path)
             # search timestamps and find nearest-previous height index
-            height = diff.loc[diff.index.get_loc(timestamp, method="nearest")]
-            return diff.at[height, "difficulty"]
+            # res = diff.loc[diff.index.get_loc(timestamp, method="nearest")]  # get_loc is deprecated
+            res = diff.loc[diff["timestamp"] <= timestamp]
+            # print(res.at[res.last_valid_index(), "timestamp"])
+            # print(res["difficulty"].iloc[-1])
+            return res["difficulty"].iloc[-1]
         else:  # not height and not timestamp:
             raise TypeError("Need a height or a timestamp")
 
@@ -193,7 +209,9 @@ def test():
     # h5 = a._request_headers_batcher(2500000, 2500001, batch_size=1)
     # print(h5)
     # print(a.historical_diff(height=10))
-    print(a.historical_diff(timestamp=datetime.fromtimestamp(1397818225)))
+    print(a.historical_diff(timestamp=1397818225))
+    print(a.historical_diff(timestamp=1447969434))
+    print(a.historical_diff(timestamp=1497818200))
 
 if __name__ == "__main__":
     test()
