@@ -134,7 +134,6 @@ class POW_Coin:
             diff = pd.read_pickle(path)
         except FileNotFoundError:
             print(f"{path} does not exist. Creating...")
-            # diff = self._request_headers_batcher(0, self.height, batch_size=batch_size)
             diff = self._request_headers_batcher(0, height, batch_size=batch_size)
             diff.to_pickle(path)
             print(diff)
@@ -142,7 +141,6 @@ class POW_Coin:
         
         last_known_height = int(diff.index[-1])
         last_known_timestamp = datetime.fromtimestamp(diff["timestamp"].iloc[-1])
-        # print("last_known_timestamp", last_known_timestamp)
         
         if height:
             if height > self.height:
@@ -157,7 +155,6 @@ class POW_Coin:
             return diff.at[height, "difficulty"]
         elif timestamp:
             dt_timestamp = datetime.fromtimestamp(timestamp)
-            # print("dt_timestamp", dt_timestamp)
             if dt_timestamp > datetime.now():
                 raise ValueError("Requested timestamp is in the future")
             if dt_timestamp < datetime.fromtimestamp(0):
@@ -167,21 +164,17 @@ class POW_Coin:
                 xmr_blocktime_120_ts = 1458748658
                 xmr_blocktime_120_dt = datetime.fromtimestamp(xmr_blocktime_120_ts)
                 if dt_timestamp < xmr_blocktime_120_dt:
-                    # print((dt_timestamp - last_known_timestamp).total_seconds() / 60)
+                    print(math.ceil((dt_timestamp - last_known_timestamp).total_seconds() / 60))
                     target_height = min(self.height, last_known_height + math.ceil((dt_timestamp - last_known_timestamp).total_seconds() / 60))
                 else:
-                    # print((dt_timestamp - xmr_blocktime_120_dt).total_seconds() / 120)
+                    print(math.ceil((dt_timestamp - xmr_blocktime_120_dt).total_seconds() / 120))
                     target_height = min(self.height, xmr_blocktime_120_height + math.ceil((dt_timestamp - xmr_blocktime_120_dt).total_seconds() / 120))
-                # print("target_height", target_height)
                 # diff_new = self._request_headers_batcher(last_known_height + 1, self.height, batch_size=batch_size)
                 diff_new = self._request_headers_batcher(last_known_height + 1, target_height, batch_size=batch_size)
                 diff = pd.concat([diff, diff_new], axis=0)
                 diff.to_pickle(path)
             # search timestamps and find nearest-previous height index
-            # res = diff.loc[diff.index.get_loc(timestamp, method="nearest")]  # get_loc is deprecated
             res = diff.loc[diff["timestamp"] <= timestamp]
-            # print(res.at[res.last_valid_index(), "timestamp"])
-            # print(res["difficulty"].iloc[-1])
             return res["difficulty"].iloc[-1]
         else:  # not height and not timestamp:
             raise TypeError("Need a height or a timestamp")
@@ -192,11 +185,17 @@ def test():
     a = POW_Coin(coin.XMR)
     b = a.profitability(fiat.USD, 20000, 200, 0.1)
     print(b)
-    print(a.difficulty)
-    print(a._difficulty_last_fetched)
+    assert type(a.difficulty) == int
+    print("Difficulty:", a.difficulty)
+    a1 = a._difficulty_last_fetched
+    # print(a1)
     time.sleep(2)
-    print(a.height)
-    print(a._height_last_fetched)  # Must match a._difficulty_last_fetched
+    a2 = a._difficulty_last_fetched
+    print(a2)  # Must match a1
+    assert type(a1) == datetime
+    assert a1 == a2
+    print("Height:", a.height)
+    assert type(a.height) == int
     print(a.get_info())
     # h1 = a._request_headers_range(2500000,2500004)
     # h2 = a._request_headers_range(2500003,2500005)
@@ -206,12 +205,12 @@ def test():
     # print(h2)
     # print(h3)
     # print(h4)
-    # h5 = a._request_headers_batcher(2500000, 2500001, batch_size=1)
+    # h5 = a._request_headers_batcher(2500000, 2500001, batch_size=1)  # TODO: assert that it is performed in 2 batches
     # print(h5)
-    # print(a.historical_diff(height=10))
-    print(a.historical_diff(timestamp=1397818225))
-    print(a.historical_diff(timestamp=1447969434))
-    print(a.historical_diff(timestamp=1497818200))
+    assert a.historical_diff(height=10) == 21898
+    assert a.historical_diff(timestamp=1397818225) == 27908  # Block 5
+    assert a.historical_diff(timestamp=1448116661) == 861110356  # Block 835786
+    assert a.historical_diff(timestamp=1497817416) == 9690685763  # Block 1335437
 
 if __name__ == "__main__":
     test()
