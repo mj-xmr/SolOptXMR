@@ -249,6 +249,7 @@ def test():
     # h5 = a._request_headers_batcher(2500000, 2500001, batch_size=1)  # TODO: assert that it is performed in 2 batches
     # print(h5)
     assert a.historical_diff(height=10) == 21898
+    assert a.historical_diff(height=69420) == 237475428
     assert a.historical_diff(timestamp=1397818225) == 27908  # Block 5
     assert a.historical_diff(timestamp=1448116661) == 861110356  # Block 835786
     assert a.historical_diff(timestamp=1497817416) == 9690685763  # Block 1335437
