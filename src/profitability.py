@@ -114,16 +114,27 @@ class POW_Coin:
         # if (end_height - start_height) >= batch_size, send a batch request then
         # evaluate again with start_height = start_height + batch_size
         # if it's false request the last range from start_height to end_height
-        # TODO: handle KeyboardCancellation to save partial data
         results = []
-        while (end_height - start_height >= batch_size):
-            print(f"Downloading headers from {start_height} to {start_height + batch_size - 1}")
-            results.append(self._request_headers_range(start_height, start_height + batch_size - 1))
-            start_height = start_height + batch_size
-        print(f"Downloading headers from {start_height} to {end_height}")
-        results.append(self._request_headers_range(start_height, end_height))
-        result = pd.concat(results, axis=0)
-        return result
+        try:
+            while (end_height - start_height >= batch_size):
+                print(f"Downloading headers from {start_height} to {start_height + batch_size - 1}")
+                results.append(self._request_headers_range(start_height, start_height + batch_size - 1))
+                start_height = start_height + batch_size
+            print(f"Downloading headers from {start_height} to {end_height}")
+            results.append(self._request_headers_range(start_height, end_height))
+        except KeyboardInterrupt:
+            if results == []:
+                print("Aborting block data fetch")
+            else:
+                print("Stopped - saving last data fetched...")
+            try:
+                result = pd.concat(results, axis=0)
+            except ValueError:  # ValueError: No objects to concatenate - if intrerrupting during the first fetch
+                return None
+            else:
+                return result, True  # Ugly, but necessary to exit the while loop in historical_diff
+        else:
+            return result
     
     def historical_diff(self, height:int=None, timestamp:datetime=None, batch_size:int=1000) -> int:
         if height and timestamp:
@@ -150,29 +161,42 @@ class POW_Coin:
             if height > last_known_height:  # Need to update
                 # diff_new = self._request_headers_batcher(last_known_block + 1, self.height, batch_size=batch_size)
                 diff_new = self._request_headers_batcher(last_known_height + 1, height, batch_size=batch_size)
-                diff = pd.concat([diff, diff_new], axis=0)
-                diff.to_pickle(path)
-            return diff.at[height, "difficulty"]
+                if diff_new is not None:
+                    diff = pd.concat([diff, diff_new], axis=0)
+                    diff.to_pickle(path)
+                else:
+                    raise KeyboardInterrupt
+            try:
+                return diff.at[height, "difficulty"]
+            except KeyError:
+                print(f"Block {height} missing from historical data cache!")
         elif timestamp:
             dt_timestamp = datetime.fromtimestamp(timestamp)
             if dt_timestamp > datetime.now():
                 raise ValueError("Requested timestamp is in the future")
             if dt_timestamp < datetime.fromtimestamp(0):
                 raise ValueError("Cannot have a negative timestamp")
-            if dt_timestamp > last_known_timestamp:  # Need to update
+            while dt_timestamp > last_known_timestamp and last_known_height < self.height:  # Need to update
                 xmr_blocktime_120_height = 1009827
                 xmr_blocktime_120_ts = 1458748658
                 xmr_blocktime_120_dt = datetime.fromtimestamp(xmr_blocktime_120_ts)
                 if dt_timestamp < xmr_blocktime_120_dt:
-                    print(math.ceil((dt_timestamp - last_known_timestamp).total_seconds() / 60))
+                    # print(math.ceil((dt_timestamp - last_known_timestamp).total_seconds() / 60))
                     target_height = min(self.height, last_known_height + math.ceil((dt_timestamp - last_known_timestamp).total_seconds() / 60))
                 else:
-                    print(math.ceil((dt_timestamp - xmr_blocktime_120_dt).total_seconds() / 120))
+                    # print(math.ceil((dt_timestamp - xmr_blocktime_120_dt).total_seconds() / 120))
                     target_height = min(self.height, xmr_blocktime_120_height + math.ceil((dt_timestamp - xmr_blocktime_120_dt).total_seconds() / 120))
                 # diff_new = self._request_headers_batcher(last_known_height + 1, self.height, batch_size=batch_size)
-                diff_new = self._request_headers_batcher(last_known_height + 1, target_height, batch_size=batch_size)
-                diff = pd.concat([diff, diff_new], axis=0)
-                diff.to_pickle(path)
+                diff_new, blocked = self._request_headers_batcher(last_known_height + 1, target_height, batch_size=batch_size)
+                if diff_new is not None:
+                    diff = pd.concat([diff, diff_new], axis=0)
+                    diff.to_pickle(path)
+                    if blocked:
+                        raise KeyboardInterrupt
+                    last_known_height = int(diff.index[-1])
+                    last_known_timestamp = datetime.fromtimestamp(diff["timestamp"].iloc[-1])
+                else:
+                    raise KeyboardInterrupt
             # search timestamps and find nearest-previous height index
             res = diff.loc[diff["timestamp"] <= timestamp]
             return res["difficulty"].iloc[-1]
