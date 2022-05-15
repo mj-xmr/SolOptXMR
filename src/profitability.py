@@ -202,6 +202,23 @@ class POW_Coin:
             return res["difficulty"].iloc[-1]
         else:  # not height and not timestamp:
             raise TypeError("Need a height or a timestamp")
+    
+    def check_block_pickle_integrity(self) -> bool:
+        path = f"{DIR_TMP}/diff_{self.coin.name}.pkl"
+        try: # If we have previous saved data, merge with the new data
+            diff:pd.DataFrame = pd.read_pickle(path)
+        except FileNotFoundError:
+            print(f"{path} does not exist. Creating...")
+            return False
+        length, _ = diff.shape
+        last_known_height = int(diff.index[-1])
+        if length == last_known_height + 1:  # Height includes block #0, so off-by-one
+            return True
+        else:
+            print("Block cache contains duplicates!")
+            print("Length:", length)
+            print("Last known height:", last_known_height)
+            return False
 
 
 def test():
@@ -235,6 +252,7 @@ def test():
     assert a.historical_diff(timestamp=1397818225) == 27908  # Block 5
     assert a.historical_diff(timestamp=1448116661) == 861110356  # Block 835786
     assert a.historical_diff(timestamp=1497817416) == 9690685763  # Block 1335437
+    assert a.check_block_pickle_integrity() == True
 
 if __name__ == "__main__":
     test()
