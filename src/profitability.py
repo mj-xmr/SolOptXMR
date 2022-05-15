@@ -110,7 +110,7 @@ class POW_Coin:
         result.set_index("height", inplace=True)
         return result
     
-    def _request_headers_batcher(self, start_height:int, end_height:int, batch_size:int=1000) -> pd.DataFrame:
+    def _request_headers_batcher(self, start_height:int, end_height:int, batch_size:int=1000) -> tuple[pd.DataFrame, bool]:
         # if (end_height - start_height) >= batch_size, send a batch request then
         # evaluate again with start_height = start_height + batch_size
         # if it's false request the last range from start_height to end_height
@@ -130,12 +130,12 @@ class POW_Coin:
             try:
                 result = pd.concat(results, axis=0)
             except ValueError:  # ValueError: No objects to concatenate - if intrerrupting during the first fetch
-                return None
+                return None, True
             else:
                 return result, True  # Ugly, but necessary to exit the while loop in historical_diff
         else:
             result = pd.concat(results, axis=0)
-            return result
+            return result, False
     
     def historical_diff(self, height:int=None, timestamp:datetime=None, batch_size:int=1000) -> int:
         if height and timestamp:
