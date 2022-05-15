@@ -116,11 +116,12 @@ class POW_Coin:
         # if it's false request the last range from start_height to end_height
         results = []
         try:
+            print(f"Downloading headers from {start_height} to {end_height}")
             while (end_height - start_height >= batch_size):
-                print(f"Downloading headers from {start_height} to {start_height + batch_size - 1}")
+                # print(f"Downloading headers from {start_height} to {start_height + batch_size - 1}")
                 results.append(self._request_headers_range(start_height, start_height + batch_size - 1))
                 start_height = start_height + batch_size
-            print(f"Downloading headers from {start_height} to {end_height}")
+            # print(f"Downloading headers from {start_height} to {end_height}")
             results.append(self._request_headers_range(start_height, end_height))
         except KeyboardInterrupt:
             if results == []:
