@@ -148,7 +148,7 @@ class POW_Coin:
             diff = pd.read_pickle(path)
         except FileNotFoundError:
             print(f"{path} does not exist. Creating...")
-            diff = self._request_headers_batcher(0, height, batch_size=batch_size)
+            diff, _ = self._request_headers_batcher(0, height, batch_size=batch_size)
             diff.to_pickle(path)
             print(diff)
             pass
@@ -162,8 +162,8 @@ class POW_Coin:
             if height < 0:
                 raise ValueError("Cannot have a negative height")
             if height > last_known_height:  # Need to update
-                # diff_new = self._request_headers_batcher(last_known_block + 1, self.height, batch_size=batch_size)
-                diff_new = self._request_headers_batcher(last_known_height + 1, height, batch_size=batch_size)
+                # diff_new, _ = self._request_headers_batcher(last_known_block + 1, self.height, batch_size=batch_size)
+                diff_new, _ = self._request_headers_batcher(last_known_height + 1, height, batch_size=batch_size)
                 if diff_new is not None:
                     diff = pd.concat([diff, diff_new], axis=0)
                     diff.to_pickle(path)
@@ -189,7 +189,7 @@ class POW_Coin:
                 else:
                     # print(math.ceil((dt_timestamp - xmr_blocktime_120_dt).total_seconds() / 120))
                     target_height = min(self.height, xmr_blocktime_120_height + math.ceil((dt_timestamp - xmr_blocktime_120_dt).total_seconds() / 120))
-                # diff_new = self._request_headers_batcher(last_known_height + 1, self.height, batch_size=batch_size)
+                # diff_new, blocked = self._request_headers_batcher(last_known_height + 1, self.height, batch_size=batch_size)
                 diff_new, blocked = self._request_headers_batcher(last_known_height + 1, target_height, batch_size=batch_size)
                 if diff_new is not None:
                     diff = pd.concat([diff, diff_new], axis=0)
@@ -249,7 +249,7 @@ def test():
     # print(h2)
     # print(h3)
     # print(h4)
-    # h5 = a._request_headers_batcher(2500000, 2500001, batch_size=1)  # TODO: assert that it is performed in 2 batches
+    # h5, _ = a._request_headers_batcher(2500000, 2500001, batch_size=1)  # TODO: assert that it is performed in 2 batches
     # print(h5)
     assert a.historical_diff(height=10) == 21898
     assert a.historical_diff(height=69420) == 237475428
