@@ -1,5 +1,6 @@
 from kraken import coin, fiat, kraken
 from datetime import date, datetime, timedelta
+from typing import Tuple
 import pandas as pd
 import requests
 import warnings
@@ -110,7 +111,7 @@ class POW_Coin:
         result.set_index("height", inplace=True)
         return result
     
-    def _request_headers_batcher(self, start_height:int, end_height:int, batch_size:int=1000) -> tuple[pd.DataFrame, bool]:
+    def _request_headers_batcher(self, start_height:int, end_height:int, batch_size:int=1000) -> Tuple[pd.DataFrame, bool]:
         # if (end_height - start_height) >= batch_size, send a batch request then
         # evaluate again with start_height = start_height + batch_size
         # if it's false request the last range from start_height to end_height
