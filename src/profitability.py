@@ -134,6 +134,7 @@ class POW_Coin:
             else:
                 return result, True  # Ugly, but necessary to exit the while loop in historical_diff
         else:
+            result = pd.concat(results, axis=0)
             return result
     
     def historical_diff(self, height:int=None, timestamp:datetime=None, batch_size:int=1000) -> int:
