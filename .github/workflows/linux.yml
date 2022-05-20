@@ -54,6 +54,8 @@ jobs:
       run: util/deps-pull.sh
     - name: build & install the unmanaged dependencies
       run: util/deps-build.sh
+    - name: Configure your rig
+      run: util/config.sh
     - name: build
       run: ./ci-default
     - name: run demo

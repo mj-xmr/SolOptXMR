@@ -36,4 +36,5 @@ beautifulsoup4==4.11.1
 wget==3.2
 cairosvg>=0.7.0
 Pillow==9.1.0
-#
+# Geo location
+geocoder>=1.38.1

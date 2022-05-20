@@ -29,6 +29,7 @@ pip install -r requirements.txt # Install Python packages (use this command or i
 ./util/prep-env.sh	# Prepare the environment - downloads example data and creates useful symlinks
 ./util/deps-pull.sh	# Download the maintaned dependencies
 ./util/deps-build.sh	# Build and install the unmanaged dependencies (uses sudo for installation)
+./util/config.sh	# Configure your rig
 ```
 
 ## Building & running
