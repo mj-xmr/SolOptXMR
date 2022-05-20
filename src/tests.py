@@ -7,6 +7,7 @@ import weather_lib
 import profitability
 import generator
 import kraken
+import geolocation
 
 def test():
     modules = []
@@ -18,7 +19,7 @@ def test():
     modules.append(weather_lib)
     modules.append(profitability)
     modules.append(kraken)
-    
+    modules.append(geolocation)
     
     for module in modules:
         module.test()

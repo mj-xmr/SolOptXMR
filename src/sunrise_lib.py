@@ -30,15 +30,20 @@ DIR_THIS = os.path.basename(os.path.dirname(os.path.realpath(__file__)))
 config_builder = ConfigBuilder()
 config = config_builder.parse_config('config.json')
 
-def get_config(name):
+def get_config_path(name):
     os.makedirs(HOME + config.sunrise_lib.DIR_CFG, exist_ok=True)
     path_local = HOME + config.sunrise_lib.DIR_CFG + "/{}.json".format(name)
     if not os.path.isfile(path_local):
-        cfg_template =  'src/system-cfg/{}-template.json'.format(name)
+        cfg_template =  'system-cfg/{}-template.json'.format(name)
+        if not os.path.isfile(cfg_template):
+            cfg_template = "src/" + cfg_template
         print("Not found: " + path_local)
         print("Copying " + cfg_template + " to " + path_local)
         shutil.copy(cfg_template, path_local)
-        
+    return path_local
+
+def get_config(name):
+    path_local = get_config_path(name)
     config_local = config_builder.parse_config(path_local)    
     return config_local
 
