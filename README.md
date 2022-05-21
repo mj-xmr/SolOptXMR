@@ -65,7 +65,7 @@ Inside the `~/.config/solar/arrays.json` it's important to understand, that an a
 Inside the `~/.config/solar/geo.json`, which is expected to be modified by you, according to the physical location of the solar farm, the northern hemisphere and eastern side of globe are represented with positive numbers of Lat / Lon in degrees. Southern hemisphere and western side of globe use negative numbers of Lat / Lon.
 
 The variable `city` is meant to deliver weather reports.
-It is possible, that your farm's location is so remote, that the city where it belongs, isn't listed on the weather reports.
+It is possible, that your farm's location is so remote, that the city where it belongs to, isn't listed on the weather reports.
 In such cases, please enter the nearest largest city, until the script stops complaining.
 
 ### Computers
