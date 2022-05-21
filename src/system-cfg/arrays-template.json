@@ -1,0 +1,18 @@
+{
+    "arrays": [
+    	  {
+    	  	"name" : "South",
+    	  	"count" : 2,
+    	  	"watt_peak" : 200,
+    	  	"surface_tilt" : 85,
+    	  	"surface_azimuth" : 200
+    	  },
+    	  {
+    	  	"name" : "South-West",
+    	  	"count" : 1,
+    	  	"watt_peak" : 200,
+    	  	"surface_tilt" : 85,
+    	  	"surface_azimuth" : 220
+    	  }
+    ]
+}

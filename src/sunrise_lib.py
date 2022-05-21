@@ -50,6 +50,7 @@ def get_config(name):
 config_geo = get_config('geo')
 config_batteries = get_config('batteries')
 config_computers = get_config('computers')
+config_arrays = get_config('arrays')
 
 PROJECT_NAME = "SolOptXMR"
 PROJECT_SUB_NAME = "Solar Optimal mining of XMR"

@@ -49,6 +49,12 @@ TARGET_PRICE = config.generator.TARGET_PRICE
 
 path_positions_txt = f"{PATH_POSITIONS_BASE}.txt"
 
+def get_date_range(start_date, days_horizon):
+    tzstr = sunrise_lib.config_geo.geo.time_zone
+    tz = timezone(tzstr)
+    dti = pd.date_range(start_date, periods=days_horizon * 24, freq="H", tz=tz)
+    return dti
+
 def get_sun_positions(start_date, days_horizon=3, unpickle=True):
     a = datetime.datetime.now()
     path_positions_file_name = f"{PATH_POSITIONS_BASE}-{start_date.year}-{start_date.month}-{start_date.day}-{days_horizon}"
@@ -59,7 +65,7 @@ def get_sun_positions(start_date, days_horizon=3, unpickle=True):
             pos = pickle.load(handle)
             b = datetime.datetime.now()
     else:    
-        dti = pd.date_range(start_date, periods=days_horizon * 24, freq="H")
+        dti = get_date_range(start_date, days_horizon)
         
         pos = pvlib.solarposition.get_solarposition(dti, sunrise_lib.LAT, sunrise_lib.LON)
         b = datetime.datetime.now()
@@ -70,7 +76,71 @@ def get_sun_positions(start_date, days_horizon=3, unpickle=True):
 
     c = b - a
     print("Prepared data in", c.total_seconds(), "s")
+    print(pos)
     return pos
+
+def get_arrays():
+    arrays = []
+    for array in sunrise_lib.config_arrays.arrays:
+        #print("AR", array)
+        for num in range(0, array['count']):
+            arrays.append(array)
+    return arrays
+
+def get_pv_system():
+    array_kwargs = dict(
+        module_parameters=dict(pdc0=1, gamma_pdc=-0.004),
+        temperature_model_parameters=dict(a=-3.56, b=-0.075, deltaT=3)
+    )
+    arrays = []
+    for array in get_arrays():
+        #print("AR", array)
+        array_one = pvlib.pvsystem.Array(pvlib.pvsystem.FixedMount(surface_tilt=array['surface_tilt'], surface_azimuth=array['surface_azimuth']), name=array['name'],
+                   **array_kwargs)
+        arrays.append(array_one)
+    system = pvlib.pvsystem.PVSystem(arrays=arrays, inverter_parameters=dict(pdc0=3))
+    return system
+
+def get_power(start_date, days_horizon=3, unpickle=True):
+    system = get_pv_system()
+    print(system.num_arrays)
+    for array in system.arrays:
+        print(array.mount)
+
+    loc = pvlib.location.Location(sunrise_lib.LAT, sunrise_lib.LON)
+    mc = pvlib.modelchain.ModelChain(system, loc, aoi_model='physical',
+                           spectral_model='no_loss')
+
+
+    dti = get_date_range(start_date, days_horizon)
+    #times = pd.date_range('2019-06-01 03:00', '2019-06-01 20:00', freq='5min',
+    #                  tz='Etc/GMT+1')
+    weather = loc.get_clearsky(dti)
+    mc.run_model(weather)
+
+    watt_peak = get_arrays()[0]['watt_peak'] # TODO: assuming each panel uses the same Wp
+    watt = mc.results.ac * watt_peak * 0.8 # TODO: damping the result by 20%
+    #watt.columns = ['Watt']
+    #print("Watt")
+    #print(watt)
+
+    #plt.plot(watt)
+    #plt.show()
+    
+    plot = False
+    if plot:
+        fig, ax = plt.subplots()
+        for array, pdc, array_internal in zip(system.arrays, mc.results.dc, get_arrays()):
+            pdc.plot(label=f'{array.name}')            
+        mc.results.ac.plot(label='Inverter')
+        plt.ylabel('System Output')
+        plt.grid()
+        plt.legend()
+        plt.show()
+
+    return watt
+
+    
 
 def plot_sun(name, elev, bat, usage, show_plots):
     #print(elev)
@@ -268,34 +338,37 @@ def list_to_pd(listt, df):
     return pd.DataFrame(listt, index=df.index.copy())
 
 def simul_weather(pos):
-    pos.loc[::5, [ELEVATION_KEY]] *= 0.6
-    pos.loc[::3, [ELEVATION_KEY]] *= 0.8
-    pos.loc[::8, [ELEVATION_KEY]] *= 0.3
+    pos[::5] *= 0.6
+    pos[::3] *= 0.8
+    pos[::8] *= 0.3
 
     return pos
 
-def add_weather(pos, horizon):
+def add_weather(elev, horizon):
+    #elev = elev[0, :].to_list()
     print("hori", horizon)
     weather = weather_lib.get_weather(horizon)
     curr_hour = sunrise_lib.DATE_NOW.hour
-    for i in range(0, pos.count()[ELEVATION_KEY]):
+    for i in range(0, len(elev)):
         day = math.floor((i+curr_hour) / 24)
         if day < len(weather):
             wday = weather[day]
         else:
             wday = weather[-1]
-        pos.at[pos.index[i], ELEVATION_KEY] *= wday
-    return pos
+        elev.at[elev.index[i]] *= wday
+        #elev.iloc[i,0] *= wday
+        #print(elev.iloc[i,0])
+    return elev
 
-def proc_data(pos, is_simul_weather=False, horizon=0):
+def proc_data(elev, is_simul_weather=False, horizon=0):
     if is_simul_weather:
-        pos = simul_weather(pos)
+        pos = simul_weather(elev)
     else:
-        pos = add_weather(pos, horizon)
+        pos = add_weather(elev, horizon)
     pos = adj_losses(pos) # TODO: This will be a solar panel parameter
 
     print("Dumping data to:", path_positions_txt)
-    np.savetxt(path_positions_txt, pos[ELEVATION_KEY])
+    np.savetxt(path_positions_txt, elev)
     
     return pos
 
@@ -305,8 +378,10 @@ def extr_data(pos):
 
 def adj_losses(pos):
     # TODO: This will be a solar panel parameter
-    pos.loc[pos[ELEVATION_KEY] < MIN_POWER, [ELEVATION_KEY]] = MIN_POWER
-    pos.loc[pos[ELEVATION_KEY] > MAX_POWER, [ELEVATION_KEY]] = MAX_POWER
+    #pos.loc[pos[ELEVATION_KEY] < MIN_POWER, [ELEVATION_KEY]] = MIN_POWER
+    #pos.loc[pos[ELEVATION_KEY] > MAX_POWER, [ELEVATION_KEY]] = MAX_POWER
+    #pos.loc[pos.iloc[0] < MIN_POWER, pos.iloc[0]] = MIN_POWER
+    #pos.loc[pos[:] > MAX_POWER, 0] = MAX_POWER
     return pos
 
 def run_main(elev, show_plots, battery_charge=0, horizon=0):
@@ -321,13 +396,16 @@ def run_algo(elev, show_plots, algo, battery_charge, horizon):
 def test(show_plots=False):
     start_date = datetime.datetime(2020, 1, 1)
     days_horizon = 30 * 9
-    pos = get_sun_positions(start_date, days_horizon)
-    #print(pos)
+    #pos = get_sun_positions(start_date, days_horizon)
+    elev = get_power(start_date, days_horizon)
+    #print(elev)
 
-    proc = proc_data(pos, True)
-    #proc = proc_data(pos)
-    elev = extr_data(proc)
-    run_main(elev, show_plots)
+    #elev = extr_data(pos)
+    
+    #proc = proc_data(elev, True)
+    proc = proc_data(elev, False, 3)
+    #
+    #run_main(proc, show_plots)
 
 if __name__ == "__main__":
     test(True)
