@@ -25,12 +25,21 @@ When in doubt, please view their contents with `cat` for an objective assessment
 ```bash
 git clone --recursive https://github.com/mj-xmr/SolOptXMR.git # Clone this repo (assuming it's not a fork)
 cd SolOptXMR		# Enter the cloned repo's dir
-pip install -r requirements.txt # Install Python packages (use this command or its fitting alternative) 
+pip install -r requirements.txt # Install Python packages (either use this command or its fitting alternative) 
 ./util/prep-env.sh	# Prepare the environment - downloads example data and creates useful symlinks
 ./util/deps-pull.sh	# Download the maintaned dependencies
 ./util/deps-build.sh	# Build and install the unmanaged dependencies (uses sudo for installation)
 ./util/config.sh	# Configure your rig
 ```
+
+## Configuring
+After running the `./util/config.sh` script, you'll be presented with paths to configuration scripts, that have just been copied to your `~/.config` directory. You're meant to adjust them to your specifics.
+
+### Arrays
+Inside the `~/.config/solar/arrays.json` it's important to understand, that an array's parameter `surface_tilt` accepts degrees and 0 means laying flat horizontally on a roof, while 90 means hanging flat vertically on a wall. `surface_azimuth` uses 0 as north, 90 as east, 180 as south and 270 as west.
+
+### Geo
+Northern hemisphere and eastern side of globe are represented with positive numbers of Lat / Lon in degrees. Southern hemisphere and western side of globe use negative numbers of Lat / Lon.
 
 ## Building & running
 ```bash
