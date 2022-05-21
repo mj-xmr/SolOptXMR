@@ -81,12 +81,12 @@ def run_main(elev, show_plots, battery_charge, horizon):
 
 def main(args):
     start_date = dateutil.parser.parse(args.start_date)
-    pos = generator.get_sun_positions(start_date, args.days_horizon, unpickle=False)
+    elev = generator.get_power(start_date, args.days_horizon, unpickle=False)
     #print(pos)
     show_plots = True
     #print('hori', args.days_horizon)
-    proc = generator.proc_data(pos, False, args.days_horizon)
-    elev = generator.extr_data(proc)
+    elev = generator.proc_data(elev, False, args.days_horizon)
+    #elev = generator.extr_data(proc)
     print(elev)
     run_main(elev, show_plots, args.battery_charge, args.days_horizon)
 

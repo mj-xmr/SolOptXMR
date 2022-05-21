@@ -68,6 +68,10 @@ double BatterySimulation::iter_get_load(double inp, double out, double hours)
         //out = 0; // dangerous
     }
     double discharge = hours * pars.DISCHARGE_PER_HOUR_PERCENT / 100.0 * load;
+    if (inp < 0)
+    {
+        inp = 0;
+    }
     double balance = inp - out - discharge;
     double change = balance * pars.MUL_POWER_2_CAPACITY;
     if (change > pars.MAX_DISCHARGE_AMP)
