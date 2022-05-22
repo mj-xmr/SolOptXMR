@@ -185,8 +185,25 @@ void OptimizerEnProfit::RandomSearch()
     PrintSolution(binarBest);
 }
 
+#include <iostream>
+#include <iomanip>
+#include <chrono>
+#include <ctime>
+#include <Ios/Osstream.hpp>
+
+static int GetCurrentHour()
+{
+    std::time_t t = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+    std::tm ltime;
+    localtime_r(&t, &ltime);
+    Osstream oss;
+    oss.OStr() << std::put_time(&ltime, "%H");
+    return CharManipulations().ToInt(oss.str());
+}
+
 void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat) const
 {
+    const int currHour = GetCurrentHour();
     OptiSubjectEnProfit osub(m_dataModel);
     osub.GetVerbose(bestMat, true);
     for (int i = 0; i < bestMat.size(); ++i)
@@ -213,9 +230,10 @@ void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat) const
         const int horizonHours = m_dataModel.GetHorizonHours();
         for (int i = 1; i < horizonHours; ++i)
         {
-            const int hour = i % HOURS_IN_DAY;
-            const int day  = GMat().round(i / static_cast<double>(HOURS_IN_DAY));
-            const int dayPrev  = GMat().round((i-1) / static_cast<double>(HOURS_IN_DAY));
+            const int ihour = i + currHour;
+            const int hour = ihour % HOURS_IN_DAY;
+            const int day  = GMat().round(ihour / static_cast<double>(HOURS_IN_DAY));
+            const int dayPrev  = GMat().round((ihour-1) / static_cast<double>(HOURS_IN_DAY));
             if (day != dayPrev)
             {
                 //LOG << Nl;
@@ -232,8 +250,8 @@ void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat) const
             {
                 if (not onCurr) // Switch off
                 {
-                    const int hourPrev = (i - 1) % HOURS_IN_DAY;
-                    LOG << "day " << lastDayOn << ", hour " << lastHourOn << "-" << hourPrev << Nl;
+                    const int hourPrev = (ihour - 1) % HOURS_IN_DAY;
+                    LOG << "day " << lastDayOn << ", hour " << lastHourOn << "-" << hourPrev<< Nl;
                     lastHourOn = -1;
                 }
                 else if (i == horizonHours - 1)
