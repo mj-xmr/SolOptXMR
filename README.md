@@ -38,7 +38,7 @@ pip install -r requirements.txt # Install Python packages (either use this comma
 ./soloptxmr.py        # Run the prediction with default parameters  
 ./soloptxmr.py --help # Print all the available options 
 ```
-By default the script perfomrs the predictions 3 days ahead from now, assuming the battery charge at its reasonable minimum, set by the `battery.json`.
+By default the script performs the predictions 3 days ahead from now, assuming the battery charge at its reasonable minimum, set by the `battery.json`.
 
 In order to alter the default behavior, the main script can be ran with the following example options:
 ```bash
