@@ -13,11 +13,11 @@ EnjoLib::Str BatteryParams::Print() const
     return ""; /// TODO
 }
 
-double BatteryParams::GetMulPowerToCapacity(double voltage) const
+double BatteryParams::GetMulPowerToCapacity(double systemVoltage) const
 {
-    if (voltage <= 0)
+    if (systemVoltage <= 0)
     {
         EnjoLib::Assertions::Throw("Voltage <= 0", "BatteryParams::GetMulPowerToCapacity");
     }
-    return 1 / voltage;
+    return 1 / systemVoltage;
 }

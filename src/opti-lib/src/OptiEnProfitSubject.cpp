@@ -84,7 +84,7 @@ double BatterySimulation::iter_get_load(double inp, double out, double hours)
     }
     //#print(change)
     load += change;
-
+    //LOGL << "Cap " <<  pars.MAX_CAPACITY_AMPH << Nl;
     if (load > pars.MAX_CAPACITY_AMPH)
     {
         load = pars.MAX_CAPACITY_AMPH;

@@ -46,14 +46,14 @@ EnjoLib::Array<BatteryParams> JsonReader::ReadBatteries(bool verbose) const
         }
         if (count == 0)
         {
-            continue; // Disabled computer, yet still registered.
+            continue; // Disabled, yet still registered.
         }
-        ret.push_back(batObj);
         if (count > 1)
         {
             batObj.MAX_CAPACITY_AMPH *= count;
             batObj.MIN_LOAD_AMPH *= count;
         }
+        ret.push_back(batObj);
     }
     if (verbose)
     {
@@ -102,7 +102,7 @@ EnjoLib::Array<Computer> JsonReader::ReadComputers(bool verbose) const
         }
         if (count == 0)
         {
-            continue; // Disabled computer, yet still registered.
+            continue; // Disabled, yet still registered.
         }
         ret.push_back(compObj);
         if (count > 1)

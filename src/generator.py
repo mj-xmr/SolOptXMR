@@ -38,8 +38,8 @@ MIN_POWER = 0
 # Not changable: solar system params
 MAX_POWER = config.generator.MAX_POWER
 MAX_USAGE = battery['max_discharge_amp']
-MIN_CAPACITY = battery['min_load_amph']
-MAX_CAPACITY = battery['max_capacity_amph']
+MIN_CAPACITY = battery['min_load_amph'] * battery['count']
+MAX_CAPACITY = battery['max_capacity_amph'] * battery['count']
 MUL_POWER_2_CAPACITY = config.generator.MUL_POWER_2_CAPACITY
 T_DELTA_HOURS = config.generator.T_DELTA_HOURS
 DATE_NOW = sunrise_lib.DATE_NOW
