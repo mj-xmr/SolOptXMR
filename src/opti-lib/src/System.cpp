@@ -13,7 +13,20 @@ EnjoLib::Str System::Print() const
 
     oss << "---------" << Nl;
     //oss << name << Nl;
-    oss << voltage << "V " << type << Nl;
+    oss << voltage << "V\n";
+    if (generating)
+    {
+        oss << "Generating; ";
+    }
+    if (buying)
+    {
+        oss << "Buying; ";
+    }
+    if (selling)
+    {
+        oss << "Selling; ";
+    }
+    
 
     return oss.str();
 }

@@ -1,4 +1,7 @@
 {
-	"type" : "island",
-	"voltage" : 12
+	"voltage" : 12,
+	"generate" : true,
+	"buy" : false,
+	"sell" : false
 }
+
