@@ -32,8 +32,9 @@ OptiSubjectEnProfit::~OptiSubjectEnProfit()
 
 struct BatterySimulation
 {
-    BatterySimulation(const ConfigSol & confSol, const BatteryParams & batPars);
+    BatterySimulation(const ConfigSol & confSol, const BatteryParams & batPars, const System & sys);
     const BatteryParams & pars;
+    const System & m_sys;
     //state:
     //double load = MIN_LOAD * 0.95;
     double load = 0;
@@ -48,8 +49,9 @@ struct BatterySimulation
     double iter_get_load(double inp, double out, double hours=T_DELTA_HOURS);
 };
 
-BatterySimulation::BatterySimulation(const ConfigSol & confSol, const BatteryParams & batPars)
+BatterySimulation::BatterySimulation(const ConfigSol & confSol, const BatteryParams & batPars, const System & sys)
 : pars(batPars)
+, m_sys(sys)
 {
     if (confSol.BATTERY_CHARGE > 0)
     {
@@ -73,7 +75,7 @@ double BatterySimulation::iter_get_load(double inp, double out, double hours)
         inp = 0;
     }
     double balance = inp - out - discharge;
-    double change = balance * pars.MUL_POWER_2_CAPACITY;
+    double change = balance * pars.GetMulPowerToCapacity(m_sys.voltage);
     if (change > pars.MAX_DISCHARGE_AMP)
     {
         //if out > pars.MAX_CAPACITY_AMPH: # A valid possibility
@@ -117,7 +119,7 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
     const size_t n = dataMat.at(0).size();
     const EnjoLib::Array<Computer> & comps = m_dataModel.GetComputers();
 
-    BatterySimulation battery(m_dataModel.GetConf(), m_dataModel.GetBatPars());
+    BatterySimulation battery(m_dataModel.GetConf(), m_dataModel.GetBatPars(), m_dataModel.GetSystem());
     double penalitySum = 0;
 
     SimResult simResult{};
@@ -166,7 +168,7 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
                 LOGL << ": New goal = " << sumAdjusted << ", m_sumMax = " << m_sumMax << ", penality = " << penality << ", after " << 0 << " iterations\n";
 
                 SimResult resVisual{};
-                BatterySimulation batteryCopy(m_dataModel.GetConf(), m_dataModel.GetBatPars());
+                BatterySimulation batteryCopy(m_dataModel.GetConf(), m_dataModel.GetBatPars(), m_dataModel.GetSystem());
                 VecD hashes, loads, penalityUnder, input, prod, hashrateBonus, usages;
                 for (int i = 0; i < n; ++i)
                 {
@@ -177,7 +179,7 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
                     const SimResult & resLocal = Simulate(i, dataMat, bonusMul);
                     resVisual.Add(resLocal);
                     const double load = batteryCopy.iter_get_load(m_dataModel.GetPowerProduction(i), resLocal.sumPowerUsage);
-                    usages.Add(resLocal.sumPowerUsage * batteryCopy.pars.MUL_POWER_2_CAPACITY);
+                    usages.Add(resLocal.sumPowerUsage * batteryCopy.pars.GetMulPowerToCapacity(m_dataModel.GetSystem().voltage));
                     //input.Add(val);
                     loads.Add(load);
                     prod.Add(m_dataModel.GetPowerProduction(i));

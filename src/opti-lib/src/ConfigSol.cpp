@@ -33,6 +33,7 @@ void ConfigSol::RegisterAndReadInts(EnjoLib::Istream & f)
 {
     RegisterAndReadInt (f, DAYS_HORIZON, 3);
     RegisterAndReadInt (f, DAYS_START, 0);
+    //RegisterAndReadInt (f, SYSTEM_VOLTAGE, 12);
 }
 void ConfigSol::RegisterAndReadFloats(EnjoLib::Istream & f)
 {
@@ -40,6 +41,7 @@ void ConfigSol::RegisterAndReadFloats(EnjoLib::Istream & f)
 }
 void ConfigSol::RegisterAndReadStrs(EnjoLib::Istream & f)
 {
+    //RegisterAndReadStr(f, SYSTEM_TYPE, "island");
 }
 void ConfigSol::UpdateFromOther(const ConfigSol & cfgTSCmdLine)
 {

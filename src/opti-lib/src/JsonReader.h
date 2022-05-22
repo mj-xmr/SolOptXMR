@@ -3,6 +3,7 @@
 
 #include "Computer.h"
 #include "BatteryParams.h"
+#include "System.h"
 
 #include <Util/Str.hpp>
 #include <Template/Array.hpp>
@@ -14,6 +15,7 @@ public:
 	virtual ~JsonReader();
 	EnjoLib::Array<Computer>      ReadComputers(bool verbose = false) const;
 	EnjoLib::Array<BatteryParams> ReadBatteries(bool verbose = false) const;
+	System ReadSystem(bool verbose = false) const;
 
 	EnjoLib::Str GetJson(const EnjoLib::Str & fileName) const;
 protected:

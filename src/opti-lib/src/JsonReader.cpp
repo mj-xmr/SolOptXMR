@@ -130,6 +130,20 @@ EnjoLib::Array<Computer> JsonReader::ReadComputers(bool verbose) const
     return ret;
 }
 
+System JsonReader::ReadSystem(bool verbose) const
+{
+    System ret;
+    const Str & wholeJson = GetJson("system.json");
+    const CharManipulations cman;
+    rapidjson::Document d;
+    d.Parse(wholeJson.c_str());
+    
+    ret.voltage = d["voltage"].GetInt();
+    ret.type    = d["type"].GetString();
+    
+    return ret;
+}
+
 #include <unistd.h>
 #include <sys/types.h>
 #include <pwd.h>

@@ -35,8 +35,8 @@ def get_weather(horizon=3):
     assert horizon > 0
     MIN_WEATHER = 0.1
     try:
-        print(config_geo.geo.country)
-        print(config_geo.geo.city)
+        #print(config_geo.geo.country)
+        #print(config_geo.geo.city)
 
         dnow = sunrise_lib.DATE_NOW.date().isoformat()
         dirr = sunrise_lib.DIR_TMP + '/weather-pred/{}/'.format(dnow)

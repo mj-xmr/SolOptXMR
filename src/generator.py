@@ -28,7 +28,8 @@ from python_json_config import ConfigBuilder
 
 config = sunrise_lib.config
 config_batteries = sunrise_lib.config_batteries
-battery = config_batteries.batteries[0]
+config_system = sunrise_lib.config_system
+battery = config_batteries.batteries[0] # TODO: extend
 
 ELEVATION_KEY = config.generator.ELEVATION_KEY
 BUILD_DIR='build/'  # TODO: Config
@@ -94,7 +95,6 @@ def get_pv_system():
     )
     arrays = []
     for array in get_arrays():
-        #print("AR", array)
         array_one = pvlib.pvsystem.Array(pvlib.pvsystem.FixedMount(surface_tilt=array['surface_tilt'], surface_azimuth=array['surface_azimuth']), name=array['name'],
                    **array_kwargs)
         arrays.append(array_one)
@@ -146,7 +146,8 @@ def plot_sun(name, elev, bat, usage, show_plots):
     #print(elev)
     plt.title("Algo: " + name)
     plt.xlabel("Time")
-    plt.ylabel("Energy")
+    plt.xticks(rotation=25, ha='right')
+    plt.ylabel("Power [W] [Wh] & capacity [Ah]")
     plt.plot(list_to_pd([MAX_CAPACITY]   * len(elev), elev))
     plt.plot(bat,   'g')
     plt.plot(list_to_pd([MIN_CAPACITY]   * len(elev), elev))
