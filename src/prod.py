@@ -29,6 +29,7 @@ from python_json_config import ConfigBuilder
 DATE_NOW_STR = sunrise_lib.DATE_NOW.isoformat()
 DEFAULT_HORIZON_DAYS = 3
 DEFAULT_BATTERY_STATE = 0
+config_system = sunrise_lib.config_system
 
 def get_args():
     parser = argparse.ArgumentParser()
@@ -51,6 +52,9 @@ class BatterySimulatorCpp(generator.BatterySimulator):
         cmd = path
         cmd += " --battery-charge {}".format(battery_charge)
         cmd += " --horizon-days {}".format(horizon)
+        #cmd += " --system-type {}".format(config_system.type)
+        #cmd += " --system-voltage {}".format(config_system.voltage)
+        
         
         result = sunrise_lib.run_cmd(cmd, True)
         if result.returncode != 0:

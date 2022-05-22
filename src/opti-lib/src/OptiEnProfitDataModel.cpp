@@ -23,6 +23,7 @@ OptiEnProfitDataModel::OptiEnProfitDataModel(const ConfigSol & confSol, int hori
 , m_horizonHours(horizonDays * 24)
 , m_statingPoint(statingPoint)
 , m_comps(JsonReader().ReadComputers())
+, m_sys(JsonReader().ReadSystem())
 , m_batPars(JsonReader().ReadBatteries().at(0))
 {
     const char * fname = "/tmp/solar_pos.txt";

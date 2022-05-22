@@ -46,14 +46,14 @@ EnjoLib::Array<BatteryParams> JsonReader::ReadBatteries(bool verbose) const
         }
         if (count == 0)
         {
-            continue; // Disabled computer, yet still registered.
+            continue; // Disabled, yet still registered.
         }
-        ret.push_back(batObj);
         if (count > 1)
         {
             batObj.MAX_CAPACITY_AMPH *= count;
             batObj.MIN_LOAD_AMPH *= count;
         }
+        ret.push_back(batObj);
     }
     if (verbose)
     {
@@ -102,7 +102,7 @@ EnjoLib::Array<Computer> JsonReader::ReadComputers(bool verbose) const
         }
         if (count == 0)
         {
-            continue; // Disabled computer, yet still registered.
+            continue; // Disabled, yet still registered.
         }
         ret.push_back(compObj);
         if (count > 1)
@@ -127,6 +127,20 @@ EnjoLib::Array<Computer> JsonReader::ReadComputers(bool verbose) const
             LOG << comp.Print() << Nl;
         }
     }
+    return ret;
+}
+
+System JsonReader::ReadSystem(bool verbose) const
+{
+    System ret;
+    const Str & wholeJson = GetJson("system.json");
+    const CharManipulations cman;
+    rapidjson::Document d;
+    d.Parse(wholeJson.c_str());
+    
+    ret.voltage = d["voltage"].GetInt();
+    ret.type    = d["type"].GetString();
+    
     return ret;
 }
 
