@@ -138,8 +138,10 @@ System JsonReader::ReadSystem(bool verbose) const
     rapidjson::Document d;
     d.Parse(wholeJson.c_str());
     
-    ret.voltage = d["voltage"].GetInt();
-    ret.type    = d["type"].GetString();
+    ret.voltage     = d["voltage"].GetInt();
+    ret.generating  = d["generate"].GetBool();
+    ret.buying      = d["buy"].GetBool();
+    ret.selling     = d["sell"].GetBool();
     
     return ret;
 }

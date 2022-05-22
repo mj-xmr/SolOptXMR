@@ -10,7 +10,9 @@ public:
 	virtual ~System();
 
 	int voltage = 12;
-    EnjoLib::Str type;
+    bool generating = true;
+    bool selling = false;
+    bool buying = false;
     
     EnjoLib::Str Print() const;
 	
