@@ -12,6 +12,7 @@
 #include "OptiEnProfitSubject.h"
 #include "OptiEnProfitDataModel.h"
 #include "GnuplotIOSWrap.h"
+#include "SolUtil.h"
 
 #include <Math/GeneralMath.hpp>
 #include <Util/ProgressMonit.hpp>
@@ -185,25 +186,9 @@ void OptimizerEnProfit::RandomSearch()
     PrintSolution(binarBest);
 }
 
-#include <iostream>
-#include <iomanip>
-#include <chrono>
-#include <ctime>
-#include <Ios/Osstream.hpp>
-
-static int GetCurrentHour()
-{
-    std::time_t t = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-    std::tm ltime;
-    localtime_r(&t, &ltime);
-    Osstream oss;
-    oss.OStr() << std::put_time(&ltime, "%H");
-    return CharManipulations().ToInt(oss.str());
-}
-
 void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat) const
 {
-    const int currHour = GetCurrentHour();
+    const int currHour = SolUtil().GetCurrentHour();
     OptiSubjectEnProfit osub(m_dataModel);
     osub.GetVerbose(bestMat, true);
     for (int i = 0; i < bestMat.size(); ++i)
