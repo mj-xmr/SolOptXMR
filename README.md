@@ -56,13 +56,16 @@ or equivalently:
 ```
 
 ## Configuration
-After running the `./util/config.sh` script, you'll be presented with paths to configuration scripts, that have just been copied to your `~/.config` directory. You're meant to adjust them to your specifics.
+After running the `./util/config.sh` script, you'll be presented with paths to configuration scripts, that have just been copied to your `~/.config` directory. 
+You're meant to adjust them to match your specifics.
 
 ### Arrays
-Inside the `~/.config/solar/arrays.json` it's important to understand, that an array's parameter `surface_tilt` accepts degrees and 0 means laying flat horizontally on a roof, while 90 means hanging flat vertically on a wall. `surface_azimuth` uses 0 as north, 90 as east, 180 as south and 270 as west.
+Inside the `~/.config/solar/arrays.json` it's important to understand, that an array's parameter `surface_tilt` accepts degrees and 0 means laying flat horizontally on a roof, while 90 means hanging flat vertically on a wall. 
+`surface_azimuth` uses 0 as north, 90 as east, 180 as south and 270 as west.
 
 ### Geo
-Inside the `~/.config/solar/geo.json`, which is expected to be modified by you, according to the physical location of the solar farm, the northern hemisphere and eastern side of globe are represented with positive numbers of Lat / Lon in degrees. Southern hemisphere and western side of globe use negative numbers of Lat / Lon.
+Inside the `~/.config/solar/geo.json`, which is expected to be modified by you, according to the physical location of the solar farm, the northern hemisphere and eastern side of globe are represented with positive numbers of Lat / Lon in degrees. 
+Southern hemisphere and western side of globe use negative numbers of Lat / Lon.
 
 The variable `city` is meant to deliver weather reports.
 It is possible, that your farm's location is so remote, that the city where it belongs to, isn't listed on the weather reports.
