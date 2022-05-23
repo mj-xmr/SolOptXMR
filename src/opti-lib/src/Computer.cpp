@@ -14,7 +14,8 @@ double Computer::GetHashRate(double freqGhz) const
 }
 double Computer::GetUsage(double freqGhz) const
 {
-    return cores * freqGhz * wattPerCore;
+    const double idle = freqGhz > 0 ? wattIdle : 0;
+    return cores * freqGhz * wattPerCore + idle;
 }
 
 EnjoLib::Str Computer::Print() const

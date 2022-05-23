@@ -31,6 +31,7 @@ DEFAULT_HORIZON_DAYS = 3
 DEFAULT_BATTERY_STATE = 0
 config_system = sunrise_lib.config_system
 FILE_HASHRATE_BONUS = "/hashrate_bonus_ma.dat"
+FILE_HASHRATE_SEASONAL = "/seasonal.dat"
 FILE_HASHRATE_BONUS_SINGLE = "/hashrate_bonus_ma_single.dat"
 
 def get_args():
@@ -101,14 +102,30 @@ def get_usage_prod(args, available, battery_charge, horizon):
     
     return "Production", hashrates, usage, loads, bat_sim, incomes, costs, effs
 
+def plot_single(ax, data, days):
+    length = 24*days
+    ax.plot(data[-length:])
+    ax.plot([0] * length, color='y')
+    for d in range(0, days):
+        ax.axvline(x=d * 24, color='g')
+    ax.grid()
+
 def plot_hashrates():
     if args.in_data and args.out_dir:
-        bonus = np.loadtxt(args.out_dir + FILE_HASHRATE_BONUS)
-        plt.title("Network difficulty rel. to its moving average")
-        plt.xlabel("Time [h]")
-        plt.ylabel("Rel. network diff.")
-        plt.plot(bonus[-250:])
-        plt.grid()
+        fig, (ax1, ax2) = plt.subplots(2, 1)
+        
+        bonusMA = np.loadtxt(args.out_dir + FILE_HASHRATE_BONUS)
+        ax1.set_title("Network difficulty rel. to its moving average")
+        ax1.set_xlabel("Time [h]")
+        ax1.set_ylabel("Rel. network diff.")
+        plot_single(ax1, bonusMA, 8)
+        
+        bonus = np.loadtxt(args.out_dir + FILE_HASHRATE_SEASONAL)
+        ax2.set_title("Network difficulty seasonal")
+        ax2.set_xlabel("Time [h]")
+        ax2.set_ylabel("Network diff. seasonal")
+        plot_single(ax2, bonus, 4)
+        
         plt.show()
         
 
