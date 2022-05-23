@@ -2,9 +2,9 @@
     "habits": [
     	  {
     	  	"name" : "Partner's laptop",
-    	  	"count" : 2,
+    	  	"count" : 1,
     	  	"watt" : 8,
-    	  	"watt_asleep" : 1,
+    	  	"watt_asleep" : 0.9,
     	  	"duration_hours" : 11,
     	  	"schedule" : "0 8 * * *"
     	  },
@@ -12,7 +12,7 @@
     	  	"name" : "Desktop screen",
     	  	"count" : 2,
     	  	"watt" : 15,
-    	  	"watt_asleep" : 1,
+    	  	"watt_asleep" : 0.6,
     	  	"duration_hours" : 11,
     	  	"schedule" : "0 8 * * *"
     	  },
