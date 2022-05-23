@@ -129,7 +129,7 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
         //LOG << "i = " << i << ", val = " << inp[i] << Nl;
         //if (not battery.initial_load)
         //if (false)
-        const SimResult & resLocal = Simulate(i, dataMat, bonusMul);
+        const SimResult & resLocal = Simulate(i, dataMat, bonusMul, m_dataModel.GetConf().HASHRATE_BONUS);
         simResult.Add(resLocal);
         const double load = battery.iter_get_load(m_dataModel.GetPowerProduction(i), resLocal.sumPowerUsage);
         //const double pentalityUndervolted = load < 0 ? GMat().Fabs(load * load * load) : 0;
@@ -176,7 +176,7 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
                     //LOG << "i = " << i << ", val = " << inp[i] << Nl;
                     //if (not battery.initial_load)
                     //if (false)
-                    const SimResult & resLocal = Simulate(i, dataMat, bonusMul);
+                    const SimResult & resLocal = Simulate(i, dataMat, bonusMul, m_dataModel.GetConf().HASHRATE_BONUS);
                     resVisual.Add(resLocal);
                     const double load = batteryCopy.iter_get_load(m_dataModel.GetPowerProduction(i), resLocal.sumPowerUsage);
                     usages.Add(resLocal.sumPowerUsage * batteryCopy.pars.GetMulPowerToCapacity(m_dataModel.GetSystem().voltage));
@@ -208,7 +208,7 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
     //return -sum;
 }
 
-OptiSubjectEnProfit::SimResult OptiSubjectEnProfit::Simulate(int i, const EnjoLib::Matrix & dataMat, double bonusMul) const
+OptiSubjectEnProfit::SimResult OptiSubjectEnProfit::Simulate(int i, const EnjoLib::Matrix & dataMat, double bonusMul, double bonusMulMA) const
 {
     SimResult res{};
 
@@ -219,7 +219,14 @@ OptiSubjectEnProfit::SimResult OptiSubjectEnProfit::Simulate(int i, const EnjoLi
         const VecD & inp = dataMat.at(ic);
         const double val = inp[i];
         const double hashe = comp.GetHashRate(val) * bonusMul;
-        res.sumHashes += hashe;
+        if (ic < comp.minRunHours + 1)
+        {
+            res.sumHashes += hashe * (1 + bonusMulMA);
+        }
+        else
+        {
+            res.sumHashes += hashe;
+        }
         res.sumPowerUsage += comp.GetUsage(val);
     }
     return res;

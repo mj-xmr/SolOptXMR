@@ -49,7 +49,7 @@ public:
         }
     };
 
-    SimResult Simulate(int i, const EnjoLib::Matrix & dataMat, double bonusMul) const;
+    SimResult Simulate(int i, const EnjoLib::Matrix & dataMat, double bonusMul, double bonusMulMA) const;
 
 
 protected:

@@ -38,12 +38,14 @@ EnjoLib::Result<CLIResultSol> CLISol::GetConfigs(int argc, char ** argv) const
     const char * OPT_BATTERY_CHARGE  = "battery-charge";
     const char * OPT_SYSTEM_TYPE  = "system-type";
     const char * OPT_SYSTEM_VOLTAGE  = "system-voltage";
+    const char * OPT_HASHRATE_BONUS  = "hashrate-bonus";
 
     EnjoLib::ProgramOptionsState popState;
     ////popState.AddStr(OPT_PLUGIN,    "Plugin name");
     popState.AddInt(OPT_DAYS_HORIZON,       ConfigSol::DESCR_DAYS_HORIZON);
     popState.AddInt(OPT_DAYS_START,         ConfigSol::DESCR_DAYS_START);
     popState.AddFloat(OPT_BATTERY_CHARGE,   ConfigSol::DESCR_BATTERY_CHARGE);
+    popState.AddFloat(OPT_HASHRATE_BONUS,   ConfigSol::DESCR_HASHRATE_BONUS);
     //popState.AddStr(OPT_SYSTEM_TYPE,        ConfigSol::DESCR_SYSTEM_TYPE);
     //popState.AddInt(OPT_SYSTEM_VOLTAGE,     ConfigSol::DESCR_SYSTEM_VOLTAGE);
 
@@ -78,6 +80,7 @@ EnjoLib::Result<CLIResultSol> CLISol::GetConfigs(int argc, char ** argv) const
     confSol.DAYS_HORIZON    = pops.GetIntFromMap(OPT_DAYS_HORIZON);
     confSol.DAYS_START 	    = pops.GetIntFromMap(OPT_DAYS_START);
     confSol.BATTERY_CHARGE  = pops.GetFloatFromMap(OPT_BATTERY_CHARGE);
+    confSol.HASHRATE_BONUS  = pops.GetFloatFromMap(OPT_HASHRATE_BONUS);
     //confSol.SYSTEM_TYPE     = pops.GetStrFromMap(OPT_SYSTEM_TYPE);
     //confSol.SYSTEM_VOLTAGE  = pops.GetIntFromMap(OPT_SYSTEM_VOLTAGE);
     //confSym.period     		    = pops.GetStrFromMap(OPT_PERIOD);

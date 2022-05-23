@@ -324,8 +324,8 @@ def print_profits(incomes, costs):
     print(f"Total profit = {profit:.2f} USD")
     print(f"Profitability = {profitability:.2f} %")
 
-def get_usage(available, algo, battery_charge=0, horizon=0):
-    name, hashrates, usage, bat, bat_sim, incomes, costs, effs  = algo(available, battery_charge, horizon)
+def get_usage(args, available, algo, battery_charge=0, horizon=0):
+    name, hashrates, usage, bat, bat_sim, incomes, costs, effs  = algo(args, available, battery_charge, horizon)
     print("\nAlgo name: ", name)
     bat_sim.print_stats(len(available))
     print_hashes(hashrates)
@@ -385,12 +385,12 @@ def adj_losses(pos):
     #pos.loc[pos[:] > MAX_POWER, 0] = MAX_POWER
     return pos
 
-def run_main(elev, show_plots, battery_charge=0, horizon=0):
-    run_algo(elev, show_plots, get_usage_simple, battery_charge, horizon)
-    run_algo(elev, show_plots, get_usage_endor_example, battery_charge, horizon)
+def run_main(args, elev, show_plots, battery_charge=0, horizon=0):
+    run_algo(args, elev, show_plots, get_usage_simple, battery_charge, horizon)
+    run_algo(args, elev, show_plots, get_usage_endor_example, battery_charge, horizon)
 
-def run_algo(elev, show_plots, algo, battery_charge, horizon):
-    name, usage, bat = get_usage(elev, algo, battery_charge, horizon)
+def run_algo(args, elev, show_plots, algo, battery_charge, horizon):
+    name, usage, bat = get_usage(args, elev, algo, battery_charge, horizon)
     plot_sun(name, elev, bat, usage, show_plots)
 
 
