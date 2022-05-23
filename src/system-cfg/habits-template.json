@@ -1,0 +1,34 @@
+{
+    "habits": [
+    	  {
+    	  	"name" : "Partner's laptop",
+    	  	"count" : 2,
+    	  	"watt" : 8,
+    	  	"watt_asleep" : 1,
+    	  	"duration_hours" : 11,
+    	  	"schedule" : "0 8 * * *"
+    	  },
+    	  {
+    	  	"name" : "Desktop screen",
+    	  	"count" : 2,
+    	  	"watt" : 15,
+    	  	"watt_asleep" : 1,
+    	  	"duration_hours" : 11,
+    	  	"schedule" : "0 8 * * *"
+    	  },
+    	  {
+    	  	"name" : "12V water kettle",
+    	  	"watt" : 100,
+    	  	"duration_hours" : 0.8,
+    	  	"schedule" : "0 7,18 * * *"
+    	  },
+    	  {
+    	  	"name" : "Slow cooker 4 Sunday",
+    	  	"count" : 1,
+    	  	"watt" : 150,
+    	  	"duration_hours" : 6,
+    	  	"schedule" : "0 8 * * SUN"
+    	  }
+    ]
+}
+

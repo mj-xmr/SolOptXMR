@@ -52,6 +52,7 @@ config_batteries = get_config('batteries')
 config_computers = get_config('computers')
 config_arrays = get_config('arrays')
 config_system = get_config('system')
+config_habits = get_config('habits')
 
 PROJECT_NAME = "SolOptXMR"
 PROJECT_SUB_NAME = "Solar Optimal mining of XMR"
