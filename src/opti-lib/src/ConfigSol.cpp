@@ -38,6 +38,7 @@ void ConfigSol::RegisterAndReadInts(EnjoLib::Istream & f)
 void ConfigSol::RegisterAndReadFloats(EnjoLib::Istream & f)
 {
     RegisterAndReadFloat(f, BATTERY_CHARGE, 0);
+    RegisterAndReadFloat(f, HASHRATE_BONUS, 0);
 }
 void ConfigSol::RegisterAndReadStrs(EnjoLib::Istream & f)
 {
