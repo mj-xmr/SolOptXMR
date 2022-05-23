@@ -87,6 +87,11 @@ A plot of the energetic balance, based on real astronomic data and contrived wea
 
 ![plot-1st](https://user-images.githubusercontent.com/63722585/163774847-7c3f522a-a6b9-43bf-b133-6ba0c6e007f8.png)
 
+## Network difficulty
+These data are taken into account when making decision about starting a rig or not. Sometimes it's worth to wait for a while until other miners switch off their rigs. Obviously this assumes, that your stored electricity doesn't go to waste.
+![Network difficulty](https://user-images.githubusercontent.com/63722585/169827786-7dc548c1-6b46-49a9-a7ac-ca20605f1046.png)
+
+
 
 ## Console interactive UI
 Accessible via `ssh`/`putty`, based on `curses`.
