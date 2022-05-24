@@ -108,6 +108,7 @@ A plot of the energetic balance, based on real astronomic data and contrived wea
 
 ## Network difficulty
 These data are taken into account when making decision about starting a rig or not. Sometimes it's worth to wait for a while until other miners switch off their rigs in order to scoop more coins for the same amount of power. Obviously this assumes, that your stored electricity doesn't go to waste.
+
 ![Network difficulty](https://user-images.githubusercontent.com/63722585/169827786-7dc548c1-6b46-49a9-a7ac-ca20605f1046.png)
 
 
