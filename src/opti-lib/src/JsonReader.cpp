@@ -15,20 +15,24 @@ using namespace EnjoLib;
 JsonReader::JsonReader(){}
 JsonReader::~JsonReader(){}
 
-EnjoLib::Array<BatteryParams> JsonReader::ReadBatteries(bool verbose) const
-{
-    std::vector<BatteryParams> ret;
-    const Str & wholeJson = GetJson("batteries.json");
 
-    const CharManipulations cman;
+static const rapidjson::Value & GetArray(const EnjoLib::Str & name)
+{
+    const Str & wholeJson = JsonReader::GetJson(name + ".json");
     rapidjson::Document d;
     d.Parse(wholeJson.c_str());
 
-    const rapidjson::Value& batteriesVal = d["batteries"];
-    for (auto objIt = batteriesVal.Begin(); objIt != batteriesVal.End(); ++objIt)
-    {
-        /// TODO: Until here this could be abstracted
+    const rapidjson::Value& array_json = d[name.c_str()];
+    return array_json;
+}
 
+EnjoLib::Array<BatteryParams> JsonReader::ReadBatteries(bool verbose) const
+{
+    const CharManipulations cman;
+    std::vector<BatteryParams> ret;
+    const rapidjson::Value& arr = GetArray("batteries");
+    for (auto objIt = arr.Begin(); objIt != arr.End(); ++objIt)
+    {
         BatteryParams batObj;
         int count = 1;
         const rapidjson::Value & bat = *objIt;
@@ -69,14 +73,10 @@ EnjoLib::Array<BatteryParams> JsonReader::ReadBatteries(bool verbose) const
 
 EnjoLib::Array<Computer> JsonReader::ReadComputers(bool verbose) const
 {
-    std::vector<Computer> ret;
-    const Str & wholeJson = GetJson("computers.json");
     const CharManipulations cman;
-    rapidjson::Document d;
-    d.Parse(wholeJson.c_str());
-
-    const rapidjson::Value& computersVal = d["computers"];
-    for (auto compIt = computersVal.Begin(); compIt != computersVal.End(); ++compIt)
+    std::vector<Computer> ret;
+    const rapidjson::Value& arr = GetArray("computers");
+    for (auto compIt = arr.Begin(); compIt != arr.End(); ++compIt)
     {
         Computer compObj;
         int count = 1;
@@ -130,11 +130,66 @@ EnjoLib::Array<Computer> JsonReader::ReadComputers(bool verbose) const
     return ret;
 }
 
+EnjoLib::Array<Habit> JsonReader::ReadHabits(bool verbose) const
+{
+    const CharManipulations cman;
+    std::vector<Habit> ret;
+    const rapidjson::Value& arr = GetArray("habits");
+    for (auto itr = arr.Begin(); itr != arr.End(); ++itr)
+    {
+        Habit obj;
+        int count = 1;
+        const rapidjson::Value & habit = *itr;
+        ELO
+        
+        obj.name = habit["name"].GetString();
+        {LOGL << obj.name << Nl;}
+        obj.watt = habit["watt"].GetDouble();
+        if (habit.HasMember("watt_asleep"))
+        {
+            obj.watt_asleep = habit["watt_asleep"].GetDouble();
+        }
+        obj.schedule = habit["schedule"].GetString();
+        obj.duration_hours = habit["duration_hours"].GetDouble();
+        
+        
+        //LOG <<  << Nl;
+        if (habit.HasMember("count"))
+        {
+            count = habit["count"].GetInt();
+        }
+        if (count == 0)
+        {
+            continue; // Disabled, yet still registered.
+        }
+        if (count > 1)
+        {
+            obj.watt *= count;
+            obj.watt_asleep *= count;
+        }
+        //obj.ParseSchedule();
+        ret.push_back(obj);
+    }
+    if (verbose)
+    {
+        ELO
+        LOG << "Available habits:\n";
+        for (const auto & obj : ret)
+        {
+            LOG << obj.Print() << Nl;
+        }
+    }
+    for (auto & obj : ret)
+    {
+        obj.ParseSchedule();
+    }
+    return ret;
+}
+
 System JsonReader::ReadSystem(bool verbose) const
 {
     System ret;
     const Str & wholeJson = GetJson("system.json");
-    const CharManipulations cman;
     rapidjson::Document d;
     d.Parse(wholeJson.c_str());
     
@@ -150,7 +205,7 @@ System JsonReader::ReadSystem(bool verbose) const
 #include <sys/types.h>
 #include <pwd.h>
 
-EnjoLib::Str JsonReader::GetJson(const EnjoLib::Str & fileName) const
+EnjoLib::Str JsonReader::GetJson(const EnjoLib::Str & fileName)
 {
     const char *homedir = nullptr;
 

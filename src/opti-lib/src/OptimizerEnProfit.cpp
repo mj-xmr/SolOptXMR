@@ -13,6 +13,7 @@
 #include "OptiEnProfitDataModel.h"
 #include "GnuplotIOSWrap.h"
 #include "SolUtil.h"
+#include "TimeUtil.h"
 
 #include <Math/GeneralMath.hpp>
 #include <Util/ProgressMonit.hpp>
@@ -188,7 +189,7 @@ void OptimizerEnProfit::RandomSearch()
 
 void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat) const
 {
-    const int currHour = SolUtil().GetCurrentHour();
+    const int currHour = TimeUtil().GetCurrentHour();
     OptiSubjectEnProfit osub(m_dataModel);
     osub.GetVerbose(bestMat, true);
     for (int i = 0; i < bestMat.size(); ++i)

@@ -6,7 +6,6 @@ class SolUtil
 public:
 	SolUtil();
 	virtual ~SolUtil();
-	int GetCurrentHour() const;
 
 protected:
 

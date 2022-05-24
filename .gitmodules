@@ -1,3 +1,6 @@
 [submodule "externals/tsqsim"]
 	path = externals/tsqsim
 	url = https://github.com/mj-xmr/tsqsim.git
+[submodule "externals/croncpp"]
+	path = externals/croncpp
+	url = https://github.com/mariusbancila/croncpp.git

@@ -52,6 +52,7 @@ config_batteries = get_config('batteries')
 config_computers = get_config('computers')
 config_arrays = get_config('arrays')
 config_system = get_config('system')
+config_habits = get_config('habits')
 
 PROJECT_NAME = "SolOptXMR"
 PROJECT_SUB_NAME = "Solar Optimal mining of XMR"
@@ -64,7 +65,10 @@ MIN_WEATHER = config.sunrise_lib.MIN_WEATHER
 DIR_TMP = config.sunrise_lib.DIR_TMP
 DIR_XMRIG = HOME + config.sunrise_lib.DIR_XMRIG
 
-DATE_NOW = datetime.datetime.now()
+tzstr = config_geo.geo.time_zone
+tz = timezone(tzstr)
+    
+DATE_NOW = datetime.datetime.now(tz=tz)
 LAT = config_geo.geo.lat
 LON = config_geo.geo.lon
 
