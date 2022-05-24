@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/bash -e
 
 #cd externals/tsqsim/
 #./util/prep-env.sh
@@ -22,5 +22,9 @@ python3 src/tests.py
 echo "Testing the entire production chain:"
 # TODO: Make optional & derive a build script from tsqsim/util/build.py:
 export R_HOME=/usr/lib/R && export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$R_HOME/lib
+if [ "$(uname)" == "Linux" ]; then
+	python3 src/prod.py
+	# TODO: Mac OSX suffers from an endless loop
+fi
 
-# python3 src/prod.py
+
