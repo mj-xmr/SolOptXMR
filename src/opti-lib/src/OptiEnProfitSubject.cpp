@@ -20,6 +20,8 @@
 #include <Util/ToolsMixed.hpp>
 #include <Template/Array.hpp>
 
+#include <STD/Vector.hpp>
+
 using namespace EnjoLib;
 
 OptiSubjectEnProfit::OptiSubjectEnProfit(const OptiEnProfitDataModel & dataModel)
@@ -273,7 +275,7 @@ EnjoLib::VecD OptiSubjectEnProfit::GetStep() const
 EnjoLib::Array<EnjoLib::OptiMultiSubject::Bounds> OptiSubjectEnProfit::GetBounds() const
 {
     const Matrix mat = m_dataModel.GetData();
-    EnjoLib::Array<EnjoLib::OptiMultiSubject::Bounds> ret;
+    std::vector<EnjoLib::OptiMultiSubject::Bounds> ret;
     for (const VecD & dim : mat)
     {
         EnjoLib::OptiMultiSubject::Bounds bound(dim.First(), dim.Last());
