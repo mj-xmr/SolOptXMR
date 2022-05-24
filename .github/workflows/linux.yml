@@ -105,8 +105,6 @@ jobs:
     - name: build
       run: ./ci-default --no-tests --no-install
     - name: run python
-      run: |
-    	python3 src/tests.py
-	# Now test unpickling:
-	python3 src/tests.py
+      run: python3 src/tests.py
+      
 
