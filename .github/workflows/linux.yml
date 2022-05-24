@@ -57,7 +57,7 @@ jobs:
     - name: Configure your rig
       run: util/config.sh
     - name: build
-      run: ./ci-default --no-tests
+      run: ./ci-default --no-tests --no-install
 #    - name: run demo
 #      run: ./ci-default
 # It doesn't make sense for now, since we're not linking Boost statically yet.
@@ -104,6 +104,6 @@ jobs:
     - name: build & install the unmanaged dependencies
       run: util/deps-build.sh
     - name: build
-      run: ./ci-default --no-tests
+      run: ./ci-default --no-tests --no-install
 
 
