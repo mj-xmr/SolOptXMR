@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/bash -e
 
 cd externals/tsqsim/
 ./util/deps-pull.sh
