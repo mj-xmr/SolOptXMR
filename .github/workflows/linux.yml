@@ -56,13 +56,50 @@ jobs:
       run: util/deps-build.sh
     - name: Configure your rig
       run: util/config.sh
-    - name: build
-      run: ./ci-default --no-tests
-#    - name: run demo
-#      run: ./ci-default
-# It doesn't make sense for now, since we're not linking Boost statically yet.
+    - name: build generic
+      run: ./util/ci.sh
     - uses: actions/upload-artifact@v3
       with:
         name: SolOptXMR-ubuntu-latest
         path: /home/runner/work/SolOptXMR/SolOptXMR/build/*.png
+        
+        
+
+  build-macos:
+    runs-on: ${{ matrix.os }}
+    env:
+      CCACHE_TEMPDIR: /tmp/.ccache-temp
+    strategy:
+      fail-fast: false
+      matrix:
+        #os: [macOS-latest, macOS-11]    # prev
+        #os: [macOS-latest, macOS-10.15] # future 
+        #os: [macOS-10.15, macOS-11]      # transitionary
+        os: [macOS-11]     
+    steps:
+    - uses: actions/checkout@v1
+      with:
+        submodules: recursive
+    # Volatile cache
+    - name: ccache
+      uses: actions/cache@v2
+      with:
+        path: /Users/runner/Library/Caches/ccache
+        key:          ccache03-${{ runner.os }}-${{ matrix.os }}-build-${{ github.sha }}
+        restore-keys: ccache03-${{ runner.os }}-${{ matrix.os }}-build-
+    # Less volatile cache
+    - name: data cache
+      uses: actions/cache@v2
+      with:
+        path: build/data/data/txt
+        key:          data-${{ hashFiles('build/data/data/txt/**/*') }}
+        restore-keys: data-${{ hashFiles('build/data/data/txt/**/*') }}
+    - name: prepare environment
+      run: util/prep-env.sh
+    - name: install dependencies
+      run: util/deps-pull.sh
+    - name: build & install the unmanaged dependencies
+      run: util/deps-build.sh
+    - name: build generic
+      run: ./util/ci.sh
 

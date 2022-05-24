@@ -44,20 +44,33 @@ def get_args():
     #parser.add_argument('-v', '--verbose',      default=TESTING, action='store_true', help="Test (default: OFF)")
     return parser.parse_args()
 
-def fixPath(path):
-    if not os.path.isfile(path):
-        path = '../' + path
-    return path
+def getInstallPath():
+    dir1 = 'build/icecc-shared-release/bin'
+    dir2 = 'build/icecc-static-release/bin'
+    dir3 = 'build/default-static-release/bin'
+    dir4 = 'build/default-shared-release/bin'
+    if os.path.isdir(dir1):
+        dirr = dir1
+    elif os.path.isdir(dir2):
+        dirr = dir2
+    elif os.path.isdir(dir3):
+        dirr = dir3
+    elif os.path.isdir(dir4):
+        dirr = dir4
+    return dirr
         
 class BatterySimulatorCpp(generator.BatterySimulator):
     def __init(self):
         pass
     
     def run(self, args, battery_charge, horizon):
-
+        cwd = os.getcwd()
+        install_path = getInstallPath()
+        os.chdir(install_path)
+        
         hashrate_bonus = 0
         if args.in_data and args.out_dir:
-            cmd = fixPath('build/externals/tsqsim/src/tsqsim/tsqsim')
+            cmd = "./tsqsim"
             cmd += " --data {}".format(args.in_data)
             cmd += " --out {}".format(args.out_dir)
             cmd += " --latest-date"
@@ -72,7 +85,7 @@ class BatterySimulatorCpp(generator.BatterySimulator):
 
         #hashrate_bonus = -3.2 # For simulation only
         #hashrate_bonus =  5.2 # For simulation only
-        cmd = fixPath('build/src/opti/opti')
+        cmd = "./opti"
         cmd += " --battery-charge {}".format(battery_charge)
         cmd += " --horizon-days {}".format(horizon)
         cmd += " --hashrate-bonus {}".format(hashrate_bonus)
@@ -89,6 +102,8 @@ class BatterySimulatorCpp(generator.BatterySimulator):
         self.hashrates  = np.loadtxt(basePathIn.format('hashrates'))
         self.loads      = np.loadtxt(basePathIn.format('battery'))
         self.usage      = np.loadtxt(basePathIn.format('usage'))
+
+        os.chdir(cwd)
 
 def get_usage_prod(args, available, battery_charge, horizon):
     bat_sim = BatterySimulatorCpp()

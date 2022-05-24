@@ -78,7 +78,11 @@ EnjoLib::Matrix OptiEnProfitDataModel::GetData() const
 
     RandomMath rmath;
     rmath.RandSeed();
-    short binary[m_horizonHours] {};
+    short binary[m_horizonHours];
+    for (int i = 0; i < m_horizonHours; ++i)
+    {
+        binary[i] = 0;
+    }
 
     EnjoLib::Matrix ret2;
 
