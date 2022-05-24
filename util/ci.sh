@@ -17,9 +17,10 @@ python3 src/tests.py
 python3 src/tests.py
 
 #util/build-debian.sh
-./ci-default
+./ci-default --no-tests
 
 echo "Testing the entire production chain:"
 # TODO: Make optional & derive a build script from tsqsim/util/build.py:
 export R_HOME=/usr/lib/R && export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$R_HOME/lib
-python3 src/prod.py
+
+# python3 src/prod.py
