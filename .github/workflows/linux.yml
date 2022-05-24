@@ -57,9 +57,7 @@ jobs:
     - name: Configure your rig
       run: util/config.sh
     - name: build generic
-      run: ./ci-default --no-tests --no-install
-    - name: build debian
-      run: ./util/ci-debian.sh
+      run: ./util/ci.sh
     - uses: actions/upload-artifact@v3
       with:
         name: SolOptXMR-ubuntu-latest
@@ -102,9 +100,6 @@ jobs:
       run: util/deps-pull.sh
     - name: build & install the unmanaged dependencies
       run: util/deps-build.sh
-    - name: build
-      run: ./ci-default --no-tests --no-install
-    - name: run python
-      run: python3 src/tests.py
-      
+    - name: build generic
+      run: ./util/ci.sh
 

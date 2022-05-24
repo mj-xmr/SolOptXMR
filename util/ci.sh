@@ -16,7 +16,8 @@ python3 src/tests.py
 # Now test unpickling:
 python3 src/tests.py
 
-util/build-debian.sh
+#util/build-debian.sh
+./ci-default
 
 echo "Testing the entire production chain:"
 # TODO: Make optional & derive a build script from tsqsim/util/build.py:
