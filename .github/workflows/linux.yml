@@ -57,9 +57,9 @@ jobs:
     - name: Configure your rig
       run: util/config.sh
     - name: build
-      run: ./ci-default
-    - name: run demo
-      run: ./ci-default
+      run: ./ci-default --no-tests
+#    - name: run demo
+#      run: ./ci-default
 # It doesn't make sense for now, since we're not linking Boost statically yet.
     - uses: actions/upload-artifact@v3
       with:
