@@ -4,30 +4,31 @@
     	  	"name" : "Partner's laptop",
     	  	"count" : 1,
     	  	"watt" : 8,
-    	  	"watt_asleep" : 0.9,
-    	  	"duration_hours" : 11,
-    	  	"schedule" : "0 8 * * *"
+    	  	"watt_asleep" : 0.4,
+    	  	"duration_hours" : 8,
+    	  	"schedule" : "0 0 8 * * MON-FRI"
     	  },
     	  {
     	  	"name" : "Desktop screen",
-    	  	"count" : 2,
-    	  	"watt" : 15,
+    	  	"count" : 1,
+    	  	"watt" : 12,
     	  	"watt_asleep" : 0.6,
-    	  	"duration_hours" : 11,
-    	  	"schedule" : "0 8 * * *"
+    	  	"duration_hours" : 8,
+    	  	"schedule" : "0 0 8 * * MON-FRI"
     	  },
     	  {
     	  	"name" : "12V water kettle",
-    	  	"watt" : 100,
+    	  	"count" : 1,
+    	  	"watt" : 80,
     	  	"duration_hours" : 0.8,
-    	  	"schedule" : "0 7,18 * * *"
+    	  	"schedule" : "0 0 7,18 * * *"
     	  },
     	  {
     	  	"name" : "Slow cooker 4 Sunday",
     	  	"count" : 1,
     	  	"watt" : 150,
     	  	"duration_hours" : 6,
-    	  	"schedule" : "0 8 * * SUN"
+    	  	"schedule" : "0 0 8 * * SUN"
     	  }
     ]
 }

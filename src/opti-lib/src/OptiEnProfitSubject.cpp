@@ -235,18 +235,15 @@ OptiSubjectEnProfit::SimResult OptiSubjectEnProfit::Simulate(int i, int currHour
     
     const EnjoLib::Array<Habit> & habits = m_dataModel.GetHabits();
     
-    const int hour = i + currHour;
     for (const Habit & hab : habits)
     {
         double usage = hab.watt_asleep;
-        
-        if (hour > 23 && hour <= 24) /// TODO: Condition should be read from the Habit itself, after the initial parsing
+        if (hab.IsOn(i))
         {
             usage = hab.watt;
         }
         res.sumPowerUsage += usage;
     }
-    
     return res;
 }
 

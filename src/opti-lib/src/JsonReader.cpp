@@ -143,6 +143,7 @@ EnjoLib::Array<Habit> JsonReader::ReadHabits(bool verbose) const
         ELO
         
         obj.name = habit["name"].GetString();
+        {LOGL << obj.name << Nl;}
         obj.watt = habit["watt"].GetDouble();
         if (habit.HasMember("watt_asleep"))
         {
@@ -151,7 +152,7 @@ EnjoLib::Array<Habit> JsonReader::ReadHabits(bool verbose) const
         obj.schedule = habit["schedule"].GetString();
         obj.duration_hours = habit["duration_hours"].GetDouble();
         
-        obj.ParseSchedule();
+        
         //LOG <<  << Nl;
         if (habit.HasMember("count"))
         {
@@ -161,12 +162,13 @@ EnjoLib::Array<Habit> JsonReader::ReadHabits(bool verbose) const
         {
             continue; // Disabled, yet still registered.
         }
-        ret.push_back(obj);
         if (count > 1)
         {
             obj.watt *= count;
             obj.watt_asleep *= count;
         }
+        //obj.ParseSchedule();
+        ret.push_back(obj);
     }
     if (verbose)
     {
@@ -176,6 +178,10 @@ EnjoLib::Array<Habit> JsonReader::ReadHabits(bool verbose) const
         {
             LOG << obj.Print() << Nl;
         }
+    }
+    for (auto & obj : ret)
+    {
+        obj.ParseSchedule();
     }
     return ret;
 }
