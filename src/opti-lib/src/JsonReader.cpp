@@ -6,6 +6,7 @@
 #include <Util/FileUtils.hpp>
 #include <Util/Tokenizer.hpp>
 #include <Util/CharManipulations.hpp>
+#include <Statistical/Assertions.hpp>
 #include <rapidjson/document.h>
 
 #include <STD/VectorCpp.hpp>
@@ -18,10 +19,13 @@ JsonReader::~JsonReader(){}
 
 static const rapidjson::Value & GetArray(const EnjoLib::Str & name)
 {
-    const Str & wholeJson = JsonReader::GetJson(name + ".json");
+    const Str jsonFile = name + ".json";
+    const Str & wholeJson = JsonReader::GetJson(jsonFile);
     rapidjson::Document d;
-    d.Parse(wholeJson.c_str());
-
+    if (d.Parse(wholeJson.c_str()).HasParseError())
+    {
+        Assertions::Throw((jsonFile + " failed to parse\n").c_str(), "GetArray");
+    }
     const rapidjson::Value& array_json = d[name.c_str()];
     return array_json;
 }
@@ -149,9 +153,11 @@ EnjoLib::Array<Habit> JsonReader::ReadHabits(bool verbose) const
         {
             obj.watt_asleep = habit["watt_asleep"].GetDouble();
         }
-        obj.schedule = habit["schedule"].GetString();
-        obj.duration_hours = habit["duration_hours"].GetDouble();
-        
+        if (habit.HasMember("schedule"))
+        {
+             obj.schedule = habit["schedule"].GetString();
+             obj.duration_hours = habit["duration_hours"].GetDouble();
+        }
         
         //LOG <<  << Nl;
         if (habit.HasMember("count"))
@@ -167,7 +173,6 @@ EnjoLib::Array<Habit> JsonReader::ReadHabits(bool verbose) const
             obj.watt *= count;
             obj.watt_asleep *= count;
         }
-        //obj.ParseSchedule();
         ret.push_back(obj);
     }
     if (verbose)

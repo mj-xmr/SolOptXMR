@@ -17,6 +17,11 @@ EnjoLib::VecT<int> HabitCron::GetNextHoursOn(const Habit & hab, int horizonDays)
     const int hoursInDay = 24;
     const int maxI = hoursInDay * horizonDays;
     EnjoLib::VecT<int> ret(maxI);
+    if (hab.schedule.empty())
+    {
+        EnjoLib::VecT<int> retAlwaysOn(maxI, 1);
+        return retAlwaysOn;
+    }
     const std::string str = hab.schedule.str();
     const auto cron = cron::make_cron(str);
     
