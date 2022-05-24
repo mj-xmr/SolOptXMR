@@ -29,6 +29,17 @@
     	  	"watt" : 150,
     	  	"duration_hours" : 6,
     	  	"schedule" : "0 0 8 * * SUN"
+    	  },
+    	  {
+    	  	"name" : "Network switch",
+    	  	"count" : 1,
+    	  	"watt" : 0.8
+    	  },
+    	  {
+    	  	"name" : "Inverter",
+    	  	"inverter" : true,
+    	  	"count" : 1,
+    	  	"watt" : 1.1
     	  }
     ]
 }
