@@ -56,11 +56,10 @@ jobs:
       run: util/deps-build.sh
     - name: Configure your rig
       run: util/config.sh
-    - name: build
+    - name: build generic
       run: ./ci-default --no-tests --no-install
-#    - name: run demo
-#      run: ./ci-default
-# It doesn't make sense for now, since we're not linking Boost statically yet.
+    - name: build debian
+      run: ./util/ci-debian.sh
     - uses: actions/upload-artifact@v3
       with:
         name: SolOptXMR-ubuntu-latest
