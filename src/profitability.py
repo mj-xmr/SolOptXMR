@@ -162,11 +162,13 @@ class POW_Coin:
             if height < 0:
                 raise ValueError("Cannot have a negative height")
             if height > last_known_height:  # Need to update
-                # diff_new, _ = self._request_headers_batcher(last_known_block + 1, self.height, batch_size=batch_size)
-                diff_new, _ = self._request_headers_batcher(last_known_height + 1, height, batch_size=batch_size)
+                # diff_new, blocked = self._request_headers_batcher(last_known_block + 1, self.height, batch_size=batch_size)
+                diff_new, blocked = self._request_headers_batcher(last_known_height + 1, height, batch_size=batch_size)
                 if diff_new is not None:
                     diff = pd.concat([diff, diff_new], axis=0)
                     diff.to_pickle(path)
+                    if blocked:
+                        raise KeyboardInterrupt
                 else:
                     raise KeyboardInterrupt
             try:
