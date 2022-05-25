@@ -203,8 +203,8 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
                 OutputVar(usages, "usage", false);
 
                 //GnuplotPlotTerminal1d(input, "input", 1, 0.5);
-                GnuplotPlotTerminal1d(prod, "prod", 1, 0.5);
-                GnuplotPlotTerminal1d(hashrateBonus, "hashrateBonus", 1, 0.5);
+                GnuplotPlotTerminal1d(prod, "Energy production", 1, 0.5);
+                GnuplotPlotTerminal1d(hashrateBonus, "Bashrate bonus seasonal", 1, 0.5);
             }
         }
     }
@@ -289,11 +289,11 @@ double OptiSubjectEnProfit::HashrateBonusNonCached(int hour) const
     /// TODO: This is meant to be dynamically read from tsqsim
     if (hour > 10 && hour < 16)
     {
-        return 0.97;
+        return 0.99;
     }
     else if (hour > 18)
     {
-        return 1.03;
+        return 1.01;
     }
     else
     {
