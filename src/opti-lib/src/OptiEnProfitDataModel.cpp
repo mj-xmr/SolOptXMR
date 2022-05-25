@@ -24,7 +24,8 @@ OptiEnProfitDataModel::OptiEnProfitDataModel(const ConfigSol & confSol, int hori
 , m_statingPoint(statingPoint)
 , m_comps(JsonReader().ReadComputers())
 , m_sys(JsonReader().ReadSystem())
-, m_batPars(JsonReader().ReadBatteries().at(0))
+, m_batPars(JsonReader().ReadBatteries().at(0)) /// TODO: extend
+, m_habits(JsonReader().ReadHabits())
 {
     const char * fname = "/tmp/solar_pos.txt";
     {Ifstream solPosIn(fname);}
@@ -77,7 +78,11 @@ EnjoLib::Matrix OptiEnProfitDataModel::GetData() const
 
     RandomMath rmath;
     rmath.RandSeed();
-    short binary[m_horizonHours] {};
+    short binary[m_horizonHours];
+    for (int i = 0; i < m_horizonHours; ++i)
+    {
+        binary[i] = 0;
+    }
 
     EnjoLib::Matrix ret2;
 

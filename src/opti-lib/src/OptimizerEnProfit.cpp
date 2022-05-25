@@ -13,6 +13,7 @@
 #include "OptiEnProfitDataModel.h"
 #include "GnuplotIOSWrap.h"
 #include "SolUtil.h"
+#include "TimeUtil.h"
 
 #include <Math/GeneralMath.hpp>
 #include <Util/ProgressMonit.hpp>
@@ -74,6 +75,7 @@ void OptimizerEnProfit::operator()()
 
 void OptimizerEnProfit::RandomSearch()
 {
+    SOL_LOG("Random search");
     const int horizonHours = m_dataModel.GetHorizonHours();
     const EnjoLib::Array<Computer> & comps = m_dataModel.GetComputers();
     const int numComputers = comps.size();
@@ -157,6 +159,7 @@ void OptimizerEnProfit::RandomSearch()
         {
             if (Consume2(binaryMat))
             {
+                SOL_LOG("Consume success: " + binaryMat.Print());
                 m_numFailed = 0;
                 binarBest = binaryMat;
                 m_uniqueSolutionsPrev = m_uniqueSolutions;
@@ -164,6 +167,7 @@ void OptimizerEnProfit::RandomSearch()
             }
             else
             {
+                //SOL_LOG("Failed: " + binaryMat.Print());
                 ++m_numFailed;
             }
             RecalcComputationCosts();
@@ -188,7 +192,7 @@ void OptimizerEnProfit::RandomSearch()
 
 void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat) const
 {
-    const int currHour = SolUtil().GetCurrentHour();
+    const int currHour = TimeUtil().GetCurrentHour();
     OptiSubjectEnProfit osub(m_dataModel);
     osub.GetVerbose(bestMat, true);
     for (int i = 0; i < bestMat.size(); ++i)

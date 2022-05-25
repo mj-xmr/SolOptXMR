@@ -9,6 +9,7 @@ Computer::~Computer(){}
 
 double Computer::GetHashRate(double freqGhz) const
 {
+    //freqGhz = 1; /// TODO: can be used to regulate temperature and hashes as well.
     double hashes = hashPerCore * cores * freqGhz; // minus scaling factor
     return hashes;
 }

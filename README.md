@@ -44,16 +44,18 @@ In order to alter the default behavior, the main script can be ran with the foll
 ```bash
 ./soloptxmr.py \
 --days-horizon 5 \
---battery-charge 55.2 \
+--battery-charge-ah 75.2 \
 --start-date 2022-02-20T20:22
 ```
 or equivalently:
 ```bash
 ./soloptxmr.py \
 -d 5 \
--b 55.2 \
+-a 75.2 \
 -s "2022-02-20 20:22"
 ```
+
+Setting the battery's voltage, rather than the Ah charge is a feature planned for the near future. For now, you have to resort to online resources in order to estimate the initial battery's state. [Example 1](http://www.scubaengineer.com/documents/lead_acid_battery_charging_graphs.pdf)
 
 ## Configuration
 After running the `./util/config.sh` script, you'll be presented with paths to configuration scripts, that have just been copied to your `~/.config` directory. 
@@ -73,6 +75,28 @@ In such cases, please enter the nearest largest city, until the script stops com
 
 ### Computers
 Currently the system doesn't work very well with the number of mining machines larger than 2.
+In case a single computer should be disabled, please set its `count` field to `0`.
+
+### Habits
+The `~/.config/solar/habits.json` config file allows you to declare your daily/weekly habits, that drain the solar power in a predictable way. 
+The syntax used there for scheduling is better explained by [this documentation](https://github.com/mariusbancila/croncpp#cron-expressions).
+A single example:
+
+`0 15 10 * * ? *`	means: 10:15 AM every day
+
+[Here's more interactive way](https://crontab.guru/) to understand the syntax. 
+Note, that it doesn't use the required seconds part though.
+
+As with the computers json, a given habit may be disabled by setting its `count` field to `0`.
+
+### System
+The `~/.config/solar/system.json` config file defines the voltage of the system (12 or 24 V) used for conversions.
+Other 3 options include the ability to independently: generate, buy and/or sell the electricity. 
+The combination of these options helps in deriving the optimal solution for your case, regarding the profitability of the operation.
+
+### Electricity price
+TODO: enable scheduling the electricity buy/sell prices via cron, like in the Habits json.
+
 
 # Screenshots
 
@@ -88,7 +112,12 @@ A plot of the energetic balance, based on real astronomic data and contrived wea
 ![plot-1st](https://user-images.githubusercontent.com/63722585/163774847-7c3f522a-a6b9-43bf-b133-6ba0c6e007f8.png)
 
 ## Network difficulty
-These data are taken into account when making decision about starting a rig or not. Sometimes it's worth to wait for a while until other miners switch off their rigs. Obviously this assumes, that your stored electricity doesn't go to waste.
+These data are taken into account when making decision about starting a rig or not. 
+Sometimes it's worth to wait for a while until other miners switch off their rigs in order to scoop more coins for the same amount of used power. 
+Obviously this assumes, that your stored electricity doesn't go to waste. 
+Also, please note the differences in scales of the two plots. 
+The daily seasonal swings are 100 times smaller than the mean reversion ones.
+
 ![Network difficulty](https://user-images.githubusercontent.com/63722585/169827786-7dc548c1-6b46-49a9-a7ac-ca20605f1046.png)
 
 

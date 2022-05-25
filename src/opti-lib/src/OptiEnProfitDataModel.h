@@ -4,6 +4,7 @@
 #include "Computer.h"
 #include "BatteryParams.h"
 #include "System.h"
+#include "Habit.h"
 
 #include <Statistical/Matrix.hpp>
 #include <Util/VecD.hpp>
@@ -25,6 +26,7 @@ class OptiEnProfitDataModel
 
         const ConfigSol & GetConf() const { return m_confSol; }
         const EnjoLib::Array<Computer> & GetComputers() const { return m_comps; }
+        const EnjoLib::Array<Habit> & GetHabits() const { return m_habits; }
         const BatteryParams & GetBatPars() const { return m_batPars; }
         const System & GetSystem() const { return m_sys; }
 
@@ -36,6 +38,7 @@ class OptiEnProfitDataModel
         int m_statingPoint = 0;
         EnjoLib::VecD m_power;
         EnjoLib::Array<Computer> m_comps;
+        EnjoLib::Array<Habit> m_habits;
         System m_sys;
         BatteryParams m_batPars;
 };

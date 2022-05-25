@@ -51,9 +51,9 @@ TARGET_PRICE = config.generator.TARGET_PRICE
 path_positions_txt = f"{PATH_POSITIONS_BASE}.txt"
 
 def get_date_range(start_date, days_horizon):
-    tzstr = sunrise_lib.config_geo.geo.time_zone
-    tz = timezone(tzstr)
-    dti = pd.date_range(start_date, periods=days_horizon * 24, freq="H", tz=tz)
+    tz = sunrise_lib.tz
+    dti = pd.date_range(start_date, periods=days_horizon * 24, freq="H")
+    #print(dti)
     return dti
 
 def get_sun_positions(start_date, days_horizon=3, unpickle=True):
@@ -102,6 +102,7 @@ def get_pv_system():
     return system
 
 def get_power(start_date, days_horizon=3, unpickle=True):
+    print("get_power()", ", horizon", days_horizon)
     system = get_pv_system()
     print(system.num_arrays)
     for array in system.arrays:
@@ -144,6 +145,7 @@ def get_power(start_date, days_horizon=3, unpickle=True):
 
 def plot_sun(name, elev, bat, usage, show_plots):
     #print(elev)
+    plt.gca().xaxis_date(sunrise_lib.tz)
     plt.title("Algo: " + name)
     plt.xlabel("Time")
     plt.xticks(rotation=25, ha='right')

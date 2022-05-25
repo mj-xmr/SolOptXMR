@@ -3,6 +3,7 @@
 mkdir -p build/bin/
 
 cd externals/tsqsim/
-./util/prep-env.sh
+#./util/prep-env.sh
 cd ../..
 
+externals/tsqsim/util/prep-env.sh
