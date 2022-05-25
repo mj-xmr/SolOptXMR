@@ -139,19 +139,33 @@ class POW_Coin:
             result = pd.concat(results, axis=0)
             return result, False
     
-    def historical_diff(self, height:int=None, timestamp:int=None, batch_size:int=1000) -> int:
+    def read_diff_pkl(self, path=None) -> pd.DataFrame:
+        if not path:
+            path = f"{DIR_TMP}/diff_{self.coin.name}.pkl"
+        try: # If we have previous saved data, merge with the new data
+            df = pd.read_pickle(path)
+        except FileNotFoundError:
+            print(f"{path} does not exist")
+            return None
+        else:
+            return df
+    
+    def historical_diff(self, height:int=None, timestamp:int=None, batch_size:int=1000, path:str=None) -> int:
         if height and timestamp:
             warnings.warn("Both height and timestamp present: ignoring timestamp", UserWarning)
         
-        path = f"{DIR_TMP}/diff_{self.coin.name}.pkl"
-        try: # If we have previous saved data, merge with the new data
-            diff = pd.read_pickle(path)
-        except FileNotFoundError:
-            print(f"{path} does not exist. Creating...")
-            diff, _ = self._request_headers_batcher(0, height, batch_size=batch_size)
-            diff.to_pickle(path)
-            print(diff)
-            pass
+        if not path:
+            path = f"{DIR_TMP}/diff_{self.coin.name}.pkl"
+        # If we have previous saved data, merge with the new data
+        diff = self.read_diff_pkl(path)
+        if diff is None:
+            print(f"Creating {path}")
+            diff, blocked = self._request_headers_batcher(0, height, batch_size=batch_size)
+            if blocked:
+                raise KeyboardInterrupt
+            else:
+                diff.to_pickle(path)
+                print(diff)
         
         last_known_height = int(diff.index[-1])
         last_known_timestamp = datetime.fromtimestamp(diff["timestamp"].iloc[-1])
