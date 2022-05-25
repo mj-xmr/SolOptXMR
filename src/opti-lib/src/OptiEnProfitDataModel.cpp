@@ -2,6 +2,7 @@
 
 #include "JsonReader.h"
 #include "ConfigSol.h"
+#include "TimeUtil.h"
 
 //#define BOOST_JSON_STACK_BUFFER_SIZE 1024
 //#include <boost/json/src.hpp>
@@ -22,7 +23,8 @@ OptiEnProfitDataModel::OptiEnProfitDataModel(const ConfigSol & confSol, int hori
 : m_confSol(confSol)
 , m_horizonHours(horizonDays * 24)
 , m_statingPoint(statingPoint)
-, m_comps(JsonReader().ReadComputers())
+, m_currHour(TimeUtil().GetCurrentHour())
+//, m_comps(JsonReader().ReadComputers())
 , m_sys(JsonReader().ReadSystem())
 , m_batPars(JsonReader().ReadBatteries().at(0)) /// TODO: extend
 , m_habits(JsonReader().ReadHabits())
@@ -33,6 +35,9 @@ OptiEnProfitDataModel::OptiEnProfitDataModel(const ConfigSol & confSol, int hori
     const VecStr & lines = tok.GetLines(fname);
     for (const Str line : lines)
         m_power.Add(CharManipulations().ToDouble(line));
+        
+    const auto comps = JsonReader().ReadComputers();
+    AR2VEC(comps, m_comps);
 }
 
 OptiEnProfitDataModel::~OptiEnProfitDataModel()
@@ -105,9 +110,29 @@ EnjoLib::Matrix OptiEnProfitDataModel::GetData() const
         }
         ret2.push_back(vec);
     }
-
-
-
-
     return ret2;
+}
+
+double OptiEnProfitDataModel::GetHabitsUsage(int i) const
+{
+    if (i < m_habitsCache.size())
+    {
+        return m_habitsCache[i];
+    }
+    else
+    {
+        double sum = 0;
+        for (int ih = 0; ih < m_habits.size(); ++ih)
+        {
+            const Habit & hab = m_habits[ih];
+            double usage = hab.watt_asleep;
+            if (hab.IsOn(i))
+            {
+                usage = hab.watt;
+            }
+            sum += usage;
+        }
+        m_habitsCache.Add(sum);
+        return sum;
+    }
 }

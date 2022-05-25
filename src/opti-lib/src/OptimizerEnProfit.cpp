@@ -104,7 +104,10 @@ void OptimizerEnProfit::RandomSearch()
     ProgressMonitHigh progressMonitor;
     for (int i = 0; i < maxEl; ++i)
     {
-        progressMonitor.PrintProgressBarTime(i, maxEl);
+        if (i % 100000 == 0)
+        {
+            progressMonitor.PrintProgressBarTime(i, maxEl);
+        }
         const int icomp = gmat.round(rmath.Rand(0, numComputers-1));
         //for (int icomp = 0; icomp < numComputers; ++icomp)
         {
