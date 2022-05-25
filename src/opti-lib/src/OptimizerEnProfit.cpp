@@ -159,7 +159,7 @@ void OptimizerEnProfit::RandomSearch()
         {
             if (Consume2(binaryMat))
             {
-                SOL_LOG("Consume: " + binaryMat.Print());
+                SOL_LOG("Consume success: " + binaryMat.Print());
                 m_numFailed = 0;
                 binarBest = binaryMat;
                 m_uniqueSolutionsPrev = m_uniqueSolutions;
@@ -167,7 +167,7 @@ void OptimizerEnProfit::RandomSearch()
             }
             else
             {
-                SOL_LOG("Failed: " + binaryMat.Print());
+                //SOL_LOG("Failed: " + binaryMat.Print());
                 ++m_numFailed;
             }
             RecalcComputationCosts();
