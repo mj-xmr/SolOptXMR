@@ -130,6 +130,7 @@ The daily seasonal swings are 100 times smaller than the mean reversion ones.
 An example evaluation of 2 sets of panels - one set pointing to south-east and the other to south-west. 
 Please note the prolonged production, reflected by the inverter's output.
 
+![array-modelling](https://user-images.githubusercontent.com/63722585/170349578-16f0965a-9c34-45ea-9d14-df740a562723.png)
 
 
 ## Console interactive UI
