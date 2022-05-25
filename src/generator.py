@@ -80,30 +80,9 @@ def get_sun_positions(start_date, days_horizon=3, unpickle=True):
     print(pos)
     return pos
 
-def get_arrays():
-    arrays = []
-    for array in sunrise_lib.config_arrays.arrays:
-        #print("AR", array)
-        for num in range(0, array['count']):
-            arrays.append(array)
-    return arrays
-
-def get_pv_system():
-    array_kwargs = dict(
-        module_parameters=dict(pdc0=1, gamma_pdc=-0.004),
-        temperature_model_parameters=dict(a=-3.56, b=-0.075, deltaT=3)
-    )
-    arrays = []
-    for array in get_arrays():
-        array_one = pvlib.pvsystem.Array(pvlib.pvsystem.FixedMount(surface_tilt=array['surface_tilt'], surface_azimuth=array['surface_azimuth']), name=array['name'],
-                   **array_kwargs)
-        arrays.append(array_one)
-    system = pvlib.pvsystem.PVSystem(arrays=arrays, inverter_parameters=dict(pdc0=3))
-    return system
-
 def get_power(start_date, days_horizon=3, unpickle=True):
     print("get_power()", ", horizon", days_horizon)
-    system = get_pv_system()
+    system = sunrise_lib.get_pv_system()
     print(system.num_arrays)
     for array in system.arrays:
         print(array.mount)
@@ -119,7 +98,7 @@ def get_power(start_date, days_horizon=3, unpickle=True):
     weather = loc.get_clearsky(dti)
     mc.run_model(weather)
 
-    watt_peak = get_arrays()[0]['watt_peak'] # TODO: assuming each panel uses the same Wp
+    watt_peak = sunrise_lib.get_arrays()[0]['watt_peak'] # TODO: assuming each panel uses the same Wp
     watt = mc.results.ac * watt_peak * 0.8 # TODO: damping the result by 20%
     #watt.columns = ['Watt']
     #print("Watt")
@@ -131,7 +110,7 @@ def get_power(start_date, days_horizon=3, unpickle=True):
     plot = False
     if plot:
         fig, ax = plt.subplots()
-        for array, pdc, array_internal in zip(system.arrays, mc.results.dc, get_arrays()):
+        for array, pdc, array_internal in zip(system.arrays, mc.results.dc, sunrise_lib.get_arrays()):
             pdc.plot(label=f'{array.name}')            
         mc.results.ac.plot(label='Inverter')
         plt.ylabel('System Output')

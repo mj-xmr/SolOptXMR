@@ -8,12 +8,14 @@ import profitability
 import generator
 import kraken
 import geolocation
+import arrays
 
 def test():
     modules = []
     
     modules.append(ui_lib)
     modules.append(sunrise_lib)
+    modules.append(arrays)
     # Needs network:
     modules.append(generator) # TODO: Make network independent or implementa a fallback
     modules.append(weather_lib)
