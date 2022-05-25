@@ -26,6 +26,7 @@ using namespace EnjoLib;
 
 OptiSubjectEnProfit::OptiSubjectEnProfit(const OptiEnProfitDataModel & dataModel)
     : m_dataModel(dataModel)
+    , m_currHour(dataModel.GetCurrHour())
 {
 }
 
@@ -48,6 +49,8 @@ struct BatterySimulation
     double num_undervolted_initial = 0;
     double num_overvolted = 0;
     double num_overused = 0;
+    double m_mulPowerToCapacity = 0;
+    double m_dischargePerHour = 0;
 
     double iter_get_load(double inp, double out, double hours=T_DELTA_HOURS);
 };
@@ -55,6 +58,8 @@ struct BatterySimulation
 BatterySimulation::BatterySimulation(const ConfigSol & confSol, const BatteryParams & batPars, const System & sys)
 : pars(batPars)
 , m_sys(sys)
+, m_mulPowerToCapacity(pars.GetMulPowerToCapacity(sys.voltage))
+, m_dischargePerHour(pars.DISCHARGE_PER_HOUR_PERCENT / 100.0)
 {
     if (confSol.BATTERY_CHARGE > 0)
     {
@@ -72,17 +77,17 @@ double BatterySimulation::iter_get_load(double inp, double out, double hours)
     {
         //out = 0; // dangerous
     }
-    double discharge = hours * pars.DISCHARGE_PER_HOUR_PERCENT / 100.0 * load;
+    const double discharge = hours * m_dischargePerHour * load;
     if (inp < 0)
     {
         inp = 0;
     }
-    double balance = inp - out - discharge;
-    double change = balance * pars.GetMulPowerToCapacity(m_sys.voltage);
+    const double balance = inp - out - discharge;
+    double change = balance * m_mulPowerToCapacity;
     if (change > pars.MAX_DISCHARGE_AMP)
     {
         //if out > pars.MAX_CAPACITY_AMPH: # A valid possibility
-        num_overused += 1;
+        ++num_overused;
         change = pars.MAX_DISCHARGE_AMP;
     }
     //#print(change)
@@ -91,14 +96,14 @@ double BatterySimulation::iter_get_load(double inp, double out, double hours)
     if (load > pars.MAX_CAPACITY_AMPH)
     {
         load = pars.MAX_CAPACITY_AMPH;
-        num_overvolted += 1;
+        ++num_overvolted;
     }
     if (load < pars.MIN_LOAD_AMPH)
     {
         //if (initial_load)
         //  num_undervolted_initial += 1;
         //else
-        num_undervolted += 1;
+        ++num_undervolted;
 
     }
     //if (load < 0)
@@ -109,7 +114,6 @@ double BatterySimulation::iter_get_load(double inp, double out, double hours)
             initial_load = false;
 
     return load;
-
 }
 
 double OptiSubjectEnProfit::Get(const double * inp, int n)
@@ -124,18 +128,19 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
 
     BatterySimulation battery(m_dataModel.GetConf(), m_dataModel.GetBatPars(), m_dataModel.GetSystem());
     double penalitySum = 0;
-
-    const int currHour = TimeUtil().GetCurrentHour();
     SimResult simResult{};
+    const size_t compSize = m_dataModel.GetComputers().size();
+    Assertions::SizesEqual(compSize, dataMat.size(), "OptiSubjectEnProfit::GetVerbose");
     for (int i = 0; i < n; ++i)
     {
         const double bonusMul = HashrateBonus(i % 24);
+        const double powerProd = m_dataModel.GetPowerProduction(i);
         //LOG << "i = " << i << ", val = " << inp[i] << Nl;
         //if (not battery.initial_load)
         //if (false)
-        const SimResult & resLocal = Simulate(i, currHour, dataMat, bonusMul, m_dataModel.GetConf().HASHRATE_BONUS);
+        const SimResult & resLocal = Simulate(i, m_currHour, compSize, dataMat, bonusMul, m_dataModel.GetConf().HASHRATE_BONUS);
         simResult.Add(resLocal);
-        const double load = battery.iter_get_load(m_dataModel.GetPowerProduction(i), resLocal.sumPowerUsage);
+        const double load = battery.iter_get_load(powerProd, resLocal.sumPowerUsage);
         //const double pentalityUndervolted = load < 0 ? GMat().Fabs(load * load * load) : 0;
         const double pentalityUndervolted = battery.num_undervolted;
         const double pentalityOvervolted = battery.num_overvolted;
@@ -174,20 +179,21 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
                 SimResult resVisual{};
                 BatterySimulation batteryCopy(m_dataModel.GetConf(), m_dataModel.GetBatPars(), m_dataModel.GetSystem());
                 VecD hashes, loads, penalityUnder, input, prod, hashrateBonus, usages;
-                const int currHour = TimeUtil().GetCurrentHour();
+                Assertions::SizesEqual(m_dataModel.GetComputers().size(), dataMat.size(), "OptiSubjectEnProfit::GetVerbose");
                 for (int i = 0; i < n; ++i)
                 {
                     const double bonusMul = HashrateBonus(i % 24);
+                    const double powerProd = m_dataModel.GetPowerProduction(i);
                     //LOG << "i = " << i << ", val = " << inp[i] << Nl;
                     //if (not battery.initial_load)
                     //if (false)
-                    const SimResult & resLocal = Simulate(i, currHour, dataMat, bonusMul, m_dataModel.GetConf().HASHRATE_BONUS);
+                    const SimResult & resLocal = Simulate(i, m_currHour, compSize, dataMat, bonusMul, m_dataModel.GetConf().HASHRATE_BONUS);
                     resVisual.Add(resLocal);
-                    const double load = batteryCopy.iter_get_load(m_dataModel.GetPowerProduction(i), resLocal.sumPowerUsage);
+                    const double load = batteryCopy.iter_get_load(powerProd, resLocal.sumPowerUsage);
                     usages.Add(resLocal.sumPowerUsage * batteryCopy.pars.GetMulPowerToCapacity(m_dataModel.GetSystem().voltage));
                     //input.Add(val);
                     loads.Add(load);
-                    prod.Add(m_dataModel.GetPowerProduction(i));
+                    prod.Add(powerProd);
                     hashes.Add(resVisual.sumHashes);
                     hashrateBonus.Add(bonusMul);
                 }
@@ -213,18 +219,19 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
     //return -sum;
 }
 
-OptiSubjectEnProfit::SimResult OptiSubjectEnProfit::Simulate(int i, int currHour, const EnjoLib::Matrix & dataMat, double bonusMul, double bonusMulMA) const
+OptiSubjectEnProfit::SimResult OptiSubjectEnProfit::Simulate(int i, int currHour, size_t compSize, const EnjoLib::Matrix & dataMat, double bonusMul, double bonusMulMA) const
 {
     SimResult res{};
-
-    const EnjoLib::Array<Computer> & comps = m_dataModel.GetComputers();
-    for (int ic = 0; ic < comps.size(); ++ic)
+    
+    //const EnjoLib::Array<Computer> & comps = m_dataModel.GetComputers();
+    const auto & comps = m_dataModel.GetComputers();
+    for (int ic = 0; ic < compSize; ++ic)
     {
-        const Computer & comp = comps.at(ic);
-        const VecD & inp = dataMat.at(ic);
+        const Computer & comp = comps[ic];
+        const VecD & inp = dataMat[ic];
         const double val = inp[i];
         const double hashe = comp.GetHashRate(val) * bonusMul;
-        if (ic < comp.minRunHours + 1)
+        if (ic < comp.minRunHours + 1) // Assuming, that the bonus will last at least for the number of computer's running hours
         {
             res.sumHashes += hashe * (1 + bonusMulMA);
         }
@@ -234,11 +241,13 @@ OptiSubjectEnProfit::SimResult OptiSubjectEnProfit::Simulate(int i, int currHour
         }
         res.sumPowerUsage += comp.GetUsage(val);
     }
-    
+        
+    /*
     const EnjoLib::Array<Habit> & habits = m_dataModel.GetHabits();
-    
-    for (const Habit & hab : habits)
+    //for (const Habit & hab : habits)
+    for (int ih = 0; ih < habits.size(); ++ih)
     {
+        const Habit & hab = habits[ih];
         double usage = hab.watt_asleep;
         if (hab.IsOn(i))
         {
@@ -246,6 +255,8 @@ OptiSubjectEnProfit::SimResult OptiSubjectEnProfit::Simulate(int i, int currHour
         }
         res.sumPowerUsage += usage;
     }
+    */
+    res.sumPowerUsage += m_dataModel.GetHabitsUsage(i);
     return res;
 }
 
