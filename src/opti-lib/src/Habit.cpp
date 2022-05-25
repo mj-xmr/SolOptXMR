@@ -19,7 +19,7 @@ void Habit::ParseSchedule() /// TODO: Figure out a way to parse it only once
 
 bool Habit::IsOn(int hour) const
 {
-    if (hour > szz)
+    if (not HasHour(hour))
     {
         EnjoLib::Assertions::Throw("Size above", "Habit::IsOn");
         //return false;
