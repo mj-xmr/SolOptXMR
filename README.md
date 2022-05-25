@@ -97,6 +97,12 @@ The combination of these options helps in deriving the optimal solution for your
 ### Electricity price
 TODO: enable scheduling the electricity buy/sell prices via cron, like in the Habits json.
 
+# Extra scripts
+
+## Modeling solar arrays
+The script `src/arrays.py` will help you understand how a mixture of various orientations of arrays, defined via `~/.config/solar/arrays.json` reduce the peak & through problem. 
+By properly diversifying the orientation, you'll be blessed with more stable input across the day. 
+Depending on your location, this might increase your profits of the electricity that you can't use domestically nor on mining, since the buyback prices might be a function of the time of day.
 
 # Screenshots
 
@@ -119,6 +125,10 @@ Also, please note the differences in scales of the two plots.
 The daily seasonal swings are 100 times smaller than the mean reversion ones.
 
 ![Network difficulty](https://user-images.githubusercontent.com/63722585/169827786-7dc548c1-6b46-49a9-a7ac-ca20605f1046.png)
+
+## Solar array modeling
+An example evaluation of 2 sets of panels - one set pointing to south-east and the other to south-west. 
+Please note the prolonged production, reflected by the inverter's output.
 
 
 

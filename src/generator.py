@@ -80,27 +80,6 @@ def get_sun_positions(start_date, days_horizon=3, unpickle=True):
     print(pos)
     return pos
 
-def get_arrays():
-    arrays = []
-    for array in sunrise_lib.config_arrays.arrays:
-        #print("AR", array)
-        for num in range(0, array['count']):
-            arrays.append(array)
-    return arrays
-
-def get_pv_system():
-    array_kwargs = dict(
-        module_parameters=dict(pdc0=1, gamma_pdc=-0.004),
-        temperature_model_parameters=dict(a=-3.56, b=-0.075, deltaT=3)
-    )
-    arrays = []
-    for array in get_arrays():
-        array_one = pvlib.pvsystem.Array(pvlib.pvsystem.FixedMount(surface_tilt=array['surface_tilt'], surface_azimuth=array['surface_azimuth']), name=array['name'],
-                   **array_kwargs)
-        arrays.append(array_one)
-    system = pvlib.pvsystem.PVSystem(arrays=arrays, inverter_parameters=dict(pdc0=3))
-    return system
-
 def get_power(start_date, days_horizon=3, unpickle=True):
     print("get_power()", ", horizon", days_horizon)
     system = get_pv_system()
