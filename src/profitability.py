@@ -114,6 +114,8 @@ class POW_Coin:
                 return result
             elif "error" in data:
                 raise Exception(f"Error while attempting to fetch headers {start_height}-{end_height} from {self.node_url}\n{data['error']}")
+            else:
+                raise Exception(f"Something went terribly wrong while attempting to fetch headers {start_height}-{end_height} from {self.node_url}\n{data}")
         except Exception as e:
             print(f"Error while attempting to fetch headers {start_height}-{end_height} from {self.node_url}")
             print(e)
