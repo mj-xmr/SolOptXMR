@@ -17,7 +17,7 @@ python3 src/tests.py
 python3 src/tests.py
 
 #util/build-debian.sh
-./ci-default --no-tests -o "VERBOSE_FUNCTIONS=OFF"
+./ci-default -o "VERBOSE_FUNCTIONS=OFF"
 
 echo "Testing the entire production chain:"
 # TODO: Make optional & derive a build script from tsqsim/util/build.py:
