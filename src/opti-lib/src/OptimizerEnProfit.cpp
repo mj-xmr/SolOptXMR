@@ -75,6 +75,7 @@ void OptimizerEnProfit::operator()()
 
 void OptimizerEnProfit::RandomSearch()
 {
+    SOL_LOG("Random search");
     const int horizonHours = m_dataModel.GetHorizonHours();
     const EnjoLib::Array<Computer> & comps = m_dataModel.GetComputers();
     const int numComputers = comps.size();
@@ -158,6 +159,7 @@ void OptimizerEnProfit::RandomSearch()
         {
             if (Consume2(binaryMat))
             {
+                SOL_LOG("Consume: " + binaryMat.Print());
                 m_numFailed = 0;
                 binarBest = binaryMat;
                 m_uniqueSolutionsPrev = m_uniqueSolutions;
@@ -165,6 +167,7 @@ void OptimizerEnProfit::RandomSearch()
             }
             else
             {
+                SOL_LOG("Failed: " + binaryMat.Print());
                 ++m_numFailed;
             }
             RecalcComputationCosts();

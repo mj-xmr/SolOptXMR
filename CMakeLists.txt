@@ -8,6 +8,10 @@ project (SolOptXMR)
 enable_testing()
 
 option(BUILD_TESTS "Build Tests"   ON)
+option(VERBOSE_FUNCTIONS "Verbose functions"   OFF)
+if (VERBOSE_FUNCTIONS)
+	add_compile_definitions(VERBOSE_FUNCTIONS)
+endif()
 
 
 add_subdirectory(externals)
