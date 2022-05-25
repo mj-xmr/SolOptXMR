@@ -106,10 +106,17 @@ class POW_Coin:
             "method": "get_block_headers_range",
             "params": {"start_height": start_height, "end_height": end_height}
         }
-        data = requests.post(f"{self.node_url}/json_rpc", json=json_req).json()
-        result = pd.DataFrame(data["result"]["headers"], columns=["height", "timestamp", "difficulty", "reward"])
-        result.set_index("height", inplace=True)
-        return result
+        try:
+            data = requests.post(f"{self.node_url}/json_rpc", json=json_req).json()
+            if "result" in data:
+                result = pd.DataFrame(data["result"]["headers"], columns=["height", "timestamp", "difficulty", "reward"])
+                result.set_index("height", inplace=True)
+                return result
+            elif "error" in data:
+                raise Exception(f"Error while attempting to fetch headers {start_height}-{end_height} from {self.node_url}\n{data['error']}")
+        except Exception as e:
+            print(f"Error while attempting to fetch headers {start_height}-{end_height} from {self.node_url}")
+            print(e)
     
     def _request_headers_batcher(self, start_height:int, end_height:int, batch_size:int=1000) -> Tuple[pd.DataFrame, bool]:
         # if (end_height - start_height) >= batch_size, send a batch request then
