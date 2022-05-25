@@ -10,6 +10,8 @@
 #include <Util/VecD.hpp>
 #include <Template/Array.hpp>
 
+#include <STD/Vector.hpp>
+
 class ConfigSol;
 class OptiEnProfitDataModel
 {
@@ -26,7 +28,8 @@ class OptiEnProfitDataModel
         int GetCurrHour() const { return m_currHour; }
 
         const ConfigSol & GetConf() const { return m_confSol; }
-        const EnjoLib::Array<Computer> & GetComputers() const { return m_comps; }
+        //const EnjoLib::Array<Computer> & GetComputers() const { return m_comps; }
+        const std::vector<Computer> & GetComputers() const { return m_comps; }
         const EnjoLib::Array<Habit> & GetHabits() const { return m_habits; }
         double GetHabitsUsage(int i) const;
         const BatteryParams & GetBatPars() const { return m_batPars; }
@@ -41,7 +44,8 @@ class OptiEnProfitDataModel
         int m_currHour = 0;
         EnjoLib::VecD m_power;
         mutable EnjoLib::VecD m_habitsCache;
-        EnjoLib::Array<Computer> m_comps;
+        //EnjoLib::Array<Computer> m_comps;
+        std::vector<Computer> m_comps; // Choosing std::vector for runtime speed reasons.
         EnjoLib::Array<Habit> m_habits;
         
         System m_sys;

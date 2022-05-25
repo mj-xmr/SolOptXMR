@@ -24,7 +24,7 @@ OptiEnProfitDataModel::OptiEnProfitDataModel(const ConfigSol & confSol, int hori
 , m_horizonHours(horizonDays * 24)
 , m_statingPoint(statingPoint)
 , m_currHour(TimeUtil().GetCurrentHour())
-, m_comps(JsonReader().ReadComputers())
+//, m_comps(JsonReader().ReadComputers())
 , m_sys(JsonReader().ReadSystem())
 , m_batPars(JsonReader().ReadBatteries().at(0)) /// TODO: extend
 , m_habits(JsonReader().ReadHabits())
@@ -35,6 +35,9 @@ OptiEnProfitDataModel::OptiEnProfitDataModel(const ConfigSol & confSol, int hori
     const VecStr & lines = tok.GetLines(fname);
     for (const Str line : lines)
         m_power.Add(CharManipulations().ToDouble(line));
+        
+    const auto comps = JsonReader().ReadComputers();
+    AR2VEC(comps, m_comps);
 }
 
 OptiEnProfitDataModel::~OptiEnProfitDataModel()
