@@ -26,7 +26,8 @@ if [ "$(uname)" == "Linux" ]; then
 	python3 src/prod.py
 	# TODO: Mac OSX suffers from an endless loop
 else
-	cd build/default-static-release/bin/
-	./opti
+	python3 src/prod.py
+	#cd build/default-static-release/bin/
+	#./opti
 fi
 
