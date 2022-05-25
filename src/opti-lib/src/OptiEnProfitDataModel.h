@@ -23,6 +23,7 @@ class OptiEnProfitDataModel
         //const VecD & powerProd = m_dataModel.GetPowerProduction();
         int GetHorizonHours() const { return m_horizonHours; }
         int GetStartingPoint() const { return m_statingPoint; }
+        int GetCurrHour() const { return m_currHour; }
 
         const ConfigSol & GetConf() const { return m_confSol; }
         const EnjoLib::Array<Computer> & GetComputers() const { return m_comps; }
@@ -36,6 +37,7 @@ class OptiEnProfitDataModel
         const ConfigSol & m_confSol;
         int m_horizonHours = 0;
         int m_statingPoint = 0;
+        int m_currHour = 0;
         EnjoLib::VecD m_power;
         EnjoLib::Array<Computer> m_comps;
         EnjoLib::Array<Habit> m_habits;

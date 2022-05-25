@@ -2,6 +2,7 @@
 
 #include "JsonReader.h"
 #include "ConfigSol.h"
+#include "TimeUtil.h"
 
 //#define BOOST_JSON_STACK_BUFFER_SIZE 1024
 //#include <boost/json/src.hpp>
@@ -22,6 +23,7 @@ OptiEnProfitDataModel::OptiEnProfitDataModel(const ConfigSol & confSol, int hori
 : m_confSol(confSol)
 , m_horizonHours(horizonDays * 24)
 , m_statingPoint(statingPoint)
+, m_currHour(TimeUtil().GetCurrentHour())
 , m_comps(JsonReader().ReadComputers())
 , m_sys(JsonReader().ReadSystem())
 , m_batPars(JsonReader().ReadBatteries().at(0)) /// TODO: extend

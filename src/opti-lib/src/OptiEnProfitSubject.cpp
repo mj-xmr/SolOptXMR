@@ -26,6 +26,7 @@ using namespace EnjoLib;
 
 OptiSubjectEnProfit::OptiSubjectEnProfit(const OptiEnProfitDataModel & dataModel)
     : m_dataModel(dataModel)
+    , m_currHour(dataModel.GetCurrHour())
 {
 }
 
@@ -124,8 +125,6 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
 
     BatterySimulation battery(m_dataModel.GetConf(), m_dataModel.GetBatPars(), m_dataModel.GetSystem());
     double penalitySum = 0;
-
-    const int currHour = TimeUtil().GetCurrentHour();
     SimResult simResult{};
     for (int i = 0; i < n; ++i)
     {
@@ -133,7 +132,7 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
         //LOG << "i = " << i << ", val = " << inp[i] << Nl;
         //if (not battery.initial_load)
         //if (false)
-        const SimResult & resLocal = Simulate(i, currHour, dataMat, bonusMul, m_dataModel.GetConf().HASHRATE_BONUS);
+        const SimResult & resLocal = Simulate(i, m_currHour, dataMat, bonusMul, m_dataModel.GetConf().HASHRATE_BONUS);
         simResult.Add(resLocal);
         const double load = battery.iter_get_load(m_dataModel.GetPowerProduction(i), resLocal.sumPowerUsage);
         //const double pentalityUndervolted = load < 0 ? GMat().Fabs(load * load * load) : 0;
@@ -174,14 +173,13 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
                 SimResult resVisual{};
                 BatterySimulation batteryCopy(m_dataModel.GetConf(), m_dataModel.GetBatPars(), m_dataModel.GetSystem());
                 VecD hashes, loads, penalityUnder, input, prod, hashrateBonus, usages;
-                const int currHour = TimeUtil().GetCurrentHour();
                 for (int i = 0; i < n; ++i)
                 {
                     const double bonusMul = HashrateBonus(i % 24);
                     //LOG << "i = " << i << ", val = " << inp[i] << Nl;
                     //if (not battery.initial_load)
                     //if (false)
-                    const SimResult & resLocal = Simulate(i, currHour, dataMat, bonusMul, m_dataModel.GetConf().HASHRATE_BONUS);
+                    const SimResult & resLocal = Simulate(i, m_currHour, dataMat, bonusMul, m_dataModel.GetConf().HASHRATE_BONUS);
                     resVisual.Add(resLocal);
                     const double load = batteryCopy.iter_get_load(m_dataModel.GetPowerProduction(i), resLocal.sumPowerUsage);
                     usages.Add(resLocal.sumPowerUsage * batteryCopy.pars.GetMulPowerToCapacity(m_dataModel.GetSystem().voltage));

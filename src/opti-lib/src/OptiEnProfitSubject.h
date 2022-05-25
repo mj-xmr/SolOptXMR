@@ -62,6 +62,7 @@ private:
 
     //EnjoLib::VecD m_iterData;
     float m_sumMax = 0;
+    int m_currHour = 0;
 };
 
 #endif // OptiSubjectEnProfit_H
