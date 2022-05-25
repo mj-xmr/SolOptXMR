@@ -82,6 +82,9 @@ A single example:
 
 `0 15 10 * * ? *`	means: 10:15 AM every day
 
+[Here's more interactive way](https://crontab.guru/) to understand the syntax. 
+Note, that it doesn't use the required seconds part though.
+
 As with the computers json, a given habit may be disabled by setting its `count` field to `0`.
 
 ### System
