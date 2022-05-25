@@ -242,13 +242,13 @@ class POW_Coin:
         if ts_or_h == "ts":
             self.historical_diff(timestamp=stop, batch_size=batch_size, path=path)
             diff = self.read_diff_pkl(path)
-            diff_ts = diff.query(f'timestamp >= {start} & timestamp <= {stop}')
+            diff_ts = diff.loc[(diff["timestamp"] >= start) & (diff["timestamp"] <= stop)]
             return diff_ts
         elif ts_or_h == "h":
             self.historical_diff(height=stop, batch_size=batch_size, path=path)
             diff = self.read_diff_pkl(path)
-            diff.loc[start : stop]
-            return diff
+            diff_h = diff.loc[start : stop]
+            return diff_h
         else:
             raise ValueError("ts_or_h must be 'ts' or 'h'")
     
