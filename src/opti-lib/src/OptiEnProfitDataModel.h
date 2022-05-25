@@ -28,6 +28,7 @@ class OptiEnProfitDataModel
         const ConfigSol & GetConf() const { return m_confSol; }
         const EnjoLib::Array<Computer> & GetComputers() const { return m_comps; }
         const EnjoLib::Array<Habit> & GetHabits() const { return m_habits; }
+        double GetHabitsUsage(int i) const;
         const BatteryParams & GetBatPars() const { return m_batPars; }
         const System & GetSystem() const { return m_sys; }
 
@@ -39,8 +40,10 @@ class OptiEnProfitDataModel
         int m_statingPoint = 0;
         int m_currHour = 0;
         EnjoLib::VecD m_power;
+        mutable EnjoLib::VecD m_habitsCache;
         EnjoLib::Array<Computer> m_comps;
         EnjoLib::Array<Habit> m_habits;
+        
         System m_sys;
         BatteryParams m_batPars;
 };

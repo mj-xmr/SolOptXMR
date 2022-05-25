@@ -214,15 +214,18 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
 OptiSubjectEnProfit::SimResult OptiSubjectEnProfit::Simulate(int i, int currHour, const EnjoLib::Matrix & dataMat, double bonusMul, double bonusMulMA) const
 {
     SimResult res{};
-
+    
     const EnjoLib::Array<Computer> & comps = m_dataModel.GetComputers();
+    
+    Assertions::SizesEqual(comps.size(), dataMat.size(), "OptiSubjectEnProfit::Simulate");
+    
     for (int ic = 0; ic < comps.size(); ++ic)
     {
-        const Computer & comp = comps.at(ic);
-        const VecD & inp = dataMat.at(ic);
+        const Computer & comp = comps[ic];
+        const VecD & inp = dataMat[ic];
         const double val = inp[i];
         const double hashe = comp.GetHashRate(val) * bonusMul;
-        if (ic < comp.minRunHours + 1)
+        if (ic < comp.minRunHours + 1) // Assuming, that the bonus will last at least for the number of computer's running hours
         {
             res.sumHashes += hashe * (1 + bonusMulMA);
         }
@@ -232,11 +235,13 @@ OptiSubjectEnProfit::SimResult OptiSubjectEnProfit::Simulate(int i, int currHour
         }
         res.sumPowerUsage += comp.GetUsage(val);
     }
-    
+        
+    /*
     const EnjoLib::Array<Habit> & habits = m_dataModel.GetHabits();
-    
-    for (const Habit & hab : habits)
+    //for (const Habit & hab : habits)
+    for (int ih = 0; ih < habits.size(); ++ih)
     {
+        const Habit & hab = habits[ih];
         double usage = hab.watt_asleep;
         if (hab.IsOn(i))
         {
@@ -244,6 +249,8 @@ OptiSubjectEnProfit::SimResult OptiSubjectEnProfit::Simulate(int i, int currHour
         }
         res.sumPowerUsage += usage;
     }
+    */
+    res.sumPowerUsage += m_dataModel.GetHabitsUsage(i);
     return res;
 }
 

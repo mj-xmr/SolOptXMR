@@ -107,9 +107,29 @@ EnjoLib::Matrix OptiEnProfitDataModel::GetData() const
         }
         ret2.push_back(vec);
     }
-
-
-
-
     return ret2;
+}
+
+double OptiEnProfitDataModel::GetHabitsUsage(int i) const
+{
+    if (i < m_habitsCache.size())
+    {
+        return m_habitsCache[i];
+    }
+    else
+    {
+        double sum = 0;
+        for (int ih = 0; ih < m_habits.size(); ++ih)
+        {
+            const Habit & hab = m_habits[ih];
+            double usage = hab.watt_asleep;
+            if (hab.IsOn(i))
+            {
+                usage = hab.watt;
+            }
+            sum += usage;
+        }
+        m_habitsCache.Add(sum);
+        return sum;
+    }
 }
