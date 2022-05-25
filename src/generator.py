@@ -102,6 +102,7 @@ def get_pv_system():
     return system
 
 def get_power(start_date, days_horizon=3, unpickle=True):
+    print("get_power", start_date, days_horizon)
     system = get_pv_system()
     print(system.num_arrays)
     for array in system.arrays:
