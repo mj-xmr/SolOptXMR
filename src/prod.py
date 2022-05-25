@@ -36,7 +36,8 @@ FILE_HASHRATE_BONUS_SINGLE = "/hashrate_bonus_ma_single.dat"
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-b', '--battery-charge', default=DEFAULT_BATTERY_STATE, type=float, help="Initial battery charge [Ah] (default: {} which means: minimal charge)".format(DEFAULT_BATTERY_STATE))
+    parser.add_argument('-a', '--battery-charge-ah', default=DEFAULT_BATTERY_STATE, type=float, help="Initial battery charge [Ah] (default: {} which means: minimal charge)".format(DEFAULT_BATTERY_STATE))
+    parser.add_argument('-v', '--battery-charge-v',  default=DEFAULT_BATTERY_STATE, type=float, help="Initial battery charge [V]  (default: {} which means: minimal charge) UNSUOPPORTED YET".format(DEFAULT_BATTERY_STATE))
     parser.add_argument('-s', '--start-date',    default=DATE_NOW_STR, type=str, help="Start date, ISO format (parsed) (default: {})".format(DATE_NOW_STR))
     parser.add_argument('-d', '--days-horizon',  default=DEFAULT_HORIZON_DAYS, type=int, help="Horizon in days (default: {})".format(DEFAULT_HORIZON_DAYS))
     parser.add_argument('-i', '--in-data',  default="", type=str, help="Input hashrate data (default: {})".format(""))
@@ -152,6 +153,8 @@ def run_main(args, elev, show_plots, battery_charge, horizon):
     plot_hashrates()
 
 def main(args):
+    if args.battery_charge_v:
+        raise ValueError("Voltage input not supported yet.") # TODO
     start_date = dateutil.parser.parse(args.start_date)
     elev = generator.get_power(start_date, args.days_horizon, unpickle=False)
     #print(pos)
@@ -160,7 +163,7 @@ def main(args):
     elev = generator.proc_data(elev, False, args.days_horizon)
     #elev = generator.extr_data(proc)
     #print(elev)
-    run_main(args, elev, show_plots, args.battery_charge, args.days_horizon)
+    run_main(args, elev, show_plots, args.battery_charge_ah, args.days_horizon)
 
 if __name__ == "__main__":
     args = get_args()
