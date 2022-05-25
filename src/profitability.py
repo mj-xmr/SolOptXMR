@@ -222,6 +222,27 @@ class POW_Coin:
         else:  # not height and not timestamp:
             raise TypeError("Need a height or a timestamp")
     
+    def historical_diff_range(self, ts_or_h:str, start:int, stop:int, batch_size:int=1000, path:str=None) -> pd.DataFrame:
+        if type(ts_or_h) is not str:
+            raise TypeError("ts_or_h must be a string")
+        # Call historical_diff with the latest timestamp to force updating the stored difficulty data
+        # Once we have the data, assume that everything went fine with the pkl creation
+        # Load the pkl directly and slice it
+        if not path:
+            path = f"{DIR_TMP}/diff_{self.coin.name}.pkl"
+        if ts_or_h == "ts":
+            self.historical_diff(timestamp=stop, batch_size=batch_size, path=path)
+            diff = self.read_diff_pkl(path)
+            diff_ts = diff.query(f'timestamp >= {start} & timestamp <= {stop}')
+            return diff_ts
+        elif ts_or_h == "h":
+            self.historical_diff(height=stop, batch_size=batch_size, path=path)
+            diff = self.read_diff_pkl(path)
+            diff.loc[start : stop]
+            return diff
+        else:
+            raise ValueError("ts_or_h must be 'ts' or 'h'")
+    
     def check_block_pickle_integrity(self) -> bool:
         path = f"{DIR_TMP}/diff_{self.coin.name}.pkl"
         try: # If we have previous saved data, merge with the new data
