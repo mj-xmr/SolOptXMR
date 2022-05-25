@@ -39,7 +39,7 @@ def get_weather(horizon=3):
         #print(config_geo.geo.city)
 
         dnow = sunrise_lib.DATE_NOW.date().isoformat()
-        dirr = sunrise_lib.DIR_TMP + '/weather-pred/{}/'.format(dnow)
+        dirr = sunrise_lib.DIR_TMP + '/weather-pred/{}/{}/{}'.format(dnow, config_geo.geo.country, config_geo.geo.city)
 
         path_template = dirr + '/weather-pic-{}.png'
         if not os.path.isdir(dirr):
