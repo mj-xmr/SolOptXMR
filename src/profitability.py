@@ -139,7 +139,7 @@ class POW_Coin:
             result = pd.concat(results, axis=0)
             return result, False
     
-    def historical_diff(self, height:int=None, timestamp:datetime=None, batch_size:int=1000) -> int:
+    def historical_diff(self, height:int=None, timestamp:int=None, batch_size:int=1000) -> int:
         if height and timestamp:
             warnings.warn("Both height and timestamp present: ignoring timestamp", UserWarning)
         
