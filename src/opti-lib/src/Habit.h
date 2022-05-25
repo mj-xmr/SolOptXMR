@@ -13,6 +13,7 @@ public:
 	EnjoLib::Str Print() const;
 	void ParseSchedule();
 	bool IsOn(int hour) const;
+	constexpr bool HasHour(int hour) const { return hour < szz; }
 	
 	EnjoLib::Str name;
 	EnjoLib::Str schedule;
