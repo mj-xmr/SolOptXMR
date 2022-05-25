@@ -13,7 +13,7 @@ import traceback
 from matplotlib import pyplot as plt
 
 
-def plot_arrays():
+def plot_arrays(show=True):
     system = sunrise_lib.get_pv_system()
     print(system.num_arrays)
     for array in system.arrays:
@@ -38,8 +38,11 @@ def plot_arrays():
     plt.grid()
     plt.xticks(rotation=25, ha='right')
     plt.legend()
-    plt.show()    
+    if show:
+        plt.show()    
 
+def test():
+    plot_arrays(False)
 
 if __name__ == "__main__":
     plot_arrays()
