@@ -69,10 +69,16 @@ tzstr = config_geo.geo.time_zone
 tz = timezone(tzstr)
     
 DATE_NOW = datetime.datetime.now(tz=tz)
+DATE_NOW_STR = DATE_NOW.isoformat()
+DEFAULT_HORIZON_DAYS = 3
 LAT = config_geo.geo.lat
 LON = config_geo.geo.lon
 
 TESTING = config.sunrise_lib.TESTING
+
+def add_date_arguments_to_parser(parser, date=DATE_NOW_STR, horizon=DEFAULT_HORIZON_DAYS):
+    parser.add_argument('-s', '--start-date',    default=date, type=str, help="Start date, ISO format (parsed) (default: {})".format(date))
+    parser.add_argument('-d', '--days-horizon',  default=horizon, type=int, help="Horizon in days (default: {})".format(horizon))
 
 def write_file(fname, val):
     with open(fname, 'w') as fout:
