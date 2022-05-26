@@ -78,7 +78,7 @@ It makes sense to compare and sum up this values for the extreme conditions.
 
 # Further documentation
 - [safety](docs/safety.md): how to handle electrical systems safely. Tell me, that you "read and understood it", and I can sleep fine.
-- [economy](docs/economy.md): my economy views and the resulting dynamic tailored to production of electricity.
+- [economy](docs/economy.md): my economy views and the resulting dynamics tailored to production of electricity.
 
 # Screenshots
 
