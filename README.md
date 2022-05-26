@@ -45,14 +45,14 @@ In order to alter the default behavior, the main script can be ran with the foll
 ```bash
 ./soloptxmr.py \
 --days-horizon 5 \
---battery-charge-ah 75.2 \
+--battery-charge-percent 67 \
 --start-date 2022-02-20T20:22
 ```
 or equivalently:
 ```bash
 ./soloptxmr.py \
 -d 5 \
--a 75.2 \
+-p 67 \
 -s "2022-02-20 20:22"
 ```
 
@@ -61,7 +61,7 @@ Setting the battery's voltage, rather than the Ah charge is a feature planned fo
 ## Configuration
 After running the `./util/config.sh` script, you'll be presented with paths to configuration scripts, that have just been copied to your `~/.config` directory. 
 You're meant to adjust them to match your specifics. 
-[Please read this file](docs/config.md) for more details.
+[Please read this file](docs/config.md) for further explanations.
 
 # Extra scripts
 
