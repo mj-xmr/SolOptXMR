@@ -9,6 +9,7 @@ It will accommodate for issues such as:
 
 - Time of day
 - Weather fluctuations
+- Opportunistic scooping during network difficulty reductions
 - Avoiding depleting batteries below a threshold, that would damage them
 - Avoiding overheating of the mining rig
 - Leaving enough power for your daily use
