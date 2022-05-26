@@ -26,8 +26,6 @@ from profitability import POW_Coin
 
 from python_json_config import ConfigBuilder
 
-DATE_NOW_STR = sunrise_lib.DATE_NOW.isoformat()
-DEFAULT_HORIZON_DAYS = 3
 DEFAULT_BATTERY_STATE = 0
 config_system = sunrise_lib.config_system
 FILE_HASHRATE_BONUS = "/hashrate_bonus_ma.dat"
@@ -38,8 +36,7 @@ def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-a', '--battery-charge-ah', default=DEFAULT_BATTERY_STATE, type=float, help="Initial battery charge [Ah] (default: {} which means: minimal charge)".format(DEFAULT_BATTERY_STATE))
     parser.add_argument('-v', '--battery-charge-v',  default=DEFAULT_BATTERY_STATE, type=float, help="Initial battery charge [V]  (default: {} which means: minimal charge) UNSUOPPORTED YET".format(DEFAULT_BATTERY_STATE))
-    parser.add_argument('-s', '--start-date',    default=DATE_NOW_STR, type=str, help="Start date, ISO format (parsed) (default: {})".format(DATE_NOW_STR))
-    parser.add_argument('-d', '--days-horizon',  default=DEFAULT_HORIZON_DAYS, type=int, help="Horizon in days (default: {})".format(DEFAULT_HORIZON_DAYS))
+    sunrise_lib.add_date_arguments_to_parser(parser)    
     parser.add_argument('-i', '--in-data',  default="", type=str, help="Input hashrate data (default: {})".format(""))
     parser.add_argument('-o', '--out-dir',  default="", type=str, help="Output dir to exchange with tsqsim (default: {})".format(""))
     #parser.add_argument('-v', '--verbose',      default=TESTING, action='store_true', help="Test (default: OFF)")
