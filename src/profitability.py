@@ -137,7 +137,7 @@ class POW_Coin:
             if results == []:
                 print("Aborting block data fetch")
             else:
-                print("Stopped - saving last data fetched...")
+                print(f"Stopped - saving last data fetched (up to block {start_height})")
             try:
                 result = pd.concat(results, axis=0)
             except ValueError:  # ValueError: No objects to concatenate - if intrerrupting during the first fetch
