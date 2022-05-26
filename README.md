@@ -123,7 +123,7 @@ These data are taken into account when making decision about starting a rig or n
 Sometimes it's worth to wait for a while until other miners switch off their rigs in order to scoop more coins for the same amount of used power. 
 Obviously this assumes, that your stored electricity doesn't go to waste. 
 Also, please note the differences in scales of the two plots. 
-The daily seasonal swings are 100 times smaller than the mean reversion ones.
+The daily seasonal swings (lower plot) are 100 times smaller than the mean reversion ones (upper plot).
 
 ![Network difficulty](https://user-images.githubusercontent.com/63722585/169827786-7dc548c1-6b46-49a9-a7ac-ca20605f1046.png)
 
