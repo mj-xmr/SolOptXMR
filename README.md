@@ -63,7 +63,7 @@ After running the `./util/config.sh` script, you'll be presented with paths to c
 You're meant to adjust them to match your specifics.
 
 ### Arrays
-Inside the `~/.config/solar/arrays.json` it's important to understand, that an array's parameter `surface_tilt` accepts degrees and 0 means laying flat horizontally on a roof, while 90 means hanging flat vertically on a wall. 
+Inside the `~/.config/solar/arrays.json` it's important to understand, that an array's parameter `surface_tilt` accepts degrees and 0 means laying flat horizontally on a roof, while 90 means hanging flat vertically on an external wall. 
 `surface_azimuth` uses 0 as north, 90 as east, 180 as south and 270 as west.
 
 ### Geo
