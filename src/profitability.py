@@ -205,15 +205,24 @@ class POW_Coin:
             if dt_timestamp < datetime.fromtimestamp(0):
                 raise ValueError("Cannot have a negative timestamp")
             while dt_timestamp > last_known_timestamp and last_known_height < self.height:  # Need to update
+                # Handle transition from Monero v1 (60s block time) to v2 (120s block time)
                 xmr_blocktime_120_height = 1009827
                 xmr_blocktime_120_ts = 1458748658
                 xmr_blocktime_120_dt = datetime.fromtimestamp(xmr_blocktime_120_ts)
                 if dt_timestamp < xmr_blocktime_120_dt:
-                    # print(math.ceil((dt_timestamp - last_known_timestamp).total_seconds() / 60))
-                    target_height = min(self.height, last_known_height + math.ceil((dt_timestamp - last_known_timestamp).total_seconds() / 60))
+                    # This delta_height cannot be negative, or we would not have entered the loop
+                    delta_height = math.ceil((dt_timestamp - last_known_timestamp).total_seconds() / 60)
+                    target_height = min(self.height, last_known_height + delta_height)
                 else:
-                    # print(math.ceil((dt_timestamp - xmr_blocktime_120_dt).total_seconds() / 120))
-                    target_height = min(self.height, xmr_blocktime_120_height + math.ceil((dt_timestamp - xmr_blocktime_120_dt).total_seconds() / 120))
+                    # The first delta_height handles the transition between v1 and v2 forks when fetching data by timestamp
+                    # This delta_height cannot be negative, or we would have ended up in the previous case
+                    delta_height = math.ceil((dt_timestamp - xmr_blocktime_120_dt).total_seconds() / 120)
+                    target_height = min(self.height, xmr_blocktime_120_height + delta_height)
+                    if target_height <= last_known_height:  # Technically == should be enough, but we're using <= for extra robustness
+                        # The second delta_height handles the case when the previous iteration of the loop did not fetch enough blocks
+                        # This delta_height cannot be negative, or we would not have entered the loop
+                        delta_height = math.ceil((dt_timestamp - last_known_timestamp).total_seconds() / 120)
+                        target_height = min(self.height, last_known_height + delta_height)
                 # diff_new, blocked = self._request_headers_batcher(last_known_height + 1, self.height, batch_size=batch_size)
                 diff_new, blocked = self._request_headers_batcher(last_known_height + 1, target_height, batch_size=batch_size)
                 if diff_new is not None:
@@ -300,6 +309,7 @@ def test():
     assert a.historical_diff(height=10) == 21898
     assert a.historical_diff(height=69420) == 237475428
     assert a.historical_diff(timestamp=1397818225) == 27908  # Block 5
+    assert a.historical_diff(timestamp=1412689756) == 1329370416  # Block 250500
     assert a.historical_diff(timestamp=1448116661) == 861110356  # Block 835786
     assert a.historical_diff(timestamp=1497817416) == 9690685763  # Block 1335437
     assert a.check_block_pickle_integrity() == True
