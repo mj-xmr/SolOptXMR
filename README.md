@@ -26,10 +26,10 @@ When in doubt, please view their contents with `cat` for an objective assessment
 ```bash
 git clone --recursive https://github.com/mj-xmr/SolOptXMR.git # Clone this repo (assuming it's not a fork)
 cd SolOptXMR		# Enter the cloned repo's dir
-pip install -r requirements.txt # Install Python packages (either use this command or its fitting alternative) 
 ./util/prep-env.sh	# Prepare the environment - downloads example data and creates useful symlinks
 ./util/deps-pull.sh	# Download the maintaned dependencies
 ./util/deps-build.sh	# Build and install the unmanaged dependencies (uses sudo for installation)
+pip install -r requirements.txt # Install Python packages (either use this command or its fitting alternative) 
 ./util/config.sh	# Configure your rig
 ```
 
