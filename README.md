@@ -111,6 +111,10 @@ The script accepts an iso-formatted date as an input, allowing you to simulate e
 The title of the plot presents the sum of produced electricity in a given day. 
 It makes sense to compare and sum up this values for the extreme conditions.
 
+# Further documentation
+- [safety](docs/safety.md): how to handle electrical systems safely. Tell me, that you "read and understood it", and I can sleep fine.
+- [economy](docs/economy.md): my economy views and the resulting dynamic tailored to production of electricity
+
 # Screenshots
 
 ## First production model
