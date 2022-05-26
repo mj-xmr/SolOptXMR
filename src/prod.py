@@ -162,10 +162,10 @@ def run_main(args, elev, show_plots, battery_charge, horizon):
 def main(args):
     if args.battery_charge_v:
         raise ValueError("Voltage input not supported yet.") # TODO
-    if args.battery_charge_p:
-        if args.battery_charge_p < 1:
+    if args.battery_charge_percent:
+        if args.battery_charge_percent < 1:
             raise ValueError("Percentage input must be > 1.")
-        args.battery_charge_ah = args.battery_charge_p / 100.0 * generator.MAX_CAPACITY
+        args.battery_charge_ah = args.battery_charge_percent / 100.0 * generator.MAX_CAPACITY
     
     start_date = dateutil.parser.parse(args.start_date)
     elev = generator.get_power(start_date, args.days_horizon, unpickle=False)
