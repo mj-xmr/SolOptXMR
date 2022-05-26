@@ -34,9 +34,10 @@ FILE_HASHRATE_BONUS_SINGLE = "/hashrate_bonus_ma_single.dat"
 
 def get_args():
     parser = argparse.ArgumentParser()
+    parser.add_argument('-p', '--battery-charge-percent',  default=DEFAULT_BATTERY_STATE, type=float, help="Initial battery charge [0-100]  (default: {} which means: minimal charge)".format(DEFAULT_BATTERY_STATE))
     parser.add_argument('-a', '--battery-charge-ah', default=DEFAULT_BATTERY_STATE, type=float, help="Initial battery charge [Ah] (default: {} which means: minimal charge)".format(DEFAULT_BATTERY_STATE))
     parser.add_argument('-v', '--battery-charge-v',  default=DEFAULT_BATTERY_STATE, type=float, help="Initial battery charge [V]  (default: {} which means: minimal charge) UNSUOPPORTED YET".format(DEFAULT_BATTERY_STATE))
-    sunrise_lib.add_date_arguments_to_parser(parser)    
+    sunrise_lib.add_date_arguments_to_parser(parser)
     parser.add_argument('-i', '--in-data',  default="", type=str, help="Input hashrate data (default: {})".format(""))
     parser.add_argument('-o', '--out-dir',  default="", type=str, help="Output dir to exchange with tsqsim (default: {})".format(""))
     #parser.add_argument('-v', '--verbose',      default=TESTING, action='store_true', help="Test (default: OFF)")
@@ -161,6 +162,11 @@ def run_main(args, elev, show_plots, battery_charge, horizon):
 def main(args):
     if args.battery_charge_v:
         raise ValueError("Voltage input not supported yet.") # TODO
+    if args.battery_charge_p:
+        if args.battery_charge_p < 1:
+            raise ValueError("Percentage input must be > 1.")
+        args.battery_charge_ah = args.battery_charge_p / 100.0 * generator.MAX_CAPACITY
+    
     start_date = dateutil.parser.parse(args.start_date)
     elev = generator.get_power(start_date, args.days_horizon, unpickle=False)
     #print(pos)
