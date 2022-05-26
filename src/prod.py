@@ -42,19 +42,28 @@ def get_args():
     #parser.add_argument('-v', '--verbose',      default=TESTING, action='store_true', help="Test (default: OFF)")
     return parser.parse_args()
 
+def getInstallPathPrefix(prefix=''):
+    pref = prefix + 'build/'
+    dir_candidates = []
+    dir_candidates.append('icecc-shared-release')
+    dir_candidates.append('icecc-static-release')
+    dir_candidates.append('default-static-release')
+    dir_candidates.append('default-shared-release')
+    dir_candidates.append('clang-static-release')
+    dir_candidates.append('clang-shared-release')
+    dir_candidates.append('gcc-static-release')
+    dir_candidates.append('gcc-shared-release')
+
+    for d in dir_candidates:
+        dir_test = pref + d + "/bin"
+        if os.path.isdir(dir_test):
+            return dir_test
+    return None
+
 def getInstallPath():
-    dir1 = 'build/icecc-shared-release/bin'
-    dir2 = 'build/icecc-static-release/bin'
-    dir3 = 'build/default-static-release/bin'
-    dir4 = 'build/default-shared-release/bin'
-    if os.path.isdir(dir1):
-        dirr = dir1
-    elif os.path.isdir(dir2):
-        dirr = dir2
-    elif os.path.isdir(dir3):
-        dirr = dir3
-    elif os.path.isdir(dir4):
-        dirr = dir4
+    dirr = getInstallPathPrefix()
+    if dirr == None:
+        dirr = getInstallPathPrefix('../')
     return dirr
         
 class BatterySimulatorCpp(generator.BatterySimulator):
