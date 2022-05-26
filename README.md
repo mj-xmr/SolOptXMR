@@ -109,7 +109,7 @@ You might also discover, that although the recommended panel tilt of 45 degrees 
 In order to balance this discrepancy, please try experimenting with more vertical tilts, like between 89 and 80.
 The script accepts an iso-formatted date as an input, allowing you to simulate extreme conditions - winter and summer. 
 The title of the plot presents the sum of produced electricity in a given day. 
-It makes sense to compare and sum up this values for summer and winter.
+It makes sense to compare and sum up this values for the extreme conditions.
 
 # Screenshots
 
