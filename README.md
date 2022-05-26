@@ -101,7 +101,7 @@ TODO: enable scheduling the electricity buy/sell prices via cron, like in the Ha
 # Extra scripts
 
 ## Modeling solar arrays
-The script `src/arrays.py` will help you understand how a mixture of various orientations of arrays, defined via `~/.config/solar/arrays.json` reduce the peak & trough problem. 
+The script `src/arrays.py` will help you understand how a mixture of various orientations of arrays, defined via `~/.config/solar/arrays.json` reduces the peak & trough problem. 
 By properly diversifying the orientation, you'll be blessed with more stable input across the day. 
 Depending on your location, this might increase your profits of the electricity that you can't use domestically nor on mining, since the buyback prices might be a function of the time of day.
 
