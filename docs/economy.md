@@ -95,7 +95,7 @@ They will also typically be equipped with an electromagnetic brake, that would s
 One common benefit for all of the diversification solutions is that PCs with low CPU cache will behave better, if they use fewer threads, that would otherwise compete for the same cache regions, thus reducing the output.
 In other words, their output doesn't scale linearly with the linear increase of used threads.
 OTOH by not using all the threads, they leave an energetic surplus, as opposed to the sutuation when they use all the threads.
-Another limitation, that prevents you from using all the threads of all the computers at the same time of peak production, that may only be obvious to electrical engineers, results from the cables' internal resistance.
+Another limitation, that prevents you from using all the threads of all the computers at the same time in order to scalp the peak production, that may only be obvious to electrical engineers, results from the cables' internal resistance.
 If, for practical reasons, you decided to join all, say 4, batteries with a single cable, reaching the inverter and the cable is too narrow, then it will limit the number of electrons (hence finally: available Watts) that can be transfered per second.
 This essentially forces you to diversify the inputs, unless you're OK with investing more than enough into batteries to store the unused overproduction.
 Whatever diversification scheme is on your mind, before making such an investment decision, you may simulate the potential outcome by changing the configuration settings and re-running the simulation.
