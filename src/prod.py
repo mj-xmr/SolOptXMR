@@ -79,21 +79,13 @@ class BatterySimulatorCpp(generator.BatterySimulator):
         hashrate_bonus = 0
         try:
             a = POW_Coin(kraken.coin.XMR)
-            try:
-                a.historical_diff(timestamp=datetime.datetime.now().timestamp())
-            except Exception as ex:
-                print("Failed to fetch historical diff")
-                print(traceback.format_exc())
-            diff_df = a.read_diff_pkl()
-            last_diff = diff_df.tail(20000)
-
-            #last_diff.set_index([pd.Index(['timestamp'])])
-            #last_diff.reset_index(drop=True, inplace=True)
-            diff_csv_path = sunrise_lib.config.sunrise_lib.DIR_TMP + "/diff_original.csv"
-            
-            
+            height_start = a.height - 20000
+            height_end = a.height - 1
+            print("Downloading height: start =", height_start, ", end =", height_end)
+            last_diff = a.historical_diff_range("h", height_start, height_end)
             ts_diff = last_diff[['timestamp', 'difficulty']]
             print(ts_diff)
+            diff_csv_path = sunrise_lib.config.sunrise_lib.DIR_TMP + "/diff_original.csv"
             ts_diff.to_csv(diff_csv_path, sep=',', index=False)
 
             cmd = "./tsqsim"
@@ -109,9 +101,8 @@ class BatterySimulatorCpp(generator.BatterySimulator):
             hashrate_bonus = np.loadtxt(args.out_dir + FILE_HASHRATE_BONUS_SINGLE)
             print("Hashrate bonus (MA) =", hashrate_bonus)
         except Exception as ex:
-            print("Failed to fetch hashrate")
-            #raise ex
             print(traceback.format_exc())
+            print("Failed to fetch hashrate")
 
         #hashrate_bonus = -3.2 # For simulation only
         #hashrate_bonus =  5.2 # For simulation only
