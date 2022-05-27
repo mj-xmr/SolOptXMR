@@ -45,9 +45,9 @@ jobs:
       uses: actions/cache@v2
       with:
         path: /tmp/diff_XMR.pkl
-        key:          data-diff-${{ hashFiles('/tmp/diff_XMR.*') }}
+        key: data-diff-${{ github.sha }}
         restore-keys: |
-          data-diff-${{ hashFiles('/tmp/diff_XMR.*') }}
+          data-diff-${{ github.sha }}
           data-diff
 #    - name: deps cache
 #      uses: actions/cache@v2
@@ -108,9 +108,9 @@ jobs:
       uses: actions/cache@v2
       with:
         path: /tmp/diff_XMR.pkl
-        key:          data-diff-${{ hashFiles('/tmp/diff_XMR.*') }}
+        key: data-diff-${{ github.sha }}
         restore-keys: |
-          data-diff-${{ hashFiles('/tmp/diff_XMR.*') }}
+          data-diff-${{ github.sha }}
           data-diff
     - name: prepare environment
       run: util/prep-env.sh
