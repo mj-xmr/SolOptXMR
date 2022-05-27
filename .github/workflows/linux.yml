@@ -46,7 +46,9 @@ jobs:
       with:
         path: /tmp/diff_XMR.pkl
         key:          data-diff-${{ hashFiles('/tmp/diff_XMR.pkl') }}
-        restore-keys: data-diff
+        restore-keys: |
+          data-diff-${{ hashFiles('/tmp/diff_XMR.pkl') }}
+          data-diff
 #    - name: deps cache
 #      uses: actions/cache@v2
 #      with:
@@ -107,7 +109,9 @@ jobs:
       with:
         path: /tmp/diff_XMR.pkl
         key:          data-diff-${{ hashFiles('/tmp/diff_XMR.pkl') }}
-        restore-keys: data-diff
+        restore-keys: |
+          data-diff-${{ hashFiles('/tmp/diff_XMR.pkl') }}
+          data-diff
     - name: prepare environment
       run: util/prep-env.sh
     - name: install dependencies
