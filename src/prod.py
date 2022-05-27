@@ -79,7 +79,8 @@ class BatterySimulatorCpp(generator.BatterySimulator):
         hashrate_bonus = 0
         try:
             a = POW_Coin(kraken.coin.XMR)
-            height_start = a.height - 20000
+            min_data_points = 20000
+            height_start = a.height - min_data_points
             height_end = a.height - 1
             print("Downloading height: start =", height_start, ", end =", height_end)
             last_diff = a.historical_diff_range("h", height_start, height_end)
@@ -90,7 +91,7 @@ class BatterySimulatorCpp(generator.BatterySimulator):
 
             cmd = "./tsqsim"
             cmd += " --data {}".format(diff_csv_path)
-            cmd += " --out {}".format(args.out_dir)
+            cmd += " --out {}" .format(args.out_dir)
             cmd += " --latest-date"
             cmd += " --per h1"
 
