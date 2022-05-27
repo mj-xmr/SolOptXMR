@@ -11,7 +11,7 @@ public:
 	HabitCron();
 	virtual ~HabitCron();
 	
-	EnjoLib::VecT<int> GetNextHoursOn(const Habit & hab, int horizonDays = 7) const; /// TODO: Pass on horizon days
+	EnjoLib::VecT<int> GetNextHoursOn(const Habit & hab, int horizonDays = 10) const; /// TODO: Pass on horizon days
 
 protected:
 

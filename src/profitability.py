@@ -127,7 +127,7 @@ class POW_Coin:
         results = []
         try:
             print(f"Downloading headers from {start_height} to {end_height}")
-            while (end_height - start_height >= batch_size):
+            while (end_height - start_height >= batch_size): # TODO: This loop has to have any kind of max_iterations fuse, where the max_iterations can be a very large number.
                 # print(f"Downloading headers from {start_height} to {start_height + batch_size - 1}")
                 results.append(self._request_headers_range(start_height, start_height + batch_size - 1))
                 start_height = start_height + batch_size

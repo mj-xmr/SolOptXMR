@@ -40,12 +40,15 @@ jobs:
         path: externals/tsqsim/build/data/data/txt
         key:          data-${{ hashFiles('externals/tsqsim/data/data/txt/**/*') }}
         restore-keys: data-${{ hashFiles('externals/tsqsim/data/data/txt/**/*') }}
+    # Expendable, volatile & large cache
     - name: diff cache
       uses: actions/cache@v2
       with:
         path: /tmp/diff_XMR.pkl
-        key:          data-diff
-        restore-keys: data-diff
+        key: data-diff-${{ github.sha }}
+        restore-keys: |
+          data-diff-${{ github.sha }}
+          data-diff
 #    - name: deps cache
 #      uses: actions/cache@v2
 #      with:
@@ -100,12 +103,15 @@ jobs:
         path: build/data/data/txt
         key:          data-${{ hashFiles('build/data/data/txt/**/*') }}
         restore-keys: data-${{ hashFiles('build/data/data/txt/**/*') }}
+    # Expendable, volatile & large cache
     - name: diff cache
       uses: actions/cache@v2
       with:
         path: /tmp/diff_XMR.pkl
-        key:          data-diff
-        restore-keys: data-diff
+        key: data-diff-${{ github.sha }}
+        restore-keys: |
+          data-diff-${{ github.sha }}
+          data-diff
     - name: prepare environment
       run: util/prep-env.sh
     - name: install dependencies
