@@ -80,7 +80,7 @@ class BatterySimulatorCpp(generator.BatterySimulator):
         try:
             a = POW_Coin(kraken.coin.XMR)
             min_data_points = 20000
-            height_start = a.height - min_data_points
+            height_start = a.height - min_data_points - 1
             height_end = a.height - 1
             print("Downloading height: start =", height_start, ", end =", height_end)
             last_diff = a.historical_diff_range("h", height_start, height_end)
