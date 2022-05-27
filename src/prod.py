@@ -39,7 +39,7 @@ def get_args():
     parser.add_argument('-v', '--battery-charge-v',  default=DEFAULT_BATTERY_STATE, type=float, help="Initial battery charge [V]  (default: {} which means: minimal charge) UNSUOPPORTED YET".format(DEFAULT_BATTERY_STATE))
     sunrise_lib.add_date_arguments_to_parser(parser)
     parser.add_argument('-i', '--in-data',  default="", type=str, help="Input hashrate data (default: {})".format(""))
-    parser.add_argument('-o', '--out-dir',  default="", type=str, help="Output dir to exchange with tsqsim (default: {})".format(""))
+    parser.add_argument('-o', '--out-dir',  default=sunrise_lib.config.sunrise_lib.DIR_TMP, type=str, help="Output dir to exchange with tsqsim (default: {})".format(""))
     #parser.add_argument('-v', '--verbose',      default=TESTING, action='store_true', help="Test (default: OFF)")
     return parser.parse_args()
 
@@ -75,11 +75,29 @@ class BatterySimulatorCpp(generator.BatterySimulator):
         cwd = os.getcwd()
         install_path = getInstallPath()
         os.chdir(install_path)
-        
+
         hashrate_bonus = 0
-        if args.in_data and args.out_dir:
+        try:
+            a = POW_Coin(kraken.coin.XMR)
+            try:
+                a.historical_diff(timestamp=datetime.datetime.now().timestamp())
+            except Exception as ex:
+                print("Failed to fetch historical diff")
+                print(traceback.format_exc())
+            diff_df = a.read_diff_pkl()
+            last_diff = diff_df.tail(20000)
+
+            #last_diff.set_index([pd.Index(['timestamp'])])
+            #last_diff.reset_index(drop=True, inplace=True)
+            diff_csv_path = sunrise_lib.config.sunrise_lib.DIR_TMP + "/diff_original.csv"
+            
+            
+            ts_diff = last_diff[['timestamp', 'difficulty']]
+            print(ts_diff)
+            ts_diff.to_csv(diff_csv_path, sep=',', index=False)
+
             cmd = "./tsqsim"
-            cmd += " --data {}".format(args.in_data)
+            cmd += " --data {}".format(diff_csv_path)
             cmd += " --out {}".format(args.out_dir)
             cmd += " --latest-date"
             cmd += " --per h1"
@@ -89,7 +107,11 @@ class BatterySimulatorCpp(generator.BatterySimulator):
                 raise RuntimeError("Failed to run tsqsim")
 
             hashrate_bonus = np.loadtxt(args.out_dir + FILE_HASHRATE_BONUS_SINGLE)
-            print("Last bonus =", hashrate_bonus)
+            print("Hashrate bonus (MA) =", hashrate_bonus)
+        except Exception as ex:
+            print("Failed to fetch hashrate")
+            #raise ex
+            print(traceback.format_exc())
 
         #hashrate_bonus = -3.2 # For simulation only
         #hashrate_bonus =  5.2 # For simulation only
@@ -113,6 +135,10 @@ class BatterySimulatorCpp(generator.BatterySimulator):
 
         os.chdir(cwd)
 
+        #if hashrate_bonus != 0:
+        #    plot_hashrates()
+            
+
 def get_usage_prod(args, available, battery_charge, horizon):
     bat_sim = BatterySimulatorCpp()
     bat_sim.run(args, battery_charge, horizon)
@@ -134,24 +160,27 @@ def plot_single(ax, data, days):
     ax.grid()
 
 def plot_hashrates():
-    if args.in_data and args.out_dir:
-        fig, (ax1, ax2) = plt.subplots(2, 1)
-        #plt.gca().xaxis_date(sunrise_lib.tz) # Not a time series just yet
-        
+    fig, (ax1, ax2) = plt.subplots(2, 1)
+    #plt.gca().xaxis_date(sunrise_lib.tz) # Not a time series just yet
+
+    if os.path.isfile(args.out_dir + FILE_HASHRATE_BONUS):
         bonusMA = np.loadtxt(args.out_dir + FILE_HASHRATE_BONUS)
         ax1.set_title("Network difficulty rel. to its moving average")
         ax1.set_xlabel("Time [h]")
-        ax1.set_ylabel("Rel. network diff.")
+        ax1.set_ylabel("Relat. network diff.")
         plot_single(ax1, bonusMA, 8)
-        
+
+    if os.path.isfile(args.out_dir + FILE_HASHRATE_SEASONAL):
         bonus = np.loadtxt(args.out_dir + FILE_HASHRATE_SEASONAL)
-        ax2.set_title("Network difficulty seasonal")
+        ax2.set_title("Network difficulty: seasonal (TODO)")
         ax2.set_xlabel("Time [h]")
-        ax2.set_ylabel("Network diff. seasonal")
+        ax2.set_ylabel("Seasonal network diff.")
         plot_single(ax2, bonus, 4)
 
-        
-        plt.show()
+    plt.subplots_adjust(hspace=0.5)
+
+    
+    plt.show()
         
 
 def run_main(args, elev, show_plots, battery_charge, horizon):
