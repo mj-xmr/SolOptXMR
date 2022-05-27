@@ -9,6 +9,7 @@ It will accommodate for issues such as:
 
 - Time of day
 - Weather fluctuations
+- Opportunistic scooping during network difficulty reductions
 - Avoiding depleting batteries below a threshold, that would damage them
 - Avoiding overheating of the mining rig
 - Leaving enough power for your daily use
@@ -25,10 +26,10 @@ When in doubt, please view their contents with `cat` for an objective assessment
 ```bash
 git clone --recursive https://github.com/mj-xmr/SolOptXMR.git # Clone this repo (assuming it's not a fork)
 cd SolOptXMR		# Enter the cloned repo's dir
-pip install -r requirements.txt # Install Python packages (either use this command or its fitting alternative) 
 ./util/prep-env.sh	# Prepare the environment - downloads example data and creates useful symlinks
 ./util/deps-pull.sh	# Download the maintaned dependencies
 ./util/deps-build.sh	# Build and install the unmanaged dependencies (uses sudo for installation)
+pip install -r requirements.txt # Install Python packages (either use this command or its fitting alternative) 
 ./util/config.sh	# Configure your rig
 ```
 
@@ -44,14 +45,14 @@ In order to alter the default behavior, the main script can be ran with the foll
 ```bash
 ./soloptxmr.py \
 --days-horizon 5 \
---battery-charge-ah 75.2 \
+--battery-charge-percent 67 \
 --start-date 2022-02-20T20:22
 ```
 or equivalently:
 ```bash
 ./soloptxmr.py \
 -d 5 \
--a 75.2 \
+-p 67 \
 -s "2022-02-20 20:22"
 ```
 
@@ -59,44 +60,25 @@ Setting the battery's voltage, rather than the Ah charge is a feature planned fo
 
 ## Configuration
 After running the `./util/config.sh` script, you'll be presented with paths to configuration scripts, that have just been copied to your `~/.config` directory. 
-You're meant to adjust them to match your specifics.
+You're meant to adjust them to match your specifics. 
+[Please read this file](docs/config.md) for further explanations.
 
-### Arrays
-Inside the `~/.config/solar/arrays.json` it's important to understand, that an array's parameter `surface_tilt` accepts degrees and 0 means laying flat horizontally on a roof, while 90 means hanging flat vertically on a wall. 
-`surface_azimuth` uses 0 as north, 90 as east, 180 as south and 270 as west.
+# Extra scripts
 
-### Geo
-Inside the `~/.config/solar/geo.json`, which is expected to be modified by you, according to the physical location of the solar farm, the northern hemisphere and eastern side of globe are represented with positive numbers of Lat / Lon in degrees. 
-Southern hemisphere and western side of globe use negative numbers of Lat / Lon.
+## Modeling solar arrays
+The script `src/arrays.py` will help you understand how a mixture of various orientations of arrays, defined via `~/.config/solar/arrays.json` reduces the peak & trough problem. 
+By properly diversifying the orientation, you'll be blessed with more stable input across the day. 
+Depending on your location, this might increase your profits of the sold electricity, that you can't use domestically nor on mining, since the buyback prices might be a function of the time of day.
 
-The variable `city` is meant to deliver weather reports.
-It is possible, that your farm's location is so remote, that the city where it belongs to, isn't listed on the weather reports.
-In such cases, please enter the nearest largest city, until the script stops complaining.
+You might also discover, that although the recommended panel tilt of 45 degrees does deliver more production in total across the whole year, it also creates as much of overproduction during the summer, that you'll have a hard time using due to high temperatures and low buyback prices, as low underproduction it delivers during winter, when you need the power the most. 
+In order to balance this discrepancy, please try experimenting with more vertical tilts, like between 89 and 80.
+The script accepts an iso-formatted date as an input, allowing you to simulate extreme conditions - winter and summer. 
+The title of the plot presents the sum of produced electricity in a given day. 
+It makes sense to compare and sum up this values for the extreme conditions.
 
-### Computers
-Currently the system doesn't work very well with the number of mining machines larger than 2.
-In case a single computer should be disabled, please set its `count` field to `0`.
-
-### Habits
-The `~/.config/solar/habits.json` config file allows you to declare your daily/weekly habits, that drain the solar power in a predictable way. 
-The syntax used there for scheduling is better explained by [this documentation](https://github.com/mariusbancila/croncpp#cron-expressions).
-A single example:
-
-`0 15 10 * * ? *`	means: 10:15 AM every day
-
-[Here's more interactive way](https://crontab.guru/) to understand the syntax. 
-Note, that it doesn't use the required seconds part though.
-
-As with the computers json, a given habit may be disabled by setting its `count` field to `0`.
-
-### System
-The `~/.config/solar/system.json` config file defines the voltage of the system (12 or 24 V) used for conversions.
-Other 3 options include the ability to independently: generate, buy and/or sell the electricity. 
-The combination of these options helps in deriving the optimal solution for your case, regarding the profitability of the operation.
-
-### Electricity price
-TODO: enable scheduling the electricity buy/sell prices via cron, like in the Habits json.
-
+# Further documentation
+- [safety](docs/safety.md): how to handle electrical systems safely. Tell me, that you "read and understood it", and I can sleep fine.
+- [economy](docs/economy.md): my economy views and the resulting dynamics tailored to production of electricity.
 
 # Screenshots
 
@@ -116,10 +98,15 @@ These data are taken into account when making decision about starting a rig or n
 Sometimes it's worth to wait for a while until other miners switch off their rigs in order to scoop more coins for the same amount of used power. 
 Obviously this assumes, that your stored electricity doesn't go to waste. 
 Also, please note the differences in scales of the two plots. 
-The daily seasonal swings are 100 times smaller than the mean reversion ones.
+The daily seasonal swings (lower plot) are 100 times smaller than the mean reversion ones (upper plot).
 
 ![Network difficulty](https://user-images.githubusercontent.com/63722585/169827786-7dc548c1-6b46-49a9-a7ac-ca20605f1046.png)
 
+## Solar array modeling
+An example evaluation of 2 sets of panels - one set pointing to south-east and the other to south-west. 
+Please note the prolonged production across the whole day, reflected by the inverter's wide output.
+
+![array-modelling](https://user-images.githubusercontent.com/63722585/170349578-16f0965a-9c34-45ea-9d14-df740a562723.png)
 
 
 ## Console interactive UI

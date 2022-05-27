@@ -69,10 +69,16 @@ tzstr = config_geo.geo.time_zone
 tz = timezone(tzstr)
     
 DATE_NOW = datetime.datetime.now(tz=tz)
+DATE_NOW_STR = DATE_NOW.isoformat()
+DEFAULT_HORIZON_DAYS = 3
 LAT = config_geo.geo.lat
 LON = config_geo.geo.lon
 
 TESTING = config.sunrise_lib.TESTING
+
+def add_date_arguments_to_parser(parser, date=DATE_NOW_STR, horizon=DEFAULT_HORIZON_DAYS):
+    parser.add_argument('-s', '--start-date',    default=date, type=str, help="Start date, ISO format (parsed) (default: {})".format(date))
+    parser.add_argument('-d', '--days-horizon',  default=horizon, type=int, help="Horizon in days (default: {})".format(horizon))
 
 def write_file(fname, val):
     with open(fname, 'w') as fout:
@@ -103,6 +109,27 @@ class StatefulBool:
 
     def get(self):
         return self._prev
+
+def get_arrays():
+    arrays = []
+    for array in config_arrays.arrays:
+        #print("AR", array)
+        for num in range(0, array['count']):
+            arrays.append(array)
+    return arrays
+
+def get_pv_system():
+    array_kwargs = dict(
+        module_parameters=dict(pdc0=1, gamma_pdc=-0.004),
+        temperature_model_parameters=dict(a=-3.56, b=-0.075, deltaT=3)
+    )
+    arrays = []
+    for array in get_arrays():
+        array_one = pvlib.pvsystem.Array(pvlib.pvsystem.FixedMount(surface_tilt=array['surface_tilt'], surface_azimuth=array['surface_azimuth']), name=array['name'],
+                   **array_kwargs)
+        arrays.append(array_one)
+    system = pvlib.pvsystem.PVSystem(arrays=arrays, inverter_parameters=dict(pdc0=3))
+    return system
 
 def test_stateful_bool():
     print("Test stateful bool")
