@@ -79,7 +79,7 @@ If enough volume is pumped, the losses of this act aren't too large, the night i
 
 ### Wind generators
 An easy, though not cheap way to fill up the nightly gap is via wind generators, since night is when the wind is typically the strongest. 
-In specific locations, the output profile of a hybrid system might look as promising as the following one:
+At specific locations, the output profile of a hybrid system might look as promising as the following one:
 
 ![image](https://user-images.githubusercontent.com/63722585/164888207-cb7c3315-1dfb-4137-bc0a-80783f31b53b.png)
 
