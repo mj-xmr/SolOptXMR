@@ -11,7 +11,7 @@ EnjoLib::Str Habit::Print() const
     return name;
 }
 
-void Habit::ParseSchedule() /// TODO: Figure out a way to parse it only once
+void Habit::ParseSchedule()
 {
     m_hoursOn = HabitCron().GetNextHoursOn(*this);
     szz = m_hoursOn.size();
