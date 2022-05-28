@@ -147,6 +147,7 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
         if (i > n-24)
         {
             // last day - don't mine
+            // Since the algo considers the last day in the horizon as "the end of world", if typically decides to drain the battery to the minimum at the horizon.
             penalitySum += resLocal.sumHashes;
         }
         //penalityUnder.Add(pentalityUndervolted);
