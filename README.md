@@ -59,7 +59,7 @@ or equivalently:
 Setting the battery's voltage, rather than the Ah charge is a feature planned for the near future. For now, you have to resort to online resources in order to estimate the initial battery's state. [Example 1](http://www.scubaengineer.com/documents/lead_acid_battery_charging_graphs.pdf)
 
 ## Plotting the hashrate situation only
-Because the optimization might take some time and you might be only interested in the hashrate situation alone, the main script has an option to ommit the optimization part.
+Because the optimization takes some time and you might be only interested in the hashrate situation alone, the main script has an option to ommit the optimization part.
 
 ```bash
 ./soloptxmr.py --net-diff
