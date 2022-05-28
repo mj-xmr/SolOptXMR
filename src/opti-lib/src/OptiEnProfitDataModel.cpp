@@ -122,7 +122,8 @@ double OptiEnProfitDataModel::GetHabitsUsage(int i) const
     else
     {
         double sum = 0;
-        for (int ih = 0; ih < m_habits.size(); ++ih)
+        const size_t szz = m_habits.size();
+        for (int ih = 0; ih < szz; ++ih)
         {
             const Habit & hab = m_habits[ih];
             double usage = hab.watt_asleep;
@@ -132,7 +133,7 @@ double OptiEnProfitDataModel::GetHabitsUsage(int i) const
             }
             sum += usage;
         }
-        m_habitsCache.Add(sum);
+        m_habitsCache.push_back(sum);
         return sum;
     }
 }

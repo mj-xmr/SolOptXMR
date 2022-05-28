@@ -43,7 +43,8 @@ class OptiEnProfitDataModel
         int m_statingPoint = 0;
         int m_currHour = 0;
         EnjoLib::VecD m_power;
-        mutable EnjoLib::VecD m_habitsCache;
+        //mutable EnjoLib::VecD m_habitsCache;
+        mutable std::vector<double> m_habitsCache;
         //EnjoLib::Array<Computer> m_comps;
         std::vector<Computer> m_comps; // Choosing std::vector for runtime speed reasons.
         EnjoLib::Array<Habit> m_habits;
