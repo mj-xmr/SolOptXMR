@@ -40,6 +40,7 @@ def get_args():
     sunrise_lib.add_date_arguments_to_parser(parser)
     parser.add_argument('-i', '--in-data',  default="", type=str, help="Input hashrate data (default: {})".format(""))
     parser.add_argument('-o', '--out-dir',  default=sunrise_lib.config.sunrise_lib.DIR_TMP, type=str, help="Output dir to exchange with tsqsim (default: {})".format(""))
+    parser.add_argument('-n', '--net-diff',      default=False, action='store_true', help="Plot network difficulty only (default: OFF)")
     #parser.add_argument('-v', '--verbose',      default=TESTING, action='store_true', help="Test (default: OFF)")
     return parser.parse_args()
 
@@ -66,6 +67,38 @@ def getInstallPath():
     if dirr == None:
         dirr = getInstallPathPrefix('../')
     return dirr
+
+def get_hashrate_bonus(out_dir):
+    hashrate_bonus = 0
+    try:
+        a = POW_Coin(kraken.coin.XMR)
+        min_data_points = 20000
+        height_start = a.height - min_data_points - 1
+        height_end = a.height - 1  # The current height is not "historical" yet. TODO: Document in the API
+        print("Downloading height: start =", height_start, ", end =", height_end)
+        last_diff = a.historical_diff_range("h", height_start, height_end)
+        ts_diff = last_diff[['timestamp', 'difficulty']]
+        print(ts_diff)
+        diff_csv_path = sunrise_lib.config.sunrise_lib.DIR_TMP + "/diff_original.csv"
+        ts_diff.to_csv(diff_csv_path, sep=',', index=False)
+
+        cmd = "./tsqsim"
+        cmd += " --data {}".format(diff_csv_path)
+        cmd += " --out {}" .format(out_dir)
+        cmd += " --latest-date"
+        cmd += " --per h1"
+
+        result = sunrise_lib.run_cmd(cmd, True)
+        if result.returncode != 0:
+            raise RuntimeError("Failed to run tsqsim")
+
+        hashrate_bonus = np.loadtxt(out_dir + FILE_HASHRATE_BONUS_SINGLE)
+        print("Hashrate bonus (MA) =", hashrate_bonus)
+    except Exception as ex:
+        print(traceback.format_exc())
+        print("Failed to fetch hashrate")
+
+    return hashrate_bonus
         
 class BatterySimulatorCpp(generator.BatterySimulator):
     def __init(self):
@@ -76,34 +109,7 @@ class BatterySimulatorCpp(generator.BatterySimulator):
         install_path = getInstallPath()
         os.chdir(install_path)
 
-        hashrate_bonus = 0
-        try:
-            a = POW_Coin(kraken.coin.XMR)
-            min_data_points = 20000
-            height_start = a.height - min_data_points - 1
-            height_end = a.height - 1  # The current height is not "historical" yet. TODO: Document in the API
-            print("Downloading height: start =", height_start, ", end =", height_end)
-            last_diff = a.historical_diff_range("h", height_start, height_end)
-            ts_diff = last_diff[['timestamp', 'difficulty']]
-            print(ts_diff)
-            diff_csv_path = sunrise_lib.config.sunrise_lib.DIR_TMP + "/diff_original.csv"
-            ts_diff.to_csv(diff_csv_path, sep=',', index=False)
-
-            cmd = "./tsqsim"
-            cmd += " --data {}".format(diff_csv_path)
-            cmd += " --out {}" .format(args.out_dir)
-            cmd += " --latest-date"
-            cmd += " --per h1"
-
-            result = sunrise_lib.run_cmd(cmd, True)
-            if result.returncode != 0:
-                raise RuntimeError("Failed to run tsqsim")
-
-            hashrate_bonus = np.loadtxt(args.out_dir + FILE_HASHRATE_BONUS_SINGLE)
-            print("Hashrate bonus (MA) =", hashrate_bonus)
-        except Exception as ex:
-            print(traceback.format_exc())
-            print("Failed to fetch hashrate")
+        hashrate_bonus = get_hashrate_bonus(args.out_dir)
 
         #hashrate_bonus = -3.2 # For simulation only
         #hashrate_bonus =  5.2 # For simulation only
@@ -187,16 +193,22 @@ def main(args):
         if args.battery_charge_percent < 1:
             raise ValueError("Percentage input must be > 1.")
         args.battery_charge_ah = args.battery_charge_percent / 100.0 * generator.MAX_CAPACITY
-    
-    start_date = dateutil.parser.parse(args.start_date)
-    elev = generator.get_power(start_date, args.days_horizon, unpickle=False)
-    #print(pos)
-    show_plots = True
-    #print('hori', args.days_horizon)
-    elev = generator.proc_data(elev, False, args.days_horizon)
-    #elev = generator.extr_data(proc)
-    #print(elev)
-    run_main(args, elev, show_plots, args.battery_charge_ah, args.days_horizon)
+
+    if args.net_diff:
+        install_path = getInstallPath()
+        os.chdir(install_path)
+        hashrate_bonus = get_hashrate_bonus(args.out_dir)
+        plot_hashrates()
+    else:
+        start_date = dateutil.parser.parse(args.start_date)
+        elev = generator.get_power(start_date, args.days_horizon, unpickle=False)
+        #print(pos)
+        show_plots = True
+        #print('hori', args.days_horizon)
+        elev = generator.proc_data(elev, False, args.days_horizon)
+        #elev = generator.extr_data(proc)
+        #print(elev)
+        run_main(args, elev, show_plots, args.battery_charge_ah, args.days_horizon)
 
 if __name__ == "__main__":
     args = get_args()

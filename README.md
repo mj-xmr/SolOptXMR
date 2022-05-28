@@ -45,18 +45,30 @@ In order to alter the default behavior, the main script can be ran with the foll
 ```bash
 ./soloptxmr.py \
 --days-horizon 5 \
---battery-charge-percent 67 \
+--battery-charge-percent 78 \
 --start-date 2022-02-20T20:22
 ```
 or equivalently:
 ```bash
 ./soloptxmr.py \
 -d 5 \
--p 67 \
+-p 78 \
 -s "2022-02-20 20:22"
 ```
 
 Setting the battery's voltage, rather than the Ah charge is a feature planned for the near future. For now, you have to resort to online resources in order to estimate the initial battery's state. [Example 1](http://www.scubaengineer.com/documents/lead_acid_battery_charging_graphs.pdf)
+
+## Plotting the hashrate situation only
+Because the optimization might take some time and you might be only interested in the hashrate situation alone, the main script has an option to ommit the optimization part.
+
+```bash
+./soloptxmr.py --net-diff
+```
+or:
+```bash
+./soloptxmr.py -n
+```
+... shows the network difficulty situation only.
 
 ## Configuration
 After running the `./util/config.sh` script, you'll be presented with paths to configuration scripts, that have just been copied to your `~/.config` directory. 
