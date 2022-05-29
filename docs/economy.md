@@ -99,3 +99,27 @@ Another limitation, that prevents you from using all the threads of all the comp
 If, for practical reasons, you decided to join all, say 4, batteries with a single cable, reaching the inverter and the cable is too narrow, then it will limit the number of electrons (hence finally: available Watts) that can be transfered per second.
 This essentially forces you to diversify the inputs, unless you're OK with investing more than enough into batteries to store the unused overproduction.
 Whatever diversification scheme is on your mind, before making such an investment decision, you may simulate the potential outcome by changing the configuration settings and re-running the simulation.
+
+## Political backslash
+And interesting discussion was sparked in [this thread](https://repo.getmonero.org/monero-project/ccs-proposals/-/merge_requests/299#note_15693), through [this](https://repo.getmonero.org/monero-project/ccs-proposals/-/merge_requests/299#note_15704) and [this reply](https://repo.getmonero.org/monero-project/ccs-proposals/-/merge_requests/299#note_15712).
+
+Allow me to cite the most important parts:
+
+Cactii1:
+I think this is a great idea and has the potential to help a lot of people with monetizing their PV systems the best way possible for them. It seems that a lot of countries did a bait and switch when it came to solar and incentivized people with subsidies and promises of prices per KW/h being pushed into the grid and then they changed their minds about it.
+
+mj-xmr:
+Exactly. I know only about the spanish case from 2016:
+
+- [Intro](https://www.jus.uio.no/pluricourts/english/blog/daniel-friedrich-behn/2016-01-26-arbitration-spain.html)
+- [Lost lawsuit](https://www.pv-magazine.com/2016/01/27/solar-companies-lose-the-1st-international-legal-ruling-over-spanish-feed-in-tariff-cuts_100022969/)
+- [Summary (longer read)](https://www.iisd.org/itn/en/2019/06/27/spains-renewable-energy-saga-lessons-for-international-investment-law-and-sustainable-development-isabella-reynoso/)
+
+The only thing that's predictable about governments is, that through subsidies they will first lure you into something that you think is a lucrative business, then screw you over, like that old man with candies.
+
+Therefore in this context me, Endor and the entire Ecosystem will serve as:
+
+1. Regulator (or creator) of the free market, as anybody can choose whether to sell the overproduction for the currently promised candy, for pennies guaranteed in the future or for an increasing XMR/USD price. I assume the XMR price will only increase since we've been postponing both hyperinflation and energy crisis since at least 2008 (The Housing Bubble), if not since 2000 (The DotCom Bubble). This means that with less energy available cheaply fewer people will mine, increasing your own odds of success, plus that tiny XMR inflation is nothing compared to the inflation that awaits the Petrodollar.
+2. Safeguards of promises made by the governments. They will know, that as soon as they start speculating about decreasing the tariffs (A.K.A. *"We're NOT planning to decrease the tariffs"*), as it was in Spain, the Producers will already be able to switch to mining anytime... still enjoying the subsidies that they were awarded before.
+
+Especially in the context of 2., it's absolutely critical to use @SChernykh [p2pool](https://github.com/SChernykh/p2pool), to be able to stay under the radar and pretend that you're simply not selling, only merely waiting for the government to raise the prices.
