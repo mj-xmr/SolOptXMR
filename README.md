@@ -64,11 +64,12 @@ Because the optimization takes some time and you might be only interested in the
 ```bash
 ./soloptxmr.py --net-diff
 ```
-or:
+or equivalently:
 ```bash
 ./soloptxmr.py -n
 ```
-... shows the network difficulty situation only.
+... shows the network difficulty situation only. 
+This ususeful, because when you know, that your battery is charged, you don't plan on using the accumulated electricity domestically and there's a dip in the hashrate at the same time, it's simply obvious that you should start mining without being told to do so by the optimizer.
 
 ## Configuration
 After running the `./util/config.sh` script, you'll be presented with paths to configuration scripts, that have just been copied to your `~/.config` directory. 
