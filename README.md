@@ -16,6 +16,28 @@ It will accommodate for issues such as:
 
 [Full description on Monero Community Crowdfunding System](https://ccs.getmonero.org/proposals/soloptxmr-mj-endor-2022.html)
 
+# Requirements
+- A POSIX system with a C++ compiler and Python3 interpreter. 
+- Less than 1 GB of RAM.
+
+Supported Operating Systems and features:
+
+| OS  | Support   |
+| ------------- | -- | 
+| Debian stable | ✓  | 
+| Debian buster | ✓  | 
+| Ubuntu 21.04  | ✓  | 
+| Ubuntu 20.04  | ✓  | 
+| Mac OSX 12    | ?  | 
+| Mac OSX 11    | ?  | 
+| Mac OSX 10.15 | ?  | 
+| Raspbian      | X  | 
+| Windows       | X  | 
+
+Legend:
+- ✓ : Full support or there are bugs that are fixable
+- ? : Should work but some more testing is required
+- X : No support yet, but is being planned
 
 # Quickstart
 In case these instructions become outdated, please refer to the steps of the [CI](.github/workflows/linux.yml).
