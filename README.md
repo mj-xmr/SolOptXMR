@@ -116,7 +116,7 @@ The daily seasonal swings (lower plot) are 100 times smaller than the mean rever
 ![Network difficulty](https://user-images.githubusercontent.com/63722585/169827786-7dc548c1-6b46-49a9-a7ac-ca20605f1046.png)
 
 ## Solar array modeling
-An example evaluation of 2 sets of panels - one set pointing to south-east and the other to south-west. 
+An example evaluation (via `src/arrays.py`) of 2 sets of panels - one set pointing to south-east and the other to south-west. 
 Please note the prolonged production across the whole day, reflected by the inverter's wide output.
 
 ![array-modelling](https://user-images.githubusercontent.com/63722585/170349578-16f0965a-9c34-45ea-9d14-df740a562723.png)
