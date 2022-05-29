@@ -14,6 +14,7 @@ It is possible, that your farm's location is so remote, that the city where it b
 In such cases, please enter the nearest largest city, until the script stops complaining.
 
 ## Computers
+The mining rig has to be defined in the `~/.config/solar/computers.json` file. 
 Currently the system doesn't work very well with the number of mining machines larger than 2.
 In case a single computer should be disabled, please set its `count` field to `0`.
 
