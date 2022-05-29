@@ -137,6 +137,8 @@ The daily seasonal swings (lower plot) are 100 times smaller than the mean rever
 
 ![Network difficulty](https://user-images.githubusercontent.com/63722585/169827786-7dc548c1-6b46-49a9-a7ac-ca20605f1046.png)
 
+Collectively, scooping the hashes this way also improves and stabilizes the network's security.
+
 ## Solar array modeling
 An example evaluation (via `src/arrays.py`) of 2 sets of panels - one set pointing to south-east and the other to south-west. 
 Please note the prolonged production across the whole day, reflected by the inverter's wide output.
