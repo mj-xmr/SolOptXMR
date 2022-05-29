@@ -105,8 +105,8 @@ The script `src/arrays.py` will help you understand how a mixture of various ori
 By properly diversifying the orientation, you'll be blessed with more stable input across the day. 
 Depending on your location, this might increase your profits of the sold electricity, that you can't use domestically nor on mining, since the buyback prices might be a function of the time of day.
 
-You might also discover, that although the recommended panel tilt of 45 degrees does deliver more production in total across the whole year, it also creates as much of overproduction during the summer, that you'll have a hard time using due to high temperatures and low buyback prices, as low underproduction it delivers during winter, when you need the power the most. 
-In order to balance this discrepancy, please try experimenting with more vertical tilts, like between 89 and 80.
+You might also discover, that although the recommended panel tilt of 45° does deliver more production in total across the whole year, it also creates as much of overproduction during the summer, that you'll have a hard time using due to high temperatures and low buyback prices, as low underproduction it delivers during winter, when you need the power the most. 
+In order to balance this discrepancy, please try experimenting with more vertical tilts, like between 89° and 80°.
 The script accepts an iso-formatted date as an input, allowing you to simulate extreme conditions - winter and summer. 
 The title of the plot presents the sum of produced electricity in a given day. 
 It makes sense to compare and sum up this values for the extreme conditions.
