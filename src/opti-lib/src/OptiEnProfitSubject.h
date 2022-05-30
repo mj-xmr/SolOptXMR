@@ -50,7 +50,7 @@ public:
         }
     };
 
-    SimResult Simulate(int i, int currHour, size_t compSize, const EnjoLib::Matrix & dataMat, double bonusMul, double bonusMulMA, const System & sys) const;
+    SimResult Simulate(int i, int currHour, size_t compSize, const EnjoLib::Matrix & dataMat, double bonusMul, double bonusMulMA) const;
 
 
 protected:
