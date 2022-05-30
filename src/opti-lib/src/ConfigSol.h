@@ -24,6 +24,8 @@ class ConfigSol : public ConfigBase
 
         long int DAYS_HORIZON = 3; constexpr static const char * DESCR_DAYS_HORIZON = "How many days ahead you'd like to predict";
         long int DAYS_START = 0;   constexpr static const char * DESCR_DAYS_START   = "The starting day";
+        long int RANDOM_SEED = 0;  constexpr static const char * DESCR_RANDOM_SEED  = "Random seed. Use any integer number to 'fixate' the random solutions";
+        
         //long int SYSTEM_VOLTAGE = 12;   constexpr static const char * DESCR_SYSTEM_VOLTAGE   = "System voltage: 12 / 24";
         float BATTERY_CHARGE = 0;  constexpr static const char * DESCR_BATTERY_CHARGE = "Initial battery charge in Ah";
         float HASHRATE_BONUS = 0;  constexpr static const char * DESCR_HASHRATE_BONUS = "Hashrate bonus for the current hour";

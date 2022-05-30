@@ -11,6 +11,7 @@
 class ISymbol;
 class IPeriod;
 class PredictorFactory;
+class System;
 enum class PredictorType;
 
 class OptiEnProfitDataModel;
@@ -49,7 +50,7 @@ public:
         }
     };
 
-    SimResult Simulate(int i, int currHour, size_t compSize, const EnjoLib::Matrix & dataMat, double bonusMul, double bonusMulMA) const;
+    SimResult Simulate(int i, int currHour, size_t compSize, const EnjoLib::Matrix & dataMat, double bonusMul, double bonusMulMA, const System & sys) const;
 
 
 protected:
