@@ -33,6 +33,8 @@ void ConfigSol::RegisterAndReadInts(EnjoLib::Istream & f)
 {
     RegisterAndReadInt (f, DAYS_HORIZON, 3);
     RegisterAndReadInt (f, DAYS_START, 0);
+    RegisterAndReadInt (f, RANDOM_SEED, 0);
+    
     //RegisterAndReadInt (f, SYSTEM_VOLTAGE, 12);
 }
 void ConfigSol::RegisterAndReadFloats(EnjoLib::Istream & f)

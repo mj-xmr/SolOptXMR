@@ -49,11 +49,6 @@ const EnjoLib::VecD & OptiEnProfitDataModel::GetPowerProductionData() const
     return m_power;
 }
 
-double OptiEnProfitDataModel::GetPowerProduction(int i) const
-{
-    return m_power.at(i + m_statingPoint);
-}
-
 template <int bits>
 VecD ToBinary(int number)
 {
@@ -98,7 +93,7 @@ EnjoLib::Matrix OptiEnProfitDataModel::GetData() const
         {
                 LOGL << "created " << i << "/" << maxEl << Nl;
         }
-        const int index = GMat().round(rmath.Rand(0, m_horizonHours-0.999));
+        const int index = GMat().round(rmath.Rand(0, m_horizonHours-1));
         binary[index] = binary[index] == 0 ? 1 : 0;
         //LOGL << binary << Nl;
 

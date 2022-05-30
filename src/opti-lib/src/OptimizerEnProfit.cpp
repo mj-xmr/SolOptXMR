@@ -4,6 +4,7 @@
 #include "ConfigGlob.h"
 #include "ConfigMan.h"
 #include "ConfigOpti.h"
+#include "ConfigSol.h"
 
 #include "TradeUtil.h"
 #include "OptiVarVec.h"
@@ -80,7 +81,7 @@ void OptimizerEnProfit::RandomSearch()
     const EnjoLib::Array<Computer> & comps = m_dataModel.GetComputers();
     const int numComputers = comps.size();
     const RandomMath rmath;
-    rmath.RandSeed();
+    rmath.RandSeed(m_dataModel.GetConf().RANDOM_SEED);
     const VecD binaryZero(horizonHours);
     const std::string hashStrZero(horizonHours * numComputers, '0');
     std::string hashStr = hashStrZero;

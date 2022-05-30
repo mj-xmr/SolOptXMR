@@ -11,6 +11,7 @@
 class ISymbol;
 class IPeriod;
 class PredictorFactory;
+class System;
 enum class PredictorType;
 
 class OptiEnProfitDataModel;
