@@ -70,7 +70,7 @@ tz = timezone(tzstr)
     
 DATE_NOW = datetime.datetime.now(tz=tz)
 DATE_NOW_STR = DATE_NOW.isoformat()
-DEFAULT_HORIZON_DAYS = 3
+DEFAULT_HORIZON_DAYS = 4
 LAT = config_geo.geo.lat
 LON = config_geo.geo.lon
 

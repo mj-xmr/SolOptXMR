@@ -111,13 +111,13 @@ EnjoLib::Array<Computer> JsonReader::ReadComputers(bool verbose) const
         ret.push_back(compObj);
         if (count > 1)
         {
+            const Str origName = compObj.name;
             // Multiple instances of the same type.
             for (int i = 1; i < count; ++i)
             {
-                Computer compObjNext = compObj;
                 const Str suffix = "_" + cman.ToStr(i + 1);
-                compObjNext.name += suffix;
-                ret.push_back(compObjNext);
+                compObj.name = origName + suffix;
+                ret.push_back(compObj);
             }
         }
 

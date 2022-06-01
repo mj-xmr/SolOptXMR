@@ -16,6 +16,28 @@ It will accommodate for issues such as:
 
 [Full description on Monero Community Crowdfunding System](https://ccs.getmonero.org/proposals/soloptxmr-mj-endor-2022.html)
 
+# Requirements
+- A POSIX system with a C++ compiler and Python3 interpreter. 
+- Less than 1 GB of RAM.
+
+Supported Operating Systems and features:
+
+| OS  | Support   |
+| ------------- | -- | 
+| Debian stable | ✓  | 
+| Debian buster | ✓  | 
+| Ubuntu 21.04  | ✓  | 
+| Ubuntu 20.04  | ✓  | 
+| Mac OSX 12    | ?  | 
+| Mac OSX 11    | ?  | 
+| Mac OSX 10.15 | ?  | 
+| Raspbian      | X  | 
+| Windows       | X  | 
+
+Legend:
+- ✓ : Full support or there are bugs that are fixable
+- ? : Should work but some more testing is required
+- X : No support yet, but is being planned
 
 # Quickstart
 In case these instructions become outdated, please refer to the steps of the [CI](.github/workflows/linux.yml).
@@ -45,18 +67,31 @@ In order to alter the default behavior, the main script can be ran with the foll
 ```bash
 ./soloptxmr.py \
 --days-horizon 5 \
---battery-charge-percent 67 \
+--battery-charge-percent 78 \
 --start-date 2022-02-20T20:22
 ```
 or equivalently:
 ```bash
 ./soloptxmr.py \
 -d 5 \
--p 67 \
+-p 78 \
 -s "2022-02-20 20:22"
 ```
 
 Setting the battery's voltage, rather than the Ah charge is a feature planned for the near future. For now, you have to resort to online resources in order to estimate the initial battery's state. [Example 1](http://www.scubaengineer.com/documents/lead_acid_battery_charging_graphs.pdf)
+
+## Plotting the hashrate situation only
+Because the optimization takes some time and you might be only interested in the hashrate situation alone, the main script has an option to ommit the optimization part.
+
+```bash
+./soloptxmr.py --net-diff
+```
+or equivalently:
+```bash
+./soloptxmr.py -n
+```
+... shows the network difficulty situation only. 
+This ususeful, because when you know, that your battery is charged, you don't plan on using the accumulated electricity domestically and there's a dip in the hashrate at the same time, it's simply obvious that you should start mining without being told to do so by the optimizer.
 
 ## Configuration
 After running the `./util/config.sh` script, you'll be presented with paths to configuration scripts, that have just been copied to your `~/.config` directory. 
@@ -70,8 +105,8 @@ The script `src/arrays.py` will help you understand how a mixture of various ori
 By properly diversifying the orientation, you'll be blessed with more stable input across the day. 
 Depending on your location, this might increase your profits of the sold electricity, that you can't use domestically nor on mining, since the buyback prices might be a function of the time of day.
 
-You might also discover, that although the recommended panel tilt of 45 degrees does deliver more production in total across the whole year, it also creates as much of overproduction during the summer, that you'll have a hard time using due to high temperatures and low buyback prices, as low underproduction it delivers during winter, when you need the power the most. 
-In order to balance this discrepancy, please try experimenting with more vertical tilts, like between 89 and 80.
+You might also discover, that although the recommended panel tilt of 45° does deliver more production in total across the whole year, it also creates as much of overproduction during the summer, that you'll have a hard time using due to high temperatures and low buyback prices, as low underproduction it delivers during winter, when you need the power the most. 
+In order to balance this discrepancy, please try experimenting with more vertical tilts, like between 89° and 80°.
 The script accepts an iso-formatted date as an input, allowing you to simulate extreme conditions - winter and summer. 
 The title of the plot presents the sum of produced electricity in a given day. 
 It makes sense to compare and sum up this values for the extreme conditions.
@@ -102,8 +137,10 @@ The daily seasonal swings (lower plot) are 100 times smaller than the mean rever
 
 ![Network difficulty](https://user-images.githubusercontent.com/63722585/169827786-7dc548c1-6b46-49a9-a7ac-ca20605f1046.png)
 
+On top of higher individual gains, collectively, scooping the hashes this way also improves and stabilizes the network's security.
+
 ## Solar array modeling
-An example evaluation of 2 sets of panels - one set pointing to south-east and the other to south-west. 
+An example evaluation (via `src/arrays.py`) of 2 sets of panels - one set pointing to south-east and the other to south-west. 
 Please note the prolonged production across the whole day, reflected by the inverter's wide output.
 
 ![array-modelling](https://user-images.githubusercontent.com/63722585/170349578-16f0965a-9c34-45ea-9d14-df740a562723.png)

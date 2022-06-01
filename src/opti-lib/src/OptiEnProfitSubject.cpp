@@ -125,12 +125,14 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
     //ELO
     const size_t n = dataMat.at(0).size();
     const EnjoLib::Array<Computer> & comps = m_dataModel.GetComputers();
-
-    BatterySimulation battery(m_dataModel.GetConf(), m_dataModel.GetBatPars(), m_dataModel.GetSystem());
+    const bool LOG_UNACCEPTABLE_SOLUTIONS = false;
+    const System & sys = m_dataModel.GetSystem();
+    BatterySimulation battery(m_dataModel.GetConf(), m_dataModel.GetBatPars(), sys);
     double penalitySum = 0;
     SimResult simResult{};
     const size_t compSize = m_dataModel.GetComputers().size();
     Assertions::SizesEqual(compSize, dataMat.size(), "OptiSubjectEnProfit::GetVerbose");
+    bool unacceptableSolution = false;
     for (int i = 0; i < n; ++i)
     {
         const double bonusMul = HashrateBonus(i % 24);
@@ -144,9 +146,36 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
         //const double pentalityUndervolted = load < 0 ? GMat().Fabs(load * load * load) : 0;
         const double pentalityUndervolted = battery.num_undervolted;
         const double pentalityOvervolted = battery.num_overvolted;
+        
+        if (not sys.buying)
+        {
+            if (pentalityUndervolted > 0)
+            {
+                unacceptableSolution = true;
+            }
+        }
+        if (not sys.selling)
+        {
+            if (pentalityOvervolted > 0)
+            {
+                unacceptableSolution = true;
+            }
+        }
+        if (i > n-24)
+        {
+            // last day - don't mine
+            // Since the algo considers the last day in the horizon as "the end of world", if typically decides to drain the battery to the minimum at the horizon.
+            penalitySum += resLocal.sumHashes;
+        }
         //penalityUnder.Add(pentalityUndervolted);
         penalitySum += pentalityUndervolted;
         penalitySum += pentalityOvervolted;
+        
+        if (unacceptableSolution && not LOG_UNACCEPTABLE_SOLUTIONS)
+        {
+            //LOGL << "Unacceptable solution\n";
+            break;
+        }
     }
     //const double pentalityUndervolted = m_battery.num_undervolted * m_battery.num_undervolted;
     //const double pentalityUndervolted = penalitySum * 10000;

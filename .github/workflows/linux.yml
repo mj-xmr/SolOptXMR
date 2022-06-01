@@ -45,10 +45,10 @@ jobs:
       uses: actions/cache@v2
       with:
         path: /tmp/diff_XMR.pkl
-        key: data-diff-${{ github.sha }}
+        key: data-diff-01-${{ github.sha }}
         restore-keys: |
-          data-diff-${{ github.sha }}
-          data-diff
+          data-diff-01-${{ github.sha }}
+          data-diff-01
 #    - name: deps cache
 #      uses: actions/cache@v2
 #      with:
@@ -108,10 +108,10 @@ jobs:
       uses: actions/cache@v2
       with:
         path: /tmp/diff_XMR.pkl
-        key: data-diff-${{ github.sha }}
+        key: data-diff-01-${{ github.sha }}
         restore-keys: |
-          data-diff-${{ github.sha }}
-          data-diff
+          data-diff-01-${{ github.sha }}
+          data-diff-01
     - name: prepare environment
       run: util/prep-env.sh
     - name: install dependencies
