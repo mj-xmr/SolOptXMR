@@ -13,7 +13,8 @@ Unfortunatly a similar situation might occur, if you touch the (+) and are stand
 When connecting and disconnecting terminals the following rules apply, that minimize the risk of electro shock: 
 - connecting: connect + first (red), then - (black)
 - disconnecting: disconnect - first (black) then + (red)
-Or as a rule of thumb easy to remember: the + (red) can always be hanging alone.
+
+Or as a rule of thumb easy to remember: the + (red) can always be connected alone.
 The same rule applies to all the other bipolar connectors as well.
 
 ## Voltage of the system
