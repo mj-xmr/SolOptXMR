@@ -31,7 +31,7 @@ Supported Operating Systems and features:
 | Mac OSX 12    | ?  | 
 | Mac OSX 11    | ?  | 
 | Mac OSX 10.15 | ?  | 
-| Raspbian      | X  | 
+| Raspbian      | ?  | 
 | Windows       | X  | 
 
 Legend:
