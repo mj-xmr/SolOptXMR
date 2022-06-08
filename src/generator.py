@@ -27,6 +27,7 @@ from profitability import POW_Coin
 from python_json_config import ConfigBuilder
 
 config = sunrise_lib.config
+config_volatile = sunrise_lib.config_volatile
 config_batteries = sunrise_lib.config_batteries
 config_system = sunrise_lib.config_system
 battery = config_batteries.batteries[0] # TODO: extend
@@ -43,7 +44,7 @@ MAX_CAPACITY = battery['max_capacity_amph'] * battery['count']
 MUL_POWER_2_CAPACITY = config.generator.MUL_POWER_2_CAPACITY
 T_DELTA_HOURS = config.generator.T_DELTA_HOURS
 DATE_NOW = sunrise_lib.DATE_NOW
-PATH_POSITIONS_BASE = config.sunrise_lib.DIR_TMP + config.generator.PATH_POSITIONS # TODO: Parametrize based on keys
+PATH_POSITIONS_BASE = sunrise_lib.DIR_TMP + config.generator.PATH_POSITIONS # TODO: Parametrize based on keys
 ELECTRICITY_PRICE = config.generator.ELECTRICITY_PRICE
 POOL_FEE = config.generator.POOL_FEE / 100  # Must be a float!
 TARGET_PRICE = config.generator.TARGET_PRICE

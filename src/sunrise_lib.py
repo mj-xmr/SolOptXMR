@@ -47,6 +47,8 @@ def get_config(name):
     config_local = config_builder.parse_config(path_local)    
     return config_local
 
+
+config_volatile = get_config('config-volatile')
 config_geo = get_config('geo')
 config_batteries = get_config('batteries')
 config_computers = get_config('computers')
@@ -62,7 +64,7 @@ FNAME_MASTER = HOME + config.sunrise_lib.FNAME_MASTER
 CPU_FREQ_APP = config.sunrise_lib.CPU_FREQ_APP
 HOURS_DELTA = config.sunrise_lib.HOURS_DELTA
 MIN_WEATHER = config.sunrise_lib.MIN_WEATHER
-DIR_TMP = config.sunrise_lib.DIR_TMP
+DIR_TMP = config_volatile.paths.DIR_TMP
 DIR_XMRIG = HOME + config.sunrise_lib.DIR_XMRIG
 
 tzstr = config_geo.geo.time_zone
