@@ -1,0 +1,9 @@
+{
+    "global": {
+        "TESTING": false
+    },
+    "paths": {
+	"HOME": "/foo/bar",
+        "DIR_TMP": "/tmp"
+    }
+}
