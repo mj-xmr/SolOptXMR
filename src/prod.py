@@ -39,7 +39,7 @@ def get_args():
     parser.add_argument('-v', '--battery-charge-v',  default=DEFAULT_BATTERY_STATE, type=float, help="Initial battery charge [V]  (default: {} which means: minimal charge) UNSUOPPORTED YET".format(DEFAULT_BATTERY_STATE))
     sunrise_lib.add_date_arguments_to_parser(parser)
     parser.add_argument('-i', '--in-data',  default="", type=str, help="Input hashrate data (default: {})".format(""))
-    parser.add_argument('-o', '--out-dir',  default=sunrise_lib.config.sunrise_lib.DIR_TMP, type=str, help="Output dir to exchange with tsqsim (default: {})".format(""))
+    parser.add_argument('-o', '--out-dir',  default=sunrise_lib.DIR_TMP, type=str, help="Output dir to exchange with tsqsim (default: {})".format(""))
     parser.add_argument('-n', '--net-diff',      default=False, action='store_true', help="Plot network difficulty only (default: OFF)")
     #parser.add_argument('-v', '--verbose',      default=TESTING, action='store_true', help="Test (default: OFF)")
     return parser.parse_args()
