@@ -67,6 +67,8 @@ MIN_WEATHER = config.sunrise_lib.MIN_WEATHER
 DIR_TMP = config_volatile.paths.DIR_TMP
 DIR_XMRIG = HOME + config.sunrise_lib.DIR_XMRIG
 
+os.makedirs(DIR_TMP, exist_ok=True)
+
 tzstr = config_geo.geo.time_zone
 tz = timezone(tzstr)
     

@@ -40,6 +40,7 @@ EnjoLib::Result<CLIResultSol> CLISol::GetConfigs(int argc, char ** argv) const
     const char * OPT_SYSTEM_TYPE  = "system-type";
     const char * OPT_SYSTEM_VOLTAGE  = "system-voltage";
     const char * OPT_HASHRATE_BONUS  = "hashrate-bonus";
+    const char * OPT_OUT_DIR   = "out";
 
     EnjoLib::ProgramOptionsState popState;
     ////popState.AddStr(OPT_PLUGIN,    "Plugin name");
@@ -50,6 +51,7 @@ EnjoLib::Result<CLIResultSol> CLISol::GetConfigs(int argc, char ** argv) const
     popState.AddFloat(OPT_HASHRATE_BONUS,   ConfigSol::DESCR_HASHRATE_BONUS);
     //popState.AddStr(OPT_SYSTEM_TYPE,        ConfigSol::DESCR_SYSTEM_TYPE);
     //popState.AddInt(OPT_SYSTEM_VOLTAGE,     ConfigSol::DESCR_SYSTEM_VOLTAGE);
+    popState.AddStr(OPT_OUT_DIR,    "Output directory");
 
     popState.ReadArgs(argc, argv);
     const EnjoLib::ProgramOptions pops(popState);
@@ -88,6 +90,7 @@ EnjoLib::Result<CLIResultSol> CLISol::GetConfigs(int argc, char ** argv) const
     confSol.RANDOM_SEED     = pops.GetIntFromMap(OPT_RANDOM_SEED);
     confSol.BATTERY_CHARGE  = pops.GetFloatFromMap(OPT_BATTERY_CHARGE);
     confSol.HASHRATE_BONUS  = pops.GetFloatFromMap(OPT_HASHRATE_BONUS);
+    confSol.m_outDir        = pops.GetStrFromMap(OPT_OUT_DIR);
     //confSol.SYSTEM_TYPE     = pops.GetStrFromMap(OPT_SYSTEM_TYPE);
     //confSol.SYSTEM_VOLTAGE  = pops.GetIntFromMap(OPT_SYSTEM_VOLTAGE);
     //confSym.period     		    = pops.GetStrFromMap(OPT_PERIOD);

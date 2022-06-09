@@ -44,7 +44,7 @@ void ConfigSol::RegisterAndReadFloats(EnjoLib::Istream & f)
 }
 void ConfigSol::RegisterAndReadStrs(EnjoLib::Istream & f)
 {
-    //RegisterAndReadStr(f, SYSTEM_TYPE, "island");
+    RegisterAndReadStr(f, m_outDir, "/tmp/");
 }
 void ConfigSol::UpdateFromOther(const ConfigSol & cfgTSCmdLine)
 {

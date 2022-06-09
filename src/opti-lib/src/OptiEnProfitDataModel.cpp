@@ -29,7 +29,7 @@ OptiEnProfitDataModel::OptiEnProfitDataModel(const ConfigSol & confSol, int hori
 , m_batPars(JsonReader().ReadBatteries().at(0)) /// TODO: extend
 , m_habits(JsonReader().ReadHabits())
 {
-    const char * fname = "/tmp/solar_pos.txt";
+    const Str fname = m_confSol.m_outDir + "/solar_pos.txt";
     {Ifstream solPosIn(fname);}
     const Tokenizer tok;
     const VecStr & lines = tok.GetLines(fname);

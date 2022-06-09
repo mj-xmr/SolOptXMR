@@ -79,7 +79,7 @@ def get_hashrate_bonus(out_dir):
         last_diff = a.historical_diff_range("h", height_start, height_end)
         ts_diff = last_diff[['timestamp', 'difficulty']]
         print(ts_diff)
-        diff_csv_path = sunrise_lib.config.sunrise_lib.DIR_TMP + "/diff_original.csv"
+        diff_csv_path = sunrise_lib.DIR_TMP + "/diff_original.csv"
         ts_diff.to_csv(diff_csv_path, sep=',', index=False)
 
         cmd = "./tsqsim"
@@ -117,6 +117,7 @@ class BatterySimulatorCpp(generator.BatterySimulator):
         cmd += " --battery-charge {}".format(battery_charge)
         cmd += " --horizon-days {}".format(horizon)
         cmd += " --hashrate-bonus {}".format(hashrate_bonus)
+        cmd += " --out {}" .format(args.out_dir)
         #cmd += " --system-type {}".format(config_system.type)
         #cmd += " --system-voltage {}".format(config_system.voltage)
 
