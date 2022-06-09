@@ -84,7 +84,7 @@ jobs:
         #os: [macOS-latest, macOS-11]    # prev
         #os: [macOS-latest, macOS-10.15] # future 
         #os: [macOS-10.15, macOS-11]      # transitionary
-        os: [macOS-11]     
+        os: [macOS-12]     
     steps:
     - uses: actions/checkout@v1
       with:
