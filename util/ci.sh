@@ -28,6 +28,6 @@ else
 	# TODO: Mac OSX suffers from an endless loop (?) in prod.py
 	#python3 src/prod.py
 	cd build/default-static-release/bin/
-	./opti --out "/tmp" # todo: should be defaulted
+	./opti --out "/tmp" # todo: should be defaulted in the CI App's CLI
 fi
 
