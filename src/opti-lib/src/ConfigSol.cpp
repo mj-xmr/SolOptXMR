@@ -13,6 +13,7 @@ using namespace EnjoLib;
 
 ConfigSol::~ConfigSol(){}
 ConfigSol::ConfigSol()
+: m_outDir("/tmp")
 {
 }
 
