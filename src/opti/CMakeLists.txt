@@ -2,6 +2,7 @@
 # The extension is already found. Any number of sources could be listed here.
 cmake_minimum_required(VERSION 3.5.1)
 project( opti )
+include(../../externals/tsqsim/cmake/util.cmake)
 
 file( GLOB SRCS src/*.cpp */*.h */*.hpp)
 
