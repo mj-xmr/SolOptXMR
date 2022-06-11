@@ -1,7 +1,7 @@
 # Create a library called "Hello" which includes the source file "hello.cxx".
 # The extension is already found. Any number of sources could be listed here.
 cmake_minimum_required(VERSION 3.5.1)
-#include(../../cmake/util.cmake)
+include(../../externals/tsqsim/cmake/util.cmake)
 project(opti-lib)
 
 file( GLOB SRCS src/*.cpp */*.h */*.hpp)
