@@ -1,30 +1,48 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+#-*- coding: utf-8 -*-
 
+
+import matplotlib
+matplotlib.use('Agg')
+from matplotlib import pyplot as plt
+
+import sys
 import ui_lib
 import sunrise_lib
 import weather_lib
+import voltage_lib
 import profitability
 import generator
 import kraken
 import geolocation
 import arrays
+import ocr_gas
 
-def test():
+def test(only_net_independent=False):
     modules = []
     
     modules.append(ui_lib)
     modules.append(sunrise_lib)
-    modules.append(arrays)
-    # Needs network:
-    modules.append(generator) # TODO: Make network independent or implementa a fallback
-    modules.append(weather_lib)
-    modules.append(profitability)
-    modules.append(kraken)
-    modules.append(geolocation)
+    #modules.append(arrays) # Needs UI
+    modules.append(voltage_lib)
+    modules.append(ocr_gas)
+    # Need network:
+    if not only_net_independent:
+        modules.append(generator) # TODO: Make network independent or implementa a fallback
+        modules.append(weather_lib)
+        modules.append(profitability)
+        modules.append(kraken)
+        modules.append(geolocation)
     
     for module in modules:
         module.test()
 
+    print("All tests ended")
+    
 if __name__ == "__main__":
-    test()
+    if len(sys.argv) > 1:
+        print("Testing only network independent modules")
+        test(True)
+    else: # Default
+        print("Testing all")
+        test()
