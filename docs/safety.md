@@ -28,7 +28,7 @@ Except for the inverter, which produces 230V AC, the remaining parts of the syst
 In case of a fire event, make sure to keep as much distance to the device being extinguished as possible, as this reduces your risks.
 
 ## MPPT cutoff voltage
-The MPPT controllers cutoff any input that would exceed the maximal voltage, that you may set to prevent your batteries from overloading.
+The MPPT controllers cut off any input that would exceed the maximal voltage, that you may set to prevent your batteries from overloading.
 Overloading of the batteries leads not only to a temporary shut down of the inverter, but to such an increase of the batteries' internal temperature, that their liquids start to boil. 
 Obviously this accelerates corrosion but leads to other unwanted effects as well, like toxic and flammable gas emissions and consequently such an increase of the internal pressure, that they might leak or even explode.
 I personally set my maximal voltage to 13.4V for a 12V system.
