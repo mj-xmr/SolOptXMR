@@ -10,7 +10,7 @@ In such case, the charge passes right through you and definitely causing harm.
 Unfortunatly a similar situation might occur, if you touch the (+) and are standing on the floor, without shoes, that would otherwise serve as isolation. If the floor is wet, it worsens the situation. 
 
 ## Terminals: connecting and disconnecting
-When connecting and disconnecting terminals the following rules apply, that minimize the risk of electro shock: 
+When connecting and disconnecting terminals the following rules apply, that minimize (though not eliminate) the risk of an electro shock: 
 - connecting: connect + first (red), then - (black)
 - disconnecting: disconnect - first (black) then + (red)
 
