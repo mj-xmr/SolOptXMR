@@ -37,3 +37,6 @@ cairosvg>=0.7.0
 Pillow==9.1.1
 # Geo location
 geocoder>=1.38.1
+# Image recognition
+pytesseract>=0.3.9
+opencv-python>=4.6.0.66

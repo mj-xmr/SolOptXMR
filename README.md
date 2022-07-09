@@ -58,11 +58,12 @@ pip install -r requirements.txt # Install Python packages (either use this comma
 ## Building & running
 ```bash
 ./ci-default          # Build and run the tests
-./soloptxmr.py        # Run the prediction with default parameters  
+./soloptxmr.py        # Run the prediction with default parameters
 ./soloptxmr.py --help # Print all the available options 
 ```
 By default the script performs the predictions 3 days ahead from now, assuming the battery charge at its reasonable minimum, set by the `battery.json`.
 
+### Fine configuration
 In order to alter the default behavior, the main script can be ran with the following example options:
 ```bash
 ./soloptxmr.py \
@@ -78,7 +79,23 @@ or equivalently:
 -s "2022-02-20 20:22"
 ```
 
-Setting the battery's voltage, rather than the Ah charge is a feature planned for the near future. For now, you have to resort to online resources in order to estimate the initial battery's state. [Example 1](http://www.scubaengineer.com/documents/lead_acid_battery_charging_graphs.pdf)
+### Simpler battery charge input via voltage and OCR
+Setting the battery's voltage directly, also via OCR, rather than the Ah or % charge is a feature currently being worked on. What's missing are measurements of batteries of various types, like in [Example 1](http://www.scubaengineer.com/documents/lead_acid_battery_charging_graphs.pdf)
+
+```bash
+./soloptxmr.py --battery-charge-v	12.3	# Set the voltage of your battery to be converted to its capacity
+./soloptxmr.py --battery-charge-ocr			# Use image recognition to read the current battery voltage
+```
+
+### OCR
+TODO: Describe how to create own module for image recognition.
+
+TODO: Add battery charge & discharge profiles to voltage_lib and to battery.json 
+
+### Other use cases
+```bash 
+./soloptxmr.py --net-diff     			# Only test the current network difficulty, without performing the simulation
+```
 
 ## Plotting the hashrate situation only
 Because the optimization takes some time and you might be only interested in the hashrate situation alone, the main script has an option to ommit the optimization part.

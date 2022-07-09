@@ -64,10 +64,12 @@ FNAME_MASTER = HOME + config.sunrise_lib.FNAME_MASTER
 CPU_FREQ_APP = config.sunrise_lib.CPU_FREQ_APP
 HOURS_DELTA = config.sunrise_lib.HOURS_DELTA
 MIN_WEATHER = config.sunrise_lib.MIN_WEATHER
-DIR_TMP = config_volatile.paths.DIR_TMP
 DIR_XMRIG = HOME + config.sunrise_lib.DIR_XMRIG
+DIR_TMP = config_volatile.paths.DIR_TMP
+PATH_OCR_IMAGE = DIR_TMP + '/ocr.jpg'
 
 os.makedirs(DIR_TMP, exist_ok=True)
+os.makedirs(config_volatile.paths.DIR_ARCHIVE, exist_ok=True)
 
 tzstr = config_geo.geo.time_zone
 tz = timezone(tzstr)
@@ -83,6 +85,7 @@ TESTING = config.sunrise_lib.TESTING
 def add_date_arguments_to_parser(parser, date=DATE_NOW_STR, horizon=DEFAULT_HORIZON_DAYS):
     parser.add_argument('-s', '--start-date',    default=date, type=str, help="Start date, ISO format (parsed) (default: {})".format(date))
     parser.add_argument('-d', '--days-horizon',  default=horizon, type=int, help="Horizon in days (default: {})".format(horizon))
+    parser.add_argument('-t', '--test-local',    default=False, action='store_true', help="Test only Internet independent modules")
 
 def write_file(fname, val):
     with open(fname, 'w') as fout:

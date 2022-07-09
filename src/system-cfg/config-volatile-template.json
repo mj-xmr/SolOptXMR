@@ -1,9 +1,12 @@
 {
-    "global": {
-        "TESTING": false
+    "glob": {
+        "TESTING": false,
+        "ARCHIVE_IMAGES": true
     },
     "paths": {
-	"HOME": "/foo/bar",
-        "DIR_TMP": "/tmp"
+        "HOME": "/foo/bar",
+        "DIR_TMP": "/tmp",
+        "DIR_ARCHIVE": "solar/archive/",
+        "DIR_OCR_SCRIPT": "externals/GasPumpOCR-mj/custom-scripts/lcd-glowing"
     }
 }

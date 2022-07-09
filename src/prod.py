@@ -20,6 +20,8 @@ from pytz import timezone
 from matplotlib import pyplot as plt
 
 import sunrise_lib
+import voltage_lib
+import ocr_gas
 import generator
 import kraken
 from profitability import POW_Coin
@@ -34,10 +36,13 @@ FILE_HASHRATE_BONUS_SINGLE = "/hashrate_bonus_ma_single.dat"
 
 def get_args():
     parser = argparse.ArgumentParser()
+    parser.add_argument('-r', '--battery-charge-ocr',      default=False, action='store_true', help="Initial battery charge OCR (default: OFF)")
     parser.add_argument('-p', '--battery-charge-percent',  default=DEFAULT_BATTERY_STATE, type=float, help="Initial battery charge [0-100]  (default: {} which means: minimal charge)".format(DEFAULT_BATTERY_STATE))
     parser.add_argument('-a', '--battery-charge-ah', default=DEFAULT_BATTERY_STATE, type=float, help="Initial battery charge [Ah] (default: {} which means: minimal charge)".format(DEFAULT_BATTERY_STATE))
-    parser.add_argument('-v', '--battery-charge-v',  default=DEFAULT_BATTERY_STATE, type=float, help="Initial battery charge [V]  (default: {} which means: minimal charge) UNSUOPPORTED YET".format(DEFAULT_BATTERY_STATE))
+    parser.add_argument('-v', '--battery-charge-v',  default=DEFAULT_BATTERY_STATE, type=float, help="Initial battery charge [V]  (default: {} which means: minimal charge)".format(DEFAULT_BATTERY_STATE))
     sunrise_lib.add_date_arguments_to_parser(parser)
+    # TODO:
+    # parser.add_argument('-f', '--file-image-ocr',  default="", type=str, help="Image path to OCR (default: {})".format(""))
     parser.add_argument('-i', '--in-data',  default="", type=str, help="Input hashrate data (default: {})".format(""))
     parser.add_argument('-o', '--out-dir',  default=sunrise_lib.DIR_TMP, type=str, help="Output dir to exchange with tsqsim (default: {})".format(""))
     parser.add_argument('-n', '--net-diff',      default=False, action='store_true', help="Plot network difficulty only (default: OFF)")
@@ -178,7 +183,6 @@ def plot_hashrates():
 
     plt.subplots_adjust(hspace=0.5)
 
-    
     plt.show()
         
 
@@ -188,13 +192,30 @@ def run_main(args, elev, show_plots, battery_charge, horizon):
     plot_hashrates()
 
 def main(args):
-    if args.battery_charge_v:
-        raise ValueError("Voltage input not supported yet.") # TODO
+    if args.battery_charge_ocr:
+        print("OCR input is still unstable.")
+        #make_picture()
+        args.battery_charge_v = ocr_gas.get_detection()
+        # TODO:
+        # make_picture()
+        # args.battery_charge_v = ocr_gas.get_detection()
+        
+    if args.battery_charge_v and args.battery_charge_v != DEFAULT_BATTERY_STATE:
+        print("Voltage input is still unstable.") # TODO: use various discharge rates
+        print("Battery voltage readout:", args.battery_charge_v) 
+        args.battery_charge_percent = voltage_lib.voltage_to_percentage(args.battery_charge_v)
+        if args.battery_charge_percent == 0:
+            args.battery_charge_percent = 1
     if args.battery_charge_percent:
         if args.battery_charge_percent < 1:
             raise ValueError("Percentage input must be > 1.")
+        print("Battery percentage readout:", args.battery_charge_percent)
         args.battery_charge_ah = args.battery_charge_percent / 100.0 * generator.MAX_CAPACITY
+        print("Battery apere-hours readout:", args.battery_charge_ah)
 
+    if args.battery_charge_ah == 0:
+        print("Battery apere-hours is 0. Trying to guess a reasonable value.")
+    
     if args.net_diff:
         install_path = getInstallPath()
         os.chdir(install_path)

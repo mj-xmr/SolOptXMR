@@ -16,16 +16,20 @@ using namespace EnjoLib;
 JsonReader::JsonReader(){}
 JsonReader::~JsonReader(){}
 
-
-static const rapidjson::Value & GetArray(const EnjoLib::Str & name)
+static void parseJsonOrThrow(const Str & jsonFile, rapidjson::Document & d)
 {
-    const Str jsonFile = name + ".json";
     const Str & wholeJson = JsonReader::GetJson(jsonFile);
-    rapidjson::Document d;
     if (d.Parse(wholeJson.c_str()).HasParseError())
     {
         Assertions::Throw((jsonFile + " failed to parse\n").c_str(), "GetArray");
     }
+}
+
+static const rapidjson::Value & GetArray(const EnjoLib::Str & name)
+{
+    const Str jsonFile = name + ".json";
+    rapidjson::Document d;
+    parseJsonOrThrow(jsonFile, d);
     const rapidjson::Value& array_json = d[name.c_str()];
     return array_json;
 }
@@ -194,9 +198,9 @@ EnjoLib::Array<Habit> JsonReader::ReadHabits(bool verbose) const
 System JsonReader::ReadSystem(bool verbose) const
 {
     System ret;
-    const Str & wholeJson = GetJson("system.json");
+    const Str jsonFile = "system.json";
     rapidjson::Document d;
-    d.Parse(wholeJson.c_str());
+    parseJsonOrThrow(jsonFile, d);
     
     ret.voltage     = d["voltage"].GetInt();
     ret.generating  = d["generate"].GetBool();
