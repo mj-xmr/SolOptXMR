@@ -112,7 +112,7 @@ double BatterySimulation::iter_get_load(double inp, double out, double hours)
     if (initial_load)
         if (load > pars.MIN_LOAD_AMPH)
         {
-            LOGL << "Initial load done.\n";
+            //LOGL << "Initial load done.\n";
             initial_load = false;
         }
             
