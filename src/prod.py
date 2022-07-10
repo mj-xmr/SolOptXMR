@@ -45,7 +45,8 @@ def get_args():
     # parser.add_argument('-f', '--file-image-ocr',  default="", type=str, help="Image path to OCR (default: {})".format(""))
     parser.add_argument('-i', '--in-data',  default="", type=str, help="Input hashrate data (default: {})".format(""))
     parser.add_argument('-o', '--out-dir',  default=sunrise_lib.DIR_TMP, type=str, help="Output dir to exchange with tsqsim (default: {})".format(""))
-    parser.add_argument('-n', '--net-diff',      default=False, action='store_true', help="Plot network difficulty only (default: OFF)")
+    parser.add_argument('-n', '--net-diff', default=False, action='store_true', help="Plot network difficulty only (default: OFF)")
+    parser.add_argument('-m', '--sim',      default=False, action='store_true', help="Plot simulation only (default: OFF)")
     #parser.add_argument('-v', '--verbose',      default=TESTING, action='store_true', help="Test (default: OFF)")
     return parser.parse_args()
 
@@ -189,7 +190,8 @@ def plot_hashrates():
 def run_main(args, elev, show_plots, battery_charge, horizon):
     generator.run_algo(args, elev, show_plots, get_usage_prod, battery_charge, horizon)
     #generator.run_algo(args, elev, show_plots, generator.get_usage_simple)
-    plot_hashrates()
+    if not args.sim:
+        plot_hashrates()
 
 def main(args):
     if args.battery_charge_ocr:
