@@ -154,7 +154,7 @@ def test():
     print("voltage")
     x = get_x()
     y = get_y_c_by_10()
-    assert len(x) == 11 # both 0 and 100
+    assert len(x) == 11 # both 0 and 100, therefore 11, not just 10
     assert len(y) == len(x)
     x_interp = get_x_interp()
     assert len(x_interp) > len(x)
