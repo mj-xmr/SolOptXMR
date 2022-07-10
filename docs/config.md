@@ -25,10 +25,10 @@ Below are the parameters and example values:
 | `"name"` | "Ca-Ca" | An arbitrary name. In this case the abbreviation means "Calcium-Calcium". |
 | `"count"` | 2 | The number of batteries of the same type. |  
 | `"discharge_rate_c_by"` | 10 | The discharge rate of the battery at discharge. See [this paper](http://www.scubaengineer.com/documents/lead_acid_battery_charging_graphs.pdf) about lead-acid batteries. Available choices: 3, 5, 10, 20, 100 | 
-|	`"max_discharge_amp"` | 11 | TODO |
-| `"max_capacity_amph"` | 60 | TODO |
-|	`"min_load_amph"` | 30 | TODO |
-|	`"discharge_per_hour_percent"` | 0.9 | TODO |
+|	`"max_discharge_amp"` | 11 | The maximum amount of Amperes, that the battery can deliver. |
+| `"max_capacity_amph"` | 60 | The maximum capacity of the battery in Ampere-hours, as provided by the manufacturer. |
+|	`"min_load_amph"` | 30 | The minimum load, that has to remain in the battery, not to damage it. For lead batteries, it will be half of the maximum. |
+|	`"discharge_per_hour_percent"` | 0.9 | The percentual self-discharge value per hour. |
 
 ## Computers computers.json
 Defines mining rigs. 
