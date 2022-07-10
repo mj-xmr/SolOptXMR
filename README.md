@@ -162,6 +162,10 @@ Please note the prolonged production across the whole day, reflected by the inve
 
 ![array-modelling](https://user-images.githubusercontent.com/63722585/170349578-16f0965a-9c34-45ea-9d14-df740a562723.png)
 
+## Lead-acid battery discharge profiles
+
+![bat-discharge](https://user-images.githubusercontent.com/63722585/178121819-af159f30-8d41-444c-8bf6-71c84c7ec902.png)
+
 
 ## Console interactive UI
 Accessible via `ssh`/`putty`, based on `curses`.

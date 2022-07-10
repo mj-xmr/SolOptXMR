@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+# Source: http://www.scubaengineer.com/documents/lead_acid_battery_charging_graphs.pdf
+
 import os
 import datetime
 import time
@@ -14,25 +16,41 @@ def get_x():
 def get_x_interp():
     return list(range(0, 101, 2))        
 
-def get_y_c_by_3():
-    # TODO: Add other discharge rates, also into battery.json
+# TODO: Add other discharge rates, also into battery.json
+
+def get_y_c_by_100():
     y = []
-    y.append(9.5)    # 0
-    y.append(10)    # 10
-    y.append(10.4)  # 20
-    y.append(10.7)  # 30
-    y.append(11)    # 40
-    y.append(11.2)  # 50
-    y.append(11.35) # 60
-    y.append(11.5)  # 70
-    y.append(11.65) # 80
-    y.append(11.7)  # 90
-    y.append(11.75) # 100
+    y.append(11.7)  # 0
+    y.append(11.9)  # 10
+    y.append(12.1)  # 20
+    y.append(12.25) # 30
+    y.append(12.4)  # 40
+    y.append(12.5)  # 50
+    y.append(12.6)  # 60
+    y.append(12.65) # 70
+    y.append(12.66) # 80
+    y.append(12.665)# 90
+    y.append(12.66) # 100
+
+    return y
+
+def get_y_c_by_20(): # Could be measured better
+    y = []
+    y.append(11.45)  # 0
+    y.append(11.65)  # 10
+    y.append(11.9)  # 20
+    y.append(12.11) # 30
+    y.append(12.25)  # 40
+    y.append(12.32)  # 50
+    y.append(12.42)  # 60
+    y.append(12.5) # 70
+    y.append(12.6) # 80
+    y.append(12.63)# 90
+    y.append(12.64) # 100
 
     return y
 
 def get_y_c_by_10():
-    # TODO: Add other discharge rates, also into battery.json
     y = []
     y.append(11)    # 0
     y.append(11.27) # 10
@@ -48,21 +66,38 @@ def get_y_c_by_10():
 
     return y
 
-def get_y_c_by_100():
+def get_y_c_by_5():
     y = []
-    y.append(11.7)  # 0
-    y.append(11.9)  # 10
-    y.append(12.15) # 20
-    y.append(12.25) # 30
-    y.append(12.4)  # 40
-    y.append(12.5)  # 50
-    y.append(12.6)  # 60
-    y.append(12.65) # 70
-    y.append(12.66) # 80
-    y.append(12.665)# 90
-    y.append(12.66) # 100
+    y.append(10.2)    # 0
+    y.append(10.6)    # 10
+    y.append(10.9)  # 20
+    y.append(11.2)  # 30
+    y.append(11.4)    # 40
+    y.append(11.55)  # 50
+    y.append(11.7) # 60
+    y.append(11.8)  # 70
+    y.append(11.9) # 80
+    y.append(12)  # 90
+    y.append(12.1) # 100
 
     return y
+
+def get_y_c_by_3():
+    y = []
+    y.append(9.5)    # 0
+    y.append(10)    # 10
+    y.append(10.4)  # 20
+    y.append(10.7)  # 30
+    y.append(11)    # 40
+    y.append(11.2)  # 50
+    y.append(11.35) # 60
+    y.append(11.5)  # 70
+    y.append(11.65) # 80
+    y.append(11.7)  # 90
+    y.append(11.75) # 100
+
+    return y
+
 def get_fun_interp(x, y):
     # TODO: Use linear regression of 2nd order?
     f = interpolate.interp1d(x, y)
@@ -98,32 +133,6 @@ def voltage_to_percentage(voltage, battery_y=get_y_c_by_10):
     print(voltage, 'V ', percentage, "%")
     return percentage
 
-def plot():
-    import matplotlib.pyplot as plt
-    x = get_x()
-    xx = get_x_interp()
-    discharge_rates = []
-    
-    discharge_rates.append((100, get_y_c_by_100))
-    discharge_rates.append((10,  get_y_c_by_10))
-    discharge_rates.append((3,   get_y_c_by_3))
-
-    legend = []
-    for disc_rate in discharge_rates:
-        y = disc_rate[1]()
-        plt.plot(x, y, 'o')
-        yy_c10 = percentage_to_voltage(xx, disc_rate[1])
-        plt.plot(xx, yy_c10, '.')
-        legend.append('c/{} meas.'.format(disc_rate[0]))
-        legend.append('c/{} interp.'.format(disc_rate[0]))
-
-    plt.title('Voltage to State of Charge (SoC) [%] at discharge')
-    plt.xlabel('State of Charge (SoC) [%]')
-    plt.ylabel('Voltage [V]')
-    plt.legend(legend)
-    plt.grid()
-    plt.show()
-
 def test():
     print("voltage")
     x = get_x()
@@ -146,6 +155,10 @@ def test():
 
     assert voltage_to_percentage(9) == 0 # Corner low
     assert voltage_to_percentage(14) == 100 # Corner high
+
+def plot():
+    import voltage_plot
+    voltage_plot.plot()
 
 if __name__ == "__main__":
     test()
