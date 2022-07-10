@@ -59,6 +59,7 @@ config_habits = get_config('habits')
 PROJECT_NAME = "SolOptXMR"
 PROJECT_SUB_NAME = "Solar Optimal mining of XMR"
 
+BAT_DISCHARGE_RATE_C_BY = config_batteries.batteries[0]['discharge_rate_c_by'] # TODO: Consider other bats?
 FNAME = config.sunrise_lib.FNAME
 FNAME_MASTER = HOME + config.sunrise_lib.FNAME_MASTER
 CPU_FREQ_APP = config.sunrise_lib.CPU_FREQ_APP
