@@ -88,14 +88,7 @@ Setting the battery's voltage directly, also via OCR, rather than the Ah or % ch
 ```
 
 ### OCR
-TODO: Describe how to create own module for image recognition.
-
-TODO: Add battery charge & discharge profiles to voltage_lib and to battery.json 
-
-### Other use cases
-```bash 
-./soloptxmr.py --net-diff     			# Only test the current network difficulty, without performing the simulation
-```
+It's possible to automate the process of reading the battery voltage after capturing a picture of an LCD display and running the picture via an OCR module. [See here](docs/ocr.md) for a more detailed description.
 
 ## Plotting the hashrate situation only
 Because the optimization takes some time and you might be only interested in the hashrate situation alone, the main script has an option to ommit the optimization part.
@@ -127,6 +120,9 @@ In order to balance this discrepancy, please try experimenting with more vertica
 The script accepts an iso-formatted date as an input, allowing you to simulate extreme conditions - winter and summer. 
 The title of the plot presents the sum of produced electricity in a given day. 
 It makes sense to compare and sum up this values for the extreme conditions.
+
+## Voltage plots
+To visualize the currently modelled (dis)charge rates, as described [in this paper](http://www.scubaengineer.com/documents/lead_acid_battery_charging_graphs.pdf), dubbed _C/100_, _C/20_, and so on, please run the `src/voltage_plot.py` script.
 
 # Further documentation
 - [safety](docs/safety.md): how to handle electrical systems safely. Tell me, that you "read and understood it", and I can sleep fine.
@@ -162,8 +158,8 @@ Please note the prolonged production across the whole day, reflected by the inve
 
 ![array-modelling](https://user-images.githubusercontent.com/63722585/170349578-16f0965a-9c34-45ea-9d14-df740a562723.png)
 
-## Lead-acid battery discharge profiles
-
+## Lead-acid battery (dis)charge profiles
+The currently modelled (dis)charge profiles:
 ![bat-discharge](https://user-images.githubusercontent.com/63722585/178121819-af159f30-8d41-444c-8bf6-71c84c7ec902.png)
 
 
