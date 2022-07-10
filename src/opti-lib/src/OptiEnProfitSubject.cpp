@@ -111,7 +111,11 @@ double BatterySimulation::iter_get_load(double inp, double out, double hours)
 
     if (initial_load)
         if (load > pars.MIN_LOAD_AMPH)
+        {
+            LOGL << "Initial load done.\n";
             initial_load = false;
+        }
+            
 
     return load;
 }
@@ -140,7 +144,8 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
         //LOG << "i = " << i << ", val = " << inp[i] << Nl;
         //if (not battery.initial_load)
         //if (false)
-        const SimResult & resLocal = Simulate(i, m_currHour, compSize, dataMat, bonusMul, m_dataModel.GetConf().HASHRATE_BONUS);
+        const SimResult & resLocal = Simulate(i, m_currHour, compSize, dataMat, bonusMul, m_dataModel.GetConf().HASHRATE_BONUS, battery.initial_load);
+;
         simResult.Add(resLocal);
         const double load = battery.iter_get_load(powerProd, resLocal.sumPowerUsage);
         //const double pentalityUndervolted = load < 0 ? GMat().Fabs(load * load * load) : 0;
@@ -151,7 +156,10 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
         {
             if (pentalityUndervolted > 0)
             {
-                unacceptableSolution = true;
+                //if (not battery.initial_load)
+                {
+                    unacceptableSolution = true;
+                }
             }
         }
         if (not sys.selling)
@@ -216,7 +224,7 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
                     //LOG << "i = " << i << ", val = " << inp[i] << Nl;
                     //if (not battery.initial_load)
                     //if (false)
-                    const SimResult & resLocal = Simulate(i, m_currHour, compSize, dataMat, bonusMul, m_dataModel.GetConf().HASHRATE_BONUS);
+                    const SimResult & resLocal = Simulate(i, m_currHour, compSize, dataMat, bonusMul, m_dataModel.GetConf().HASHRATE_BONUS, batteryCopy.initial_load);
                     resVisual.Add(resLocal);
                     const double load = batteryCopy.iter_get_load(powerProd, resLocal.sumPowerUsage);
                     usages.Add(resLocal.sumPowerUsage * batteryCopy.pars.GetMulPowerToCapacity(m_dataModel.GetSystem().voltage));
@@ -248,11 +256,15 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
     //return -sum;
 }
 
-OptiSubjectEnProfit::SimResult OptiSubjectEnProfit::Simulate(int i, int currHour, size_t compSize, const EnjoLib::Matrix & dataMat, double bonusMul, double bonusMulMA) const
+OptiSubjectEnProfit::SimResult OptiSubjectEnProfit::Simulate(int i, int currHour, size_t compSize, const EnjoLib::Matrix & dataMat, double bonusMul, double bonusMulMA, bool isInitialLoad) const
 {
     SimResult res{};
-    
     //const EnjoLib::Array<Computer> & comps = m_dataModel.GetComputers();
+    res.sumPowerUsage += m_dataModel.GetHabitsUsage(i);
+    if (isInitialLoad)
+    {
+        return res;
+    }
     const auto & comps = m_dataModel.GetComputers();
     for (int ic = 0; ic < compSize; ++ic)
     {
@@ -285,7 +297,6 @@ OptiSubjectEnProfit::SimResult OptiSubjectEnProfit::Simulate(int i, int currHour
         res.sumPowerUsage += usage;
     }
     */
-    res.sumPowerUsage += m_dataModel.GetHabitsUsage(i);
     return res;
 }
 
