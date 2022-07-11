@@ -83,7 +83,8 @@ or equivalently:
 Setting the battery's voltage directly, also via OCR, rather than the Ah or % charge is a feature currently being worked on. What's missing are measurements of batteries of various types, like in [Example 1](http://www.scubaengineer.com/documents/lead_acid_battery_charging_graphs.pdf)
 
 ```bash
-./soloptxmr.py --battery-charge-v 12.3 # Set the voltage of your battery to be converted to its capacity
+./soloptxmr.py --battery-charge-v 12.3 # Set the voltage of your battery to be converted to its current charge
+# or:
 ./soloptxmr.py --battery-charge-ocr    # Use image recognition to read the current battery voltage
 ```
 
