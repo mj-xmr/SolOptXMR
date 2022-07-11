@@ -161,6 +161,7 @@ Please note the prolonged production across the whole day, reflected by the inve
 
 ## Lead-acid battery (dis)charge profiles
 The currently modelled (dis)charge profiles:
+
 ![bat-discharge](https://user-images.githubusercontent.com/63722585/178121819-af159f30-8d41-444c-8bf6-71c84c7ec902.png)
 
 
