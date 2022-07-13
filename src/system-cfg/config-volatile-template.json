@@ -7,6 +7,8 @@
         "HOME": "/foo/bar",
         "DIR_TMP": "/tmp",
         "DIR_ARCHIVE": "solar/archive/",
-        "DIR_OCR_SCRIPT": "externals/GasPumpOCR-mj/custom-scripts/lcd-glowing"
+        "DIR_OCR_SCRIPT": "externals/GasPumpOCR-mj/custom-scripts/lcd-glowing",
+        "DIR_OCR_SCRIPT_GLOWING": "externals/GasPumpOCR-mj/custom-scripts/lcd-glowing",
+        "DIR_OCR_SCRIPT_GAS_PUMP": "externals/GasPumpOCR-mj/custom-scripts/gas-pump-dark"
     }
 }
