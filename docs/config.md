@@ -52,6 +52,9 @@ Defines the voltage of the system (12, 24 or 36 V) used for conversions.
 Other 3 options include the ability to independently: generate, buy and/or sell the electricity. 
 The combination of these options helps in deriving the optimal solution for your case, regarding the profitability of the operation.
 
+## Volatile config-volatile.json
+TODO: Reference OCR
+
 ## Electricity price
 TODO: enable scheduling the electricity buy/sell prices via cron, like in the Habits json.
 
