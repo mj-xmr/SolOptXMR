@@ -21,7 +21,8 @@ else
 	pip3 install pandas>=1.4.2 pvlib pykrakenapi pyparsing pyrsistent python-dateutil \
 	python-json-config pytz requests scipy six urllib3 \
 	beautifulsoup4 wget cairosvg Pillow geocoder \
-	pytesseract opencv-python \
+	opencv-python screeninfo \
+	# pytesseract not employed yet
 	#pip3 install --upgrade 
 	# Curses menu:
 	#windows-curses==2.3.0 ; sys_platform == 'win32'

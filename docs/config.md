@@ -52,6 +52,20 @@ Defines the voltage of the system (12, 24 or 36 V) used for conversions.
 Other 3 options include the ability to independently: generate, buy and/or sell the electricity. 
 The combination of these options helps in deriving the optimal solution for your case, regarding the profitability of the operation.
 
+## Volatile config-volatile.json
+Contains various entries from across the project, which don't really deserve their own config files.
+
+| Var. name  | Description |
+| ------------- | --- |
+| `glob` / `ARCHIVE_IMAGES` | Archive images for future finer analysis, like when your OCR module misinterprets the readout |
+| `glob` / `TESTING` | Internal variable used for testing |
+| `paths` / `HOME` | Home directory. Currently unused. |
+| `paths` / `DIR_TMP` | Temp directory, where all the intermediate files should be stored. |
+| `paths` / `DIR_ARCHIVE` | If there's a need to archive anything, this basepath shall be used. |
+| `paths` / `DIR_OCR_SCRIPT` | Script path for the OCR module. |
+
+For OCR related entries, please have a look [here](ocr.md)
+
 ## Electricity price
 TODO: enable scheduling the electricity buy/sell prices via cron, like in the Habits json.
 

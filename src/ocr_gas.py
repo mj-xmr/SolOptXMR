@@ -18,14 +18,14 @@ sys.path.append('externals/GasPumpOCR-mj')
 import headless
 
 def get_test_image_file():
-    imfile = 'data/img/lcd2.jpg'
+    imfile = 'data/img/lcd-glowing.jpg'
     #imfile = 'data/img/lcd-volt-90.jpg'
     #imfile = 'data/img/lcd-volt.jpg'
     return imfile
 
 def test():
     imfile = get_test_image_file()
-    script_dir = sunrise_lib.config_volatile.paths.DIR_OCR_SCRIPT
+    script_dir = 'externals/GasPumpOCR-mj/custom-scripts/lcd-glowing/'
 
     detection = get_detection(imfile, script_dir)
     assert round(detection, 1) == 11.7
