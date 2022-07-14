@@ -17,19 +17,18 @@ import sunrise_lib
 sys.path.append('externals/GasPumpOCR-mj')
 import headless
 
-def get_test_image_file():
-    imfile = 'data/img/lcd-glowing.jpg'
-    #imfile = 'data/img/lcd-volt-90.jpg'
-    #imfile = 'data/img/lcd-volt.jpg'
-    return imfile
+def test_single(image, script_dir, expected_val)
+    detection = get_detection(imfile, script_dir)
+    assert round(detection, 3) == expected_val
+    print(image, ", Detection =", detection)
 
 def test():
-    imfile = get_test_image_file()
-    script_dir = 'externals/GasPumpOCR-mj/custom-scripts/lcd-glowing/'
-
-    detection = get_detection(imfile, script_dir)
-    assert round(detection, 1) == 11.7
-    print("Detection =", detection)
+    script_dir_backlit  = 'externals/GasPumpOCR-mj/custom-scripts/lcd-glowing/'
+    script_dir_gas_pump = 'externals/GasPumpOCR-mj/custom-scripts/gas-pump-dark/'
+    test_single('data/img/lcd-glowing.jpg', script_dir_backlit, 11.7)
+    test_single('data/img/gas-pump-13A95.jpg', script_dir_gas_pump, 13.95)
+    test_single('data/img/gas-pump-49A95-mod-0.jpg', script_dir_gas_pump,  9.95)
+    test_single('data/img/gas-pump-49A95-mod-1.jpg', script_dir_gas_pump, 19.95)
 
 def get_detection(imfile=sunrise_lib.PATH_OCR_IMAGE, script_dir=sunrise_lib.config_volatile.paths.DIR_OCR_SCRIPT):
     if not os.path.isfile(imfile):
