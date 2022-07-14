@@ -17,7 +17,7 @@ import sunrise_lib
 sys.path.append('externals/GasPumpOCR-mj')
 import headless
 
-def test_single(image, script_dir, expected_val)
+def test_single(image, script_dir, expected_val):
     detection = get_detection(imfile, script_dir)
     assert round(detection, 3) == expected_val
     print(image, ", Detection =", detection)
