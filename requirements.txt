@@ -38,5 +38,6 @@ Pillow==9.1.1
 # Geo location
 geocoder>=1.38.1
 # Image recognition
-pytesseract>=0.3.9
+# pytesseract>=0.3.9 # Not employed yet
 opencv-python>=4.6.0.66
+screeninfo>=0.8
