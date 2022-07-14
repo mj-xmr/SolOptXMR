@@ -8,7 +8,7 @@ The base project for the OCR module is located under `externals/GasPumpOCR-mj`. 
 
 Within the base directory there are 2 major scripts:
 - `headless.py`, which performs the recognition based on an image file (`-f` param.) and a directory which contains a script (`-s` param.) with a file name `ocr_filter_module.py`. Any other name won't work.
-- `playground.py`, which uses the same parameters to do the same job as `headless.py`, but additionally allows you to alter the parameters of your OCR module to be able to see the result immediately on your screen.
+- `playground.py`, which uses the same parameters to do the same job as `headless.py`, but additionally allows you to interactively alter the parameters of your OCR module to be able to see the final, as well as intermediate results immediately on your screen.
 
 ## SolOptXMR integration
 SolOptXMR uses only the `headless.py` script in order to read the battery's or inverter's voltage. It expects 2 things to be in place:
