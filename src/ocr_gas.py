@@ -27,11 +27,11 @@ def test():
     base_dir_scripts = 'externals/GasPumpOCR-mj/custom-scripts/'
     base_dir_images = 'data/img/'
     script_dir_backlit  = base_dir_scripts + 'lcd-glowing/'
-    script_dir_gas_pump = base_dir_scripts + '/gas-pump-dark/'
-    test_single(base_dir_images + 'lcd-glowing.jpg', script_dir_backlit, 11.7)
-    test_single(base_dir_images + 'gas-pump-13A95.jpg', script_dir_gas_pump, 13.95)
-    test_single(base_dir_images + 'gas-pump-49A95-mod-0.jpg', script_dir_gas_pump,  9.95)
-    test_single(base_dir_images + 'gas-pump-49A95-mod-1.jpg', script_dir_gas_pump, 19.95)
+    script_dir_gas_pump = base_dir_scripts + 'gas-pump-dark/'
+    test_single(base_dir_images + 'gas-pump-13A95.jpg',         script_dir_gas_pump, 13.95)
+    test_single(base_dir_images + 'lcd-glowing.jpg',            script_dir_backlit,  11.70)
+    test_single(base_dir_images + 'gas-pump-49A95-mod-0.jpg',   script_dir_gas_pump,  9.95)
+    test_single(base_dir_images + 'gas-pump-49A95-mod-1.jpg',   script_dir_gas_pump, 19.95)
 
 def get_detection(imfile=sunrise_lib.PATH_OCR_IMAGE, script_dir=sunrise_lib.config_volatile.paths.DIR_OCR_SCRIPT):
     if not os.path.isfile(imfile):
