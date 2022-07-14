@@ -51,3 +51,7 @@ This is very apparent during cloudy days.
 The reason for this confusion is, that as soon as the battery is >80% charged, the voltage starts raising much faster with the same energy input, therefore the previous assumptions of slower growth and adjusted reaction don't hold anymore.
 
 Fingers crossed!
+
+# Appendix
+## Online resources
+- [Cable sizes vs current](https://www.spwales.com/cable-size-current-rating-chart)
