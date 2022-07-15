@@ -29,7 +29,7 @@ def test():
     script_dir_backlit  = base_dir_scripts + 'lcd-glowing/'
     script_dir_gas_pump = base_dir_scripts + 'gas-pump-dark/'
     test_single(base_dir_images + 'lcd-glowing.jpg',            script_dir_backlit,  11.70)
-    test_single(base_dir_images + 'gas-pump-13A95.jpg',         script_dir_gas_pump, 13.95)
+    test_single(base_dir_images + 'gas-pump-13A95.jpg',         script_dir_gas_pump, 13.957)
     test_single(base_dir_images + 'gas-pump-49A95-mod-0.jpg',   script_dir_gas_pump,  9.95)
     test_single(base_dir_images + 'gas-pump-49A95-mod-1.jpg',   script_dir_gas_pump, 19.95)
 
