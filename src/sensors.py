@@ -31,7 +31,10 @@ def get_temp():
     """
     Reads the general temperature from the lm-sensors output
     """
-    cmd = "sensors"
+    if platform.system() == 'Darwin':
+        cmd = "osx-cpu-temp"
+    else:
+        cmd = "sensors"
     result = sunrise_lib.run_cmd(cmd)
     temp = parse_temp(result.stdout)
     return temp
