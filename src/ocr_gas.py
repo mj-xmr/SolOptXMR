@@ -14,10 +14,10 @@ import time
 import shutil
 import sunrise_lib
 import importlib
-import headless
 
 sys.path.append('externals/GasPumpOCR-mj')
 
+import headless
 
 def test_single(imfile, script_dir, expected_val):
     print("Testing:", imfile, ", script dir:",  script_dir, ", expected val:", expected_val)
