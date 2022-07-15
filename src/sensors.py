@@ -7,6 +7,7 @@ import datetime
 from subprocess import PIPE, run
 import argparse
 import time
+import platform
 import sunrise_lib
 
 MAX_TEMP_C = 45.0
