@@ -107,7 +107,7 @@ def test_temp():
     get_temp()
 
 def test():
-    print("Testing")
+    print("Testing sensors:")
     test_basic()
     test_sensors()
     test_temp()
