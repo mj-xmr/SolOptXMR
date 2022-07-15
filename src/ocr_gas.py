@@ -13,10 +13,8 @@ import datetime
 import time
 import shutil
 import sunrise_lib
-import importlib
 
 sys.path.append('externals/GasPumpOCR-mj')
-
 import headless
 
 def test_single(imfile, script_dir, expected_val):
@@ -66,8 +64,7 @@ def get_detection(imfile=sunrise_lib.PATH_OCR_IMAGE, script_dir=sunrise_lib.conf
         if not os.path.isdir(script_dir):
             raise IOError("Dir doesn't exist", script_dir)
     print("Reading script dir for OCR:", script_dir)
-
-    importlib.reload(headless)
+    
     detection = headless.get_detection(imfile, script_dir)
 
     return detection
