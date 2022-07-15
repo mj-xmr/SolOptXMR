@@ -18,6 +18,30 @@ DISCHARGE_RATE_100 = 100
 
 DISCHARGE_RATE_DICT = {}
 
+def percentage_to_voltage(percentage, discharge_rate=DISCHARGE_RATE_10):
+    x = get_x()
+    y = battery_y(discharge_rate)
+    f = get_fun_interp(x, y)
+    #print(percentage, "%")
+    voltage = f(percentage)
+    print(voltage, 'V ', percentage, "%")
+    return voltage
+
+def voltage_to_percentage(voltage, discharge_rate=DISCHARGE_RATE_10):
+    x = get_x()
+    y = battery_y(discharge_rate)
+
+    if voltage < y[0]:
+        return x[0]
+    if voltage > y[-1]:
+        return x[-1]
+    
+    f = get_fun_interp(y, x)
+    print(voltage, 'V ')
+    percentage = f(voltage)
+    print(voltage, 'V ', percentage, "%")
+    return percentage
+
 def get_x():
     return list(range(0, 110, 10))
 
@@ -125,30 +149,6 @@ plt.plot(x, res.intercept + res.slope*x, 'r', label='fitted line')
 
 def battery_y(discharge_rate):
     return DISCHARGE_RATE_DICT[discharge_rate]() 
-
-def percentage_to_voltage(percentage, discharge_rate=DISCHARGE_RATE_10):
-    x = get_x()
-    y = battery_y(discharge_rate)
-    f = get_fun_interp(x, y)
-    #print(percentage, "%")
-    voltage = f(percentage)
-    print(voltage, 'V ', percentage, "%")
-    return voltage
-
-def voltage_to_percentage(voltage, discharge_rate=DISCHARGE_RATE_10):
-    x = get_x()
-    y = battery_y(discharge_rate)
-
-    if voltage < y[0]:
-        return x[0]
-    if voltage > y[-1]:
-        return x[-1]
-    
-    f = get_fun_interp(y, x)
-    print(voltage, 'V ')
-    percentage = f(voltage)
-    print(voltage, 'V ', percentage, "%")
-    return percentage
 
 def test():
     print("voltage")
