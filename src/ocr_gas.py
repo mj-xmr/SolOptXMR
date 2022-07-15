@@ -34,10 +34,9 @@ def test():
     test_single(base_dir_images + 'gas-pump-49A95-mod-1.jpg',   script_dir_gas_pump, 19.95)
 
 def get_detection(imfile=sunrise_lib.PATH_OCR_IMAGE, script_dir=sunrise_lib.config_volatile.paths.DIR_OCR_SCRIPT):
+    imfile = sunrise_lib.fix_path_src(imfile)
     if not os.path.isfile(imfile):
-        imfile = "src/" + imfile
-        if not os.path.isfile(imfile):
-            raise IOError("File doesn't exist", imfile)
+       raise IOError("File doesn't exist", imfile)
     print("Reading image file for OCR:", imfile)
     time_mod = os.path.getmtime(imfile)
     time_diff = time.time() - time_mod
@@ -59,10 +58,9 @@ def get_detection(imfile=sunrise_lib.PATH_OCR_IMAGE, script_dir=sunrise_lib.conf
         else:
             print(path_copy, "already exists.")
 
+    script_dir = sunrise_lib.fix_path_src(script_dir)
     if not os.path.isdir(script_dir):
-        script_dir = "src/" + script_dir
-        if not os.path.isdir(script_dir):
-            raise IOError("Dir doesn't exist", script_dir)
+        raise IOError("Dir doesn't exist", script_dir)
     print("Reading script dir for OCR:", script_dir)
     
     detection = headless.get_detection(imfile, script_dir)

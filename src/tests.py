@@ -17,6 +17,7 @@ import kraken
 import geolocation
 import arrays
 import ocr_gas
+import sensors
 
 def test(only_net_independent=False):
     modules = []
@@ -26,6 +27,7 @@ def test(only_net_independent=False):
     #modules.append(arrays) # Needs UI
     modules.append(voltage_lib)
     modules.append(ocr_gas)
+    modules.append(sensors)
     # Need network:
     if not only_net_independent:
         modules.append(generator) # TODO: Make network independent or implementa a fallback

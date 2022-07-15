@@ -103,6 +103,11 @@ def run_cmd(cmd, print_result=False):
         print(result.returncode, result.stdout, result.stderr)
     return result
 
+def fix_path_src(pth):
+    if os.path.exists(pth):
+        return pth
+    return 'src/' + pth
+
 # get local timezone    
 #local_tz = get_localzone()
 
