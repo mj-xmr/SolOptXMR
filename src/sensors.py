@@ -98,6 +98,7 @@ def test_basic():
     assert is_overheat(MAX_TEMP_C - 1, MAX_TEMP_C) == False
 
 def test_temp():
+    print("Current temperature:", get_temp(), "°C")
     assert get_temp() >= 0
 
 def test():
