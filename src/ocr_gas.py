@@ -15,7 +15,7 @@ import shutil
 import sunrise_lib
 
 sys.path.append('externals/GasPumpOCR-mj')
-import headless
+
 
 def test_single(imfile, script_dir, expected_val):
     print("Testing:", imfile, ", script dir:",  script_dir, ", expected val:", expected_val)
@@ -28,8 +28,8 @@ def test():
     base_dir_images = 'data/img/'
     script_dir_backlit  = base_dir_scripts + 'lcd-glowing/'
     script_dir_gas_pump = base_dir_scripts + 'gas-pump-dark/'
-    test_single(base_dir_images + 'gas-pump-13A95.jpg',         script_dir_gas_pump, 13.95)
     test_single(base_dir_images + 'lcd-glowing.jpg',            script_dir_backlit,  11.70)
+    test_single(base_dir_images + 'gas-pump-13A95.jpg',         script_dir_gas_pump, 13.95)
     test_single(base_dir_images + 'gas-pump-49A95-mod-0.jpg',   script_dir_gas_pump,  9.95)
     test_single(base_dir_images + 'gas-pump-49A95-mod-1.jpg',   script_dir_gas_pump, 19.95)
 
@@ -64,7 +64,8 @@ def get_detection(imfile=sunrise_lib.PATH_OCR_IMAGE, script_dir=sunrise_lib.conf
         if not os.path.isdir(script_dir):
             raise IOError("Dir doesn't exist", script_dir)
     print("Reading script dir for OCR:", script_dir)
-    
+
+    import headless
     detection = headless.get_detection(imfile, script_dir)
 
     return detection
