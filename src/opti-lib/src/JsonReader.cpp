@@ -61,6 +61,7 @@ EnjoLib::Array<BatteryParams> JsonReader::ReadBatteries(bool verbose) const
         ELO
 
         batObj.DISCHARGE_RATE_C_BY =    GetValueJson(bat, idd, "discharge_rate_c_by").GetInt();
+        batObj.MAX_CHARGE_V =           GetValueJson(bat, idd, "max_charge_v").GetDouble();
         batObj.MAX_DISCHARGE_AMP =      GetValueJson(bat, idd, "max_discharge_amp").GetDouble();
         batObj.MAX_CAPACITY_AMPH =      GetValueJson(bat, idd, "max_capacity_amph").GetDouble();
         batObj.MIN_LOAD_AMPH =          GetValueJson(bat, idd, "min_load_amph").GetDouble();
