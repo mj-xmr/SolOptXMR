@@ -36,15 +36,33 @@ static const rapidjson::Value & GetArrayJson(const EnjoLib::Str & name)
     return array_json;
 }
 
-static const rapidjson::Value & GetValueJson(const rapidjson::Value & obj, const EnjoLib::Str & identif, const EnjoLib::Str & name)
+class JsonValueWrapper
 {
-    //{LOGL << "Reading variable: " << name << " of " << identif << Nl;}
-    if (not obj.HasMember(name.c_str()))
+public:
+    JsonValueWrapper(const rapidjson::Value & obj, const EnjoLib::Str & identif)
+    : m_obj(obj)
+    , m_id(identif)
     {
-        const EnjoLib::Str msg = "No member " + name + " in " + identif;
+
+    }
+    const rapidjson::Value & GetValueJson(const EnjoLib::Str & name) const;
+
+
+private:
+
+    const rapidjson::Value & m_obj;
+    const EnjoLib::Str m_id;
+};
+
+const rapidjson::Value & JsonValueWrapper::GetValueJson(const EnjoLib::Str & name) const
+{
+    //{LOGL << "Reading variable: " << name << " of " << m_id << Nl;}
+    if (not m_obj.HasMember(name.c_str()))
+    {
+        const EnjoLib::Str msg = "No member " + name + " in " + m_id;
         Assertions::Throw(msg.c_str(), "GetValue");
     }
-    return obj[name.c_str()];
+    return m_obj[name.c_str()];
 }
 
 EnjoLib::Array<BatteryParams> JsonReader::ReadBatteries(bool verbose) const
@@ -58,19 +76,20 @@ EnjoLib::Array<BatteryParams> JsonReader::ReadBatteries(bool verbose) const
         BatteryParams batObj;
         int count = 1;
         const rapidjson::Value & bat = *objIt;
+        JsonValueWrapper jwrap(bat, idd);
         ELO
 
-        batObj.DISCHARGE_RATE_C_BY =    GetValueJson(bat, idd, "discharge_rate_c_by").GetInt();
-        batObj.MAX_CHARGE_V =           GetValueJson(bat, idd, "max_charge_v").GetDouble();
-        batObj.MAX_DISCHARGE_AMP =      GetValueJson(bat, idd, "max_discharge_amp").GetDouble();
-        batObj.MAX_CAPACITY_AMPH =      GetValueJson(bat, idd, "max_capacity_amph").GetDouble();
-        batObj.MIN_LOAD_AMPH =          GetValueJson(bat, idd, "min_load_amph").GetDouble();
-        batObj.DISCHARGE_PER_HOUR_PERCENT = GetValueJson(bat, idd, "discharge_per_hour_percent").GetDouble();
+        batObj.DISCHARGE_RATE_C_BY =    jwrap.GetValueJson("discharge_rate_c_by").GetInt();
+        batObj.MAX_CHARGE_V =           jwrap.GetValueJson("max_charge_v").GetDouble();
+        batObj.MAX_DISCHARGE_AMP =      jwrap.GetValueJson("max_discharge_amp").GetDouble();
+        batObj.MAX_CAPACITY_AMPH =      jwrap.GetValueJson("max_capacity_amph").GetDouble();
+        batObj.MIN_LOAD_AMPH =          jwrap.GetValueJson("min_load_amph").GetDouble();
+        batObj.DISCHARGE_PER_HOUR_PERCENT = jwrap.GetValueJson("discharge_per_hour_percent").GetDouble();
         //batObj.name = bat["name"].GetString();
         //LOG <<  << Nl;
         if (bat.HasMember("count")) /// TODO: Repeated pattern
         {
-            count = bat["count"].GetInt();
+            count = jwrap.GetValueJson("count").GetInt();
         }
         if (count == 0)
         {
@@ -106,24 +125,25 @@ EnjoLib::Array<Computer> JsonReader::ReadComputers(bool verbose) const
         Computer compObj;
         int count = 1;
         const rapidjson::Value & comp = *compIt;
+        JsonValueWrapper jwrap(comp, idd);
         ELO
 
-        compObj.cores =         GetValueJson(comp, idd, "cores").GetInt();
-        compObj.wattPerCore =   GetValueJson(comp, idd, "watt_per_core").GetDouble();
-        compObj.hashPerCore =   GetValueJson(comp, idd, "hash_per_core").GetDouble();
+        compObj.cores =         jwrap.GetValueJson("cores").GetInt();
+        compObj.wattPerCore =   jwrap.GetValueJson("watt_per_core").GetDouble();
+        compObj.hashPerCore =   jwrap.GetValueJson("hash_per_core").GetDouble();
         /// TODO: hash per core scaling factor
         //compObj.scalingFactor = 0.85;
 
-        compObj.hashPerCore =    GetValueJson(comp, idd, "hash_per_core").GetDouble();
-        compObj.wattAsleep =     GetValueJson(comp, idd, "watt_asleep").GetDouble();
-        compObj.wattIdle =       GetValueJson(comp, idd, "watt_idle").GetDouble();
-        compObj.maxTempCelcius = GetValueJson(comp, idd, "max_temp_celcius").GetDouble();
-        compObj.minRunHours =    GetValueJson(comp, idd, "min_run_hours").GetInt();
-        compObj.name =           GetValueJson(comp, idd, "name").GetString();
+        compObj.hashPerCore =    jwrap.GetValueJson("hash_per_core").GetDouble();
+        compObj.wattAsleep =     jwrap.GetValueJson("watt_asleep").GetDouble();
+        compObj.wattIdle =       jwrap.GetValueJson("watt_idle").GetDouble();
+        compObj.maxTempCelcius = jwrap.GetValueJson("max_temp_celcius").GetDouble();
+        compObj.minRunHours =    jwrap.GetValueJson("min_run_hours").GetInt();
+        compObj.name =           jwrap.GetValueJson("name").GetString();
         //LOG <<  << Nl;
         if (comp.HasMember("count"))
         {
-            count = GetValueJson(comp, idd, "count").GetInt();
+            count = jwrap.GetValueJson("count").GetInt();
         }
         if (count == 0)
         {
@@ -166,25 +186,26 @@ EnjoLib::Array<Habit> JsonReader::ReadHabits(bool verbose) const
         Habit obj;
         int count = 1;
         const rapidjson::Value & habit = *itr;
+        JsonValueWrapper jwrap(habit, idd);
         ELO
 
-        obj.name = GetValueJson(habit, idd, "name").GetString();
+        obj.name = jwrap.GetValueJson("name").GetString();
         //{LOGL << obj.name << Nl;}
-        obj.watt = GetValueJson(habit, idd, "watt").GetDouble();
+        obj.watt = jwrap.GetValueJson("watt").GetDouble();
         if (habit.HasMember("watt_asleep"))
         {
-            obj.watt_asleep = GetValueJson(habit, idd, "watt_asleep").GetDouble();
+            obj.watt_asleep = jwrap.GetValueJson("watt_asleep").GetDouble();
         }
         if (habit.HasMember("schedule"))
         {
-             obj.schedule =         GetValueJson(habit, idd, "schedule").GetString();
-             obj.duration_hours =   GetValueJson(habit, idd, "duration_hours").GetDouble();
+             obj.schedule =         jwrap.GetValueJson("schedule").GetString();
+             obj.duration_hours =   jwrap.GetValueJson("duration_hours").GetDouble();
         }
 
         //LOG <<  << Nl;
         if (habit.HasMember("count"))
         {
-            count = GetValueJson(habit, idd, "count").GetInt();
+            count = jwrap.GetValueJson("count").GetInt();
         }
         if (count == 0)
         {
@@ -220,11 +241,12 @@ System JsonReader::ReadSystem(bool verbose) const
     const Str idd = jsonFile;
     rapidjson::Document d;
     parseJsonOrThrow(jsonFile, d);
+    JsonValueWrapper jwrap(d, idd);
 
-    ret.voltage     = GetValueJson(d, idd, "voltage").GetInt();
-    ret.generating  = GetValueJson(d, idd, "generate").GetBool();
-    ret.buying      = GetValueJson(d, idd, "buy").GetBool();
-    ret.selling     = GetValueJson(d, idd, "sell").GetBool();
+    ret.voltage     = jwrap.GetValueJson("voltage").GetInt();
+    ret.generating  = jwrap.GetValueJson("generate").GetBool();
+    ret.buying      = jwrap.GetValueJson("buy").GetBool();
+    ret.selling     = jwrap.GetValueJson("sell").GetBool();
 
     return ret;
 }
