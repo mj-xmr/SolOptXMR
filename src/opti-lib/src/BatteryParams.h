@@ -9,6 +9,7 @@ struct BatteryParams
 	virtual ~BatteryParams();
 
     int DISCHARGE_RATE_C_BY = 10;
+    double MAX_CHARGE_V = 13.2;
     double MAX_DISCHARGE_AMP = 11;
     double GetMulPowerToCapacity(double systemVoltage) const;
     double MAX_CAPACITY_AMPH = 60;
