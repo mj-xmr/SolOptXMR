@@ -14,22 +14,24 @@ DISCHARGE_RATE_3   = 3
 DISCHARGE_RATE_5   = 5
 DISCHARGE_RATE_10  = 10
 DISCHARGE_RATE_20  = 20
+DISCHARGE_RATE_40  = 40
 DISCHARGE_RATE_100 = 100
 
+CHARGE_RATE_DICT = {}
 DISCHARGE_RATE_DICT = {}
 
-def percentage_to_voltage(percentage, discharge_rate=DISCHARGE_RATE_10):
-    x = get_x()
-    y = battery_y(discharge_rate)
+def percentage_to_voltage(percentage, discharge_rate=DISCHARGE_RATE_10, charge=False):
+    x = get_x(charge)
+    y = battery_y(discharge_rate, charge)
     f = get_fun_interp(x, y)
     #print(percentage, "%")
     voltage = f(percentage)
     print(voltage, 'V ', percentage, "%")
     return voltage
 
-def voltage_to_percentage(voltage, discharge_rate=DISCHARGE_RATE_10):
-    x = get_x()
-    y = battery_y(discharge_rate)
+def voltage_to_percentage(voltage, discharge_rate=DISCHARGE_RATE_10, charge=False):
+    x = get_x(charge)
+    y = battery_y(discharge_rate, charge)
 
     if voltage < y[0]:
         return x[0]
@@ -42,27 +44,66 @@ def voltage_to_percentage(voltage, discharge_rate=DISCHARGE_RATE_10):
     print(voltage, 'V ', percentage, "%")
     return percentage
 
-def get_x():
-    return list(range(0, 110, 10))
 
-def get_x_interp():
-    return list(range(0, 101, 2))        
+def battery_y(discharge_rate, charge=False):
+    d = CHARGE_RATE_DICT if charge else DISCHARGE_RATE_DICT
+    return d[discharge_rate]()
 
-# TODO: Add other discharge rates, also into battery.json
+def get_start_end_range(charge, interp):
+    start = 10 if charge else 0
+    if interp:
+        end = 121 if charge else 101
+    else:
+        end = 130 if charge else 110
+
+    return start, end
+
+def get_x(charge):
+    start, end = get_start_end_range(charge, False)  
+    return list(range(start, end, 10))
+
+def get_x_interp(charge):
+    start, end = get_start_end_range(charge, True)
+    return list(range(start, end, 2))        
+
+
+def get_keys(charge):
+    if charge:
+        return [DISCHARGE_RATE_40,  DISCHARGE_RATE_20, DISCHARGE_RATE_10, DISCHARGE_RATE_5]
+    else:
+        return list(reversed([DISCHARGE_RATE_100, DISCHARGE_RATE_20, DISCHARGE_RATE_10, DISCHARGE_RATE_5, DISCHARGE_RATE_3]))
 
 def get_y_c_by_100():
     y = []
-    y.append(11.7,  11.8 )  # 0
-    y.append(11.9,  11.8 )  # 10
-    y.append(12.1,  12.3 )  # 20
-    y.append(12.25, 12.6 )  # 30
-    y.append(12.4,  12.75)  # 40
-    y.append(12.5,  12.85)  # 50
-    y.append(12.6,  12.9 )  # 60
-    y.append(12.65, 12.95) # 70
-    y.append(12.66, ) # 80
-    y.append(12.665)# 90
-    y.append(12.66) # 100
+    y.append(11.7 )  # 0
+    y.append(11.9 )  # 10
+    y.append(12.1 )  # 20
+    y.append(12.25)  # 30
+    y.append(12.4 )  # 40
+    y.append(12.5 )  # 50
+    y.append(12.6 )  # 60
+    y.append(12.65)  # 70
+    y.append(12.66)  # 80
+    y.append(12.665) # 90
+    y.append(12.66)  # 100
+
+    return y
+
+def get_y_c_by_40_charge():
+    y = []
+    
+    y.append(11.8 ) # 10
+    y.append(12.3 ) # 20
+    y.append(12.6 ) # 30
+    y.append(12.75) # 40
+    y.append(12.85) # 50
+    y.append(12.9 ) # 60
+    y.append(12.95) # 70
+    y.append(13.  ) # 80
+    y.append(13.2 ) # 90
+    y.append(13.50) # 100
+    y.append(14.50) # 110
+    y.append(15.20) # 120
 
     return y
 
@@ -82,6 +123,24 @@ def get_y_c_by_20(): # Could be measured better
 
     return y
 
+def get_y_c_by_20_charge():
+    y = []
+    
+    y.append(12.15) # 10
+    y.append(12.4 ) # 20
+    y.append(12.7 ) # 30
+    y.append(12.90) # 40
+    y.append(13.05) # 50
+    y.append(13.15) # 60
+    y.append(13.20) # 70
+    y.append(13.35) # 80
+    y.append(13.52) # 90
+    y.append(14.15) # 100
+    y.append(15.10) # 110
+    y.append(15.55) # 120
+
+    return y
+
 def get_y_c_by_10():
     y = []
     y.append(11)    # 0
@@ -98,6 +157,24 @@ def get_y_c_by_10():
 
     return y
 
+def get_y_c_by_10_charge():
+    y = []
+    
+    y.append(12.37) # 10
+    y.append(12.55) # 20
+    y.append(12.8 ) # 30
+    y.append(13.1 ) # 40
+    y.append(13.25) # 50
+    y.append(13.35) # 60
+    y.append(13.40) # 70
+    y.append(13.70) # 80
+    y.append(14.10) # 90
+    y.append(15.25) # 100
+    y.append(15.70) # 110
+    y.append(16.00) # 120
+
+    return y
+
 def get_y_c_by_5():
     y = []
     y.append(10.2)  # 0
@@ -111,6 +188,25 @@ def get_y_c_by_5():
     y.append(11.9)  # 80
     y.append(12)    # 90
     y.append(12.1)  # 100
+
+    return y
+
+
+def get_y_c_by_5_charge():
+    y = []
+    
+    y.append(12.6 ) # 10
+    y.append(12.75) # 20
+    y.append(13.0 ) # 30
+    y.append(13.2 ) # 40
+    y.append(13.4 ) # 50
+    y.append(13.51) # 60
+    y.append(13.7 ) # 70
+    y.append(14.0 ) # 80
+    y.append(15.25) # 90
+    y.append(15.95) # 100
+    y.append(16.25) # 110
+    y.append(16.4 ) # 120
 
     return y
 
@@ -134,7 +230,16 @@ DISCHARGE_RATE_DICT[DISCHARGE_RATE_3]   = get_y_c_by_3
 DISCHARGE_RATE_DICT[DISCHARGE_RATE_5]   = get_y_c_by_5
 DISCHARGE_RATE_DICT[DISCHARGE_RATE_10]  = get_y_c_by_10
 DISCHARGE_RATE_DICT[DISCHARGE_RATE_20]  = get_y_c_by_20
+DISCHARGE_RATE_DICT[DISCHARGE_RATE_40]  = get_y_c_by_100
 DISCHARGE_RATE_DICT[DISCHARGE_RATE_100] = get_y_c_by_100
+
+CHARGE_RATE_DICT[DISCHARGE_RATE_3]   = get_y_c_by_5_charge
+CHARGE_RATE_DICT[DISCHARGE_RATE_5]   = get_y_c_by_5_charge
+CHARGE_RATE_DICT[DISCHARGE_RATE_10]  = get_y_c_by_10_charge
+CHARGE_RATE_DICT[DISCHARGE_RATE_20]  = get_y_c_by_20_charge
+CHARGE_RATE_DICT[DISCHARGE_RATE_40]  = get_y_c_by_40_charge
+CHARGE_RATE_DICT[DISCHARGE_RATE_100] = get_y_c_by_40_charge
+
 
 def get_fun_interp(x, y):
     # TODO: Use linear regression of 2nd order?
@@ -147,18 +252,16 @@ plt.plot(x, y, 'o', label='original data')
 plt.plot(x, res.intercept + res.slope*x, 'r', label='fitted line')
 """
 
-def battery_y(discharge_rate):
-    return DISCHARGE_RATE_DICT[discharge_rate]() 
-
 def test():
     print("voltage")
-    x = get_x()
+    charge = False # TODO: Same for charge
+    x = get_x(charge)
     y = get_y_c_by_10()
     assert len(x) == 11 # both 0 and 100, therefore 11, not just 10
     assert len(y) == len(x)
-    x_interp = get_x_interp()
+    x_interp = get_x_interp(charge)
     assert len(x_interp) > len(x)
-    yy_c10 = percentage_to_voltage(x_interp, DISCHARGE_RATE_10)
+    yy_c10 = percentage_to_voltage(x_interp, DISCHARGE_RATE_10, charge)
     assert len(x_interp) == len(yy_c10)
 
     # Overvoltage
