@@ -21,6 +21,7 @@ from matplotlib import pyplot as plt
 
 import sunrise_lib
 import weather_lib
+import voltage_lib
 import kraken
 from profitability import POW_Coin
 
@@ -40,7 +41,8 @@ MIN_POWER = 0
 MAX_POWER = config.generator.MAX_POWER
 MAX_USAGE = battery['max_discharge_amp']
 MIN_CAPACITY = battery['min_load_amph'] * battery['count']
-MAX_CAPACITY = battery['max_capacity_amph'] * battery['count']
+MAX_CAPACITY_PERCENTAGE = 1/100 * voltage_lib.voltage_to_percentage(battery['max_charge_v'], discharge_rate=battery['discharge_rate_c_by'], charge=True)
+MAX_CAPACITY = battery['max_capacity_amph'] * battery['count'] * MAX_CAPACITY_PERCENTAGE
 MUL_POWER_2_CAPACITY = config.generator.MUL_POWER_2_CAPACITY
 T_DELTA_HOURS = config.generator.T_DELTA_HOURS
 DATE_NOW = sunrise_lib.DATE_NOW
