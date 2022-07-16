@@ -10,23 +10,11 @@ import time
 import platform
 import sunrise_lib
 
-MAX_TEMP_C = 45.0
+MAX_TEMP_C = 52.0
 COOLED_TEMP_C = 40.0
 
 SCRIPT_DIR = 'data/'
 DIR_TESTCASES = sunrise_lib.fix_path_src(SCRIPT_DIR + "/sensor-testcases/")
-
-def is_cooled(temp, min_temp=COOLED_TEMP_C):
-    if temp == None:
-        # Have to assume, that we're overheated
-        return False
-    return temp <= min_temp        
-
-def is_overheat(temp, max_temp=MAX_TEMP_C):
-    if temp == None:
-        # Have to assume, that we're overheated
-        return True
-    return temp >= max_temp
 
 def get_temp():
     """
@@ -39,6 +27,18 @@ def get_temp():
     result = sunrise_lib.run_cmd(cmd)
     temp = parse_temp(result.stdout)
     return temp
+
+def is_cooled(temp, min_temp=COOLED_TEMP_C):
+    if temp == None:
+        # Have to assume, that we're overheated
+        return False
+    return temp <= min_temp        
+
+def is_overheat(temp, max_temp=MAX_TEMP_C):
+    if temp == None:
+        # Have to assume, that we're overheated
+        return True
+    return temp >= max_temp
 
 def parse_temp(sensors_output):
     temps = []
@@ -107,7 +107,7 @@ def test_temp():
     get_temp()
 
 def test():
-    print("Testing")
+    print("Testing sensors:")
     test_basic()
     test_sensors()
     test_temp()
