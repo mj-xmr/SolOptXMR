@@ -52,15 +52,15 @@ def get_x_interp():
 
 def get_y_c_by_100():
     y = []
-    y.append(11.7)  # 0
-    y.append(11.9)  # 10
-    y.append(12.1)  # 20
-    y.append(12.25) # 30
-    y.append(12.4)  # 40
-    y.append(12.5)  # 50
-    y.append(12.6)  # 60
-    y.append(12.65) # 70
-    y.append(12.66) # 80
+    y.append(11.7,  11.8 )  # 0
+    y.append(11.9,  11.8 )  # 10
+    y.append(12.1,  12.3 )  # 20
+    y.append(12.25, 12.6 )  # 30
+    y.append(12.4,  12.75)  # 40
+    y.append(12.5,  12.85)  # 50
+    y.append(12.6,  12.9 )  # 60
+    y.append(12.65, 12.95) # 70
+    y.append(12.66, ) # 80
     y.append(12.665)# 90
     y.append(12.66) # 100
 
