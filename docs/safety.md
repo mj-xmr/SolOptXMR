@@ -49,7 +49,7 @@ Obviously protective gloves also wouldn't hurt.
 Bear in mind, that they react with a delay, so if you set the voltage high but still, say, 1V below the maximal sane batteries' voltage (14V vs 15V), exceeding of which would temporarly shut down your inverter, the delay in reaction of the MPPT controller may still lead to overvoltage, as defined by the inverter. 
 This is very apparent during days with low clouds, resulting in switching your panels on and off multiple times. 
 The reason for this confusion is, that as soon as the battery is >80% charged, the voltage starts raising much faster with the same energy input, therefore the previous assumptions of slower growth and adjusted reaction time don't hold anymore.
-Below you can see the typical charge profiles of a Lead-Acid batteries, where above the ~80% charge, you may see the sudden non-linearity of voltage, that confuses the MTTP controllers.
+Below you can see the typical charge profiles of lead-acid batteries, where above the ~80% charge, you may see the sudden non-linearity of voltage, that confuses the MTTP controllers.
 
 ![bat-charge](https://user-images.githubusercontent.com/63722585/179357283-3a2ca304-7919-4dfe-b9b6-6e01f9d1b625.png)
 
