@@ -57,4 +57,5 @@ Fingers crossed!
 
 # Appendix
 ## Online resources
-- [Cable sizes vs current](https://www.spwales.com/cable-size-current-rating-chart)
+- [Cable sizes vs current](https://www.spwales.com/cable-size-current-rating-chart) - TODO: explain
+- [Lead-Acid charging graphs](http://www.scubaengineer.com/documents/lead_acid_battery_charging_graphs.pdf)
