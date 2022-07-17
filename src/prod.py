@@ -121,6 +121,7 @@ class BatterySimulatorCpp(generator.BatterySimulator):
         #hashrate_bonus =  5.2 # For simulation only
         cmd = "./opti"
         cmd += " --battery-charge {}".format(battery_charge)
+        cmd += " --battery-charge-max-percent {}".format(generator.MAX_CAPACITY_PERCENTAGE)        
         cmd += " --horizon-days {}".format(horizon)
         cmd += " --hashrate-bonus {}".format(hashrate_bonus)
         cmd += " --out {}" .format(args.out_dir)

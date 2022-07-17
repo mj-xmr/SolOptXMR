@@ -37,6 +37,7 @@ EnjoLib::Result<CLIResultSol> CLISol::GetConfigs(int argc, char ** argv) const
     const char * OPT_DAYS_START  = "start-day";
     const char * OPT_RANDOM_SEED  = "random-seed";
     const char * OPT_BATTERY_CHARGE  = "battery-charge";
+    const char * OPT_BATTERY_CHARGE_MAX_PERCENTAGE  = "battery-charge-max-percent";
     const char * OPT_SYSTEM_TYPE  = "system-type";
     const char * OPT_SYSTEM_VOLTAGE  = "system-voltage";
     const char * OPT_HASHRATE_BONUS  = "hashrate-bonus";
@@ -48,6 +49,7 @@ EnjoLib::Result<CLIResultSol> CLISol::GetConfigs(int argc, char ** argv) const
     popState.AddInt(OPT_DAYS_START,         ConfigSol::DESCR_DAYS_START);
     popState.AddInt(OPT_RANDOM_SEED,         ConfigSol::DESCR_RANDOM_SEED);
     popState.AddFloat(OPT_BATTERY_CHARGE,   ConfigSol::DESCR_BATTERY_CHARGE);
+    popState.AddFloat(OPT_BATTERY_CHARGE_MAX_PERCENTAGE,   ConfigSol::DESCR_BATTERY_CHARGE_MAX_PERCENTAGE);
     popState.AddFloat(OPT_HASHRATE_BONUS,   ConfigSol::DESCR_HASHRATE_BONUS);
     //popState.AddStr(OPT_SYSTEM_TYPE,        ConfigSol::DESCR_SYSTEM_TYPE);
     //popState.AddInt(OPT_SYSTEM_VOLTAGE,     ConfigSol::DESCR_SYSTEM_VOLTAGE);
@@ -80,7 +82,7 @@ EnjoLib::Result<CLIResultSol> CLISol::GetConfigs(int argc, char ** argv) const
     }
 
     //confSym.dates.Set0();
-    
+
 //#ifdef NO_RANDOM
     //confSol.RANDOM_SEED = 1; // An idea for later perhaps.
 //#endif // NO_RANDOM
@@ -88,8 +90,9 @@ EnjoLib::Result<CLIResultSol> CLISol::GetConfigs(int argc, char ** argv) const
     confSol.DAYS_HORIZON    = pops.GetIntFromMap(OPT_DAYS_HORIZON);
     confSol.DAYS_START 	    = pops.GetIntFromMap(OPT_DAYS_START);
     confSol.RANDOM_SEED     = pops.GetIntFromMap(OPT_RANDOM_SEED);
-    confSol.BATTERY_CHARGE  = pops.GetFloatFromMap(OPT_BATTERY_CHARGE);
     confSol.HASHRATE_BONUS  = pops.GetFloatFromMap(OPT_HASHRATE_BONUS);
+    confSol.BATTERY_CHARGE  = pops.GetFloatFromMap(OPT_BATTERY_CHARGE);
+    confSol.BATTERY_CHARGE_MAX_PERCENTAGE = pops.GetFloatFromMap(OPT_BATTERY_CHARGE_MAX_PERCENTAGE);
     confSol.m_outDir        = pops.GetStrFromMap(OPT_OUT_DIR);
     //confSol.SYSTEM_TYPE     = pops.GetStrFromMap(OPT_SYSTEM_TYPE);
     //confSol.SYSTEM_VOLTAGE  = pops.GetIntFromMap(OPT_SYSTEM_VOLTAGE);

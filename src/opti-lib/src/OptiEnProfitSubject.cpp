@@ -51,6 +51,7 @@ struct BatterySimulation
     double num_overused = 0;
     double m_mulPowerToCapacity = 0;
     double m_dischargePerHour = 0;
+    double m_maxCapacityAmph = 0;
 
     double iter_get_load(double inp, double out, double hours=T_DELTA_HOURS);
 };
@@ -60,6 +61,7 @@ BatterySimulation::BatterySimulation(const ConfigSol & confSol, const BatteryPar
 , m_sys(sys)
 , m_mulPowerToCapacity(pars.GetMulPowerToCapacity(sys.voltage))
 , m_dischargePerHour(pars.DISCHARGE_PER_HOUR_PERCENT / 100.0)
+, m_maxCapacityAmph(pars.MAX_CAPACITY_AMPH * (confSol.BATTERY_CHARGE_MAX_PERCENTAGE > 0 ? confSol.BATTERY_CHARGE_MAX_PERCENTAGE : 1))
 {
     if (confSol.BATTERY_CHARGE > 0)
     {
@@ -86,16 +88,16 @@ double BatterySimulation::iter_get_load(double inp, double out, double hours)
     double change = balance * m_mulPowerToCapacity;
     if (change > pars.MAX_DISCHARGE_AMP)
     {
-        //if out > pars.MAX_CAPACITY_AMPH: # A valid possibility
+        //if out > m_maxCapacityAmph: # A valid possibility
         ++num_overused;
         change = pars.MAX_DISCHARGE_AMP;
     }
     //#print(change)
     load += change;
-    //LOGL << "Cap " <<  pars.MAX_CAPACITY_AMPH << Nl;
-    if (load > pars.MAX_CAPACITY_AMPH)
+    //LOGL << "Cap " <<  m_maxCapacityAmph << Nl;
+    if (load > m_maxCapacityAmph)
     {
-        load = pars.MAX_CAPACITY_AMPH;
+        load = m_maxCapacityAmph;
         ++num_overvolted;
     }
     if (load < pars.MIN_LOAD_AMPH)
@@ -115,7 +117,7 @@ double BatterySimulation::iter_get_load(double inp, double out, double hours)
             //LOGL << "Initial load done.\n";
             initial_load = false;
         }
-            
+
 
     return load;
 }
@@ -151,7 +153,7 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
         //const double pentalityUndervolted = load < 0 ? GMat().Fabs(load * load * load) : 0;
         const double pentalityUndervolted = battery.num_undervolted;
         const double pentalityOvervolted = battery.num_overvolted;
-        
+
         if (not sys.buying)
         {
             if (pentalityUndervolted > 0)
@@ -178,7 +180,7 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
         //penalityUnder.Add(pentalityUndervolted);
         penalitySum += pentalityUndervolted;
         penalitySum += pentalityOvervolted;
-        
+
         if (unacceptableSolution && not LOG_UNACCEPTABLE_SOLUTIONS)
         {
             //LOGL << "Unacceptable solution\n";
@@ -282,7 +284,7 @@ OptiSubjectEnProfit::SimResult OptiSubjectEnProfit::Simulate(int i, int currHour
         }
         res.sumPowerUsage += comp.GetUsage(val);
     }
-        
+
     /*
     const EnjoLib::Array<Habit> & habits = m_dataModel.GetHabits();
     //for (const Habit & hab : habits)

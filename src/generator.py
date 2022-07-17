@@ -21,6 +21,7 @@ from matplotlib import pyplot as plt
 
 import sunrise_lib
 import weather_lib
+import voltage_lib
 import kraken
 from profitability import POW_Coin
 
@@ -40,7 +41,10 @@ MIN_POWER = 0
 MAX_POWER = config.generator.MAX_POWER
 MAX_USAGE = battery['max_discharge_amp']
 MIN_CAPACITY = battery['min_load_amph'] * battery['count']
-MAX_CAPACITY = battery['max_capacity_amph'] * battery['count']
+MAX_CAPACITY_PERCENTAGE = 1/100 * voltage_lib.voltage_to_percentage(battery['max_charge_v'], discharge_rate=battery['discharge_rate_c_by'], charge=True)
+MAX_CAPACITY_THEORETICAL = battery['max_capacity_amph'] * battery['count']
+MAX_CAPACITY = MAX_CAPACITY_THEORETICAL * MAX_CAPACITY_PERCENTAGE
+
 MUL_POWER_2_CAPACITY = config.generator.MUL_POWER_2_CAPACITY
 T_DELTA_HOURS = config.generator.T_DELTA_HOURS
 DATE_NOW = sunrise_lib.DATE_NOW
@@ -130,6 +134,7 @@ def plot_sun(name, elev, bat, usage, show_plots):
     plt.xlabel("Time")
     plt.xticks(rotation=25, ha='right')
     plt.ylabel("Power [W] [Wh] & capacity [Ah]")
+    plt.plot(list_to_pd([MAX_CAPACITY_THEORETICAL]   * len(elev), elev))
     plt.plot(list_to_pd([MAX_CAPACITY]   * len(elev), elev))
     plt.plot(bat,   'g')
     plt.plot(list_to_pd([MIN_CAPACITY]   * len(elev), elev))
@@ -137,7 +142,7 @@ def plot_sun(name, elev, bat, usage, show_plots):
     plt.plot(list_to_pd([MAX_USAGE]      * len(elev), elev), 'r')
     plt.plot(usage, 'b')
     plt.grid()
-    plt.legend(['max bat charge', 'bat charge', 'min bat charge', 'sun input', 'max power usage', 'power usage'])
+    plt.legend(['max bat charge theo', 'max bat charge real', 'bat charge', 'min bat charge', 'sun input', 'max power usage', 'power usage'])
     os.makedirs(BUILD_DIR, exist_ok=True)
     fout_rel_path = "{}/fig-{}.png".format(BUILD_DIR, name)
     print("Saving figure to:",fout_rel_path)
