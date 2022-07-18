@@ -49,7 +49,7 @@ Note, that it doesn't use the required seconds part though.
 As with the `computers.json`, a given habit may be disabled by setting its `count` field to `0`.
 
 ## System system.json
-Defines the voltage of the system (12, 24 or 36 V) used for conversions.
+Defines the voltage of the system (12, 24 or 48 V) used for conversions.
 Other 3 options include the ability to independently: generate, buy and/or sell the electricity. 
 The combination of these options helps in deriving the optimal solution for your case, regarding the profitability of the operation.
 

@@ -93,11 +93,10 @@ EnjoLib::Result<CLIResultSol> CLISol::GetConfigs(int argc, char ** argv) const
     confSol.HASHRATE_BONUS  = pops.GetFloatFromMap(OPT_HASHRATE_BONUS);
     confSol.BATTERY_CHARGE  = pops.GetFloatFromMap(OPT_BATTERY_CHARGE);
     confSol.BATTERY_CHARGE_MAX_PERCENTAGE = pops.GetFloatFromMap(OPT_BATTERY_CHARGE_MAX_PERCENTAGE);
-    confSol.m_outDir        = pops.GetStrFromMap(OPT_OUT_DIR);
+    confSol.m_outDir        = pops.GetStrFromMap(OPT_OUT_DIR, confSol.m_outDir);
     //confSol.SYSTEM_TYPE     = pops.GetStrFromMap(OPT_SYSTEM_TYPE);
     //confSol.SYSTEM_VOLTAGE  = pops.GetIntFromMap(OPT_SYSTEM_VOLTAGE);
     //confSym.period     		    = pops.GetStrFromMap(OPT_PERIOD);
     //auto pluginName = pops.GetStrFromMap (OPT_PLUGIN);
-
     return EnjoLib::Result<CLIResultSol>(CLIResultSol(confSol), true);
 }

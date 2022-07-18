@@ -40,6 +40,7 @@ def get_args():
     parser.add_argument('-p', '--battery-charge-percent',  default=DEFAULT_BATTERY_STATE, type=float, help="Initial battery charge [0-100]  (default: {} which means: minimal charge)".format(DEFAULT_BATTERY_STATE))
     parser.add_argument('-a', '--battery-charge-ah', default=DEFAULT_BATTERY_STATE, type=float, help="Initial battery charge [Ah] (default: {} which means: minimal charge)".format(DEFAULT_BATTERY_STATE))
     parser.add_argument('-v', '--battery-charge-v',  default=DEFAULT_BATTERY_STATE, type=float, help="Initial battery charge [V]  (default: {} which means: minimal charge)".format(DEFAULT_BATTERY_STATE))
+    parser.add_argument('--random-seed',       default=0, type=int, help="Random seed for debugging (default: 0)")
     sunrise_lib.add_date_arguments_to_parser(parser)
     # TODO:
     # parser.add_argument('-f', '--file-image-ocr',  default="", type=str, help="Image path to OCR (default: {})".format(""))
@@ -125,6 +126,7 @@ class BatterySimulatorCpp(generator.BatterySimulator):
         cmd += " --horizon-days {}".format(horizon)
         cmd += " --hashrate-bonus {}".format(hashrate_bonus)
         cmd += " --out {}" .format(args.out_dir)
+        cmd += " --random-seed {}".format(args.random_seed)
         #cmd += " --system-type {}".format(config_system.type)
         #cmd += " --system-voltage {}".format(config_system.voltage)
 

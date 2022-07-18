@@ -32,7 +32,7 @@ class ConfigSol : public ConfigBase
         float HASHRATE_BONUS = 0;  constexpr static const char * DESCR_HASHRATE_BONUS = "Hashrate bonus for the current hour";
 
         //EnjoLib::Str SYSTEM_TYPE = "island"; constexpr static const char * DESCR_SYSTEM_TYPE = "System type: island / gen+buy / gen+buy+sell / gen+sell";
-        EnjoLib::Str m_outDir;
+        EnjoLib::Str m_outDir = "/tmp/";
 
 
     protected:

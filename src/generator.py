@@ -41,7 +41,7 @@ MIN_POWER = 0
 MAX_POWER = config.generator.MAX_POWER
 MAX_USAGE = battery['max_discharge_amp']
 MIN_CAPACITY = battery['min_load_amph'] * battery['count']
-MAX_CAPACITY_PERCENTAGE = 1/100 * voltage_lib.voltage_to_percentage(battery['max_charge_v'], discharge_rate=battery['discharge_rate_c_by'], charge=True)
+MAX_CAPACITY_PERCENTAGE = round(1/100 * voltage_lib.voltage_to_percentage(battery['max_charge_v'], discharge_rate=battery['discharge_rate_c_by'], charge=True), 3)
 MAX_CAPACITY_THEORETICAL = battery['max_capacity_amph'] * battery['count']
 MAX_CAPACITY = MAX_CAPACITY_THEORETICAL * MAX_CAPACITY_PERCENTAGE
 
