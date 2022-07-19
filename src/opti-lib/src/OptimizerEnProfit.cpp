@@ -164,6 +164,7 @@ void OptimizerEnProfit::RandomSearch()
             if (Consume2(binaryMat))
             {
                 SOL_LOG("Consume success: " + binaryMat.Print());
+                //LOGL << "Consume success: " << binaryMat.Print() << '\n';
                 m_numFailed = 0;
                 binarBest = binaryMat;
                 m_uniqueSolutionsPrev = m_uniqueSolutions;
@@ -280,7 +281,7 @@ static double GMatRatio(double val, double valRef)
 bool OptimizerEnProfit::Consume2(const EnjoLib::Matrix & dataMat)
 {
     OptiSubjectEnProfit osub(m_dataModel);
-    float goal = osub.GetVerbose(dataMat);
+    const float goal = osub.GetVerbose(dataMat, false);
     //LOGL << "goal = " << goal << Nl;
     m_goals.Add(goal);
     if (goal > m_goal)
@@ -297,7 +298,7 @@ bool OptimizerEnProfit::Consume2(const EnjoLib::Matrix & dataMat)
 //        << GMat().round(relNeg2Pos * 100) << "%" << Nl;
 
         //osub.GetVerbose(dataMat, true);
-        osub.GetVerbose(dataMat, false);
+        //osub.GetVerbose(dataMat, false); /// TODO: Why would we recalculate it in a non-verbose mode?
         m_goal = goal;
 
         return true;

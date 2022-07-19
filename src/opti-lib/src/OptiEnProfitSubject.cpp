@@ -133,6 +133,7 @@ double OptiSubjectEnProfit::Get(const double * inp, int n)
 double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool verbose)
 {
     //ELO
+    const int PENALITY_SUM_MUL = 10000;
     const size_t n = dataMat.at(0).size();
     const EnjoLib::Array<Computer> & comps = m_dataModel.GetComputers();
     const bool LOG_UNACCEPTABLE_SOLUTIONS = false;
@@ -190,27 +191,32 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
             {
                 LOGL << "Unacceptable solution. Penality undervolt = " << pentalityUndervolted << " Overvolt: " << pentalityOvervolted << "\n";
             }
-            return 0;
-            //break;
+            const double penality = penalitySum * PENALITY_SUM_MUL;
+            return - penality * (n - i) * 3; // Extrapolate across the remaining simulation steps
+            break;
         }
         //LOGL << "acceptable solution. Penality undervolt = " << pentalityUndervolted << " Overvolt: " << pentalityOvervolted << "\n";
     }
 
     //const double pentalityUndervolted = m_battery.num_undervolted * m_battery.num_undervolted;
-    //const double pentalityUndervolted = penalitySum * 10000;
+    //const double pentalityUndervolted = penalitySum * PENALITY_SUM_MUL;
     //const double pentalityOvervolted = battery.num_overvolted;
-    const double penality = penalitySum * 10000; /// TODO: Penalize overvoltage differently than undervoltage
+    const double penality = penalitySum * PENALITY_SUM_MUL; /// TODO: Penalize overvoltage differently than undervoltage
     /// TODO: The undervoltage / overvoltage penality should be non-linear.
     const double positive = simResult.sumHashes;
     double sumAdjusted = positive - penality;
     if (penality > 0 && sumAdjusted > 0)
     {
-        sumAdjusted -= positive;
+        sumAdjusted -= positive; /// TODO: This looks like a mistake
     }
-    LOGL << "acceptable solution. Penality sum = " << penalitySum << " positive: " << positive << "\n";
+    //LOGL << "acceptable solution. Penality sum = " << penalitySum << " positive: " << positive << "\n";
     //LOGL << sum << ", adj = "  << sumAdjusted << Endl;
 
     //if (GMat().round(sumAdjusted) > GMat().round(m_sumMax) || m_sumMax == 0)
+    if (unacceptableSolution)
+    {
+        Assertions::Throw("Logic error: unacceptableSolution went through", "GetVerbose");
+    }
     if (verbose)
     {
         LOGL << m_sumMax << ", adj = "  << sumAdjusted << Endl;
