@@ -298,7 +298,7 @@ bool OptimizerEnProfit::Consume2(const EnjoLib::Matrix & dataMat)
 //        << GMat().round(relNeg2Pos * 100) << "%" << Nl;
 
         //osub.GetVerbose(dataMat, true);
-        //osub.GetVerbose(dataMat, false); /// TODO: Why would we recalculate it in a non-verbose mode?
+        osub.GetVerbose(dataMat, false); /// TODO: Why would we recalculate it in a non-verbose mode? To store the final result?
         m_goal = goal;
 
         return true;
