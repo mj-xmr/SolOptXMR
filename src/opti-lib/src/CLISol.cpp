@@ -1,6 +1,7 @@
 #include "CLISol.h"
 #include "CLIResultSol.h"
 #include "ConfigSol.h"
+#include "JsonReader.h"
 
 #include <EnjoLibBoost/ProgramOptions.hpp>
 
@@ -29,7 +30,7 @@ EnjoLib::Str CLISol::GetAdditionalHelp() const
 /// TODO: Fill all the possible options
 EnjoLib::Result<CLIResultSol> CLISol::GetConfigs(int argc, char ** argv) const
 {
-    ConfigSol confSol;
+    ConfigSol confSol = JsonReader().ReadConfigSol();
 
     //const char * OPT_PLUGIN  = "plugin";
 
