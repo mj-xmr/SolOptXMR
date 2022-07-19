@@ -102,9 +102,9 @@ double BatterySimulation::iter_get_load(double inp, double out, double hours)
     }
     if (load < pars.MIN_LOAD_AMPH)
     {
-        //if (initial_load)
-        //  num_undervolted_initial += 1;
-        //else
+        if (initial_load)
+          num_undervolted_initial += 1;
+        else
         ++num_undervolted;
 
     }
@@ -116,6 +116,10 @@ double BatterySimulation::iter_get_load(double inp, double out, double hours)
         {
             //LOGL << "Initial load done.\n";
             initial_load = false;
+        }
+        else
+        {
+            //LOGL << "Still loading.\n";
         }
 
 
@@ -147,7 +151,6 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
         //if (not battery.initial_load)
         //if (false)
         const SimResult & resLocal = Simulate(i, m_currHour, compSize, dataMat, bonusMul, m_dataModel.GetConf().HASHRATE_BONUS, battery.initial_load);
-;
         simResult.Add(resLocal);
         const double load = battery.iter_get_load(powerProd, resLocal.sumPowerUsage);
         //const double pentalityUndervolted = load < 0 ? GMat().Fabs(load * load * load) : 0;
@@ -158,7 +161,7 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
         {
             if (pentalityUndervolted > 0)
             {
-                //if (not battery.initial_load)
+                if (not battery.initial_load)
                 {
                     unacceptableSolution = true;
                 }
@@ -181,12 +184,18 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
         penalitySum += pentalityUndervolted;
         penalitySum += pentalityOvervolted;
 
-        if (unacceptableSolution && not LOG_UNACCEPTABLE_SOLUTIONS)
+        if (unacceptableSolution)
         {
-            //LOGL << "Unacceptable solution\n";
-            break;
+            if  (LOG_UNACCEPTABLE_SOLUTIONS)
+            {
+                LOGL << "Unacceptable solution. Penality undervolt = " << pentalityUndervolted << " Overvolt: " << pentalityOvervolted << "\n";
+            }
+            return 0;
+            //break;
         }
+        //LOGL << "acceptable solution. Penality undervolt = " << pentalityUndervolted << " Overvolt: " << pentalityOvervolted << "\n";
     }
+
     //const double pentalityUndervolted = m_battery.num_undervolted * m_battery.num_undervolted;
     //const double pentalityUndervolted = penalitySum * 10000;
     //const double pentalityOvervolted = battery.num_overvolted;
@@ -198,13 +207,13 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
     {
         sumAdjusted -= positive;
     }
-
+    LOGL << "acceptable solution. Penality sum = " << penalitySum << " positive: " << positive << "\n";
     //LOGL << sum << ", adj = "  << sumAdjusted << Endl;
 
     //if (GMat().round(sumAdjusted) > GMat().round(m_sumMax) || m_sumMax == 0)
     if (verbose)
     {
-        //LOGL << sum << ", adj = "  << sumAdjusted << Endl;
+        LOGL << m_sumMax << ", adj = "  << sumAdjusted << Endl;
         m_sumMax = sumAdjusted;
 
         //if (gcfgMan.cfgOpti->OPTI_VERBOSE && m_isVerbose)
