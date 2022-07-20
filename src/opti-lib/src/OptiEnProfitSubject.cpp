@@ -213,7 +213,7 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
     //LOGL << sum << ", adj = "  << sumAdjusted << Endl;
 
     //if (GMat().round(sumAdjusted) > GMat().round(m_sumMax) || m_sumMax == 0)
-    if (unacceptableSolution)
+    if (not verbose && unacceptableSolution)
     {
         Assertions::Throw("Logic error: unacceptableSolution went through", "GetVerbose");
     }
