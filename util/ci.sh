@@ -19,6 +19,10 @@ python3 src/tests.py
 #util/build-debian.sh
 ./ci-default -o "VERBOSE_FUNCTIONS=OFF"
 
+if [ $# -eq 1 ]; then
+	echo "Production test not requested. Exiting."
+	exit 0
+fi
 echo "Testing the entire production chain:"
 # TODO: Make optional & derive a build script from tsqsim/util/build.py:
 export R_HOME=/usr/lib/R && export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$R_HOME/lib
