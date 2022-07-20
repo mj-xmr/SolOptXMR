@@ -1,5 +1,6 @@
 #include "JsonReader.h"
 #include "Computer.h"
+#include "ConfigSol.h"
 
 #include <Ios/Ifstream.hpp>
 #include <Util/CoutBuf.hpp>
@@ -248,6 +249,20 @@ System JsonReader::ReadSystem(bool verbose) const
     ret.buying      = jwrap.GetValueJson("buy").GetBool();
     ret.selling     = jwrap.GetValueJson("sell").GetBool();
 
+    return ret;
+}
+
+ConfigSol JsonReader::ReadConfigSol(bool verbose) const
+{
+    ConfigSol ret;
+    const Str jsonFile = "config-volatile.json";
+    const Str idd = jsonFile;
+    rapidjson::Document d;
+    parseJsonOrThrow(jsonFile, d);
+    JsonValueWrapper jwrap(d, idd);
+    
+    /// TODO: This should be secured better, like the rest, but it's multilayered.
+    ret.m_outDir     = d["paths"]["DIR_TMP"].GetString();
     return ret;
 }
 

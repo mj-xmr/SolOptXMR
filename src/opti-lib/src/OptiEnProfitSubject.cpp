@@ -102,9 +102,9 @@ double BatterySimulation::iter_get_load(double inp, double out, double hours)
     }
     if (load < pars.MIN_LOAD_AMPH)
     {
-        //if (initial_load)
-        //  num_undervolted_initial += 1;
-        //else
+        if (initial_load)
+          num_undervolted_initial += 1;
+        else
         ++num_undervolted;
 
     }
@@ -116,6 +116,10 @@ double BatterySimulation::iter_get_load(double inp, double out, double hours)
         {
             //LOGL << "Initial load done.\n";
             initial_load = false;
+        }
+        else
+        {
+            //LOGL << "Still loading.\n";
         }
 
 
@@ -129,6 +133,7 @@ double OptiSubjectEnProfit::Get(const double * inp, int n)
 double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool verbose)
 {
     //ELO
+    const int PENALITY_SUM_MUL = 10000;
     const size_t n = dataMat.at(0).size();
     const EnjoLib::Array<Computer> & comps = m_dataModel.GetComputers();
     const bool LOG_UNACCEPTABLE_SOLUTIONS = false;
@@ -147,7 +152,6 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
         //if (not battery.initial_load)
         //if (false)
         const SimResult & resLocal = Simulate(i, m_currHour, compSize, dataMat, bonusMul, m_dataModel.GetConf().HASHRATE_BONUS, battery.initial_load);
-;
         simResult.Add(resLocal);
         const double load = battery.iter_get_load(powerProd, resLocal.sumPowerUsage);
         //const double pentalityUndervolted = load < 0 ? GMat().Fabs(load * load * load) : 0;
@@ -158,7 +162,7 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
         {
             if (pentalityUndervolted > 0)
             {
-                //if (not battery.initial_load)
+                if (not battery.initial_load)
                 {
                     unacceptableSolution = true;
                 }
@@ -181,30 +185,47 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
         penalitySum += pentalityUndervolted;
         penalitySum += pentalityOvervolted;
 
-        if (unacceptableSolution && not LOG_UNACCEPTABLE_SOLUTIONS)
+        if (unacceptableSolution)
         {
-            //LOGL << "Unacceptable solution\n";
-            break;
+            if  (LOG_UNACCEPTABLE_SOLUTIONS)
+            {
+                LOGL << "Unacceptable solution. Penality undervolt = " << pentalityUndervolted << " Overvolt: " << pentalityOvervolted << "\n";
+            }
+            const double penality = penalitySum * PENALITY_SUM_MUL;
+            const double penalityExtrapolated = penality * (n - i) * 3; // Extrapolate across the remaining simulation steps
+            if (not verbose)
+            {
+                return -penalityExtrapolated;
+            }
         }
+        //LOGL << "acceptable solution. Penality undervolt = " << pentalityUndervolted << " Overvolt: " << pentalityOvervolted << "\n";
     }
+
     //const double pentalityUndervolted = m_battery.num_undervolted * m_battery.num_undervolted;
-    //const double pentalityUndervolted = penalitySum * 10000;
+    //const double pentalityUndervolted = penalitySum * PENALITY_SUM_MUL;
     //const double pentalityOvervolted = battery.num_overvolted;
-    const double penality = penalitySum * 10000; /// TODO: Penalize overvoltage differently than undervoltage
+    const double penality = penalitySum * PENALITY_SUM_MUL; /// TODO: Penalize overvoltage differently than undervoltage
     /// TODO: The undervoltage / overvoltage penality should be non-linear.
     const double positive = simResult.sumHashes;
     double sumAdjusted = positive - penality;
     if (penality > 0 && sumAdjusted > 0)
     {
-        sumAdjusted -= positive;
+        sumAdjusted -= positive; /// TODO: This looks like a mistake
     }
-
+    //LOGL << "acceptable solution. Penality sum = " << penalitySum << " positive: " << positive << "\n";
     //LOGL << sum << ", adj = "  << sumAdjusted << Endl;
 
     //if (GMat().round(sumAdjusted) > GMat().round(m_sumMax) || m_sumMax == 0)
-    if (verbose)
+    if (not verbose)
     {
-        //LOGL << sum << ", adj = "  << sumAdjusted << Endl;
+        if (unacceptableSolution)
+        {
+            Assertions::Throw("Logic error: unacceptableSolution went through", "GetVerbose");
+        }
+    }
+    else
+    {
+        LOGL << m_sumMax << ", adj = "  << sumAdjusted << Endl;
         m_sumMax = sumAdjusted;
 
         //if (gcfgMan.cfgOpti->OPTI_VERBOSE && m_isVerbose)
