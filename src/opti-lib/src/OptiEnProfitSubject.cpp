@@ -192,8 +192,11 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
                 LOGL << "Unacceptable solution. Penality undervolt = " << pentalityUndervolted << " Overvolt: " << pentalityOvervolted << "\n";
             }
             const double penality = penalitySum * PENALITY_SUM_MUL;
-            return - penality * (n - i) * 3; // Extrapolate across the remaining simulation steps
-            break;
+            const double penalityExtrapolated = penality * (n - i) * 3; // Extrapolate across the remaining simulation steps
+            if (not verbose)
+            {
+                return -penalityExtrapolated;
+            }
         }
         //LOGL << "acceptable solution. Penality undervolt = " << pentalityUndervolted << " Overvolt: " << pentalityOvervolted << "\n";
     }
@@ -213,11 +216,14 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
     //LOGL << sum << ", adj = "  << sumAdjusted << Endl;
 
     //if (GMat().round(sumAdjusted) > GMat().round(m_sumMax) || m_sumMax == 0)
-    if (not verbose && unacceptableSolution)
+    if (not verbose)
     {
-        Assertions::Throw("Logic error: unacceptableSolution went through", "GetVerbose");
+        if (unacceptableSolution)
+        {
+            Assertions::Throw("Logic error: unacceptableSolution went through", "GetVerbose");
+        }
     }
-    if (verbose)
+    else
     {
         LOGL << m_sumMax << ", adj = "  << sumAdjusted << Endl;
         m_sumMax = sumAdjusted;
