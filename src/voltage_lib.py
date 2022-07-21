@@ -71,7 +71,7 @@ def get_keys(charge):
     if charge:
         return [DISCHARGE_RATE_40,  DISCHARGE_RATE_20, DISCHARGE_RATE_10, DISCHARGE_RATE_5]
     else:
-        return list(reversed([DISCHARGE_RATE_100, DISCHARGE_RATE_20, DISCHARGE_RATE_10, DISCHARGE_RATE_5, DISCHARGE_RATE_3]))
+        return [DISCHARGE_RATE_100, DISCHARGE_RATE_20, DISCHARGE_RATE_10, DISCHARGE_RATE_5, DISCHARGE_RATE_3]
 
 def get_y_c_by_100():
     y = []

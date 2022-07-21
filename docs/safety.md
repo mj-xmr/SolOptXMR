@@ -51,7 +51,7 @@ This is very apparent during days with low clouds, resulting in switching your p
 The reason for this confusion is, that as soon as the battery is >80% charged, the voltage starts raising much faster with the same energy input, therefore the previous assumptions of slower growth and adjusted reaction time don't hold anymore.
 Below you can see the typical charge profiles of lead-acid batteries, where above the ~80% charge, you may see the sudden non-linearity of voltage, that confuses the MPPT controllers.
 
-![bat-charge](https://user-images.githubusercontent.com/63722585/179357283-3a2ca304-7919-4dfe-b9b6-6e01f9d1b625.png)
+![bat-charge](../data/voltage-2-soc-charge.png)
 
 Fingers crossed!
 
