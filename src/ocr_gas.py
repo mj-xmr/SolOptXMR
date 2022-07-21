@@ -54,10 +54,12 @@ def get_detection(imfile=sunrise_lib.PATH_OCR_IMAGE, script_dir=sunrise_lib.conf
 
     return detection
 
-def test_single(imfile, script_dir, expected_val):
+def test_single(imfile, script_dir, expected_val, expected_percentage = -100):
     print("Testing:", imfile, ", script dir:",  script_dir, ", expected val:", expected_val)
-    detection = get_detection(imfile, script_dir)
+    detection, percentage = get_detection(imfile, script_dir)
     assert round(detection, 3) == expected_val
+    print(imfile, ", Detection =", detection)
+    assert round(percentage, 3) == expected_percentage
     print(imfile, ", Detection =", detection)
 
 def test():
@@ -65,10 +67,12 @@ def test():
     base_dir_images = 'data/img/'
     script_dir_backlit  = base_dir_scripts + 'lcd-glowing/'
     script_dir_gas_pump = base_dir_scripts + 'gas-pump-dark/'
+    script_dir_panel_rect = base_dir_scripts + 'panel-rectangles/'
     test_single(base_dir_images + 'lcd-glowing.jpg',            script_dir_backlit,  11.70)
     test_single(base_dir_images + 'gas-pump-13A95.jpg',         script_dir_gas_pump, 13.957)
     test_single(base_dir_images + 'gas-pump-49A95-mod-0.jpg',   script_dir_gas_pump,  9.95)
     test_single(base_dir_images + 'gas-pump-49A95-mod-1.jpg',   script_dir_gas_pump, 19.95)
+    test_single(base_dir_images + 'panel-rectangles.jpg',       script_dir_panel_rect, 0, 100)
 
 if __name__ == "__main__":
     test()

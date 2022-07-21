@@ -199,11 +199,13 @@ def run_main(args, elev, show_plots, battery_charge, horizon):
 def main(args):
     if args.battery_charge_ocr:
         print("OCR input is still unstable.")
-        #make_picture()
-        args.battery_charge_v = ocr_gas.get_detection()
         # TODO:
         # make_picture()
-        # args.battery_charge_v = ocr_gas.get_detection()
+        output, percent_full = ocr_gas.get_detection()
+        if output > 0:
+            args.battery_charge_v = output
+        if percent_full >= 0:
+            args.battery_charge_percent = percent_full
         
     if args.battery_charge_v and args.battery_charge_v != DEFAULT_BATTERY_STATE:
         print("Voltage input is still unstable.") # TODO: use various discharge rates
