@@ -17,7 +17,7 @@ SolOptXMR uses only the `headless.py` script in order to read the battery's or i
 - `paths` / `DIR_TMP`, under which an image named `ocr.jpg` shall be read from, showing the LCD display. Obviously it's expected to be created there not too long before the recognition takes place, to have the result as fresh as possible. Otherwise a warning is issued.
 - `paths` / `IMG_CAPTURE_PATH`, where the image should be stored after being captured. If the capture is meant to be done on the same host, the path should point to the file above, so (pseudocode:) `${DIR_TMP}/ocr.jpg`. If a different host is to be used, then the path here should point to a network drive accessible from that host. Next, you have to make sure, that the file is symlinked to `${DIR_TMP}/ocr.jpg` on the host, which controls the system.
 - `paths` / `DIR_IMG_CAPTURE_SCRIPT`, you may create an individual script for capturing the image. See the provided examples.
-- `hosts` / `IMG_CAPTURE_HOST`, which should stay either localhost, or the IP or alias of the machine, which has the camera connected.
+- `hosts` / `IMG_CAPTURE_HOST`, which should stay either `localhost`, or the IP or alias of the machine, which has the camera connected.
 - `paths` / `DIR_OCR_SCRIPT` variable pointing to a directory containing the `ocr_filter_module.py` file, that you selected to recognize your LCD or panel.
 
 ## Tips
