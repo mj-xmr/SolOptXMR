@@ -39,7 +39,7 @@ using namespace EnjoLib;
 
 const int OptimizerEnProfit::HOURS_IN_DAY = 24;
 const int OptimizerEnProfit::MAX_NUM_COMBINATIONS = 1e7;
-const double OptimizerEnProfit::MAX_FAILED_COMBINATIONS = 0.6;
+const double OptimizerEnProfit::MAX_FAILED_COMBINATIONS = 0.40;
 const double OptimizerEnProfit::MIN_POS_2_NEG_CHANGE_RATIO = 0.01;
 
 OptimizerEnProfit::OptimizerEnProfit(const OptiEnProfitDataModel & dataModel)
@@ -96,6 +96,7 @@ void OptimizerEnProfit::RandomSearch()
     }
     Matrix binarBest = binaryMat;
 
+    bool foundFirstSolution = false;
     const bool useHash = IsUseHash();
     const int maxCombisFailed = MAX_NUM_COMBINATIONS * MAX_FAILED_COMBINATIONS;
     short bit = 1;
@@ -170,6 +171,7 @@ void OptimizerEnProfit::RandomSearch()
                 binarBest = binaryMat;
                 m_uniqueSolutionsPrev = m_uniqueSolutions;
                 m_uniqueSolutions = usedCombinations.size();
+                foundFirstSolution = true;
             }
             else
             {
@@ -181,7 +183,7 @@ void OptimizerEnProfit::RandomSearch()
         const bool changeLargeEnough = m_relPos2Neg == 0 || m_relPos2Neg > MIN_POS_2_NEG_CHANGE_RATIO;
         const bool exceededNumFailed = m_numFailed >= maxCombisFailed;
         //if (exceededNumFailed && not changeLargeEnough)
-        if (exceededNumFailed)
+        if (exceededNumFailed && foundFirstSolution)
         {
             LOGL << "Early stop after " << m_numFailed << " last failed attempts "
                  // << and last change of " << m_relPos2Neg << " < " << MIN_POS_2_NEG_CHANGE_RATIO << Nl
