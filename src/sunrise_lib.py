@@ -12,7 +12,7 @@ import datetime
 import pandas as pd
 import time
 import traceback
-from subprocess import PIPE, run
+from subprocess import PIPE, run, Popen
 from pathlib import Path
 
 from pytz import timezone
@@ -96,17 +96,27 @@ def read_file(fname):
     with open(fname) as fin:
         return fin.read()
         
-def run_cmd(cmd, print_result=False):
+def run_cmd(cmd, print_result=True):
     print("Running command:\n" + cmd)
     result = run(cmd.split(), stdout=PIPE, stderr=PIPE, universal_newlines=True)
     if print_result:
         print(result.returncode, result.stdout, result.stderr)
     return result
 
-def fix_path_src(pth):
+def run_ssh_cmd(host, cmd):
+    print("Running command:\n" + cmd, "\nOn host:", host)
+    cmds = ['ssh', '-n', host, cmd]
+    return Popen(cmds, stdout=PIPE, stderr=PIPE, stdin=PIPE, universal_newlines=True)
+
+def fix_path_src(pth, must_exist=True):
     if os.path.exists(pth):
         return pth
-    return 'src/' + pth
+    alt = 'src/' + pth
+    if must_exist:
+        if not os.path.isdir(alt):
+            if not os.path.isfile(alt):
+                raise IOError("Path doesn't exist", pth)
+    return alt
 
 # get local timezone    
 #local_tz = get_localzone()

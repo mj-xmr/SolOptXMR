@@ -22,8 +22,6 @@ def get_detection(imfile=sunrise_lib.PATH_OCR_IMAGE, script_dir=sunrise_lib.conf
     Returns the detected number as a float
     """
     imfile = sunrise_lib.fix_path_src(imfile)
-    if not os.path.isfile(imfile):
-       raise IOError("File doesn't exist", imfile)
     print("Reading image file for OCR:", imfile)
     time_mod = os.path.getmtime(imfile)
     time_diff = time.time() - time_mod
@@ -46,13 +44,18 @@ def get_detection(imfile=sunrise_lib.PATH_OCR_IMAGE, script_dir=sunrise_lib.conf
             print(path_copy, "already exists.")
 
     script_dir = sunrise_lib.fix_path_src(script_dir)
-    if not os.path.isdir(script_dir):
-        raise IOError("Dir doesn't exist", script_dir)
     print("Reading script dir for OCR:", script_dir)
     
     detection = headless.get_detection(imfile, script_dir)
 
     return detection
+
+def make_picture(host = sunrise_lib.config_volatile.hosts.IMG_CAPTURE_HOST, script_dir = sunrise_lib.config_volatile.paths.DIR_IMG_CAPTURE_SCRIPT):
+    script_dir = sunrise_lib.fix_path_src(script_dir)
+
+    sys.path.append(script_dir)
+    import img_capture_module
+    img_capture_module.capture(host, sunrise_lib.config_volatile.paths.IMG_CAPTURE_PATH)
 
 def test_single(imfile, script_dir, expected_val, expected_percentage = -100):
     print("Testing:", imfile, ", script dir:",  script_dir, ", expected val:", expected_val)
@@ -73,7 +76,9 @@ def test():
     test_single(base_dir_images + 'gas-pump-49A95-mod-0.jpg',   script_dir_gas_pump,  9.95)
     test_single(base_dir_images + 'gas-pump-49A95-mod-1.jpg',   script_dir_gas_pump, 19.95)
     test_single(base_dir_images + 'panel-rectangles.jpg',       script_dir_panel_rect, 0, 100)
+    test_single(base_dir_images + 'panel-rectangles-dark.jpg',  script_dir_panel_rect, 0, 80)
 
 if __name__ == "__main__":
+    make_picture()
     test()
 

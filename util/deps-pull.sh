@@ -10,7 +10,7 @@ elif [ "$(uname)" == "Linux" ]; then
 	sudo apt install gfortran libffi-dev
 	#sudo apt install libboost-all-dev # Only JSON is needed for now
 	#sudo apt install libffi-dev
-	sudo apt install rapidjson-dev lm-sensors
+	sudo apt install rapidjson-dev lm-sensors fswebcam
 fi
 
 if pip3 install -r requirements.txt ; then

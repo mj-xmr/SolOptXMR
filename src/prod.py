@@ -199,8 +199,7 @@ def run_main(args, elev, show_plots, battery_charge, horizon):
 def main(args):
     if args.battery_charge_ocr:
         print("OCR input is still unstable.")
-        # TODO:
-        # make_picture()
+        ocr_gas.make_picture()
         output, percent_full = ocr_gas.get_detection()
         if output > 0:
             args.battery_charge_v = output
