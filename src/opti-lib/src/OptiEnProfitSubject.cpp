@@ -189,13 +189,14 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
         {
             if  (LOG_UNACCEPTABLE_SOLUTIONS)
             {
-                LOGL << "Unacceptable solution. Penality undervolt = " << pentalityUndervolted << " Overvolt: " << pentalityOvervolted << "\n";
+                LOGL << "Unacceptable solution. Penality undervolt = " << pentalityUndervolted << " Overvolt: " << pentalityOvervolted
+                 << ", hashes = " << resLocal.sumHashes << "\n";
             }
             const double penality = penalitySum * PENALITY_SUM_MUL;
             const double penalityExtrapolated = penality * (n - i) * 3; // Extrapolate across the remaining simulation steps
             if (not verbose)
             {
-                return -penalityExtrapolated;
+                return resLocal.sumHashes -penalityExtrapolated;
             }
         }
         //LOGL << "acceptable solution. Penality undervolt = " << pentalityUndervolted << " Overvolt: " << pentalityOvervolted << "\n";

@@ -38,7 +38,8 @@ using namespace std;
 using namespace EnjoLib;
 
 const int OptimizerEnProfit::HOURS_IN_DAY = 24;
-const int OptimizerEnProfit::MAX_FAILED_COMBINATIONS = 600000;
+const int OptimizerEnProfit::MAX_NUM_COMBINATIONS = 1e7;
+const double OptimizerEnProfit::MAX_FAILED_COMBINATIONS = 0.7;
 const double OptimizerEnProfit::MIN_POS_2_NEG_CHANGE_RATIO = 0.01;
 
 OptimizerEnProfit::OptimizerEnProfit(const OptiEnProfitDataModel & dataModel)
@@ -96,18 +97,18 @@ void OptimizerEnProfit::RandomSearch()
     Matrix binarBest = binaryMat;
 
     const bool useHash = IsUseHash();
-    const int maxEl = 1e7;
+    const int maxCombisFailed = MAX_NUM_COMBINATIONS * MAX_FAILED_COMBINATIONS;
     short bit = 1;
     char bitC = '1';
     std::set<std::string> usedCombinations;
     int alreadyCombined = 0;
     const GMat gmat;
     ProgressMonitHigh progressMonitor;
-    for (int i = 0; i < maxEl; ++i)
+    for (int i = 0; i < MAX_NUM_COMBINATIONS; ++i)
     {
         if (i % 100000 == 0)
         {
-            progressMonitor.PrintProgressBarTime(i, maxEl);
+            progressMonitor.PrintProgressBarTime(i, MAX_NUM_COMBINATIONS);
         }
         const int icomp = gmat.round(rmath.Rand(0, numComputers-1));
         //for (int icomp = 0; icomp < numComputers; ++icomp)
@@ -177,17 +178,16 @@ void OptimizerEnProfit::RandomSearch()
             }
             RecalcComputationCosts();
         }
-        const int maxFail = MAX_FAILED_COMBINATIONS;
         const bool changeLargeEnough = m_relPos2Neg == 0 || m_relPos2Neg > MIN_POS_2_NEG_CHANGE_RATIO;
-        const bool exceededNumFailed = m_numFailed >= maxFail;
+        const bool exceededNumFailed = m_numFailed >= maxCombisFailed;
         //if (exceededNumFailed && not changeLargeEnough)
         if (exceededNumFailed)
         {
             LOGL << "Early stop after " << m_numFailed << " last failed attempts "
                  // << and last change of " << m_relPos2Neg << " < " << MIN_POS_2_NEG_CHANGE_RATIO << Nl
                  << Nl
-                 << "Repeated combinations = " << alreadyCombined << " of " << maxFail << ": " << GMat().round(alreadyCombined/double(maxFail) * 100) << "%" << Nl
-                 << "Unique   combinations = " << usedCombinations.size() << " of " << maxFail << ": " << GMat().round(usedCombinations.size()/double(maxFail) * 100) << "%" << Nl;
+                 << "Repeated combinations = " << alreadyCombined << " of " << maxCombisFailed << ": " << GMat().round(alreadyCombined/double(maxCombisFailed) * 100) << "%" << Nl
+                 << "Unique   combinations = " << usedCombinations.size() << " of " << maxCombisFailed << ": " << GMat().round(usedCombinations.size()/double(maxCombisFailed) * 100) << "%" << Nl;
             break;
         }
     }

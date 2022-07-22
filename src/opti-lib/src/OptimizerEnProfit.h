@@ -35,7 +35,8 @@ class OptimizerEnProfit : public EnjoLib::IMultiDimIterConsumerTpl //OptimizerBa
         bool IsUseHash() const;
 
         const int static HOURS_IN_DAY;
-        const int static MAX_FAILED_COMBINATIONS;
+        const int static MAX_NUM_COMBINATIONS;
+        const double static MAX_FAILED_COMBINATIONS;
         const double static MIN_POS_2_NEG_CHANGE_RATIO;
 
     protected:
