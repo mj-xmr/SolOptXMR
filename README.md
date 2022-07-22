@@ -89,7 +89,7 @@ Setting the battery's voltage directly, also via OCR, rather than the Ah or % ch
 ```
 
 ### OCR
-It's possible to automate the process of reading the battery voltage after capturing a picture of an LCD display and passing the picture to an OCR module. [See here](docs/ocr.md) for a more detailed description.
+It's possible to automate the process of reading the battery voltage, or % of charge directly, after capturing a picture of an LCD display and passing the picture to an OCR module. [See here](docs/ocr.md) for a more detailed description.
 
 ## Plotting the hashrate situation only
 Because the optimization takes some time and you might be only interested in the hashrate situation alone, the main script has an option to ommit the optimization part.
