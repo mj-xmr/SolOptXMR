@@ -40,10 +40,10 @@ The parameters of the `get_updated_params_image_recognition(params_dict_ir)` inc
 
 # Simple mode: Rectangle recognition
 There is a possibility to avoid digit recognition altogether, assuming, that your hardware is able to display rectangles, which represent the current battery charge, like [in this example](../src/data/img/panel-rectangles.jpg). 
-An adaptation of the OCR module, that recognizes the mentioned image can be found [here](externals/GasPumpOCR-mj/custom-scripts/panel-rectangles).
-Via function `get_countours_to_percentage_full(num_countours)` such script should return a percentage in range from 0 to 100, describing the current battery charge, depending on the number of correctly recognized countours.
-The recognition depends on the parameters, that the script sets.
-As with the digit recognition module, the `playground.py` script will help you finding the right parameters.
+An adaptation of the OCR module, that recognizes the mentioned image can be found under `externals/GasPumpOCR-mj/custom-scripts/panel-rectangles`.
+Via the function `get_countours_to_percentage_full(num_countours)` such script should return a percentage in range from 0 to 100, describing the current battery charge, depending on the number of correctly recognized countours.
+The recognition depends on the parameters, that the script sets via `get_updated_params_image_recognition()`.
+As with the digit recognition module, the `playground.py` script will help you in finding the right parameters.
 
 # Image capture module
 In the same way as you'd extend the OCR modules from `externals/GasPumpOCR-mj/custom-scripts`, you may extend the SolOptXMR modules from `src/custom-scripts`. Image capture module is one of such examples. Finally, you have to point the `config-volatile.json` file to find your script via the `DIR_IMG_CAPTURE_SCRIPT` variable.
