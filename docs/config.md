@@ -22,7 +22,7 @@ Below are the parameters and example values:
 
 | Var. name  | Value  | Description |
 | ------------- | -- | --- |
-| `"name"` | "Ca-Ca" | An arbitrary name. In this case the abbreviation means "Calcium-Calcium". |
+| `"name"` | "Ca-Ca" | An arbitrary name. In this case the abbreviation means "Calcium-Calcium" lead-acid battery. |
 | `"count"` | 2 | The number of batteries of the same type. |  
 | `"discharge_rate_c_by"` | 10 | The discharge rate of the battery at discharge. See [this paper](http://www.scubaengineer.com/documents/lead_acid_battery_charging_graphs.pdf) about lead-acid batteries. Available choices: 3, 5, 10, 20, 100 | 
 | `"max_discharge_amp"` | 11 | The maximum amount of Amperes, that the battery can deliver. |
@@ -64,6 +64,9 @@ Contains various entries from across the project, which don't really deserve the
 | `paths` / `DIR_TMP` | Temp directory, where all the intermediate files should be stored. |
 | `paths` / `DIR_ARCHIVE` | If there's a need to archive anything, this basepath shall be used. |
 | `paths` / `DIR_OCR_SCRIPT` | Script path for the OCR module. |
+| `paths` / `IMG_CAPTURE_PATH` | Path where the captured images shall be stored. |
+| `hosts` / `IMG_CAPTURE_HOST` | Host that capture images for OCR. |
+
 
 For OCR related entries, please have a look [here](ocr.md)
 
