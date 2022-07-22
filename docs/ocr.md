@@ -1,7 +1,7 @@
 # OCR module
 
 ## Intro
-The OCR module allows to read the LCD displays, like voltage. The basic idea of this module is to allow you to be independent of any smart meters, doing the same readouts, should you have privacy concerns. 
+The OCR module allows to read the LCD displays, [like voltage](../src/data/img/lcd-glowing.jpg). The basic idea of this module is to allow you to be independent of any smart meters, doing the same readouts, should you have privacy concerns. 
 Using the OCR module costs some additional initial effort, but allows your system to stay very flexible.
 
 ## Directory structure
@@ -13,9 +13,19 @@ Within the base directory there are 2 major scripts:
 - `playground.py`, which uses the same parameters to do the same job as `headless.py`, but additionally allows you to interactively alter the parameters of your OCR module to be able to see the final, as well as intermediate results immediately on your screen. After you find optimal paramerers, using this method, you're expected to store them in your module and update the global ones, like the example modules do in the `get_updated_params()` function.
 
 ## SolOptXMR integration
-SolOptXMR uses only the `headless.py` script in order to read the battery's or inverter's voltage. It expects 2 things to be in place:
-- `config-volatile.json` to have the `paths` / `DIR_TMP` variable defined, under which an image named `ocr.jpg` shall be created, showing the LCD display. Obviously it's expected to be created there not too long before the recognition takes place, to have the result as fresh as possible.
-- `config-volatile.json` to have the `paths` / `DIR_OCR_SCRIPT` variable pointing to a directory containing the `ocr_filter_module.py` file, that you selected to recognize your LCD.
+SolOptXMR uses only the `headless.py` script in order to read the battery's or inverter's voltage. It expects several things to be in place in `config-volatile.json`:
+- `paths` / `DIR_TMP`, under which an image named `ocr.jpg` shall be read from, showing the LCD display. Obviously it's expected to be created there not too long before the recognition takes place, to have the result as fresh as possible. Otherwise a warning is issued.
+- `paths` / `IMG_CAPTURE_PATH`, where the image should be stored after being captured. If the capture is meant to be done on the same host, the path should point to the file above, so (pseudocode:) `${DIR_TMP}/ocr.jpg`. If a different host is to be used, then the path here should point to a network drive accessible from that host. Next, you have to make sure, that the file is symlinked to `${DIR_TMP}/ocr.jpg` on the host, which controls the system.
+- `paths` / `DIR_IMG_CAPTURE_SCRIPT`, you may create an individual script for capturing the image. See the provided examples.
+- `hosts` / `IMG_CAPTURE_HOST`, which should stay either localhost, or the IP or alias of the machine, which has the camera connected.
+- `paths` / `DIR_OCR_SCRIPT` variable pointing to a directory containing the `ocr_filter_module.py` file, that you selected to recognize your LCD or panel.
 
 ## Tips
 Bear in mind, that the digits themselves have to take a large portion of the whole image. Photographing them from too far away will lead to not being able to recognize them.
+
+# Simple mode: Rectangle recognition
+There is a possibility to avoid digit recognition altogether, assuming, that your hardware is able to display rectangles, which represent the current battery charge, like [in this example](../src/data/img/panel-rectangles.jpg). 
+An adaptation of the OCR module, that recognizes the mentioned image can be found [here](externals/GasPumpOCR-mj/custom-scripts/panel-rectangles).
+Via function `get_countours_to_percentage_full(num_countours)` such script should return a percentage in range from 0 to 100, describing the current battery charge, depending on the number of correctly recognized countours.
+The recognition depends on the parameters, that the script sets.
+As with the digit recognition module, the `playground.py` script will help you finding the right parameters.
