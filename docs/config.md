@@ -64,6 +64,9 @@ Contains various entries from across the project, which don't really deserve the
 | `paths` / `DIR_TMP` | Temp directory, where all the intermediate files should be stored. |
 | `paths` / `DIR_ARCHIVE` | If there's a need to archive anything, this basepath shall be used. |
 | `paths` / `DIR_OCR_SCRIPT` | Script path for the OCR module. |
+| `paths` / `IMG_CAPTURE_PATH` | Path where the captured images shall be stored. |
+| `hosts` / `IMG_CAPTURE_HOST` | Host that capture images for OCR. |
+
 
 For OCR related entries, please have a look [here](ocr.md)
 
