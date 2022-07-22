@@ -39,7 +39,7 @@ using namespace EnjoLib;
 
 const int OptimizerEnProfit::HOURS_IN_DAY = 24;
 const int OptimizerEnProfit::MAX_NUM_COMBINATIONS = 1e7;
-const double OptimizerEnProfit::MAX_FAILED_COMBINATIONS = 0.7;
+const double OptimizerEnProfit::MAX_FAILED_COMBINATIONS = 0.6;
 const double OptimizerEnProfit::MIN_POS_2_NEG_CHANGE_RATIO = 0.01;
 
 OptimizerEnProfit::OptimizerEnProfit(const OptiEnProfitDataModel & dataModel)

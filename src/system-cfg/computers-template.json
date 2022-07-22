@@ -2,7 +2,7 @@
     "computers": [
     	  {
     	  	"name" : "Fanless Intel, 4 core",
-    	  	"count" : 0,
+    	  	"count" : 1,
     	  	"cores" : 4,
     	  	"hash_per_core" : 250,
     	  	"watt_per_core" : 11.5,
@@ -13,7 +13,7 @@
     	  },
     	  {
     	  	"name" : "Fanless Ryzen, 2 core",
-    	  	"cores" : 1,
+    	  	"cores" : 0,
     	  	"hash_per_core" : 100,
     	  	"watt_per_core" : 20,
     	  	"watt_idle" : 8,
@@ -23,6 +23,7 @@
     	  },
     	  {
     	  	"name" : "Ryzen 7, 8 cores",
+    	  	"count" : 1,
     	  	"cores" : 8,
     	  	"hash_per_core" : 400,
     	  	"watt_per_core" : 8,
