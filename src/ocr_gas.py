@@ -61,9 +61,9 @@ def test_single(imfile, script_dir, expected_val, expected_percentage = -100):
     print("Testing:", imfile, ", script dir:",  script_dir, ", expected val:", expected_val)
     detection, percentage = get_detection(imfile, script_dir)
     assert round(detection, 3) == expected_val
-    print(imfile, ", Detection =", detection)
+    print(imfile, ", Detection  =", detection)
     assert round(percentage, 3) == expected_percentage
-    print(imfile, ", Detection =", detection)
+    print(imfile, ", Percentage =", percentage)
 
 def test():
     base_dir_scripts = 'externals/GasPumpOCR-mj/custom-scripts/'
