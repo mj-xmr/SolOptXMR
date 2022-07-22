@@ -3,11 +3,21 @@
         "TESTING": false,
         "ARCHIVE_IMAGES": true
     },
+    "hosts": {
+	"IMG_CAPTURE_HOST": "localhost"
+    },
     "paths": {
         "HOME": "/foo/bar",
         "DIR_TMP": "/tmp",
         "DIR_ARCHIVE": "solar/archive/",
+        
+        "IMG_CAPTURE_PATH": "/tmp/ocr.jpg",
+        "DIR_IMG_CAPTURE_SCRIPT": "custom-scripts/img-capture/fswebcam-bare",
+        "DIR_IMG_CAPTURE_SCRIPT_BARE": "custom-scripts/img-capture/fswebcam-bare",
+        "DIR_IMG_CAPTURE_SCRIPT_COMPLEX": "custom-scripts/img-capture/fswebcam-complex",
+        
         "DIR_OCR_SCRIPT": "externals/GasPumpOCR-mj/custom-scripts/lcd-glowing",
+        "DIR_OCR_SCRIPT_PANEL": "externals/GasPumpOCR-mj/custom-scripts/panel-rectangles",
         "DIR_OCR_SCRIPT_GLOWING": "externals/GasPumpOCR-mj/custom-scripts/lcd-glowing",
         "DIR_OCR_SCRIPT_GAS_PUMP": "externals/GasPumpOCR-mj/custom-scripts/gas-pump-dark"
     }
