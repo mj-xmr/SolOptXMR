@@ -46,7 +46,7 @@ The recognition depends on the parameters, that the script sets.
 As with the digit recognition module, the `playground.py` script will help you finding the right parameters.
 
 # Image capture module
-In the same way as you'd extend the OCR modules from `externals/GasPumpOCR-mj/custom-scripts`, you may extend the SolOpt modules from `src/custom-scripts`. Image capture module is one of such examples. Finally, you have to point the `config-volatile.json` file to find your script via the `DIR_IMG_CAPTURE_SCRIPT` variable.
+In the same way as you'd extend the OCR modules from `externals/GasPumpOCR-mj/custom-scripts`, you may extend the SolOptXMR modules from `src/custom-scripts`. Image capture module is one of such examples. Finally, you have to point the `config-volatile.json` file to find your script via the `DIR_IMG_CAPTURE_SCRIPT` variable.
 
 ## Tips
 Bear in mind, that the digits themselves have to take a large portion of the whole image. Photographing them from too far away will lead to not being able to recognize them.
