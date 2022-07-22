@@ -5,7 +5,7 @@
     	  	"count" : 1,
     	  	"watt" : 8,
     	  	"watt_asleep" : 0.4,
-    	  	"duration_hours" : 8,
+    	  	"duration_hours" : 6,
     	  	"schedule" : "0 0 8 * * MON-FRI"
     	  },
     	  {
@@ -13,12 +13,12 @@
     	  	"count" : 1,
     	  	"watt" : 12,
     	  	"watt_asleep" : 0.6,
-    	  	"duration_hours" : 8,
+    	  	"duration_hours" : 6,
     	  	"schedule" : "0 0 8 * * MON-FRI"
     	  },
     	  {
     	  	"name" : "12V water kettle",
-    	  	"count" : 1,
+    	  	"count" : 0,
     	  	"watt" : 80,
     	  	"duration_hours" : 0.8,
     	  	"schedule" : "0 0 7,18 * * *"
@@ -27,7 +27,7 @@
     	  	"name" : "Slow cooker 4 Sunday",
     	  	"count" : 1,
     	  	"watt" : 150,
-    	  	"duration_hours" : 6,
+    	  	"duration_hours" : 5,
     	  	"schedule" : "0 0 8 * * SUN"
     	  },
     	  {
