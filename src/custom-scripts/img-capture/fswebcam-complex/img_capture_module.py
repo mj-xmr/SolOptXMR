@@ -11,7 +11,7 @@ import sunrise_lib
 
 def capture(host, imfile):
     """
-    Capture image in a simple mode.
+    Capture image in a complex mode.
     """
     print("Trying to save image file for OCR:", imfile)
     cmd = "fswebcam -r 640x480 --jpeg 85 -D 2 -S 20 -F 3 --set brightness=30% --set contrast=50%" + imfile
