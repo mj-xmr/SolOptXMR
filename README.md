@@ -127,7 +127,9 @@ To visualize the currently modelled (dis)charge rates, as described [in this pap
 
 # Further documentation
 - [safety](docs/safety.md): how to handle electrical systems safely. Tell me, that you "read and understood it", and I can sleep fine.
-- [economy](docs/economy.md): my economy views and the resulting dynamics tailored to production of electricity.
+- [economy](docs/economy.md): my economy views and the resulting dynamics tailored to production of electricity & mining crypto.
+- [config](docs/config.md): how to configure your instance of the project
+- [ocr](docs/ocr.md): deeper instructions on how to use and extend the OCR capabilities
 
 # Screenshots
 
