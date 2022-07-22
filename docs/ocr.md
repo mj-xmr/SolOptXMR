@@ -42,7 +42,7 @@ The parameters of the `get_updated_params_image_recognition(params_dict_ir)` inc
 There is a possibility to avoid digit recognition altogether, assuming, that your hardware is able to display rectangles, which represent the current battery charge, like [in this example](../src/data/img/panel-rectangles.jpg). 
 An adaptation of the OCR module, that recognizes the mentioned image can be found under `externals/GasPumpOCR-mj/custom-scripts/panel-rectangles`.
 Via the function `get_countours_to_percentage_full(num_countours)` such script should return a percentage in range from 0 to 100, describing the current battery charge, depending on the number of correctly recognized countours.
-The recognition depends on the parameters, that the script sets via `get_updated_params_image_recognition()`.
+The recognition depends on the parameters, that the script sets via `get_updated_params_image_recognition(params_dict_ir)`.
 As with the digit recognition module, the `playground.py` script will help you in finding the right parameters.
 
 # Image capture module
