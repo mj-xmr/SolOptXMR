@@ -80,5 +80,5 @@ def test():
 
 if __name__ == "__main__":
     make_picture()
-    #test()
+    test()
 
