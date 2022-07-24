@@ -23,6 +23,7 @@
 #include <Util/ToolsMixed.hpp>
 #include <Util/Except.hpp>
 #include <Util/CoutBuf.hpp>
+#include <Util/StrColour.hpp>
 #include <Statistical/Statistical.hpp>
 #include <Statistical/Distrib.hpp>
 #include <Template/CorradePointer.h>
@@ -192,6 +193,12 @@ void OptimizerEnProfit::RandomSearch()
                  << "Unique   combinations = " << usedCombinations.size() << " of " << maxCombisFailed << ": " << GMat().round(usedCombinations.size()/double(maxCombisFailed) * 100) << "%" << Nl;
             break;
         }
+    }
+    if (not foundFirstSolution)
+    {
+        // TODO: Unit test it.
+        //Assertions::Throw("Couldn't find a solution!", "OptimizerEnProfit::RandomSearch");
+        LOGL << StrColour::GenWarn("Couldn't find a solution!") << "\n... in OptimizerEnProfit::RandomSearch()";
     }
 
     PrintSolution(binarBest);

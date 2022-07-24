@@ -48,6 +48,7 @@ struct BatterySimulation
     double num_undervolted = 0;
     double num_undervolted_initial = 0;
     double num_overvolted = 0;
+    double num_overvolted_initial = 0;
     double num_overused = 0;
     double m_mulPowerToCapacity = 0;
     double m_dischargePerHour = 0;
@@ -98,22 +99,27 @@ double BatterySimulation::iter_get_load(double inp, double out, double hours)
     if (load > m_maxCapacityAmph)
     {
         load = m_maxCapacityAmph;
-        ++num_overvolted;
+        if (initial_load)
+            ++num_overvolted_initial; /// TODO: Unit test this, as lack of this should cause a crash
+        else
+            ++num_overvolted;
     }
     if (load < pars.MIN_LOAD_AMPH)
     {
         if (initial_load)
-          num_undervolted_initial += 1;
+            ++num_undervolted_initial;
         else
-        ++num_undervolted;
+            ++num_undervolted;
 
     }
     //if (load < 0)
     //  load = 0;
 
     if (initial_load)
-        if (load > pars.MIN_LOAD_AMPH)
+        if (pars.MIN_LOAD_AMPH < load && load < m_maxCapacityAmph)
+        //if (load > pars.MIN_LOAD_AMPH)
         {
+            /// TODO: Unit test this, as lack of this should cause a crash
             //LOGL << "Initial load done.\n";
             initial_load = false;
         }
@@ -156,7 +162,7 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
         const double load = battery.iter_get_load(powerProd, resLocal.sumPowerUsage);
         //const double pentalityUndervolted = load < 0 ? GMat().Fabs(load * load * load) : 0;
         const double pentalityUndervolted = battery.num_undervolted;
-        const double pentalityOvervolted = battery.num_overvolted;
+        const double pentalityOvervolted  = battery.num_overvolted;
 
         if (not sys.buying)
         {
