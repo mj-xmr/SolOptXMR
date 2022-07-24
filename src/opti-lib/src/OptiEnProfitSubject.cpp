@@ -162,7 +162,7 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
         const double load = battery.iter_get_load(powerProd, resLocal.sumPowerUsage);
         //const double pentalityUndervolted = load < 0 ? GMat().Fabs(load * load * load) : 0;
         const double pentalityUndervolted = battery.num_undervolted;
-        const double pentalityOvervolted = battery.num_overvolted;
+        const double pentalityOvervolted  = battery.num_overvolted;
 
         if (not sys.buying)
         {
