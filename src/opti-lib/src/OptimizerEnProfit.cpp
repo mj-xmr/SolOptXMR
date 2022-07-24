@@ -193,6 +193,11 @@ void OptimizerEnProfit::RandomSearch()
             break;
         }
     }
+    if (not foundFirstSolution)
+    {
+        // TODO: Unit test it.
+        Assertions::Throw("Couldn't find a solution!", "OptimizerEnProfit::RandomSearch");
+    }
 
     PrintSolution(binarBest);
 }
