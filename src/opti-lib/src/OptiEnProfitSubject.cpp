@@ -11,6 +11,7 @@
 #include "OptiEnProfitDataModel.h"
 #include "BatteryParams.h"
 #include "TimeUtil.h"
+#include "SolUtil.h"
 
 #include "GnuplotIOSWrap.h"
 
@@ -98,7 +99,7 @@ double BatterySimulation::iter_get_load(double inp, double out, double hours)
     //LOGL << "Cap " <<  m_maxCapacityAmph << Nl;
     if (load > m_maxCapacityAmph)
     {
-        load = m_maxCapacityAmph;
+        load = m_maxCapacityAmph; /// TODO: This is quite wrong to assume this.
         if (initial_load)
             ++num_overvolted_initial; /// TODO: Unit test this, as lack of this should cause a crash
         else
@@ -277,7 +278,9 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
 
                 //GnuplotPlotTerminal1d(input, "input", 1, 0.5);
                 GnuplotPlotTerminal1d(prod, "Energy production", 1, 0.5);
-                GnuplotPlotTerminal1d(hashrateBonus, "Bashrate bonus seasonal", 1, 0.5);
+                //GnuplotPlotTerminal1d(hashrateBonus, "Bashrate bonus seasonal", 1, 0.5);
+                
+                {LOGL << "Bat charge:\n" << SolUtil().GetPercentToAscii(m_loads, m_dataModel.GetBatPars().MIN_LOAD_AMPH, batteryCopy.m_maxCapacityAmph) << Nl;}
             }
         }
     }
