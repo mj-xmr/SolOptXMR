@@ -14,6 +14,7 @@
 using namespace std;
 using namespace EnjoLib;
 
+/// TODO: UTest & refactor
 void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat) const
 {
     const int currHour = TimeUtil().GetCurrentHour();
@@ -41,9 +42,10 @@ void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat) const
         LOG << comp.name << Nl;
         LOG << cman.Replace(best.Print(), " ", "") << Nl;
         
-        Str cmdsComp = "ssh -n " + comp.hostname + " 'hostname; echo \"";
+        const Str cmdsCompBare = "ssh -n " + comp.hostname + " ";
+        const Str cmdsComp = cmdsCompBare + "'hostname; echo \"";
         
-
+        bool onAtFirstHour = false;
         int lastHourOn = -1;
         int lastDayOn = -1;
         const int horizonHours = m_dataModel.GetHorizonHours();
@@ -65,16 +67,16 @@ void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat) const
                 lastHourOn = hour;
                 lastDayOn = day;
             }
+            const int hourPrev = (ihour - 1) % HOURS_IN_DAY;
             if (lastHourOn > 0)
             {
                 if (not onCurr) // Switch off
                 {
-                    const int hourPrev = (ihour - 1) % HOURS_IN_DAY;
                     LOG << "day " << lastDayOn << ", hour " << lastHourOn << "-" << hourPrev<< Nl;                  
                     if (lastDayOn == 1)
                     {
                         // Wake up
-                        oss << cmdsComp << "wakeonlan " << comp.macAddr << "\" | at " << lastHourOn <<   ":00'\n";
+                        oss << "wakeonlan " << comp.macAddr << "\" | at " << lastHourOn <<   ":00\n";
                         // Put to sleep
                         oss << cmdsComp << "systemctl suspend\"           | at " << hourPrev <<     ":00'\n";
                     }
@@ -86,7 +88,21 @@ void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat) const
                     LOG << "day " << lastDayOn << ", hour " << lastHourOn << "-.." << Nl;
                 }
             }
-
+            if (onCurr && i == 1)
+            {
+                // Start now, right at the beginning! Battery probably already too overloaded
+                oss << "wakeonlan " << comp.macAddr << "\n";
+                onAtFirstHour = true;
+            }
+            else
+            if (onPrev && not onCurr && day == 1)
+            {
+                if (onAtFirstHour) // Was started at the beginning already. Be sure to suspend later on.
+                {
+                    LOG << "day 1, hour !-" << hourPrev << Nl;
+                    oss << cmdsComp << "systemctl suspend\"           | at " << hourPrev <<     ":00'\n";
+                }
+            }
         }
         LOG << Nl;
     }

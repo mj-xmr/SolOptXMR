@@ -210,6 +210,7 @@ def main(args):
         print("Voltage input is still unstable.") # TODO: use various discharge rates
         print("Battery voltage readout:", args.battery_charge_v)
         args.battery_charge_percent = voltage_lib.voltage_to_percentage(args.battery_charge_v, sunrise_lib.BAT_DISCHARGE_RATE_C_BY)
+        print("Converted to percentage:", args.battery_charge_percent)
         if args.battery_charge_percent == 0:
             args.battery_charge_percent = 1
     if args.battery_charge_percent:
