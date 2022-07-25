@@ -10,6 +10,8 @@ public:
 	virtual ~Computer();
 
 	EnjoLib::Str name;
+	EnjoLib::Str hostname;
+	EnjoLib::Str macAddr;
 	double cores = 2;
 	double wattPerCore = 11.5;
 	double wattIdle = 5;

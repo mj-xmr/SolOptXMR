@@ -1,5 +1,11 @@
 {
     "habits": [
+          {
+    	  	"name" : "Controlling lo-powered PC",
+    	  	"count" : 1,
+    	  	"watt" : 2.2,
+    	  	"watt_asleep" : 0.4
+    	  },
     	  {
     	  	"name" : "Partner's laptop",
     	  	"count" : 1,
