@@ -3,7 +3,7 @@
           {
     	  	"name" : "Controlling lo-powered PC",
     	  	"count" : 1,
-    	  	"watt" : 2.2,
+    	  	"watt" : 2.5,
     	  	"watt_asleep" : 0.4
     	  },
     	  {
@@ -37,9 +37,16 @@
     	  	"schedule" : "0 0 8 * * SUN"
     	  },
     	  {
+    	  	"name" : "Li-Ion vacuum cleaner 4 Saturday",
+    	  	"count" : 1,
+    	  	"watt" : 15,
+    	  	"duration_hours" : 5,
+    	  	"schedule" : "0 0 10 * * SAT"
+    	  },
+    	  {
     	  	"name" : "Network switch",
     	  	"count" : 1,
-    	  	"watt" : 0.8
+    	  	"watt" : 0.9
     	  },
     	  {
     	  	"name" : "Inverter",
