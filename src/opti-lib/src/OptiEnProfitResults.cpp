@@ -46,7 +46,7 @@ void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat) const
         const Str cmdsSSH = cmdsSSHbare + " 'hostname; echo \"";
         const Str cmdWOL = "wakeonlan " + comp.macAddr;
         const Str cmdSuspendAt = "systemctl suspend\"           | at ";
-        const Str cmdMinuteSuffix = ":00'\n";
+        const Str cmdMinuteSuffix = ":00";
         
         bool onAtFirstHour = false;
         int lastHourOn = -1;
@@ -75,13 +75,13 @@ void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat) const
             {
                 if (not onCurr) // Switch off
                 {
-                    LOG << "day " << lastDayOn << ", hour " << lastHourOn << "-" << hourPrev<< Nl;                  
+                    LOG << "day " << lastDayOn << ", hour " << lastHourOn << "-" << hourPrev << Nl;                  
                     if (lastDayOn == 1)
                     {
                         // Wake up
-                        oss << "echo \"" << cmdWOL << "\" | at " << lastHourOn << cmdMinuteSuffix;
+                        oss << "echo \"" << cmdWOL << "\" | at " << lastHourOn << cmdMinuteSuffix << Nl;
                         // Put to sleep
-                        oss << cmdsSSH << cmdSuspendAt << hourPrev << cmdMinuteSuffix;
+                        oss << cmdsSSH << cmdSuspendAt << hourPrev << cmdMinuteSuffix << "'" << Nl;
                     }
                     
                     lastHourOn = -1;
@@ -93,8 +93,8 @@ void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat) const
             }
             if (onCurr && i == 1)
             {
-                // Start now, right at the beginning! Battery probably already too overloaded
-                oss << cmdWOL << "\n";
+                // Wake up now, right at the beginning! The battery is probably already overloaded.
+                oss << cmdWOL << Nl;
                 onAtFirstHour = true;
             }
             else
@@ -103,7 +103,7 @@ void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat) const
                 if (onAtFirstHour) // Was started at the beginning already. Be sure to suspend later on.
                 {
                     LOG << "day 1, hour !-" << hourPrev << Nl;
-                    oss << cmdsSSH << cmdSuspendAt << hourPrev << cmdMinuteSuffix;
+                    oss << cmdsSSH << cmdSuspendAt << hourPrev << cmdMinuteSuffix << "'" << Nl;
                 }
             }
         }
