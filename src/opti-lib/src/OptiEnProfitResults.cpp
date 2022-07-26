@@ -45,7 +45,8 @@ void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat) const
         const Str cmdsSSHbare = "ssh -o ConnectTimeout=35 -n " + comp.hostname + " ";
         const Str cmdsSSH = cmdsSSHbare + " 'hostname; echo \"";
         const Str cmdWOL = "wakeonlan " + comp.macAddr;
-        const Str cmdSuspendAt = "systemctl suspend\"           | at ";
+        //const Str cmdSuspendAt = "systemctl suspend\"           | at ";
+        const Str cmdSuspendAt = "systemctl suspend\" | at ";
         const Str cmdMinuteSuffix = ":00";
         
         bool onAtFirstHour = false;
