@@ -48,6 +48,7 @@ When in doubt, please view their contents with `cat` for an objective assessment
 ```bash
 git clone --recursive https://github.com/mj-xmr/SolOptXMR.git # Clone this repo (assuming it's not a fork)
 cd SolOptXMR		# Enter the cloned repo's dir
+git checkout $(git describe --tags $(git rev-list --tags --max-count=1)) # Checkout latest tag (master is risky)
 ./util/prep-env.sh	# Prepare the environment - downloads example data and creates useful symlinks
 pip install -r requirements.txt # Install Python packages (either use this command or its fitting alternative) 
 ./util/deps-pull.sh	# Download the maintaned dependencies
