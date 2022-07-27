@@ -131,6 +131,7 @@ To visualize the currently modelled (dis)charge rates, as described [in this pap
 - [economy](docs/economy.md): my economy views and the resulting dynamics tailored to production of electricity & mining crypto.
 - [config](docs/config.md): how to configure your instance of the project
 - [ocr](docs/ocr.md): deeper instructions on how to use and extend the OCR capabilities
+- [archive](docs/web-archive): crucial documents gathered from various sites, that deliver expert knowledge
 
 # Screenshots
 
