@@ -20,18 +20,18 @@ DISCHARGE_RATE_100 = 100
 CHARGE_RATE_DICT = {}
 DISCHARGE_RATE_DICT = {}
 
-def percentage_to_voltage(percentage, discharge_rate=DISCHARGE_RATE_10, charge=False):
-    x = get_x(charge)
-    y = battery_y(discharge_rate, charge)
+def percentage_to_voltage(percentage, charge_status, discharge_rate=DISCHARGE_RATE_10):
+    x = get_x(charge_status)
+    y = battery_y(discharge_rate, charge_status)
     f = get_fun_interp(x, y)
     #print(percentage, "%")
     voltage = f(percentage)
     print(voltage, 'V ', percentage, "%")
     return voltage
 
-def voltage_to_percentage(voltage, discharge_rate=DISCHARGE_RATE_10, charge=False):
-    x = get_x(charge)
-    y = battery_y(discharge_rate, charge)
+def voltage_to_percentage(voltage, charge_status, discharge_rate=DISCHARGE_RATE_10):
+    x = get_x(charge_status)
+    y = battery_y(discharge_rate, charge_status)
 
     if voltage < y[0]:
         return x[0]
@@ -44,6 +44,15 @@ def voltage_to_percentage(voltage, discharge_rate=DISCHARGE_RATE_10, charge=Fals
     print(voltage, 'V ', percentage, "%")
     return percentage
 
+def charge_status_str_to_bool(status_str):
+    status_str = status_str.lower()
+    char1 = status_str[0]
+    if char1 == 'c':
+        return True
+    elif char1 == 'd':
+        return False
+
+    raise IOError("Invalid charge status:", status_str) 
 
 def battery_y(discharge_rate, charge=False):
     d = CHARGE_RATE_DICT if charge else DISCHARGE_RATE_DICT
@@ -254,6 +263,8 @@ plt.plot(x, res.intercept + res.slope*x, 'r', label='fitted line')
 
 def test():
     print("voltage")
+    assert True == charge_status_str_to_bool("cHarge") == charge_status_str_to_bool("CHarge") == charge_status_str_to_bool("c")
+    assert False == charge_status_str_to_bool("dIsch") == charge_status_str_to_bool("DIScHARGE") == charge_status_str_to_bool("d")
     charge = False # TODO: Same for charge
     x = get_x(charge)
     y = get_y_c_by_10()
@@ -261,7 +272,7 @@ def test():
     assert len(y) == len(x)
     x_interp = get_x_interp(charge)
     assert len(x_interp) > len(x)
-    yy_c10 = percentage_to_voltage(x_interp, DISCHARGE_RATE_10, charge)
+    yy_c10 = percentage_to_voltage(x_interp, charge, DISCHARGE_RATE_10)
     assert len(x_interp) == len(yy_c10)
 
     # Overvoltage
@@ -271,10 +282,10 @@ def test():
     except:
         assert True # Exception thrown
 
-    assert 40 < voltage_to_percentage(12) < 60 # happy
+    assert 40 < voltage_to_percentage(12, charge) < 60 # happy
 
-    assert voltage_to_percentage(9) == 0 # Corner low
-    assert voltage_to_percentage(14) == 100 # Corner high
+    assert voltage_to_percentage(9,  charge) == 0 # Corner low
+    assert voltage_to_percentage(14, charge) == 100 # Corner high
 
 def plot():
     import voltage_plot
