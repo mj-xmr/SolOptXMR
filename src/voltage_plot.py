@@ -25,7 +25,7 @@ def plot_one(charge, plot_measurements):
         print(len(x), len(y))
         if plot_measurements:
             plt.plot(x, y, 'o')
-        yy_c10 = voltage_lib.percentage_to_voltage(xx, disc_rate, charge)
+        yy_c10 = voltage_lib.percentage_to_voltage(xx, charge, disc_rate)
         plt.plot(xx, yy_c10, '.')
         if plot_measurements:
             legend.append('c/{} meas.'.format(disc_rate))

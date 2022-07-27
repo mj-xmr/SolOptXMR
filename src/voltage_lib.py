@@ -10,6 +10,7 @@ import traceback
 
 from scipy import interpolate
 
+DISCHARGE_RATE_1   = 1
 DISCHARGE_RATE_3   = 3
 DISCHARGE_RATE_5   = 5
 DISCHARGE_RATE_10  = 10
@@ -78,9 +79,9 @@ def get_x_interp(charge):
 
 def get_keys(charge):
     if charge:
-        return [DISCHARGE_RATE_40,  DISCHARGE_RATE_20, DISCHARGE_RATE_10, DISCHARGE_RATE_5]
+        return [DISCHARGE_RATE_40,  DISCHARGE_RATE_20, DISCHARGE_RATE_10, DISCHARGE_RATE_5, DISCHARGE_RATE_1]
     else:
-        return [DISCHARGE_RATE_100, DISCHARGE_RATE_20, DISCHARGE_RATE_10, DISCHARGE_RATE_5, DISCHARGE_RATE_3]
+        return [DISCHARGE_RATE_100, DISCHARGE_RATE_20, DISCHARGE_RATE_10, DISCHARGE_RATE_5, DISCHARGE_RATE_3, DISCHARGE_RATE_1]
 
 def get_y_c_by_100():
     y = []
@@ -235,6 +236,41 @@ def get_y_c_by_3():
 
     return y
 
+
+def get_y_life_po4():
+    y = []
+    y.append(10.0)  # 0
+    y.append(12.1)  # 10
+    y.append(12.9)  # 20
+    y.append(13.0)  # 30
+    y.append(13.1)  # 40
+    y.append(13.13) # 50
+    y.append(13.17) # 60
+    y.append(13.2)  # 70
+    y.append(13.25) # 80
+    y.append(13.3)  # 90
+    y.append(13.6)  # 100
+
+    return y
+
+def get_y_life_po4_charge():
+    y = []
+    y.append(13.1)  # 10
+    y.append(13.9)  # 20
+    y.append(14.0)  # 30
+    y.append(14.1)  # 40
+    y.append(14.13) # 50
+    y.append(14.17) # 60
+    y.append(14.2)  # 70
+    y.append(14.25) # 80
+    y.append(14.3)  # 90
+    y.append(14.6)  # 100
+    y.append(15.5) # 110
+    y.append(16.7 ) # 120
+    
+    return y
+
+DISCHARGE_RATE_DICT[DISCHARGE_RATE_1]   = get_y_life_po4
 DISCHARGE_RATE_DICT[DISCHARGE_RATE_3]   = get_y_c_by_3
 DISCHARGE_RATE_DICT[DISCHARGE_RATE_5]   = get_y_c_by_5
 DISCHARGE_RATE_DICT[DISCHARGE_RATE_10]  = get_y_c_by_10
@@ -242,6 +278,7 @@ DISCHARGE_RATE_DICT[DISCHARGE_RATE_20]  = get_y_c_by_20
 DISCHARGE_RATE_DICT[DISCHARGE_RATE_40]  = get_y_c_by_100
 DISCHARGE_RATE_DICT[DISCHARGE_RATE_100] = get_y_c_by_100
 
+CHARGE_RATE_DICT[DISCHARGE_RATE_1]   = get_y_life_po4_charge
 CHARGE_RATE_DICT[DISCHARGE_RATE_3]   = get_y_c_by_5_charge
 CHARGE_RATE_DICT[DISCHARGE_RATE_5]   = get_y_c_by_5_charge
 CHARGE_RATE_DICT[DISCHARGE_RATE_10]  = get_y_c_by_10_charge
