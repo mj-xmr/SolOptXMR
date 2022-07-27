@@ -29,6 +29,7 @@ from profitability import POW_Coin
 from python_json_config import ConfigBuilder
 
 DEFAULT_BATTERY_STATE = 0
+DEFAULT_CHARGE_STATE = 'discharging'
 config_system = sunrise_lib.config_system
 FILE_HASHRATE_BONUS = "/hashrate_bonus_ma.dat"
 FILE_HASHRATE_SEASONAL = "/seasonal.dat"
@@ -40,11 +41,13 @@ def get_args():
     parser.add_argument('-p', '--battery-charge-percent',  default=DEFAULT_BATTERY_STATE, type=float, help="Initial battery charge [0-100]  (default: {} which means: minimal charge)".format(DEFAULT_BATTERY_STATE))
     parser.add_argument('-a', '--battery-charge-ah', default=DEFAULT_BATTERY_STATE, type=float, help="Initial battery charge [Ah] (default: {} which means: minimal charge)".format(DEFAULT_BATTERY_STATE))
     parser.add_argument('-v', '--battery-charge-v',  default=DEFAULT_BATTERY_STATE, type=float, help="Initial battery charge [V]  (default: {} which means: minimal charge)".format(DEFAULT_BATTERY_STATE))
-    parser.add_argument('--random-seed',       default=0, type=int, help="Random seed for debugging (default: 0)")
+    parser.add_argument('--random-seed',       default=1, type=int, help="Random seed for debugging (default: 1)")
     sunrise_lib.add_date_arguments_to_parser(parser)
     # TODO:
     # parser.add_argument('-f', '--file-image-ocr',  default="", type=str, help="Image path to OCR (default: {})".format(""))
     parser.add_argument('-i', '--in-data',  default="", type=str, help="Input hashrate data (default: {})".format(""))
+    # TODO: use 'auto' charge status as well, based on time of day and weather.
+    parser.add_argument('-c', '--charge-status', default=DEFAULT_CHARGE_STATE, type=str, help="Charge status: charging(c)/discharging(d) for voltage input (default: {})".format(DEFAULT_CHARGE_STATE))
     parser.add_argument('-o', '--out-dir',  default=sunrise_lib.DIR_TMP, type=str, help="Output dir to exchange with tsqsim (default: {})".format(""))
     parser.add_argument('-n', '--net-diff', default=False, action='store_true', help="Plot network difficulty only (default: OFF)")
     parser.add_argument('-m', '--sim',      default=False, action='store_true', help="Plot simulation only (default: OFF)")
@@ -209,7 +212,8 @@ def main(args):
     if args.battery_charge_v and args.battery_charge_v != DEFAULT_BATTERY_STATE:
         print("Voltage input is still unstable.") # TODO: use various discharge rates
         print("Battery voltage readout:", args.battery_charge_v)
-        args.battery_charge_percent = voltage_lib.voltage_to_percentage(args.battery_charge_v, sunrise_lib.BAT_DISCHARGE_RATE_C_BY)
+        charge_status = voltage_lib.charge_status_str_to_bool(args.charge_status)
+        args.battery_charge_percent = voltage_lib.voltage_to_percentage(args.battery_charge_v, charge_status, sunrise_lib.BAT_DISCHARGE_RATE_C_BY)
         print("Converted to percentage:", args.battery_charge_percent)
         if args.battery_charge_percent == 0:
             args.battery_charge_percent = 1
