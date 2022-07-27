@@ -17,9 +17,10 @@ if pip3 install -r requirements.txt ; then
 	echo "pip succeeded."
 else
 	echo "pip failed. Trying a fallback."
-
-	pip3 install pandas>=1.4.2 pvlib pykrakenapi pyparsing pyrsistent python-dateutil \
-	python-json-config pytz requests scipy six urllib3 \
+	pip3 uninstall -r requirements.txt -y
+	pip3 install pandas>=1.4.2 scipy>=1.2.0 numpy>=1.19.3 \
+	pvlib pykrakenapi pyparsing pyrsistent python-dateutil \
+	python-json-config pytz requests six urllib3 \
 	beautifulsoup4 wget cairosvg Pillow geocoder \
 	opencv-python screeninfo \
 	# pytesseract not employed yet
