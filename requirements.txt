@@ -28,7 +28,7 @@ requests>=2.27.1
 six>=1.16.0
 urllib3>=1.26.9
 # Curses menu:
-windows-curses>=2.3.0 ; sys_platform=='win32'
+windows-curses>=2.3.0 ; sys_platform == 'win32'
 # Ascii menu:
 asciimatics>=1.13.0
 # Weather:
