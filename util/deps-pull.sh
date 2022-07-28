@@ -21,7 +21,7 @@ else
 	pip3 install pandas>=1.4.2 scipy>=1.2.0 numpy>=1.19.3 matplotlib \
 	pvlib pykrakenapi pyparsing pyrsistent python-dateutil \
 	python-json-config pytz requests six urllib3 \
-	beautifulsoup4 wget cairosvg Pillow geocoder \
+	beautifulsoup4 wget cairosvg Pillow>=9.1.1 geocoder \
 	opencv-python screeninfo \
 	# pytesseract not employed yet
 	#pip3 install --upgrade 
