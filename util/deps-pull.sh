@@ -7,7 +7,7 @@ cd ../..
 if [ "$(uname)" == "Darwin" ]; then
 	HOMEBREW_NO_AUTO_UPDATE=1 brew install rapidjson libffi osx-cpu-temp
 elif [ "$(uname)" == "Linux" ]; then
-	sudo apt install gfortran libffi-dev
+	sudo apt install gfortran libffi-dev python3-testresources
 	#sudo apt install libboost-all-dev # Only JSON is needed for now
 	#sudo apt install libffi-dev
 	sudo apt install rapidjson-dev lm-sensors fswebcam
