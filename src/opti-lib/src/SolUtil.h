@@ -10,9 +10,6 @@ class SolUtil
 public:
 	SolUtil();
 	virtual ~SolUtil();
-	
-	EnjoLib::Str GetPercentToAscii(double val, double minimum = 0, double maximum = 1);
-	EnjoLib::Str GetPercentToAscii(const EnjoLib::VecD & val, double minimum = 0, double maximum = 1, bool decoration = false);
 
 protected:
 

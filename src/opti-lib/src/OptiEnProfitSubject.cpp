@@ -280,7 +280,7 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
                 GnuplotPlotTerminal1d(prod, "Energy production", 1, 0.5);
                 //GnuplotPlotTerminal1d(hashrateBonus, "Bashrate bonus seasonal", 1, 0.5);
                 
-                {LOGL << "Bat charge:\n" << SolUtil().GetPercentToAscii(m_loads, m_dataModel.GetBatPars().MIN_LOAD_AMPH, batteryCopy.m_maxCapacityAmph) << Nl;}
+                {LOGL << "Bat charge:\n" << ToolsMixed().GetPercentToAscii(m_loads, m_dataModel.GetBatPars().MIN_LOAD_AMPH, batteryCopy.m_maxCapacityAmph) << Nl;}
             }
         }
     }
