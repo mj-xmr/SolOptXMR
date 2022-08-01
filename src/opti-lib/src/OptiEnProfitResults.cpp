@@ -9,6 +9,7 @@
 #include <Statistical/Distrib.hpp>
 #include <Math/GeneralMath.hpp>
 #include <Util/CoutBuf.hpp>
+#include <Util/ToolsMixed.hpp>
 #include <Util/CharManipulations.hpp>
 
 using namespace std;
@@ -40,15 +41,17 @@ void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat) const
         const Computer & comp = m_dataModel.GetComputers().at(i);
         const VecD & best = bestMat.at(i);
         LOG << comp.name << Nl;
-        LOG << cman.Replace(best.Print(), " ", "") << Nl;
-        
+        const double maxx = 1;
+        LOG << ToolsMixed().GetPercentToAscii(best, 0, maxx) << Nl;
+        //LOG << cman.Replace(best.Print(), " ", "") << Nl;
+
         const Str cmdsSSHbare = "ssh -o ConnectTimeout=35 -n " + comp.hostname + " ";
         const Str cmdsSSH = cmdsSSHbare + " 'hostname; echo \"";
         const Str cmdWOL = "wakeonlan " + comp.macAddr;
         //const Str cmdSuspendAt = "systemctl suspend\"           | at ";
         const Str cmdSuspendAt = "systemctl suspend\" | at ";
         const Str cmdMinuteSuffix = ":00";
-        
+
         bool onAtFirstHour = false;
         int lastHourOn = -1;
         int lastDayOn = -1;
@@ -76,7 +79,7 @@ void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat) const
             {
                 if (not onCurr) // Switch off
                 {
-                    LOG << "day " << lastDayOn << ", hour " << lastHourOn << "-" << hourPrev << Nl;                  
+                    LOG << "day " << lastDayOn << ", hour " << lastHourOn << "-" << hourPrev << Nl;
                     if (lastDayOn == 1)
                     {
                         // Wake up
@@ -84,7 +87,7 @@ void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat) const
                         // Put to sleep
                         oss << cmdsSSH << cmdSuspendAt << hourPrev << cmdMinuteSuffix << "'" << Nl;
                     }
-                    
+
                     lastHourOn = -1;
                 }
                 else if (i == horizonHours - 1)
@@ -110,14 +113,14 @@ void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat) const
         }
         LOG << Nl;
     }
-    
+
     LOG << "Commands:\n\n";
     LOG << oss.str();
-    
+
     const Str fileCmds = "/tmp/cmds.sh";
     Ofstream ofs(fileCmds);
     ofs << oss.str();
-    
+
     LOG << "\nSaved commands:\nbash " << fileCmds << Nl;
 }
 

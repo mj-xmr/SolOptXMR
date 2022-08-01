@@ -273,14 +273,18 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
                 m_hashrateBonus = hashrateBonus;
                 //ToolsMixed().SystemCallWarn("clear", __PRETTY_FUNCTION__);
                 OutputVar(hashes, "hashrates");
-                OutputVar(loads, "battery");
                 OutputVar(usages, "usage", false);
 
                 //GnuplotPlotTerminal1d(input, "input", 1, 0.5);
                 GnuplotPlotTerminal1d(prod, "Energy production", 1, 0.5);
                 //GnuplotPlotTerminal1d(hashrateBonus, "Bashrate bonus seasonal", 1, 0.5);
-                
-                {LOGL << "Bat charge:\n" << ToolsMixed().GetPercentToAscii(m_loads, m_dataModel.GetBatPars().MIN_LOAD_AMPH, batteryCopy.m_maxCapacityAmph) << Nl;}
+                OutputVar(loads, "battery");
+
+                {
+                    ELO
+                    LOG << "Energy input:\n" << ToolsMixed().GetPercentToAscii(m_prod, 0, m_prod.Max()) << Nl;
+                    LOG << "Bat charge:\n" << ToolsMixed().GetPercentToAscii(m_loads, m_dataModel.GetBatPars().MIN_LOAD_AMPH, batteryCopy.m_maxCapacityAmph) << Nl;
+                }
             }
         }
     }
