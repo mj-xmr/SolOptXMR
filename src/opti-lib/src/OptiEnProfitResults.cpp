@@ -11,6 +11,7 @@
 #include <Util/CoutBuf.hpp>
 #include <Util/ToolsMixed.hpp>
 #include <Util/CharManipulations.hpp>
+#include <Visual/AsciiPlot.hpp>
 
 using namespace std;
 using namespace EnjoLib;
@@ -42,7 +43,7 @@ void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat) const
         const VecD & best = bestMat.at(i);
         LOG << comp.name << Nl;
         const double maxx = 1;
-        LOG << ToolsMixed().GetPercentToAscii(best, 0, maxx) << Nl;
+        LOG << AsciiPlot::Build()(AsciiPlot::Pars::MAXIMUM, maxx).Finalize().Plot(best) << Nl;
         //LOG << cman.Replace(best.Print(), " ", "") << Nl;
 
         const Str cmdsSSHbare = "ssh -o ConnectTimeout=35 -n " + comp.hostname + " ";
