@@ -9,6 +9,7 @@
 #include <Statistical/Distrib.hpp>
 #include <Math/GeneralMath.hpp>
 #include <Util/CoutBuf.hpp>
+#include <Util/ToolsMixed.hpp>
 #include <Util/CharManipulations.hpp>
 #include <Visual/AsciiPlot.hpp>
 
