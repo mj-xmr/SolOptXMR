@@ -18,8 +18,8 @@
 #include <Ios/Ofstream.hpp>
 #include <Math/GeneralMath.hpp>
 #include <Util/CoutBuf.hpp>
-#include <Util/ToolsMixed.hpp>
 #include <Template/Array.hpp>
+#include <Visual/AsciiPlot.hpp>
 
 #include <STD/Vector.hpp>
 
@@ -282,8 +282,9 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
 
                 {
                     ELO
-                    LOG << "Energy input:\n" << ToolsMixed().GetPercentToAscii(m_prod, 0, m_prod.Max()) << Nl;
-                    LOG << "Bat charge:\n" << ToolsMixed().GetPercentToAscii(m_loads, m_dataModel.GetBatPars().MIN_LOAD_AMPH, batteryCopy.m_maxCapacityAmph) << Nl;
+                    LOG << "Energy input:\n" << AsciiPlot::Build()(AsciiPlot::Pars::MAXIMUM, m_prod.Max()).Finalize().Plot(m_prod) << Nl;
+                    LOG << "Bat charge:\n"   << AsciiPlot::Build()(AsciiPlot::Pars::MAXIMUM, batteryCopy.m_maxCapacityAmph)
+                    (AsciiPlot::Pars::MINIMUM, m_dataModel.GetBatPars().MIN_LOAD_AMPH).Finalize().Plot(m_loads) << Nl;
                 }
             }
         }
