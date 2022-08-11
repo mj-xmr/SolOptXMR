@@ -17,6 +17,7 @@
 #include "TimeUtil.h"
 
 #include <Math/GeneralMath.hpp>
+#include <Math/RandomMath.hpp>
 #include <Util/ProgressMonit.hpp>
 #include <Util/ProgressMonitHigh.hpp>
 #include <Util/CharManipulations.hpp>
@@ -27,9 +28,7 @@
 #include <Statistical/Statistical.hpp>
 #include <Statistical/Distrib.hpp>
 #include <Template/CorradePointer.h>
-
-#include <Math/RandomMath.hpp>
-#include <Math/GeneralMath.hpp>
+#include <Visual/AsciiPlot.hpp>
 
 #include <STD/VectorCpp.hpp>
 #include <STD/Set.hpp>
@@ -105,12 +104,19 @@ void OptimizerEnProfit::RandomSearch()
     std::set<std::string> usedCombinations;
     int alreadyCombined = 0;
     const GMat gmat;
-    ProgressMonitHigh progressMonitor;
+    //const Distrib distr;
+    ProgressMonitHigh progressMonitor(20);
     for (int i = 0; i < MAX_NUM_COMBINATIONS; ++i)
     {
         if (i % 100000 == 0)
         {
-            progressMonitor.PrintProgressBarTime(i, MAX_NUM_COMBINATIONS);
+            progressMonitor.PrintProgressBarTime(i, MAX_NUM_COMBINATIONS, "Solutions");
+            //if (i > 0)
+            {
+            //const DistribData & data = distr.GetDistrib(m_goals, 20); const Str & dstr = distr.PlotLine(data, true, true, true);
+            //progressMonitor.PrintProgressBarTime(i, MAX_NUM_COMBINATIONS, dstr);    
+            }
+            
         }
         const int icomp = gmat.round(rmath.Rand(0, numComputers-1));
         //for (int icomp = 0; icomp < numComputers; ++icomp)

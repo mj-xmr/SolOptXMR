@@ -19,6 +19,7 @@ using namespace EnjoLib;
 /// TODO: UTest & refactor
 void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat) const
 {
+    ELO
     const int currHour = TimeUtil().GetCurrentHour();
     OptiSubjectEnProfit osub(m_dataModel);
     osub.GetVerbose(bestMat, true);
@@ -31,10 +32,12 @@ void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat) const
     const DistribData & distribDat = distr.GetDistrib(m_goals);
     if (distribDat.IsValid())
     {
+        const Str & dstr = distr.PlotLine(distribDat, false, true, true);
+        LOG << Nl << "Distribution of solutions:" << Nl<< dstr << Nl;
         //GnuplotPlotTerminal2d(distribDat.data, "Solution distribution", 1, 0.5);
     }
     Str cmds = "";
-    ELO
+    
     LOG << "\nComputer start schedule:\n";
     Osstream oss;
     for (int i = 0; i < bestMat.size(); ++i)
