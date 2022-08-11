@@ -204,7 +204,7 @@ void OptimizerEnProfit::RandomSearch()
     {
         // TODO: Unit test it.
         //Assertions::Throw("Couldn't find a solution!", "OptimizerEnProfit::RandomSearch");
-        LOGL << StrColour::GenWarn("Couldn't find a solution!") << "\n... in OptimizerEnProfit::RandomSearch()";
+        LOGL << Nl << StrColour::GenWarn("Couldn't find a solution!") << "\n... in OptimizerEnProfit::RandomSearch()";
     }
 
     PrintSolution(binarBest);

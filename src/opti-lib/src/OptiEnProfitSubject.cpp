@@ -99,7 +99,7 @@ double BatterySimulation::iter_get_load(double inp, double out, double hours)
     //LOGL << "Cap " <<  m_maxCapacityAmph << Nl;
     if (load > m_maxCapacityAmph)
     {
-        load = m_maxCapacityAmph; /// TODO: This is quite wrong to assume this.
+        //load = m_maxCapacityAmph; /// TODO: This is quite wrong to assume this.
         if (initial_load)
             ++num_overvolted_initial; /// TODO: Unit test this, as lack of this should cause a crash
         else
