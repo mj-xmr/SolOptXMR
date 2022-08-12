@@ -1,7 +1,8 @@
 {
     "glob": {
         "TESTING": false,
-        "ARCHIVE_IMAGES": true
+        "ARCHIVE_IMAGES": true,
+        "ENABLE_PLOTTING": true
     },
     "hosts": {
 	"IMG_CAPTURE_HOST": "localhost"

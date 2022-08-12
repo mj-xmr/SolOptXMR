@@ -31,6 +31,7 @@ from python_json_config import ConfigBuilder
 DEFAULT_BATTERY_STATE = 0
 DEFAULT_CHARGE_STATE = 'discharging'
 config_system = sunrise_lib.config_system
+DISABLE_PLOTTING = not sunrise_lib.config_volatile.glob.ENABLE_PLOTTING
 FILE_HASHRATE_BONUS = "/hashrate_bonus_ma.dat"
 FILE_HASHRATE_SEASONAL = "/seasonal.dat"
 FILE_HASHRATE_BONUS_SINGLE = "/hashrate_bonus_ma_single.dat"
@@ -45,37 +46,40 @@ def get_args():
     sunrise_lib.add_date_arguments_to_parser(parser)
     # TODO:
     # parser.add_argument('-f', '--file-image-ocr',  default="", type=str, help="Image path to OCR (default: {})".format(""))
-    parser.add_argument('-i', '--in-data',  default="", type=str, help="Input hashrate data (default: {})".format(""))
+    parser.add_argument('-i', '--in-data',      default="", type=str, help="Input hashrate data (default: {})".format(""))
+    parser.add_argument('-bd','--binaries-dir', default="", type=str, help="Override binaries dir (default: {})".format(""))
     # TODO: use 'auto' charge status as well, based on time of day and weather.
     parser.add_argument('-c', '--charge-status', default=DEFAULT_CHARGE_STATE, type=str, help="Charge status: charging(c)/discharging(d) for voltage input (default: {})".format(DEFAULT_CHARGE_STATE))
     parser.add_argument('-o', '--out-dir',  default=sunrise_lib.DIR_TMP, type=str, help="Output dir to exchange with tsqsim (default: {})".format(""))
-    parser.add_argument('-n', '--net-diff', default=False, action='store_true', help="Plot network difficulty only (default: OFF)")
-    parser.add_argument('-m', '--sim',      default=False, action='store_true', help="Plot simulation only (default: OFF)")
-    #parser.add_argument('-v', '--verbose',      default=TESTING, action='store_true', help="Test (default: OFF)")
+    parser.add_argument('-n', '--net-diff', default=False, action='store_true', help="Plot network difficulty only (default: False)")
+    parser.add_argument('-m', '--sim',      default=False, action='store_true', help="Plot simulation only (default: False)")
+    parser.add_argument('-np','--no-plot',  default=DISABLE_PLOTTING, action='store_true', help="No plotting at all (default: {})".format(DISABLE_PLOTTING))
+    #parser.add_argument('-v', '--verbose',      default=TESTING, action='store_true', help="Test (default: False)")
     return parser.parse_args()
 
-def getInstallPathPrefix(prefix=''):
+def getInstallPathPrefix(binaries_dir, prefix=''):
     pref = prefix + 'build/'
     dir_candidates = []
-    dir_candidates.append('icecc-shared-release')
-    dir_candidates.append('icecc-static-release')
-    dir_candidates.append('default-static-release')
-    dir_candidates.append('default-shared-release')
-    dir_candidates.append('clang-static-release')
-    dir_candidates.append('clang-shared-release')
-    dir_candidates.append('gcc-static-release')
-    dir_candidates.append('gcc-shared-release')
-
+    if binaries_dir:
+        dir_candidates.append(binaries_dir)
+    else:
+        for compiler in ['icecc', 'default', 'clang', 'gcc']:
+            for linkage in ['shared', 'static']:
+                candidate = '{}-{}-release'.format(compiler, linkage)
+                dir_candidates.append(candidate)
+    
     for d in dir_candidates:
         dir_test = pref + d + "/bin"
         if os.path.isdir(dir_test):
+            print('Using installation dir:', dir_test)
             return dir_test
-    return None
 
-def getInstallPath():
-    dirr = getInstallPathPrefix()
+    raise IOError("Couldn't find installation dir in any of the following:", dir_candidates, "Is the C++ source compiled?")
+
+def getInstallPath(binaries_dir):
+    dirr = getInstallPathPrefix(binaries_dir)
     if dirr == None:
-        dirr = getInstallPathPrefix('../')
+        dirr = getInstallPathPrefix(binaries_dir, '../')
     return dirr
 
 def get_hashrate_bonus(out_dir):
@@ -116,7 +120,7 @@ class BatterySimulatorCpp(generator.BatterySimulator):
     
     def run(self, args, battery_charge, horizon):
         cwd = os.getcwd()
-        install_path = getInstallPath()
+        install_path = getInstallPath(args.binaries_dir)
         os.chdir(install_path)
 
         hashrate_bonus = get_hashrate_bonus(args.out_dir)
@@ -196,7 +200,7 @@ def plot_hashrates():
 def run_main(args, elev, show_plots, battery_charge, horizon):
     generator.run_algo(args, elev, show_plots, get_usage_prod, battery_charge, horizon)
     #generator.run_algo(args, elev, show_plots, generator.get_usage_simple)
-    if not args.sim:
+    if not args.sim and not args.no_plot:
         plot_hashrates()
 
 def main(args):
@@ -228,7 +232,7 @@ def main(args):
         print("Battery apere-hours is 0. Trying to guess a reasonable value.")
     
     if args.net_diff:
-        install_path = getInstallPath()
+        install_path = getInstallPath(args.binaries_dir)
         os.chdir(install_path)
         hashrate_bonus = get_hashrate_bonus(args.out_dir)
         plot_hashrates()
@@ -236,7 +240,7 @@ def main(args):
         start_date = dateutil.parser.parse(args.start_date)
         elev = generator.get_power(start_date, args.days_horizon, unpickle=False)
         #print(pos)
-        show_plots = True
+        show_plots = not args.no_plot
         #print('hori', args.days_horizon)
         elev = generator.proc_data(elev, False, args.days_horizon)
         #elev = generator.extr_data(proc)
