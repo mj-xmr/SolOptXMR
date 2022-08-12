@@ -7,28 +7,35 @@
 
 using namespace EnjoLib;
 
-TEST(Json_read_all)
+TEST(Json_ReadComputers)
 {
-	JsonReader().ReadComputers();
-	JsonReader().ReadBatteries();
-	JsonReader().ReadHabits   ();
-	JsonReader().ReadSystem();
-	JsonReader().ReadConfigSol();
-	CHECK(true);
-}
-
-TEST(Json_read_volatile)
-{
-    JsonReader().ReadConfigSol();
+    JsonReader().ReadComputers();
     CHECK(true);
 }
 
+TEST(Json_ReadBatteries)
+{
+    JsonReader().ReadBatteries();
+    CHECK(true);
+}
 
-TEST(Json_read_habits)
+TEST(Json_ReadSystem)
+{
+    JsonReader().ReadSystem();
+    CHECK(true);
+}
+
+TEST(Json_ReadHabits)
 {
     JsonReader().ReadHabits();
     //const bool result = habit.HasHour(0);
     //const bool expected = false;
     //CHECK_EQUAL(expected, result);
+    CHECK(true);
+}
+
+TEST(Json_ReadConfigSol)
+{
+    JsonReader().ReadConfigSol();
     CHECK(true);
 }
