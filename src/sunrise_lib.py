@@ -97,7 +97,6 @@ def read_file(fname):
         return fin.read()
         
 def run_cmd(cmd, print_result=True):
-    cmd = 'stdbuf -oL ' + cmd
     print("Running command:\n" + cmd)
     result = run(cmd.split(), bufsize=0, stdout=PIPE, stderr=PIPE, universal_newlines=True)
     if print_result:
