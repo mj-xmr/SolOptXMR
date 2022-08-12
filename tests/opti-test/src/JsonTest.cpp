@@ -7,6 +7,15 @@
 
 using namespace EnjoLib;
 
+TEST(Json_read_all)
+{
+	JsonReader().ReadComputers();
+	JsonReader().ReadBatteries();
+	JsonReader().ReadHabits   ();
+	JsonReader().ReadSystem();
+	JsonReader().ReadConfigSol();
+	CHECK(true);
+}
 
 TEST(Json_read_volatile)
 {
