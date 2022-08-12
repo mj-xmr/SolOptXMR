@@ -283,7 +283,9 @@ EnjoLib::Str JsonReader::GetJson(const EnjoLib::Str & fileName)
     {
         Assertions::Throw("Not found home dir", "JsonReader::GetJson");
     }
-    Ifstream fcomps(Str(homedir) + "/.config/solar/" + fileName);
+    const Str path = Str(homedir) + "/.config/solar/" + fileName;
+    {LOGL << "Reading json: " << path << Nl;}
+    Ifstream fcomps(path);
     const Tokenizer tok;
     const VecStr & lines = tok.GetLines(fcomps);
     Str wholeJson;
