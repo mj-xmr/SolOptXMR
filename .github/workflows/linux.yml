@@ -133,16 +133,9 @@ jobs:
     
 
   build-macos:
-    runs-on: ${{ matrix.os }}
+    runs-on: macOS-latest
     env:
       CCACHE_TEMPDIR: /tmp/.ccache-temp
-    strategy:
-      fail-fast: false
-      matrix:
-        #os: [macOS-latest, macOS-11]    # prev
-        #os: [macOS-latest, macOS-10.15] # future 
-        #os: [macOS-10.15, macOS-11]      # transitionary
-        os: [macOS-latest]     
     steps:
     - uses: actions/checkout@v1
       with:
@@ -182,18 +175,11 @@ jobs:
 
   test-macos:
     needs: build-macos
-    runs-on: ${{ matrix.os }}
-    timeout-minutes: 59
+    runs-on: macOS-latest
+    timeout-minutes: 50
     continue-on-error: true # It will timeout and appear to have failed, so let's ignore the warning
     env:
       CCACHE_TEMPDIR: /tmp/.ccache-temp
-    strategy:
-      fail-fast: false
-      matrix:
-        #os: [macOS-latest, macOS-11]    # prev
-        #os: [macOS-latest, macOS-10.15] # future 
-        #os: [macOS-10.15, macOS-11]      # transitionary
-        os: [macOS-latest]     
     steps:
     - uses: actions/checkout@v1
       with:
