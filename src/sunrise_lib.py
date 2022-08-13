@@ -98,7 +98,9 @@ def read_file(fname):
         
 def run_cmd(cmd, print_result=True):
     print("Running command:\n" + cmd)
-    result = run(cmd.split(), bufsize=0, stdout=PIPE, stderr=PIPE, universal_newlines=True)
+    timeout_minutes = 59
+    timeout_s = timeout_minutes * 60
+    result = run(cmd.split(), timeout=timeout_s, bufsize=0, stdout=PIPE, stderr=PIPE, universal_newlines=True)
     if print_result:
         print(result.returncode, result.stdout, result.stderr)
     return result
