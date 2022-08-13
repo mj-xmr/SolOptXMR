@@ -173,9 +173,10 @@ The currently modelled (dis)charge profiles:
 These kinds of images are able to be successfully recognized:
 
 ![lcd](https://user-images.githubusercontent.com/63722585/184493273-58239fe5-3e8b-4646-a3de-c06449d6c534.png)
+Translates into the displayed number.
 
 ![image](https://user-images.githubusercontent.com/63722585/184493343-3793b869-0284-4d49-8c27-57a3f5274c8f.png)
-
+Using custom code, translates into percentage - in this case 100%, since all the relevant rectangles are lit.
 
 More [examples here](src/data/img).
 
