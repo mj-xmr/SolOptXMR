@@ -31,7 +31,7 @@
     	  },
     	  {
     	  	"name" : "Slow cooker 4 Sunday",
-    	  	"count" : 1,
+    	  	"count" : 0,
     	  	"watt" : 150,
     	  	"duration_hours" : 5,
     	  	"schedule" : "0 0 8 * * SUN"
