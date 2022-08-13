@@ -176,12 +176,12 @@ Translates into the displayed number:
 
 ![lcd](https://user-images.githubusercontent.com/63722585/184493273-58239fe5-3e8b-4646-a3de-c06449d6c534.png)
 
-Similar as the LCD above but notice, that this one is backlit, whose removal requires an additional inversion step:
+Similar as the LCD above but notice, that this one is backlit, the removal of which requires an additional inversion step:
 
 ![lcd-backlit](https://user-images.githubusercontent.com/63722585/184493679-ed3a3a25-e297-481c-8aa4-a0c871ccac5f.png)
 
 
-Using custom code, translates into percentage - in this case 100%, since all the relevant rectangles are lit:
+Using custom code, translates into percentage - in this case 100%, since all the relevant rectangles, namely the ones representing the battery charge, are lit:
 
 ![image](https://user-images.githubusercontent.com/63722585/184493343-3793b869-0284-4d49-8c27-57a3f5274c8f.png)
 
