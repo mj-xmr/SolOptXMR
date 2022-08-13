@@ -169,9 +169,18 @@ The currently modelled (dis)charge profiles:
 
 ![bat-charge](data/voltage-2-soc-charge.png)
 
+## OCR and generic image recognition
+These kinds of images are able to be successfully recognized:
+
+![lcd](https://user-images.githubusercontent.com/63722585/184493273-58239fe5-3e8b-4646-a3de-c06449d6c534.png)
+
+![image](https://user-images.githubusercontent.com/63722585/184493343-3793b869-0284-4d49-8c27-57a3f5274c8f.png)
 
 
-## Console interactive UI
+More [examples here](src/data/img).
+
+
+## Console interactive UI (WIP)
 Accessible via `ssh`/`putty`, based on `curses`.
 
 ![image](https://user-images.githubusercontent.com/63722585/163773221-52705e53-167b-4468-ad7e-2038c2f822a8.png)
