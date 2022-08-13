@@ -32,11 +32,10 @@ echo "Testing the entire production chain:"
 export R_HOME=/usr/lib/R && export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$R_HOME/lib
 if [ "$(uname)" == "Linux" ]; then
 	python3 src/prod.py
-fi
-#else
+else
 	# TODO: Mac OSX suffers from an endless loop (?) in prod.py
 	#python3 src/prod.py
-	#cd build/default-static-release/bin/
-	#./opti --out "/tmp" # todo: should be defaulted in the CI App's CLI
-#fi
+	cd build/default-static-release/bin/
+	./opti # --out "/tmp" # todo: should be defaulted in the CI App's CLI
+fi
 

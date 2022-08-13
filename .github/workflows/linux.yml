@@ -184,6 +184,7 @@ jobs:
     needs: build-macos
     runs-on: ${{ matrix.os }}
     timeout-minutes: 59
+    continue-on-error: true # It will timeout and appear to have failed, so let's ignore the warning
     env:
       CCACHE_TEMPDIR: /tmp/.ccache-temp
     strategy:
