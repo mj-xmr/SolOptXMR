@@ -176,7 +176,7 @@ jobs:
   test-macos:
     needs: build-macos
     runs-on: macOS-latest
-    timeout-minutes: 50
+    timeout-minutes: 60
     continue-on-error: true # It will timeout and appear to have failed, so let's ignore the warning
     env:
       CCACHE_TEMPDIR: /tmp/.ccache-temp
