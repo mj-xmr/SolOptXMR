@@ -183,7 +183,7 @@ jobs:
   test-macos:
     needs: build-macos
     runs-on: ${{ matrix.os }}
-    timeout-minutes:59
+    timeout-minutes: 59
     env:
       CCACHE_TEMPDIR: /tmp/.ccache-temp
     strategy:
