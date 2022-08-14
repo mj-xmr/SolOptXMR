@@ -146,7 +146,7 @@ Below is the standard Python plot:
 ![plots-python](docs/screenshots/various-plots-python.png)
 
 The same plot can represented in alternative ways for systems or remote connections, where Python plotting isn't available. 
-First the gnuplot-iostreams console output is presented, that mimics the energy input cycles, as well as the bettery charge from the above Python plot:
+First the gnuplot-iostreams console output is presented, that mimics the energy input cycles, as well as the bettery charge from the above Python plot accordingly:
 
 ![plots-python](docs/screenshots/various-plots-gnuplot-iostreams.png)
 
