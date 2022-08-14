@@ -150,7 +150,7 @@ First the gnuplot-iostreams console output is presented, that mimics the energy 
 
 ![plots-python](docs/screenshots/various-plots-gnuplot-iostreams.png)
 
-Yet because it's quite cumbersome to install the gnuplot's dependencies under Windows and because these kinds of console plots take a lot of space to be printed in a readable form, the below purely ASCII representation is also being used:
+Yet because it's quite cumbersome to install the gnuplot's dependencies under Windows and because these kinds of console plots take a lot of space to be printed in a readable form, the below dependency-free ASCII representation is also being used:
 
 ![plots-python](docs/screenshots/various-plots-enjolib.png)
 
