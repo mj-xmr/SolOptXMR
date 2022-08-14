@@ -154,7 +154,7 @@ Below is the standard Python plot:
 The same plot can represented in alternative ways for systems or remote connections, where Python plotting isn't available. 
 First the gnuplot-iostreams console output is presented, that mimics the energy input cycles, as well as the bettery charge from the above Python plot:
 
-![plots-python](docs/screenshots/various-plots-python.png)
+![plots-python](docs/screenshots/various-plots-gnuplot-iostreams.png)
 
 Yet because it's quite cumbersome to install the gnuplot's dependencies under Windows and because these kinds of console plots take a lot of space to be printed in a readable form, the below purely ASCII representation is also being used:
 
