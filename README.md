@@ -160,7 +160,7 @@ Yet because it's quite cumbersome to install the gnuplot's dependencies under Wi
 
 ![plots-python](docs/screenshots/various-plots-enjolib.png)
 
-This kind of ASCII plotting yields a very quick and compact way to deliver multi-layered information in just one visible screen area, that's currently visible to you.
+This kind of ASCII plotting yields a very quick and compact way to deliver multi-layered information in just one screen area, that might be currently visible to you.
 
 ## Network difficulty
 These data are taken into account when making decision about starting a rig or not. 
