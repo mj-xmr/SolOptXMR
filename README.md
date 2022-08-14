@@ -135,15 +135,9 @@ To visualize the currently modelled (dis)charge rates, as described [in this pap
 # Screenshots
 
 ## First production model
-A model with an integrated n-day weather prediction & multiple, user-defined mining rigs (here: 2).
+A model with an integrated n-day weather prediction & multiple, user-defined mining rigs (here: 2), simulating the battery drainage with a horizon of 5 days:
 
 ![solopt-prod](https://user-images.githubusercontent.com/63722585/167363580-978d0835-9d6c-40bb-94dd-ffa955bade10.png)
-
-
-## First model
-A plot of the energetic balance, based on real astronomic data and contrived weather distortions, simulating the battery drainage with a horizon of 3 days:
-
-![plot-1st](https://user-images.githubusercontent.com/63722585/163774847-7c3f522a-a6b9-43bf-b133-6ba0c6e007f8.png)
 
 ## Alternative plots
 
