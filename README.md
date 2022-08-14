@@ -145,6 +145,23 @@ A plot of the energetic balance, based on real astronomic data and contrived wea
 
 ![plot-1st](https://user-images.githubusercontent.com/63722585/163774847-7c3f522a-a6b9-43bf-b133-6ba0c6e007f8.png)
 
+## Alternative plots
+
+Below is the standard Python plot:
+
+![plots-python](docs/screenshots/various-plots-python.png)
+
+The same plot can represented in alternative ways for systems or remote connections, where Python plotting isn't available. 
+First the gnuplot-iostreams console output is presented, that mimics the energy input cycles, as well as the bettery charge from the above Python plot:
+
+![plots-python](docs/screenshots/various-plots-python.png)
+
+Yet because it's quite cumbersome to install the gnuplot's dependencies under Windows and because these kinds of console plots take a lot of space to be printed in a readable form, the below purely ASCII representation is also being used:
+
+![plots-python](docs/screenshots/various-plots-enjolib.png)
+
+This kind of ASCII plotting yields a very quick and compact way to deliver multi-layered information in just one visible screen area, that's currently visible to you.
+
 ## Network difficulty
 These data are taken into account when making decision about starting a rig or not. 
 Sometimes it's worth to wait for a while until other miners switch off their rigs in order to scoop more coins for the same amount of used power. 
