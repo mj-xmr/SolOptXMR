@@ -16,6 +16,29 @@ It will accommodate for issues such as:
 
 [Full description on Monero Community Crowdfunding System](https://ccs.getmonero.org/proposals/soloptxmr-mj-endor-2022.html)
 
+
+ - [SolOptXMR](#soloptxmr)
+ - [Requirements](#requirements)
+ - [Quickstart](#quickstart)
+  - [Preparation](#preparation)
+  - [Building & running](#building-&-running)
+ - [or](#)
+  - [Plotting the hashrate situation only](#plotting-the-hashrate-situation-only)
+  - [Configuration](#configuration)
+ - [Extra scripts](#extra-scripts)
+  - [Modeling solar arrays](#modeling-solar-arrays)
+  - [Voltage plots](#voltage-plots)
+ - [Further documentation](#further-documentation)
+ - [Screenshots](#screenshots)
+  - [First production model](#first-production-model)
+  - [Alternative plots](#alternative-plots)
+  - [Network difficulty](#network-difficulty)
+  - [Solar array modeling](#solar-array-modeling)
+  - [Lead-acid battery (dis)charge profiles](#lead-acid-battery-(dis)charge-profiles)
+  - [OCR and generic image recognition](#ocr-and-generic-image-recognition)
+  - [Console interactive UI (WIP)](#console-interactive-ui-(wip))
+  - [Profitability calculation](#profitability-calculation)
+  
 # Requirements
 - A POSIX system with a C++ compiler and Python3 interpreter. 
 - Less than 1 GB of RAM.
