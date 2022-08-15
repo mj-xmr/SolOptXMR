@@ -21,6 +21,8 @@ class ConfigSol : public ConfigBase
         void FromOptsNumeric(const OptionsNumeric & optsNum) override;
 
         void UpdateFromOther(const ConfigSol & cfgTSCmdLine);
+        
+        bool NO_PROGRESS_BAR = false; constexpr static const char * DESCR_NO_PROGRESS_BAR = "Disable progress bar"; 
 
         long int DAYS_HORIZON = 3; constexpr static const char * DESCR_DAYS_HORIZON = "How many days ahead you'd like to predict";
         long int DAYS_START = 0;   constexpr static const char * DESCR_DAYS_START   = "The starting day";

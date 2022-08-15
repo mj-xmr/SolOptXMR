@@ -27,6 +27,7 @@ void ConfigSol::FromOptsNumeric(const OptionsNumeric & optsNum)
 
 void ConfigSol::RegisterAndReadBools(EnjoLib::Istream & f)
 {
+    RegisterAndReadBool(f, NO_PROGRESS_BAR, false, DESCR_NO_PROGRESS_BAR);    
 }
 
 void ConfigSol::RegisterAndReadInts(EnjoLib::Istream & f)
