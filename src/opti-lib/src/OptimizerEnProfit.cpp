@@ -110,6 +110,8 @@ void OptimizerEnProfit::RandomSearch()
     {
         if (i % 100000 == 0)
         {
+bool pmanim = false; /// TODO use cli on ci & true by default
+if (pmanim)
             progressMonitor.PrintProgressBarTime(i, MAX_NUM_COMBINATIONS, "Solutions");
             //if (i > 0)
             {
