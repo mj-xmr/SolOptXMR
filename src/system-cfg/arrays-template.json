@@ -2,7 +2,7 @@
     "arrays": [
     	  {
     	  	"name" : "South",
-    	  	"count" : 1,
+    	  	"count" : 2,
     	  	"watt_peak" : 200,
     	  	"surface_tilt" : 87,
     	  	"surface_azimuth" : 193
