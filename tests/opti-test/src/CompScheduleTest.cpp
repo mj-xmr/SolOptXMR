@@ -1,4 +1,4 @@
-#include "OptimizerEnProfit.h" /// TODO: Use a smaller header after the extraction
+//#include "OptimizerEnProfit.h" /// TODO: Use a smaller header after the extraction
 #include "OptiEnProfitResults.h"
 
 //#include "ConfigSol.h"
@@ -49,7 +49,7 @@ static Str GetStartHourToSchedule(int startHour, int endHour = -1)
     return oss.str();
 }
 
-TEST(CompSched_1)
+TEST(CompSched_open_ended)
 {
     const CharManipulations cman;
     const Computer & comp0 = GetCompTestSched();
@@ -67,5 +67,22 @@ TEST(CompSched_1)
     CHECK_EQUAL(exp, toks.at(1));
     
     const Str & expText = GetStartHourToSchedule(startHour);
+    CHECK_EQUAL(expText, toks.at(2));
+}
+
+TEST(CompSched_finalized)
+{
+    const Computer & comp0 = GetCompTestSched();
+    const VecD schedule = {0, 0, 0, 1, 1, 1, 1, 1, 0};
+    const int currHour = 0;
+    const int startHour = 3;
+    const int endHour = 7;
+    const Str & schedStr = OptiEnProfitResults().PrintScheduleComp(comp0, schedule, currHour);
+    const Tokenizer tok;
+    const VecStr & toks = tok.Tokenize(schedStr, '\n');
+    LOGL << schedStr << Nl;
+    const Str & exp = GetSched2ExpPlot(schedule);
+    CHECK_EQUAL(exp, toks.at(1));
+    const Str & expText = GetStartHourToSchedule(startHour, endHour);
     CHECK_EQUAL(expText, toks.at(2));
 }
