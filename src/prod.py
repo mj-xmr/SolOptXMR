@@ -134,6 +134,7 @@ class BatterySimulatorCpp(generator.BatterySimulator):
         cmd += " --hashrate-bonus {}".format(hashrate_bonus)
         #cmd += " --out {}" .format(args.out_dir) # Moved to json
         cmd += " --random-seed {}".format(args.random_seed)
+        cmd += " --no-progress-bar" # Looks poorly under CI logging
         #cmd += " --system-type {}".format(config_system.type)
         #cmd += " --system-voltage {}".format(config_system.voltage)
 

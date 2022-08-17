@@ -77,7 +77,7 @@ void OptimizerEnProfit::operator()()
 
 void OptimizerEnProfit::RandomSearch()
 {
-    SOL_LOG("Random search");
+    {LOGL << "Random search of " << MAX_NUM_COMBINATIONS << " solutions\n";}
     const int horizonHours = m_dataModel.GetHorizonHours();
     const EnjoLib::Array<Computer> & comps = m_dataModel.GetComputers();
     const int numComputers = comps.size();
@@ -105,19 +105,24 @@ void OptimizerEnProfit::RandomSearch()
     int alreadyCombined = 0;
     const GMat gmat;
     //const Distrib distr;
+    const bool animateProgressBar = not m_dataModel.GetConf().NO_PROGRESS_BAR;
     ProgressMonitHigh progressMonitor(20);
     for (int i = 0; i < MAX_NUM_COMBINATIONS; ++i)
     {
-        if (i % 100000 == 0)
+        if (animateProgressBar)
         {
-            progressMonitor.PrintProgressBarTime(i, MAX_NUM_COMBINATIONS, "Solutions");
-            //if (i > 0)
+            if (i % 100000 == 0)
             {
-            //const DistribData & data = distr.GetDistrib(m_goals, 20); const Str & dstr = distr.PlotLine(data, true, true, true);
-            //progressMonitor.PrintProgressBarTime(i, MAX_NUM_COMBINATIONS, dstr);    
+                progressMonitor.PrintProgressBarTime(i, MAX_NUM_COMBINATIONS, "Solutions");
+                //if (i > 0)
+                {
+                //const DistribData & data = distr.GetDistrib(m_goals, 20); const Str & dstr = distr.PlotLine(data, true, true, true);
+                //progressMonitor.PrintProgressBarTime(i, MAX_NUM_COMBINATIONS, dstr);    
+                }
+                
             }
-            
         }
+        
         const int icomp = gmat.round(rmath.Rand(0, numComputers-1));
         //for (int icomp = 0; icomp < numComputers; ++icomp)
         {
