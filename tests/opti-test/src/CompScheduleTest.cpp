@@ -64,6 +64,7 @@ static Str GetStartHourToWakeup(int startHour, const Computer & comp)
     oss << "wakeonlan " << compSched_macAddr;
     if (startHour > SCHEDULE_CURR_HOUR)
     {
+        /// TODO: All "at"s should also include the day when to start, not just today, unless we assume starting once only every day, which makes sense as well, but make it a parameter or sth.
         oss << "\" | at " << startHour << ":00";
     }
     return oss.str();

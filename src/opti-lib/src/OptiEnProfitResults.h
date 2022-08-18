@@ -21,7 +21,7 @@ class OptiEnProfitResults
         };
 
         EnjoLib::Str PrintScheduleComp(const Computer & comp, const EnjoLib::VecD & best) const;
-        CommandsInfos PrintCommandsComp(const Computer & comp, const EnjoLib::VecD & best, int currHour, int maxDayCmdsLimit = -1) const;
+        CommandsInfos PrintCommandsComp(const Computer & comp, const EnjoLib::VecD & best, int currHour, int maxDayCmdsLimit = 1) const;
         
         static const int SSH_TIMEOUT;
         
