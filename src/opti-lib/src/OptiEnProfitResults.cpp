@@ -17,6 +17,8 @@
 using namespace std;
 using namespace EnjoLib;
 
+const int OptiEnProfitResults::SSH_TIMEOUT = 60;
+
 /// TODO: UTest & refactor
 void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat) const
 {
@@ -45,7 +47,10 @@ void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat) const
     {
         const Computer & comp = m_dataModel.GetComputers().at(i);
         const VecD & best = bestMat.at(i);
-        LOG << OptiEnProfitResults().PrintScheduleComp(comp, best, currHour);
+        LOG << OptiEnProfitResults().PrintScheduleComp(comp, best);
+        const OptiEnProfitResults::CommandsInfos & cmdInfo = OptiEnProfitResults().PrintCommandsComp(comp, best, currHour);
+        LOG << cmdInfo.infos;
+        oss << cmdInfo.commands;
     }
 
     LOG << "Commands:\n\n";
@@ -61,16 +66,24 @@ void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat) const
 OptiEnProfitResults:: OptiEnProfitResults() {}
 OptiEnProfitResults::~OptiEnProfitResults() {}
 
-EnjoLib::Str OptiEnProfitResults::PrintScheduleComp(const Computer & comp, const VecD & best, int currHour) const
+EnjoLib::Str OptiEnProfitResults::PrintScheduleComp(const Computer & comp, const VecD & best) const
 {
     Osstream oss;
     oss << comp.name << Nl;
     const double maxx = 1;
     oss << AsciiPlot::Build()(AsciiPlot::Pars::MAXIMUM, maxx).Finalize().Plot(best) << Nl;
+    return oss.str();
+}
+
+OptiEnProfitResults::CommandsInfos OptiEnProfitResults::PrintCommandsComp(const Computer & comp, const VecD & best, int currHour, int maxDayCmdsLimit) const
+{
+    CommandsInfos ret;
+    Osstream ossCmd, ossInfo;
+    const CharManipulations cman;
     //oss << cman.Replace(best.Print(), " ", "") << Nl;
 
-    const Str cmdsSSHbare = "ssh -o ConnectTimeout=35 -n " + comp.hostname + " ";
-    const Str cmdsSSH = cmdsSSHbare + " 'hostname; echo \"";
+    const Str cmdsSSHbare = "ssh -o ConnectTimeout=" + cman.ToStr(SSH_TIMEOUT) + " -n " + comp.hostname + " ";
+    const Str cmdsSSH = cmdsSSHbare + "'hostname; echo \"";
     const Str cmdWOL = "wakeonlan " + comp.macAddr;
     //const Str cmdSuspendAt = "systemctl suspend\"           | at ";
     const Str cmdSuspendAt = "systemctl suspend\" | at ";
@@ -89,7 +102,7 @@ EnjoLib::Str OptiEnProfitResults::PrintScheduleComp(const Computer & comp, const
         const int dayPrev  = GMat().round((ihour-1) / static_cast<double>(OptimizerEnProfit::HOURS_IN_DAY));
         if (day != dayPrev)
         {
-            //oss << Nl;
+            //ossInfo << Nl;
         }
 
         const bool onPrev = best.at(i-1);
@@ -99,45 +112,56 @@ EnjoLib::Str OptiEnProfitResults::PrintScheduleComp(const Computer & comp, const
             lastHourOn = hour;
             lastDayOn = day;
         }
+        const bool isInDayLimit = maxDayCmdsLimit < 0 || lastDayOn <= maxDayCmdsLimit;
         const int hourPrev = (ihour - 1) % OptimizerEnProfit::HOURS_IN_DAY;
         if (lastHourOn > 0)
         {
             if (not onCurr) // Switch off
             {
-                oss << "day " << lastDayOn << ", hour " << lastHourOn << "-" << hourPrev << Nl;
-                if (lastDayOn == 1)
+                ossInfo << "day " << lastDayOn << ", hour " << lastHourOn << "-" << hourPrev << Nl;
+                if (isInDayLimit)
                 {
                     // Wake up
-                    oss << "echo \"" << cmdWOL << "\" | at " << lastHourOn << cmdMinuteSuffix << Nl;
+                    ossCmd << "echo \"" << cmdWOL << "\" | at " << lastHourOn << cmdMinuteSuffix << Nl;
                     // Put to sleep
-                    oss << cmdsSSH << cmdSuspendAt << hourPrev << cmdMinuteSuffix << "'" << Nl;
+                    /// TODO: This is a logic error. It should SSH AT the end hour to sleep, not SSH now to sleep at hour. The rig is sleeping until the start hour!
+                    ossCmd << cmdsSSH << cmdSuspendAt << hourPrev << cmdMinuteSuffix << "'" << Nl;
                 }
 
                 lastHourOn = -1;
             }
             else if (i == horizonHours - 1)
             {
-                oss << "day " << lastDayOn << ", hour " << lastHourOn << "-.." << Nl;
+                ossInfo << "day " << lastDayOn << ", hour " << lastHourOn << "-.." << Nl;
+                if (isInDayLimit)
+                {
+                    // Wake up
+                    ossCmd << "echo \"" << cmdWOL << "\" | at " << lastHourOn << cmdMinuteSuffix << Nl;
+                }
             }
         }
         if (onCurr && i == 1)
         {
             // Wake up now, right at the beginning! The battery is probably already overloaded.
-            oss << cmdWOL << Nl;
+            ossCmd << cmdWOL << Nl;
             onAtFirstHour = true;
         }
         else
-        if (onPrev && not onCurr && day == 1)
+        if (onPrev && not onCurr && isInDayLimit)
         {
             if (onAtFirstHour) // Was started at the beginning already. Be sure to suspend later on.
             {
-                oss << "day 1, hour !-" << hourPrev << Nl;
-                oss << cmdsSSH << cmdSuspendAt << hourPrev << cmdMinuteSuffix << "'" << Nl;
+                ossInfo << "day 0, hour !-" << hourPrev << Nl;
+                ossCmd << cmdsSSH << cmdSuspendAt << hourPrev << cmdMinuteSuffix << "'" << Nl;
             }
         }
     }
-    oss << Nl;
+    ossCmd  << Nl;
+    ossInfo << Nl;
         
-    return oss.str();
+    ret.commands    = ossCmd.str();
+    ret.infos       = ossInfo.str();
+        
+    return ret;
 }
 
