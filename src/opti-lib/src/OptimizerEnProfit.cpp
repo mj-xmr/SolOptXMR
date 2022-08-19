@@ -30,9 +30,7 @@
 #include <Template/CorradePointer.h>
 #include <Visual/AsciiPlot.hpp>
 
-#include <STD/VectorCpp.hpp>
 #include <STD/Set.hpp>
-#include <STD/String.hpp>
 
 using namespace std;
 using namespace EnjoLib;
@@ -75,9 +73,14 @@ void OptimizerEnProfit::operator()()
     }
 }
 
+EnjoLib::Str OptimizerEnProfit::GetT() const
+{
+    return SolUtil().GetT();
+}
+
 void OptimizerEnProfit::RandomSearch()
 {
-    {LOGL << "Random search of " << MAX_NUM_COMBINATIONS << " solutions\n";}
+    {LOGL << GetT() << "Random search of " << MAX_NUM_COMBINATIONS << " solutions\n";}
     const int horizonHours = m_dataModel.GetHorizonHours();
     const EnjoLib::Array<Computer> & comps = m_dataModel.GetComputers();
     const int numComputers = comps.size();
@@ -177,7 +180,7 @@ void OptimizerEnProfit::RandomSearch()
         {
             if (Consume2(binaryMat))
             {
-                SOL_LOG("Consume success: " + binaryMat.Print());
+                SOL_LOG(GetT() + "Consume success: " + binaryMat.Print());
                 //LOGL << "Consume success: " << binaryMat.Print() << '\n';
                 m_numFailed = 0;
                 binarBest = binaryMat;
@@ -247,7 +250,7 @@ bool OptimizerEnProfit::Consume2(const EnjoLib::Matrix & dataMat)
 
         RecalcComputationCosts();
 
-        LOGL << "\nNew score = " << goal << " ->\t"
+        LOGL << Nl << GetT() << "New score = " << goal << " ->\t"
         << GMat().round(relChangePositive * 100) << "%" << " costing: "
         << GMat().round(m_relChangeNegative * 100) << "%" << ", pos2neg: "
         << GMat().round(m_relPos2Neg * 100) << "%" << Nl;

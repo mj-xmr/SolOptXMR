@@ -4,6 +4,7 @@
 #include "OptiEnProfitDataModel.h"
 #include "OptiEnProfitSubject.h"
 #include "TimeUtil.h"
+#include "SolUtil.h"
 
 #include <Ios/Osstream.hpp>
 #include <Ios/Ofstream.hpp>
@@ -26,6 +27,7 @@ void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat) const
     OptiSubjectEnProfit osub(m_dataModel);
     osub.GetVerbose(bestMat, true);
     const CharManipulations cman;
+    const SolUtil sot;
     for (int i = 0; i < bestMat.size(); ++i)
     {
         //GnuplotPlotTerminal1d(bestMat.at(i), "Best solution = " + CharManipulations().ToStr(m_goal), 1, 0.5);
@@ -35,7 +37,7 @@ void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat) const
     if (distribDat.IsValid())
     {
         const Str & dstr = distr.PlotLine(distribDat, false, true, true);
-        LOG << Nl << "Distribution of solutions:" << Nl<< dstr << Nl;
+        LOG << Nl << sot.GetT() <<  "Distribution of solutions:" << Nl<< dstr << Nl;
         //GnuplotPlotTerminal2d(distribDat.data, "Solution distribution", 1, 0.5);
     }
     Str cmds = "";
@@ -60,7 +62,7 @@ void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat) const
     Ofstream ofs(fileCmds);
     ofs << oss.str();
 
-    LOG << "\nSaved commands:\nbash " << fileCmds << Nl;
+    LOG << Nl << sot.GetT() << "Saved commands:\nbash " << fileCmds << Nl;
 }
 
 OptiEnProfitResults:: OptiEnProfitResults() {}

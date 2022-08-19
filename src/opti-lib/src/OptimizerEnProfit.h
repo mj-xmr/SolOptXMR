@@ -4,7 +4,6 @@
 #include "OptimizerBase.h"
 #include "StartEnd.h"
 
-#include <Util/Str.hpp>
 #include <Util/VecD.hpp>
 #include <Statistical/Matrix.hpp>
 
@@ -46,6 +45,7 @@ class OptimizerEnProfit : public EnjoLib::IMultiDimIterConsumerTpl //OptimizerBa
         //void PrintStats() const override;
         //void PrintStatsSummary() const override;
     private:
+        EnjoLib::Str GetT() const;
         const OptiEnProfitDataModel & m_dataModel;
         EnjoLib::Matrix m_data;
 

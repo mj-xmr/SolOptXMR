@@ -10,6 +10,8 @@ class SolUtil
 public:
 	SolUtil();
 	virtual ~SolUtil();
+	
+	EnjoLib::Str GetT() const;
 
 protected:
 
