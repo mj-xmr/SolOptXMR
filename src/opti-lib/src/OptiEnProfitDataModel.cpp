@@ -132,3 +132,9 @@ double OptiEnProfitDataModel::GetHabitsUsage(int i) const
         return sum;
     }
 }
+
+bool OptiEnProfitDataModel::IsAnimateProgressBar() const
+{
+    const bool animateProgressBar = not GetConf().NO_PROGRESS_BAR;
+    return animateProgressBar;
+}

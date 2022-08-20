@@ -108,7 +108,7 @@ void OptimizerEnProfit::RandomSearch()
     int alreadyCombined = 0;
     const GMat gmat;
     //const Distrib distr;
-    const bool animateProgressBar = not m_dataModel.GetConf().NO_PROGRESS_BAR;
+    const bool animateProgressBar = m_dataModel.IsAnimateProgressBar();
     ProgressMonitHigh progressMonitor(20);
     for (int i = 0; i < MAX_NUM_COMBINATIONS; ++i)
     {
@@ -247,10 +247,13 @@ bool OptimizerEnProfit::Consume2(const EnjoLib::Matrix & dataMat)
     {
         const double relChangePositive = GMat().RelativeChange(goal, m_goal);
         m_relChangePositive = relChangePositive;
-
+        ELO
         RecalcComputationCosts();
-
-        LOGL << Nl << GetT() << "New score = " << goal << " ->\t"
+        if (m_dataModel.IsAnimateProgressBar())
+        {
+            LOG << Nl; // Need an extra space to clear the progress bar
+        }
+        LOG << GetT() << "New score = " << goal << " ->\t"
         << GMat().round(relChangePositive * 100) << "%" << " costing: "
         << GMat().round(m_relChangeNegative * 100) << "%" << ", pos2neg: "
         << GMat().round(m_relPos2Neg * 100) << "%" << Nl;

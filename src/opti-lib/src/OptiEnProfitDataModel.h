@@ -37,6 +37,7 @@ class OptiEnProfitDataModel
         double GetHabitsUsage(int i) const;
         const BatteryParams & GetBatPars() const { return m_batPars; }
         const System & GetSystem() const { return m_sys; }
+        bool IsAnimateProgressBar() const;
 
     protected:
 
