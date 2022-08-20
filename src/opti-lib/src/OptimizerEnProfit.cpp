@@ -31,6 +31,7 @@
 #include <Visual/AsciiPlot.hpp>
 
 #include <STD/Set.hpp>
+#include <STD/String.hpp>
 
 using namespace std;
 using namespace EnjoLib;
