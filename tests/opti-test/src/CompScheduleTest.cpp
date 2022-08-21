@@ -72,11 +72,6 @@ static Str GetStartHourToWakeup(int startHour, const Computer & comp)
 
 static Str GetStartHourToSleep(const Computer & comp, int endHour)
 {
-    /// TODO: This is a logic error. It should SSH AT the end hour to sleep, not SSH now to sleep at hour. The rig is sleeping until the start hour!
-    Osstream ossOld;
-    ossOld << "ssh -o ConnectTimeout=" << OptiEnProfitResults::SSH_TIMEOUT << " -n " << compSched_hostname 
-    << " 'hostname; echo \"systemctl suspend\" | at " << endHour << ":00'";
-    ///return ossOld.str();
     Osstream oss;
     oss 
     << "echo \"" << "ssh -o ConnectTimeout=" << OptiEnProfitResults::SSH_TIMEOUT << " -n " << compSched_hostname  

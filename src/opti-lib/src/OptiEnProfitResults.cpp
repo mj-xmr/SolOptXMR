@@ -126,7 +126,6 @@ OptiEnProfitResults::CommandsInfos OptiEnProfitResults::PrintCommandsComp(const 
                     // Wake up
                     ossCmd << "echo \"" << cmdWOL << "\" | at " << lastHourOn << cmdMinuteSuffix << Nl;
                     // Put to sleep
-                    /// TODO: This is a logic error. It should SSH AT the end hour to sleep, not SSH now to sleep at hour. The rig is sleeping until the start hour!
                     ossCmd << cmdsSSH << cmdSuspendAt << hourPrev << cmdMinuteSuffix << Nl;
                 }
 
