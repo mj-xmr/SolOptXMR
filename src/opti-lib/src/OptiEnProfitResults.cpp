@@ -85,10 +85,10 @@ OptiEnProfitResults::CommandsInfos OptiEnProfitResults::PrintCommandsComp(const 
     //oss << cman.Replace(best.Print(), " ", "") << Nl;
 
     const Str cmdsSSHbare = "ssh -o ConnectTimeout=" + cman.ToStr(SSH_TIMEOUT) + " -n " + comp.hostname + " ";
-    const Str cmdsSSH = cmdsSSHbare + "'hostname; echo \"";
+    const Str cmdsSSH = "echo \"" + cmdsSSHbare + "'hostname; ";
     const Str cmdWOL = "wakeonlan " + comp.macAddr;
     //const Str cmdSuspendAt = "systemctl suspend\"           | at ";
-    const Str cmdSuspendAt = "systemctl suspend\" | at ";
+    const Str cmdSuspendAt = "systemctl suspend'\" | at ";
     const Str cmdMinuteSuffix = ":00";
 
     bool onAtFirstHour = false;
@@ -127,7 +127,7 @@ OptiEnProfitResults::CommandsInfos OptiEnProfitResults::PrintCommandsComp(const 
                     ossCmd << "echo \"" << cmdWOL << "\" | at " << lastHourOn << cmdMinuteSuffix << Nl;
                     // Put to sleep
                     /// TODO: This is a logic error. It should SSH AT the end hour to sleep, not SSH now to sleep at hour. The rig is sleeping until the start hour!
-                    ossCmd << cmdsSSH << cmdSuspendAt << hourPrev << cmdMinuteSuffix << "'" << Nl;
+                    ossCmd << cmdsSSH << cmdSuspendAt << hourPrev << cmdMinuteSuffix << Nl;
                 }
 
                 lastHourOn = -1;
@@ -154,7 +154,7 @@ OptiEnProfitResults::CommandsInfos OptiEnProfitResults::PrintCommandsComp(const 
             if (onAtFirstHour) // Was started at the beginning already. Be sure to suspend later on.
             {
                 ossInfo << "day 0, hour !-" << hourPrev << Nl;
-                ossCmd << cmdsSSH << cmdSuspendAt << hourPrev << cmdMinuteSuffix << "'" << Nl;
+                ossCmd << cmdsSSH << cmdSuspendAt << hourPrev << cmdMinuteSuffix << Nl;
             }
         }
     }
