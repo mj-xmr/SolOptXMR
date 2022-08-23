@@ -23,7 +23,7 @@ static Computer GetCompTestSched()
     Computer compTest;
     compTest.macAddr = compSched_macAddr;
     compTest.hostname = compSched_hostname;
-    
+
     return compTest;
 }
 
@@ -72,118 +72,137 @@ static Str GetStartHourToWakeup(int startHour, const Computer & comp)
 
 static Str GetStartHourToSleep(const Computer & comp, int endHour)
 {
+    if (endHour < 0)
+    {
+        return "";
+    }
     Osstream oss;
-    oss 
-    << "echo \"" << "ssh -o ConnectTimeout=" << OptiEnProfitResults::SSH_TIMEOUT << " -n " << compSched_hostname  
+    oss
+    << "echo \"" << "ssh -o ConnectTimeout=" << OptiEnProfitResults::SSH_TIMEOUT << " -n " << compSched_hostname
     << " 'hostname; systemctl suspend'\" | at " << endHour << ":00";
     return oss.str();
 }
 
 //ssh -o ConnectTimeout=35 -n Miner_2049er  'hostname; echo "systemctl suspend" | at 7:00
 
-TEST(CompSched_open_ended)
+static void CompSchedTestGraph(const VecD & schedule)
 {
     const OptiEnProfitResults proRes;
     const Computer & comp0 = GetCompTestSched();
-    const VecD schedule = {0, 0, 0, 1, 1, 1, 1, 1, 1};
-    const int currHour = SCHEDULE_CURR_HOUR;
-    const int startHour = 3;
-    const Str & schedStr = proRes.PrintScheduleComp(comp0, schedule);
+
+    const Str & schedStr = proRes.PrintScheduleCompGraph(comp0, schedule);
     CHECK(schedStr.size());
     const Tokenizer tok;
     const VecStr & toks = tok.Tokenize(schedStr, '\n');
     LOGL << schedStr << Nl;
     CHECK(toks.size() > 1);
-    
+
     const Str & exp = GetSched2ExpPlot(schedule);
     CHECK_EQUAL(exp, toks.at(1));
-    
+}
+
+static VecStr CompSchedTestCommands(const VecD & schedule, int currHour, int startHour, int endHour)
+{
+    ELO
+    const OptiEnProfitResults proRes;
+    const Tokenizer tok;
+    const Computer & comp0 = GetCompTestSched();
+    const OptiEnProfitResults::CommandsInfos & cmdInfo = proRes.PrintCommandsComp(comp0, schedule, currHour);
+    LOG << "Info: " << cmdInfo.infos;
+    LOG << "Cmds: " << cmdInfo.commands;
+    const VecStr & toksInfo = tok.Tokenize(cmdInfo.infos, '\n');
+    const Str & expTextInfo = GetStartHourToSchedule(startHour, endHour);
+    CHECK(toksInfo.size());
+    CHECK_EQUAL(expTextInfo, toksInfo.at(0));
+    const VecStr & toksCmds = tok.Tokenize(cmdInfo.commands, '\n');
+
+    const Str & expTextCmdWakeUp = GetStartHourToWakeup(startHour, comp0);
+    const Str & expTextCmdSleep  = GetStartHourToSleep(comp0, endHour);
+
+    CHECK_EQUAL(expTextCmdWakeUp, toksCmds.at(0));
+    LOG << "Was & exp:\n" << toksCmds.at(1) << Nl << expTextCmdSleep << Nl;
+    CHECK_EQUAL(expTextCmdSleep,  toksCmds.at(1));
+
+    return toksCmds;
+}
+
+TEST(CompSched_open_ended)
+{
+    const VecD schedule = {0, 0, 0, 1, 1, 1, 1, 1, 1};
+
+    CompSchedTestGraph(schedule);
     {
-        ELO
-        const OptiEnProfitResults::CommandsInfos & cmdInfo = proRes.PrintCommandsComp(comp0, schedule, currHour);
-        LOG << "Info: " << cmdInfo.infos;
-        LOG << "Cmds: " << cmdInfo.commands;
-        const VecStr & toksInfo = tok.Tokenize(cmdInfo.infos, '\n');
-        const Str & expTextInfo = GetStartHourToSchedule(startHour);
-        CHECK(toksInfo.size());
-        CHECK_EQUAL(expTextInfo, toksInfo.at(0));
-        
-        const VecStr & toksCmds = tok.Tokenize(cmdInfo.commands, '\n');
-        const Str & expTextCmdWakeUp = GetStartHourToWakeup(startHour, comp0);
+        const int currHour = SCHEDULE_CURR_HOUR;
+        const int startHour = 3;
+        const int endHour = -1;
+
+        const VecStr & toksCmds = CompSchedTestCommands(schedule, currHour, startHour, endHour);
         CHECK(toksCmds.size() >= 1);
-        CHECK_EQUAL(expTextCmdWakeUp, toksCmds.at(0));
-        
+
     } //echo "wakeonlan DE:AD:BE:EF:AA:BB" | at 3:00
 }
 
 TEST(CompSched_finalized)
 {
-    const OptiEnProfitResults proRes;
-    const Computer & comp0 = GetCompTestSched();
     const VecD schedule = {0, 0, 0, 1, 1, 1, 1, 1, 0};
-    const int currHour = SCHEDULE_CURR_HOUR;
-    const int startHour = 3;
-    const int endHour = 7;
-    const Str & schedStr = proRes.PrintScheduleComp(comp0, schedule);
-    const OptiEnProfitResults::CommandsInfos & cmdInfo = proRes.PrintCommandsComp(comp0, schedule, currHour);
-    const Tokenizer tok;
-    const VecStr & toks = tok.Tokenize(schedStr, '\n');
-    LOGL << schedStr << Nl;
-    const Str & exp = GetSched2ExpPlot(schedule);
-    CHECK_EQUAL(exp, toks.at(1));
-    
+
+    CompSchedTestGraph(schedule);
     {
         ELO
-        const OptiEnProfitResults::CommandsInfos & cmdInfo = proRes.PrintCommandsComp(comp0, schedule, currHour);
-        LOG << "Info: " << cmdInfo.infos;
-        LOG << "Cmds: " << cmdInfo.commands;
-        const VecStr & toksInfo = tok.Tokenize(cmdInfo.infos, '\n');
-        const Str & expTextInfo = GetStartHourToSchedule(startHour, endHour);
-        CHECK_EQUAL(expTextInfo, toksInfo.at(0));
-        
-        const VecStr & toksCmds = tok.Tokenize(cmdInfo.commands, '\n');
-        const Str & expTextCmdWakeUp = GetStartHourToWakeup(startHour, comp0);
-        const Str & expTextCmdSleep  = GetStartHourToSleep(comp0, endHour);
+        const int currHour = SCHEDULE_CURR_HOUR;
+        const int startHour = 3;
+        const int endHour = 7;
+
+        const VecStr & toksCmds = CompSchedTestCommands(schedule, currHour, startHour, endHour);
         CHECK(toksCmds.size() >= 2);
-        CHECK_EQUAL(expTextCmdWakeUp, toksCmds.at(0));
-        LOG << "Was & exp:\n" << toksCmds.at(1) << Nl << expTextCmdSleep << Nl;
-        CHECK_EQUAL(expTextCmdSleep,  toksCmds.at(1));
     }
 }
 
 
 TEST(CompSched_start_immediately)
 {
-    const OptiEnProfitResults proRes;
-    const Computer & comp0 = GetCompTestSched();
-    const VecD schedule = {1, 1, 1, 1, 1, 1, 1, 1, 0}; // TODO: {1, 1, 1, 1, 1, 1, 1, 1, 1}; (aka - start and never finish)
-    const int currHour = SCHEDULE_CURR_HOUR;
-    const int startHour = 0;
-    const int endHour = 7;
-    const Str & schedStr = proRes.PrintScheduleComp(comp0, schedule);
-    const OptiEnProfitResults::CommandsInfos & cmdInfo = proRes.PrintCommandsComp(comp0, schedule, currHour);
-    const Tokenizer tok;
-    const VecStr & toks = tok.Tokenize(schedStr, '\n');
-    LOGL << schedStr << Nl;
-    const Str & exp = GetSched2ExpPlot(schedule);
-    CHECK_EQUAL(exp, toks.at(1));
-    
+    const VecD schedule = {1, 1, 1, 1, 1, 1, 1, 1, 0};
+
+    CompSchedTestGraph(schedule);
+
     {
         ELO
-        const OptiEnProfitResults::CommandsInfos & cmdInfo = proRes.PrintCommandsComp(comp0, schedule, currHour);
-        LOG << "Info: " << cmdInfo.infos;
-        LOG << "Cmds: " << cmdInfo.commands;
-        const VecStr & toksInfo = tok.Tokenize(cmdInfo.infos, '\n');
-        const Str & expTextInfo = GetStartHourToSchedule(startHour, endHour);
-        CHECK_EQUAL(expTextInfo, toksInfo.at(0));
-        
-        const VecStr & toksCmds = tok.Tokenize(cmdInfo.commands, '\n');
+        const int currHour = SCHEDULE_CURR_HOUR;
+        const int startHour = 0;
+        const int endHour = 7;
+
+        const VecStr & toksCmds = CompSchedTestCommands(schedule, currHour, startHour, endHour);
+        CHECK(toksCmds.size() >= 2);
+    }
+}
+
+/// TODO: Quite a corner case:
+/*
+TEST(CompSched_start_immediately_dont_finish)
+{
+    const VecD schedule = {1, 1, 1, 1, 1, 1, 1, 1, 1}; // (aka - start and never finish)
+
+    CompSchedTestGraph(schedule);
+
+    {
+        ELO
+        const OptiEnProfitResults proRes;
+        const Tokenizer tok;
+        const Computer & comp0 = GetCompTestSched();
+
+        const int currHour = SCHEDULE_CURR_HOUR;
+        const int startHour = 0;
+        const int endHour = -1;
+
+        const VecStr & toksCmds = CompSchedTestCommands(schedule, currHour, startHour, endHour);
         const Str & expTextCmdWakeUp = GetStartHourToWakeup(startHour, comp0);
         const Str & expTextCmdSleep  = GetStartHourToSleep(comp0, endHour);
+
         CHECK(toksCmds.size() >= 2);
         CHECK_EQUAL(expTextCmdWakeUp, toksCmds.at(0));
         LOG << "Was & exp:\n" << toksCmds.at(1) << Nl << expTextCmdSleep << Nl;
         CHECK_EQUAL(expTextCmdSleep,  toksCmds.at(1));
     }
 }
+*/
 

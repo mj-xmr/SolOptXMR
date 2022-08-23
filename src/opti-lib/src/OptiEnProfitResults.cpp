@@ -49,7 +49,7 @@ void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat) const
     {
         const Computer & comp = m_dataModel.GetComputers().at(i);
         const VecD & best = bestMat.at(i);
-        LOG << OptiEnProfitResults().PrintScheduleComp(comp, best);
+        LOG << OptiEnProfitResults().PrintScheduleCompGraph(comp, best);
         const OptiEnProfitResults::CommandsInfos & cmdInfo = OptiEnProfitResults().PrintCommandsComp(comp, best, currHour);
         LOG << cmdInfo.infos;
         oss << cmdInfo.commands;
@@ -68,7 +68,7 @@ void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat) const
 OptiEnProfitResults:: OptiEnProfitResults() {}
 OptiEnProfitResults::~OptiEnProfitResults() {}
 
-EnjoLib::Str OptiEnProfitResults::PrintScheduleComp(const Computer & comp, const VecD & best) const
+EnjoLib::Str OptiEnProfitResults::PrintScheduleCompGraph(const Computer & comp, const VecD & best) const
 {
     Osstream oss;
     oss << comp.name << Nl;
