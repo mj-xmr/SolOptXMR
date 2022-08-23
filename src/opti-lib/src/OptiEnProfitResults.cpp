@@ -5,10 +5,12 @@
 #include "OptiEnProfitSubject.h"
 #include "TimeUtil.h"
 #include "SolUtil.h"
+#include "ConfigSol.h"
 
 #include <Ios/Osstream.hpp>
 #include <Ios/Ofstream.hpp>
 #include <Statistical/Distrib.hpp>
+#include <Statistical/Assertions.hpp>
 #include <Math/GeneralMath.hpp>
 #include <Util/CoutBuf.hpp>
 #include <Util/ToolsMixed.hpp>
@@ -41,16 +43,21 @@ void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat) const
         //GnuplotPlotTerminal2d(distribDat.data, "Solution distribution", 1, 0.5);
     }
     Str cmds = "";
-    
+
     LOG << "\nComputer start schedule:\n";
     Osstream oss;
     const int currHour = TimeUtil().GetCurrentHour();
+    const int maxDayLimit = m_dataModel.GetConf().DAYS_LIMIT_COMMANDS; /// TODO: Unstable, as it would require that at uses time AND day, not just time.
+    if (maxDayLimit > 1)
+    {
+        Assertions::Throw("Not implemented max day limit > 1", "OptimizerEnProfit::PrintSolution");
+    }
     for (int i = 0; i < bestMat.size(); ++i)
     {
         const Computer & comp = m_dataModel.GetComputers().at(i);
         const VecD & best = bestMat.at(i);
         LOG << OptiEnProfitResults().PrintScheduleCompGraph(comp, best);
-        const OptiEnProfitResults::CommandsInfos & cmdInfo = OptiEnProfitResults().PrintCommandsComp(comp, best, currHour);
+        const OptiEnProfitResults::CommandsInfos & cmdInfo = OptiEnProfitResults().PrintCommandsComp(comp, best, currHour, maxDayLimit);
         LOG << cmdInfo.infos;
         oss << cmdInfo.commands;
     }
@@ -159,10 +166,10 @@ OptiEnProfitResults::CommandsInfos OptiEnProfitResults::PrintCommandsComp(const 
     }
     ossCmd  << Nl;
     ossInfo << Nl;
-        
+
     ret.commands    = ossCmd.str();
     ret.infos       = ossInfo.str();
-        
+
     return ret;
 }
 
