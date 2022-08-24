@@ -385,6 +385,7 @@ def add_wind(pos, horizon):
                 wind_m_per_s)
 
             power *= turbine["count"]
+            #power /= config_system.voltage # TODO: Converting to Amperes. Not sure!
 
             power_sum += power
         #print(i, "wind power = ", power_sum, ', wind =', wind_m_per_s, 'm/s')

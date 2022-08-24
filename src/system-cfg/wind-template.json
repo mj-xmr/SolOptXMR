@@ -4,7 +4,7 @@
     	  	"name" : "South",
     	  	"count" : 1,
     	  	"watt_min" : 10,
-    	  	"watt_max" : 300,
+    	  	"watt_max" : 200,
     	  	"wind_speed_min_ms" : 2.5,
 		"wind_speed_max_ms" : 25.0
     	  },
@@ -12,7 +12,7 @@
     	  	"name" : "South-West",
     	  	"count" : 0,
     	  	"watt_min" : 10,
-    	  	"watt_max" : 300,
+    	  	"watt_max" : 200,
     	  	"wind_speed_min_ms" : 2.5,
 		"wind_speed_max_ms" : 25.0
     	  }
