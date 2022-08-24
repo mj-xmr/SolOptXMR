@@ -40,7 +40,7 @@ void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat) const
     if (distribDat.IsValid())
     {
         const Str & dstr = distr.PlotLine(distribDat, false, true, true);
-        LOG << Nl << sot.GetT() <<  "Distribution of solutions:" << Nl<< dstr << Nl;
+        //LOG << Nl << sot.GetT() <<  "Distribution of solutions:" << Nl<< dstr << Nl;
         //GnuplotPlotTerminal2d(distribDat.data, "Solution distribution", 1, 0.5);
     }
 
