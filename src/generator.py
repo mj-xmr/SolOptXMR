@@ -30,6 +30,7 @@ from python_json_config import ConfigBuilder
 config = sunrise_lib.config
 config_volatile = sunrise_lib.config_volatile
 config_batteries = sunrise_lib.config_batteries
+config_wind_turbines = sunrise_lib.config_wind_turbines
 config_system = sunrise_lib.config_system
 battery = config_batteries.batteries[0] # TODO: extend
 
@@ -355,6 +356,8 @@ def proc_data(elev, is_simul_weather=False, horizon=0):
         pos = add_weather(elev, horizon)
     pos = adj_losses(pos) # TODO: This will be a solar panel parameter
 
+    pos = add_wind(pos, horizon) # Not sure if this is the right position
+    
     print("Dumping data to:", path_positions_txt)
     np.savetxt(path_positions_txt, elev)
     
@@ -363,6 +366,34 @@ def proc_data(elev, is_simul_weather=False, horizon=0):
 def extr_data(pos):
     elev = pos[ELEVATION_KEY]
     return elev
+
+def add_wind(pos, horizon):
+    temp_wind_arr = weather_lib.get_temp_wind(horizon)
+    print("Len pos =", len(pos), ", len wind =", len(temp_wind_arr))
+    #assert len(temp_wind_arr) == len(pos)
+
+    for i, row in enumerate(temp_wind_arr):
+        wind_m_per_s = row[1]
+
+        power_sum = 0
+        for turbine in config_wind_turbines.wind:
+            power = sunrise_lib.get_wind_power(
+                turbine["watt_min"],
+                turbine["watt_max"],
+                turbine["wind_speed_min_ms"],
+                turbine["wind_speed_max_ms"],
+                wind_m_per_s)
+
+            power *= turbine["count"]
+            #power /= config_system.voltage # TODO: Converting to Amperes. Not sure!
+
+            power_sum += power
+        #print(i, "wind power = ", power_sum, ', wind =', wind_m_per_s, 'm/s')
+
+        pos[i] += power_sum
+
+    return pos
+    
 
 def adj_losses(pos):
     # TODO: This will be a solar panel parameter

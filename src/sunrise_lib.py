@@ -53,6 +53,7 @@ config_geo = get_config('geo')
 config_batteries = get_config('batteries')
 config_computers = get_config('computers')
 config_arrays = get_config('arrays')
+config_wind_turbines = get_config('wind')
 config_system = get_config('system')
 config_habits = get_config('habits')
 
@@ -120,6 +121,25 @@ def fix_path_src(pth, must_exist=True):
                 raise IOError("Path doesn't exist", pth)
     return alt
 
+def km_per_hour_2_meter_per_second(kmpsval):
+    return kmpsval * 1000 / 3600
+
+def get_wind_power(watt_min, watt_max, wind_min, wind_max, wind):
+    if wind > wind_max:
+        wind = wind_max
+    if wind < wind_min:
+        return 0
+
+    wind_work = wind - wind_min
+    watt_mul = watt_max - watt_min
+
+    watt = wind_work * watt_mul / (wind_max - wind_min)
+
+    watt_final = watt + watt_min
+
+    #print(watt_final)
+    return watt_final
+
 # get local timezone    
 #local_tz = get_localzone()
 
@@ -156,6 +176,15 @@ def get_pv_system():
     system = pvlib.pvsystem.PVSystem(arrays=arrays, inverter_parameters=dict(pdc0=3))
     return system
 
+def test_physical():
+    assert km_per_hour_2_meter_per_second(36) == 10
+
+    assert get_wind_power(10, 100, 10, 100, 10) == 10
+    assert get_wind_power(10, 100, 10, 100, 100) == 100
+    assert get_wind_power(10, 150, 10, 100, 150) == 150
+    assert get_wind_power(10, 100, 10, 100, 1) == 0
+    assert get_wind_power(10, 100, 10, 100, 150) == 100
+
 def test_stateful_bool():
     print("Test stateful bool")
     false = StatefulBool(False)
@@ -174,6 +203,7 @@ def test_stateful_bool():
 
 def test():
     test_stateful_bool()
+    test_physical()
 
 if __name__ == "__main__":
     test()
