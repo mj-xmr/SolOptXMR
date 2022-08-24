@@ -111,6 +111,7 @@ void OptimizerEnProfit::RandomSearch()
     //const Distrib distr;
     const bool animateProgressBar = m_dataModel.IsAnimateProgressBar();
     ProgressMonitHigh progressMonitor(20);
+    bool needNewLine = false;
     for (int i = 0; i < MAX_NUM_COMBINATIONS; ++i)
     {
         if (animateProgressBar)
@@ -121,12 +122,12 @@ void OptimizerEnProfit::RandomSearch()
                 //if (i > 0)
                 {
                 //const DistribData & data = distr.GetDistrib(m_goals, 20); const Str & dstr = distr.PlotLine(data, true, true, true);
-                //progressMonitor.PrintProgressBarTime(i, MAX_NUM_COMBINATIONS, dstr);    
+                //progressMonitor.PrintProgressBarTime(i, MAX_NUM_COMBINATIONS, dstr);
                 }
-                
+                needNewLine = true;
             }
         }
-        
+
         const int icomp = gmat.round(rmath.Rand(0, numComputers-1));
         //for (int icomp = 0; icomp < numComputers; ++icomp)
         {
@@ -179,7 +180,7 @@ void OptimizerEnProfit::RandomSearch()
         }
         else
         {
-            if (Consume2(binaryMat))
+            if (Consume2(binaryMat, needNewLine))
             {
                 SOL_LOG(GetT() + "Consume success: " + binaryMat.Print());
                 //LOGL << "Consume success: " << binaryMat.Print() << '\n';
@@ -188,6 +189,7 @@ void OptimizerEnProfit::RandomSearch()
                 m_uniqueSolutionsPrev = m_uniqueSolutions;
                 m_uniqueSolutions = usedCombinations.size();
                 foundFirstSolution = true;
+                needNewLine = false;
             }
             else
             {
@@ -209,14 +211,26 @@ void OptimizerEnProfit::RandomSearch()
             break;
         }
     }
+
+    const Str notFoundSolutionWarn = StrColour::GenWarn("Couldn't find a solution!\n"
+                                                        "The usual remedy is to increase the number of batteries, "
+                                                        "or reduce the load in 'habits' configuration file.\n"
+                                                        "If the batteries are overcharged already, "
+                                                        "the best thing to do is to start your machines now."
+                                                        );
     if (not foundFirstSolution)
     {
         // TODO: Unit test it.
         //Assertions::Throw("Couldn't find a solution!", "OptimizerEnProfit::RandomSearch");
-        LOGL << Nl << StrColour::GenWarn("Couldn't find a solution!") << "\n... in OptimizerEnProfit::RandomSearch()";
+        LOGL << Nl << notFoundSolutionWarn << Nl;
     }
 
     PrintSolution(binarBest);
+
+    if (not foundFirstSolution)
+    {
+        LOGL << Nl << notFoundSolutionWarn << Nl;
+    }
 }
 
 void OptimizerEnProfit::AddSpace(const EnjoLib::VecD & data)
@@ -238,7 +252,7 @@ static double GMatRatio(double val, double valRef)
     return val / valRef;
 }
 
-bool OptimizerEnProfit::Consume2(const EnjoLib::Matrix & dataMat)
+bool OptimizerEnProfit::Consume2(const EnjoLib::Matrix & dataMat, bool needNewline)
 {
     OptiSubjectEnProfit osub(m_dataModel);
     const float goal = osub.GetVerbose(dataMat, false);
@@ -250,14 +264,14 @@ bool OptimizerEnProfit::Consume2(const EnjoLib::Matrix & dataMat)
         m_relChangePositive = relChangePositive;
         ELO
         RecalcComputationCosts();
-        if (m_dataModel.IsAnimateProgressBar())
+        if (needNewline)
         {
             LOG << Nl; // Need an extra space to clear the progress bar
         }
         LOG << GetT() << "New score = " << goal << " ->\t"
-        << GMat().round(relChangePositive * 100) << "%" << " costing: "
+        << GMat().round(relChangePositive   * 100) << "%" << " costing: "
         << GMat().round(m_relChangeNegative * 100) << "%" << ", pos2neg: "
-        << GMat().round(m_relPos2Neg * 100) << "%" << Nl;
+        << GMat().round(m_relPos2Neg        * 100) << "%" << Nl;
 //        << GMat().round(relNeg2Pos * 100) << "%" << Nl;
 
         //osub.GetVerbose(dataMat, true);

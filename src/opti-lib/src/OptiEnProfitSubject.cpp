@@ -243,7 +243,7 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
         {
             if (not gcfgMan.cfgOpti->IsXValid())
             {
-                LOGL << SolUtil().GetT() << Nl << 
+                LOGL << SolUtil().GetT() << Nl <<
                 ": New goal = " << sumAdjusted << ", m_sumMax = " << m_sumMax << ", penality = " << penality << ", after " << 0 << " iterations\n";
 
                 SimResult resVisual{};
@@ -285,15 +285,16 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
                 {
                     using Par = AsciiPlot::Pars;
                     ELO
-                    LOG << "Energy input [A] :\n" << StrColour::GenNorm(StrColour::Col::Yellow, AsciiPlot::Build()(Par::MAXIMUM, m_prod.Max()).Finalize().Plot(m_prod)) << Nl;
-                    LOG << "Bat charge   [Ah]:\n"   << AsciiPlot::Build()(Par::MAXIMUM, batteryCopy.m_maxCapacityAmph)
+                    LOG << "Hashes cumul. [H] :\n" << StrColour::GenNorm(StrColour::Col::Magenta, AsciiPlot::Build()(Par::MAXIMUM, m_hashes.Max()).Finalize().Plot(m_hashes)) << Nl;
+                    LOG << "Energy input  [A] :\n" << StrColour::GenNorm(StrColour::Col::Yellow,  AsciiPlot::Build()(Par::MAXIMUM,   m_prod.Max()).Finalize().Plot(m_prod)) << Nl;
+                    LOG << "Bat charge    [Ah]:\n"   << AsciiPlot::Build()(Par::MAXIMUM, batteryCopy.m_maxCapacityAmph)
                     (Par::MINIMUM, m_dataModel.GetBatPars().MIN_LOAD_AMPH)(Par::COLORS, true)
                     (Par::MULTILINE, true)
                     .Finalize().Plot(m_loads) << Nl;
-                    LOG << "Total usage  [A] :\n"   << AsciiPlot::Build()(Par::MAXIMUM, batteryCopy.pars.MAX_DISCHARGE_AMP)
+                    LOG << "Total usage   [A] :\n"   << AsciiPlot::Build()(Par::MAXIMUM, batteryCopy.pars.MAX_DISCHARGE_AMP)
                     (Par::COLORS, true)
                     .Finalize().Plot(m_usages) << Nl;
-                    LOG << SolUtil().GetT() << Nl;
+                    //LOG << SolUtil().GetT() << Nl;
                 }
             }
         }

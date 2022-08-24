@@ -70,7 +70,7 @@ void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat) const
     Ofstream ofs(fileCmds);
     ofs << oss.str();
 
-    LOG << Nl << sot.GetT() << "Saved commands:\nbash " << fileCmds << Nl;
+    LOG << Nl << sot.GetT() << "Saved commands to:\n" << fileCmds << Nl;
 }
 
 OptiEnProfitResults:: OptiEnProfitResults() {}

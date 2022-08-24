@@ -27,7 +27,7 @@ class OptimizerEnProfit : public EnjoLib::IMultiDimIterConsumerTpl //OptimizerBa
 
         void Consume(const EnjoLib::VecD & data) override; // IMultiDimIterConsumerTpl
 
-        bool Consume2(const EnjoLib::Matrix & data);
+        bool Consume2(const EnjoLib::Matrix & data, bool needNewline);
         void AddSpace(const EnjoLib::VecD & data);
         void RecalcComputationCosts();
 
@@ -46,7 +46,7 @@ class OptimizerEnProfit : public EnjoLib::IMultiDimIterConsumerTpl //OptimizerBa
         //void PrintStatsSummary() const override;
     private:
         EnjoLib::Str GetT() const;
-        
+
         const OptiEnProfitDataModel & m_dataModel;
         EnjoLib::Matrix m_data;
 
