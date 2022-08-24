@@ -243,7 +243,8 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
         {
             if (not gcfgMan.cfgOpti->IsXValid())
             {
-                LOGL << ": New goal = " << sumAdjusted << ", m_sumMax = " << m_sumMax << ", penality = " << penality << ", after " << 0 << " iterations\n";
+                LOGL << SolUtil().GetT() << Nl << 
+                ": New goal = " << sumAdjusted << ", m_sumMax = " << m_sumMax << ", penality = " << penality << ", after " << 0 << " iterations\n";
 
                 SimResult resVisual{};
                 BatterySimulation batteryCopy(m_dataModel.GetConf(), m_dataModel.GetBatPars(), m_dataModel.GetSystem());
@@ -292,6 +293,7 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
                     LOG << "Total usage  [A] :\n"   << AsciiPlot::Build()(Par::MAXIMUM, batteryCopy.pars.MAX_DISCHARGE_AMP)
                     (Par::COLORS, true)
                     .Finalize().Plot(m_usages) << Nl;
+                    LOG << SolUtil().GetT() << Nl;
                 }
             }
         }

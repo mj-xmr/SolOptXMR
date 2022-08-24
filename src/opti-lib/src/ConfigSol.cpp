@@ -27,7 +27,7 @@ void ConfigSol::FromOptsNumeric(const OptionsNumeric & optsNum)
 
 void ConfigSol::RegisterAndReadBools(EnjoLib::Istream & f)
 {
-    RegisterAndReadBool(f, NO_PROGRESS_BAR, false, DESCR_NO_PROGRESS_BAR);    
+    RegisterAndReadBool(f, NO_PROGRESS_BAR, false, DESCR_NO_PROGRESS_BAR);
 }
 
 void ConfigSol::RegisterAndReadInts(EnjoLib::Istream & f)
@@ -35,8 +35,7 @@ void ConfigSol::RegisterAndReadInts(EnjoLib::Istream & f)
     RegisterAndReadInt (f, DAYS_HORIZON, 3);
     RegisterAndReadInt (f, DAYS_START, 0);
     RegisterAndReadInt (f, RANDOM_SEED, 0);
-
-    //RegisterAndReadInt (f, SYSTEM_VOLTAGE, 12);
+    RegisterAndReadInt (f, DAYS_LIMIT_COMMANDS, 0);
 }
 void ConfigSol::RegisterAndReadFloats(EnjoLib::Istream & f)
 {

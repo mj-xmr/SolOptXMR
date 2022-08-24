@@ -30,7 +30,6 @@
 #include <Template/CorradePointer.h>
 #include <Visual/AsciiPlot.hpp>
 
-#include <STD/VectorCpp.hpp>
 #include <STD/Set.hpp>
 #include <STD/String.hpp>
 
@@ -75,9 +74,14 @@ void OptimizerEnProfit::operator()()
     }
 }
 
+EnjoLib::Str OptimizerEnProfit::GetT() const
+{
+    return SolUtil().GetT();
+}
+
 void OptimizerEnProfit::RandomSearch()
 {
-    {LOGL << "Random search of " << MAX_NUM_COMBINATIONS << " solutions\n";}
+    {LOGL << GetT() << "Random search of " << MAX_NUM_COMBINATIONS << " solutions\n";}
     const int horizonHours = m_dataModel.GetHorizonHours();
     const EnjoLib::Array<Computer> & comps = m_dataModel.GetComputers();
     const int numComputers = comps.size();
@@ -105,7 +109,7 @@ void OptimizerEnProfit::RandomSearch()
     int alreadyCombined = 0;
     const GMat gmat;
     //const Distrib distr;
-    const bool animateProgressBar = not m_dataModel.GetConf().NO_PROGRESS_BAR;
+    const bool animateProgressBar = m_dataModel.IsAnimateProgressBar();
     ProgressMonitHigh progressMonitor(20);
     for (int i = 0; i < MAX_NUM_COMBINATIONS; ++i)
     {
@@ -177,7 +181,7 @@ void OptimizerEnProfit::RandomSearch()
         {
             if (Consume2(binaryMat))
             {
-                SOL_LOG("Consume success: " + binaryMat.Print());
+                SOL_LOG(GetT() + "Consume success: " + binaryMat.Print());
                 //LOGL << "Consume success: " << binaryMat.Print() << '\n';
                 m_numFailed = 0;
                 binarBest = binaryMat;
@@ -244,10 +248,13 @@ bool OptimizerEnProfit::Consume2(const EnjoLib::Matrix & dataMat)
     {
         const double relChangePositive = GMat().RelativeChange(goal, m_goal);
         m_relChangePositive = relChangePositive;
-
+        ELO
         RecalcComputationCosts();
-
-        LOGL << "\nNew score = " << goal << " ->\t"
+        if (m_dataModel.IsAnimateProgressBar())
+        {
+            LOG << Nl; // Need an extra space to clear the progress bar
+        }
+        LOG << GetT() << "New score = " << goal << " ->\t"
         << GMat().round(relChangePositive * 100) << "%" << " costing: "
         << GMat().round(m_relChangeNegative * 100) << "%" << ", pos2neg: "
         << GMat().round(m_relPos2Neg * 100) << "%" << Nl;

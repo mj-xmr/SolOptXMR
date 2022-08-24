@@ -4,10 +4,13 @@
 #include "OptiEnProfitDataModel.h"
 #include "OptiEnProfitSubject.h"
 #include "TimeUtil.h"
+#include "SolUtil.h"
+#include "ConfigSol.h"
 
 #include <Ios/Osstream.hpp>
 #include <Ios/Ofstream.hpp>
 #include <Statistical/Distrib.hpp>
+#include <Statistical/Assertions.hpp>
 #include <Math/GeneralMath.hpp>
 #include <Util/CoutBuf.hpp>
 #include <Util/ToolsMixed.hpp>
@@ -26,6 +29,7 @@ void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat) const
     OptiSubjectEnProfit osub(m_dataModel);
     osub.GetVerbose(bestMat, true);
     const CharManipulations cman;
+    const SolUtil sot;
     for (int i = 0; i < bestMat.size(); ++i)
     {
         //GnuplotPlotTerminal1d(bestMat.at(i), "Best solution = " + CharManipulations().ToStr(m_goal), 1, 0.5);
@@ -35,20 +39,25 @@ void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat) const
     if (distribDat.IsValid())
     {
         const Str & dstr = distr.PlotLine(distribDat, false, true, true);
-        LOG << Nl << "Distribution of solutions:" << Nl<< dstr << Nl;
+        LOG << Nl << sot.GetT() <<  "Distribution of solutions:" << Nl<< dstr << Nl;
         //GnuplotPlotTerminal2d(distribDat.data, "Solution distribution", 1, 0.5);
     }
     Str cmds = "";
-    
+
     LOG << "\nComputer start schedule:\n";
     Osstream oss;
     const int currHour = TimeUtil().GetCurrentHour();
+    const int maxDayLimit = m_dataModel.GetConf().DAYS_LIMIT_COMMANDS; /// TODO: Unstable, as it would require that at uses time AND day, not just time.
+    if (maxDayLimit > 1)
+    {
+        Assertions::Throw("Not implemented max day limit > 1", "OptimizerEnProfit::PrintSolution");
+    }
     for (int i = 0; i < bestMat.size(); ++i)
     {
         const Computer & comp = m_dataModel.GetComputers().at(i);
         const VecD & best = bestMat.at(i);
-        LOG << OptiEnProfitResults().PrintScheduleComp(comp, best);
-        const OptiEnProfitResults::CommandsInfos & cmdInfo = OptiEnProfitResults().PrintCommandsComp(comp, best, currHour);
+        LOG << OptiEnProfitResults().PrintScheduleCompGraph(comp, best);
+        const OptiEnProfitResults::CommandsInfos & cmdInfo = OptiEnProfitResults().PrintCommandsComp(comp, best, currHour, maxDayLimit);
         LOG << cmdInfo.infos;
         oss << cmdInfo.commands;
     }
@@ -60,13 +69,13 @@ void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat) const
     Ofstream ofs(fileCmds);
     ofs << oss.str();
 
-    LOG << "\nSaved commands:\nbash " << fileCmds << Nl;
+    LOG << Nl << sot.GetT() << "Saved commands:\nbash " << fileCmds << Nl;
 }
 
 OptiEnProfitResults:: OptiEnProfitResults() {}
 OptiEnProfitResults::~OptiEnProfitResults() {}
 
-EnjoLib::Str OptiEnProfitResults::PrintScheduleComp(const Computer & comp, const VecD & best) const
+EnjoLib::Str OptiEnProfitResults::PrintScheduleCompGraph(const Computer & comp, const VecD & best) const
 {
     Osstream oss;
     oss << comp.name << Nl;
@@ -83,10 +92,10 @@ OptiEnProfitResults::CommandsInfos OptiEnProfitResults::PrintCommandsComp(const 
     //oss << cman.Replace(best.Print(), " ", "") << Nl;
 
     const Str cmdsSSHbare = "ssh -o ConnectTimeout=" + cman.ToStr(SSH_TIMEOUT) + " -n " + comp.hostname + " ";
-    const Str cmdsSSH = cmdsSSHbare + "'hostname; echo \"";
+    const Str cmdsSSH = "echo \"" + cmdsSSHbare + "'hostname; ";
     const Str cmdWOL = "wakeonlan " + comp.macAddr;
     //const Str cmdSuspendAt = "systemctl suspend\"           | at ";
-    const Str cmdSuspendAt = "systemctl suspend\" | at ";
+    const Str cmdSuspendAt = "systemctl suspend'\" | at ";
     const Str cmdMinuteSuffix = ":00";
 
     bool onAtFirstHour = false;
@@ -124,8 +133,7 @@ OptiEnProfitResults::CommandsInfos OptiEnProfitResults::PrintCommandsComp(const 
                     // Wake up
                     ossCmd << "echo \"" << cmdWOL << "\" | at " << lastHourOn << cmdMinuteSuffix << Nl;
                     // Put to sleep
-                    /// TODO: This is a logic error. It should SSH AT the end hour to sleep, not SSH now to sleep at hour. The rig is sleeping until the start hour!
-                    ossCmd << cmdsSSH << cmdSuspendAt << hourPrev << cmdMinuteSuffix << "'" << Nl;
+                    ossCmd << cmdsSSH << cmdSuspendAt << hourPrev << cmdMinuteSuffix << Nl;
                 }
 
                 lastHourOn = -1;
@@ -152,16 +160,16 @@ OptiEnProfitResults::CommandsInfos OptiEnProfitResults::PrintCommandsComp(const 
             if (onAtFirstHour) // Was started at the beginning already. Be sure to suspend later on.
             {
                 ossInfo << "day 0, hour !-" << hourPrev << Nl;
-                ossCmd << cmdsSSH << cmdSuspendAt << hourPrev << cmdMinuteSuffix << "'" << Nl;
+                ossCmd << cmdsSSH << cmdSuspendAt << hourPrev << cmdMinuteSuffix << Nl;
             }
         }
     }
     ossCmd  << Nl;
     ossInfo << Nl;
-        
+
     ret.commands    = ossCmd.str();
     ret.infos       = ossInfo.str();
-        
+
     return ret;
 }
 
