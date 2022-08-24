@@ -31,7 +31,11 @@ config_geo = sunrise_lib.config_geo
 
 TESTING = False
 #TESTING = True
-def get_weather(horizon=3):
+WIND_TEST_CASE   = 'data/parsing-testcases/wind-url.html'
+WIND_TEST_CASE_2 = 'data/parsing-testcases/wind.html'
+DEFAULT_HORIZON = 3
+
+def get_weather(horizon=DEFAULT_HORIZON):
     assert horizon > 0
     MIN_WEATHER = 0.1
     try:
@@ -141,8 +145,89 @@ def get_date_from_now_iso(ihorizon):
     dpred_iso = dpred.isoformat()
     return dpred_iso
 
+def parse_temp_wind_2(wind_content):
+    soup = BeautifulSoup(wind_content, "html.parser")
+    
+    div_weather = soup.find("div", {"id": "weather"})
+    temp_wind = []    
+    #print(div_weather)
+    for div in div_weather:
+        idd = div.get('id')
+        if not idd:
+            continue
+        if not idd.startswith("ws_"):
+            continue
+        #print(div)
+        #print(idd)
+        for subDiv in div:
+            classs = subDiv.get('class')[0]
+            #print(classs)
+            if classs == 'temp':
+                temp = subDiv.getText()
+        #temp = div.get('temp').text
+                #print(temp)
+            elif classs == 'wind':
+                wind = subDiv.find('div', {'class': 'wstext'}).getText()
+        temp_wind.append((temp, wind))
+
+        #print(idd, 'temp =', temp, ', wind =', wind)
+    return temp_wind
+
+def parse_temp_wind(wind_content):
+    soup = BeautifulSoup(wind_content, "html.parser")
+    tab_weather = soup.find("table", {"id": "wt-hbh"})
+    temp_wind = []
+
+    for row in tab_weather.find_all('tr'):
+        cols = row.find_all('td')
+        if len(cols) < 5:
+            continue
+        #for i, col in enumerate(cols):
+         #   print(i, col)
+        temp_str = cols[1]
+        wind_str = cols[4]
+        
+        print(temp_str, wind_str)
+
+        temp = float(temp_str.getText().split()[0])
+        wind = float(wind_str.getText().split()[0])
+        wind_meters_per_second = sunrise_lib.km_per_hour_2_meter_per_second(wind)
+
+        temp_wind.append((temp, wind_meters_per_second))
+
+    return temp_wind
+    
+
+def get_temp_wind(horizon=DEFAULT_HORIZON):
+    url = "https://www.timeanddate.com/weather/{}/{}/hourly".format(config_geo.geo.country, config_geo.geo.city)
+    print("Calling:")
+    print(url)
+    page = requests.get(url)
+
+    #print(page.content)
+
+    day24h = parse_temp_wind(page.content)
+
+    # TODO: We should try to download the whole prediction, rather than extending it
+    final = []
+    for day in range(0, horizon):
+        final.extend(day24h)
+
+    print("len wind dloaded =", len(day24h), ", len wind extended =", len(final))
+    #print(final)
+
+    return final
+
 def test():
-    get_weather()    
+    with open(sunrise_lib.fix_path_src(WIND_TEST_CASE_2)) as fwind:
+        content = fwind.read()
+        assert len(parse_temp_wind_2(content)) > 0
+    with open(sunrise_lib.fix_path_src(WIND_TEST_CASE)) as fwind:
+        content = fwind.read()
+        assert len(parse_temp_wind(content)) > 0
+    assert len(get_temp_wind()) > 0
+    assert len(get_weather()) > 0
+    
 
 if __name__ == "__main__":
     test()
