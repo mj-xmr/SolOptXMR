@@ -15,5 +15,5 @@ SolUtil::~SolUtil(){}
 
 EnjoLib::Str SolUtil::GetT() const
 {
-    return  " |- " + StrColour::GenNorm(StrColour::Col::Cyan, Time().CurrentDateTime()) + " -| ";
+    return  "|< " + StrColour::GenNorm(StrColour::Col::Cyan, Time().CurrentDateTime()) + " >| ";
 }
