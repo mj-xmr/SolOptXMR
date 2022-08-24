@@ -6,6 +6,10 @@ The default configuration file location is `~/.config/solar/` and will be refere
 Inside the `~/.config/solar/arrays.json` it's important to understand, that an array's parameter `surface_tilt` accepts degrees and 0 means laying flat horizontally on a roof, while 90 means hanging flat vertically on an external wall. 
 `surface_azimuth` uses 0 as north, 90 as east, 180 as south and 270 as west.
 
+## Wind turbines wind.json
+TODO.
+Enter min/max wattage and wind tolerance.
+
 ## Geo geo.json
 Is expected to be modified by you, according to the physical location of the solar farm, the northern hemisphere and eastern side of globe are represented with positive numbers of Lat / Lon in degrees. 
 Southern hemisphere and western side of globe use negative numbers of Lat / Lon. 
