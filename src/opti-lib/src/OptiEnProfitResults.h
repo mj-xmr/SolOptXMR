@@ -13,7 +13,7 @@ class OptiEnProfitResults
     public:
         OptiEnProfitResults();
         virtual ~OptiEnProfitResults();
-        
+
         struct CommandsInfos
         {
             EnjoLib::Str commands;
@@ -22,11 +22,11 @@ class OptiEnProfitResults
 
         EnjoLib::Str PrintScheduleCompGraph(const Computer & comp, const EnjoLib::VecD & best) const;
         CommandsInfos PrintCommandsComp(const Computer & comp, const EnjoLib::VecD & best, int currHour, int maxDayCmdsLimit = 1) const;
-        
-        static const int SSH_TIMEOUT;
-        
+
+        static const int SSH_TIMEOUT_S;
+
     protected:
-    
+
     private:
         //const OptiEnProfitDataModel & m_dataModel;
 };

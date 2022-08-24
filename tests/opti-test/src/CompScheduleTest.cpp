@@ -78,7 +78,7 @@ static Str GetStartHourToSleep(const Computer & comp, int endHour)
     }
     Osstream oss;
     oss
-    << "echo \"" << "ssh -o ConnectTimeout=" << OptiEnProfitResults::SSH_TIMEOUT << " -n " << compSched_hostname
+    << "echo \"" << "ssh -o ConnectTimeout=" << OptiEnProfitResults::SSH_TIMEOUT_S << " -n " << compSched_hostname
     << " 'hostname; systemctl suspend'\" | at " << endHour << ":00";
     return oss.str();
 }

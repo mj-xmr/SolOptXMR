@@ -20,7 +20,7 @@
 using namespace std;
 using namespace EnjoLib;
 
-const int OptiEnProfitResults::SSH_TIMEOUT = 60;
+const int OptiEnProfitResults::SSH_TIMEOUT_S = 60;
 
 /// TODO: UTest & refactor
 void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat) const
@@ -30,6 +30,7 @@ void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat) const
     osub.GetVerbose(bestMat, true);
     const CharManipulations cman;
     const SolUtil sot;
+    const ConfigSol & conf = m_dataModel.GetConf();
     for (int i = 0; i < bestMat.size(); ++i)
     {
         //GnuplotPlotTerminal1d(bestMat.at(i), "Best solution = " + CharManipulations().ToStr(m_goal), 1, 0.5);
@@ -42,22 +43,22 @@ void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat) const
         LOG << Nl << sot.GetT() <<  "Distribution of solutions:" << Nl<< dstr << Nl;
         //GnuplotPlotTerminal2d(distribDat.data, "Solution distribution", 1, 0.5);
     }
-    Str cmds = "";
 
     LOG << "\nComputer start schedule:\n";
     Osstream oss;
     const int currHour = TimeUtil().GetCurrentHour();
-    const int maxDayLimit = m_dataModel.GetConf().DAYS_LIMIT_COMMANDS; /// TODO: Unstable, as it would require that at uses time AND day, not just time.
+    const int maxDayLimit = conf.DAYS_LIMIT_COMMANDS; /// TODO: Unstable, as it would require that at uses time AND day, not just time.
     if (maxDayLimit > 1)
     {
         Assertions::Throw("Not implemented max day limit > 1", "OptimizerEnProfit::PrintSolution");
     }
+    const OptiEnProfitResults resPrinter;
     for (int i = 0; i < bestMat.size(); ++i)
     {
         const Computer & comp = m_dataModel.GetComputers().at(i);
         const VecD & best = bestMat.at(i);
-        LOG << OptiEnProfitResults().PrintScheduleCompGraph(comp, best);
-        const OptiEnProfitResults::CommandsInfos & cmdInfo = OptiEnProfitResults().PrintCommandsComp(comp, best, currHour, maxDayLimit);
+        const OptiEnProfitResults::CommandsInfos & cmdInfo = resPrinter.PrintCommandsComp(comp, best, currHour, maxDayLimit);
+        LOG << resPrinter.PrintScheduleCompGraph(comp, best);
         LOG << cmdInfo.infos;
         oss << cmdInfo.commands;
     }
@@ -65,7 +66,7 @@ void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat) const
     LOG << "Commands:\n\n";
     LOG << oss.str();
 
-    const Str fileCmds = "/tmp/cmds.sh";
+    const Str fileCmds = conf.m_outDir + "/sol-cmds.sh";
     Ofstream ofs(fileCmds);
     ofs << oss.str();
 
@@ -91,7 +92,7 @@ OptiEnProfitResults::CommandsInfos OptiEnProfitResults::PrintCommandsComp(const 
     const CharManipulations cman;
     //oss << cman.Replace(best.Print(), " ", "") << Nl;
 
-    const Str cmdsSSHbare = "ssh -o ConnectTimeout=" + cman.ToStr(SSH_TIMEOUT) + " -n " + comp.hostname + " ";
+    const Str cmdsSSHbare = "ssh -o ConnectTimeout=" + cman.ToStr(SSH_TIMEOUT_S) + " -n " + comp.hostname + " ";
     const Str cmdsSSH = "echo \"" + cmdsSSHbare + "'hostname; ";
     const Str cmdWOL = "wakeonlan " + comp.macAddr;
     //const Str cmdSuspendAt = "systemctl suspend\"           | at ";
@@ -107,7 +108,7 @@ OptiEnProfitResults::CommandsInfos OptiEnProfitResults::PrintCommandsComp(const 
     {
         const int ihour = i + currHour;
         const int hour = ihour % OptimizerEnProfit::HOURS_IN_DAY;
-        const int day  = GMat().round(ihour / static_cast<double>(OptimizerEnProfit::HOURS_IN_DAY));
+        const int day  =     GMat().round(ihour     / static_cast<double>(OptimizerEnProfit::HOURS_IN_DAY));
         const int dayPrev  = GMat().round((ihour-1) / static_cast<double>(OptimizerEnProfit::HOURS_IN_DAY));
         if (day != dayPrev)
         {
