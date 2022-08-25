@@ -358,8 +358,6 @@ def proc_data(elev, is_simul_weather=False, horizon=0):
         
     #pos = adj_losses(pos) # TODO: This will be a solar panel parameter
 
-    
-    
     print("Dumping data to:", path_positions_txt)
     np.savetxt(path_positions_txt, elev)
     
