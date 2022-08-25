@@ -211,7 +211,7 @@ void OptimizerEnProfit::RandomSearch()
             break;
         }
     }
-
+    LOG << Nl << GetT() << "Finished." << Nl;
     const Str notFoundSolutionWarn = StrColour::GenWarn("Couldn't find a solution!\n"
                                                         "The usual remedy is to increase the number of batteries, "
                                                         "or reduce the load in 'habits' configuration file.\n"
