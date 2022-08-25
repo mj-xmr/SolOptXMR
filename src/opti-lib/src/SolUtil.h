@@ -5,14 +5,21 @@
 #include <Util/Str.hpp>
 #include <Util/VecD.hpp>
 
+//#include <gmpxx.h>
+
 class SolUtil
 {
 public:
 	SolUtil();
 	virtual ~SolUtil();
-	
+
 	EnjoLib::Str GetT() const;
 
+	/*
+	mpz_class GetFactorial(int inp) const;
+	mpz_class GetPermutations(int available) const;
+	mpz_class GetCombinations(int available, int selections) const;
+    */
 protected:
 
 private:

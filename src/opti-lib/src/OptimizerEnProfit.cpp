@@ -33,11 +33,15 @@
 #include <STD/Set.hpp>
 #include <STD/String.hpp>
 
+#include <limits>
+
 using namespace std;
 using namespace EnjoLib;
 
 const int OptimizerEnProfit::HOURS_IN_DAY = 24;
-const int OptimizerEnProfit::MAX_NUM_COMBINATIONS = 1e7;
+
+const OptimizerEnProfit::BigInt OptimizerEnProfit::MAX_NUM_COMBINATIONS = std::numeric_limits<BigInt>::max(); //1e7;
+//const OptimizerEnProfit::BigInt OptimizerEnProfit::MAX_NUM_COMBINATIONS = 3e6;
 const double OptimizerEnProfit::MAX_FAILED_COMBINATIONS = 0.40;
 const double OptimizerEnProfit::MIN_POS_2_NEG_CHANGE_RATIO = 0.01;
 
@@ -81,10 +85,19 @@ EnjoLib::Str OptimizerEnProfit::GetT() const
 
 void OptimizerEnProfit::RandomSearch()
 {
-    {LOGL << GetT() << "Random search of " << MAX_NUM_COMBINATIONS << " solutions\n";}
     const int horizonHours = m_dataModel.GetHorizonHours();
     const EnjoLib::Array<Computer> & comps = m_dataModel.GetComputers();
     const int numComputers = comps.size();
+
+    const GMat gmat;
+
+    // A heuristic to get the number of possible combinations.
+    // TODO: Should check the variance changes
+    const BigInt maxIter = gmat.Pow(gmat.PowInt(horizonHours, 3), gmat.Sqrt(numComputers));
+
+    {LOGL << GetT() << "Random search of " << maxIter << " solutions\n"
+    << "Hours = " << horizonHours << ", computers = " << numComputers << Nl;}
+
     const RandomMath rmath;
     rmath.RandSeed(m_dataModel.GetConf().RANDOM_SEED);
     const VecD binaryZero(horizonHours);
@@ -102,27 +115,26 @@ void OptimizerEnProfit::RandomSearch()
 
     bool foundFirstSolution = false;
     const bool useHash = IsUseHash();
-    const int maxCombisFailed = MAX_NUM_COMBINATIONS * MAX_FAILED_COMBINATIONS;
+    const BigInt maxCombisFailed = maxIter * MAX_FAILED_COMBINATIONS;
     short bit = 1;
     char bitC = '1';
     std::set<std::string> usedCombinations;
     int alreadyCombined = 0;
-    const GMat gmat;
     //const Distrib distr;
     const bool animateProgressBar = m_dataModel.IsAnimateProgressBar();
     ProgressMonitHigh progressMonitor(20);
     bool needNewLine = false;
-    for (int i = 0; i < MAX_NUM_COMBINATIONS; ++i)
+    for (BigInt i = 0; i < maxIter; ++i)
     {
         if (animateProgressBar)
         {
             if (i % 100000 == 0)
             {
-                progressMonitor.PrintProgressBarTime(i, MAX_NUM_COMBINATIONS, "Solutions");
+                progressMonitor.PrintProgressBarTime(i, maxIter, "Solutions");
                 //if (i > 0)
                 {
                 //const DistribData & data = distr.GetDistrib(m_goals, 20); const Str & dstr = distr.PlotLine(data, true, true, true);
-                //progressMonitor.PrintProgressBarTime(i, MAX_NUM_COMBINATIONS, dstr);
+                //progressMonitor.PrintProgressBarTime(i, maxIter, dstr);
                 }
                 needNewLine = true;
             }
@@ -211,7 +223,7 @@ void OptimizerEnProfit::RandomSearch()
             break;
         }
     }
-    LOG << Nl << GetT() << "Finished." << Nl;
+    {LOGL << Nl << GetT() << "Finished." << Nl;}
     const Str notFoundSolutionWarn = StrColour::GenWarn("Couldn't find a solution!\n"
                                                         "The usual remedy is to increase the number of batteries, "
                                                         "or reduce the load in 'habits' configuration file.\n"
