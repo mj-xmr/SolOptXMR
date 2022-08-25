@@ -72,7 +72,7 @@ jobs:
         name: SolOptXMR-ubuntu-latest
         path: /home/runner/work/SolOptXMR/SolOptXMR/build/*.png
         
-  test-ubuntu:
+  test-ubuntu-offline:
     needs: build-ubuntu
     runs-on: ubuntu-latest
     env:
