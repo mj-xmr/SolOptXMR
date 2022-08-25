@@ -189,9 +189,8 @@ def parse_temp_wind(wind_content):
         
         print(temp_str, wind_str)
 
-        temp = float(temp_str.getText().split()[0])
-        wind = float(wind_str.getText().split()[0])
-        wind_meters_per_second = sunrise_lib.km_per_hour_2_meter_per_second(wind)
+        temp = float(temp_str.getText().split()[0]) # TODO: Convert from F to C
+        wind_meters_per_second = sunrise_lib.conv_speed_string_2_number(wind_str.getText())
 
         temp_wind.append((temp, wind_meters_per_second))
 
