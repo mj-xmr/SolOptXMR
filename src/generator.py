@@ -354,10 +354,10 @@ def proc_data(elev, is_simul_weather=False, horizon=0):
         pos = simul_weather(elev)
     else:
         pos = add_weather(elev, horizon)
-    pos = adj_losses(pos) # TODO: This will be a solar panel parameter
+        pos = add_wind(pos, horizon) # Not sure if this is the right position
+        
+    #pos = adj_losses(pos) # TODO: This will be a solar panel parameter
 
-    pos = add_wind(pos, horizon) # Not sure if this is the right position
-    
     print("Dumping data to:", path_positions_txt)
     np.savetxt(path_positions_txt, elev)
     

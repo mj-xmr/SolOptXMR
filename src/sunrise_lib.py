@@ -78,7 +78,7 @@ tz = timezone(tzstr)
     
 DATE_NOW = datetime.datetime.now(tz=tz)
 DATE_NOW_STR = DATE_NOW.isoformat()
-DEFAULT_HORIZON_DAYS = 4
+DEFAULT_HORIZON_DAYS = 3
 LAT = config_geo.geo.lat
 LON = config_geo.geo.lon
 
@@ -123,6 +123,21 @@ def fix_path_src(pth, must_exist=True):
 
 def km_per_hour_2_meter_per_second(kmpsval):
     return kmpsval * 1000 / 3600
+
+def mile_per_hour_2_meter_per_second(mphval):
+    return mphval * 0.44704
+
+def get_number_from_val_unit(val_unit):
+    return float(val_unit.split()[0])
+
+def conv_speed_string_2_number(speed_str):
+    if 'mph' in speed_str:
+        return mile_per_hour_2_meter_per_second(get_number_from_val_unit(speed_str))
+    for kmph in ['kmh', 'km/h']:
+        if kmph in speed_str:
+            return km_per_hour_2_meter_per_second(get_number_from_val_unit(speed_str))
+
+    raise IOError("Unknown unit in " + str(speed_str))
 
 def get_wind_power(watt_min, watt_max, wind_min, wind_max, wind):
     if wind > wind_max:
@@ -178,6 +193,9 @@ def get_pv_system():
 
 def test_physical():
     assert km_per_hour_2_meter_per_second(36) == 10
+    assert mile_per_hour_2_meter_per_second(100000) == 44704
+    assert conv_speed_string_2_number("36 kmh") == 10
+    assert conv_speed_string_2_number("100000 mph") == 44704
 
     assert get_wind_power(10, 100, 10, 100, 10) == 10
     assert get_wind_power(10, 100, 10, 100, 100) == 100

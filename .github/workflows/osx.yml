@@ -1,4 +1,4 @@
-name: linux-full
+name: osx-full
 
 on:
   push:
@@ -130,4 +130,91 @@ jobs:
       with:
         name: SolOptXMR-ubuntu-latest
         path: /home/runner/work/SolOptXMR/SolOptXMR/build/*.png
+        
+  build-macos:
+    needs: test-ubuntu
+    runs-on: macOS-latest
+    env:
+      CCACHE_TEMPDIR: /tmp/.ccache-temp
+    steps:
+    - uses: actions/checkout@v1
+      with:
+        submodules: recursive
+    # Volatile cache
+    - name: ccache
+      uses: actions/cache@v2
+      with:
+        path: /Users/runner/Library/Caches/ccache
+        key:          ccache03-${{ runner.os }}-${{ matrix.os }}-build-${{ github.sha }}
+        restore-keys: ccache03-${{ runner.os }}-${{ matrix.os }}-build-
+    # Less volatile cache
+    - name: data cache
+      uses: actions/cache@v2
+      with:
+        path: build/data/data/txt
+        key:          data-${{ hashFiles('build/data/data/txt/**/*') }}
+        restore-keys: data-${{ hashFiles('build/data/data/txt/**/*') }}
+    # Expendable, volatile & large cache
+    - name: diff cache
+      uses: actions/cache@v2
+      with:
+        path: /tmp/diff_XMR.pkl
+        key: data-diff-01-${{ github.sha }}
+        restore-keys: |
+          data-diff-01-${{ github.sha }}
+          data-diff-01
+    - name: prepare environment
+      run: util/prep-env.sh
+    - name: install dependencies
+      run: util/deps-pull.sh
+    - name: build & install the unmanaged dependencies
+      run: util/deps-build.sh
+    - name: build generic
+      run: ./util/ci.sh 1
+
+
+  test-macos:
+    needs: build-macos
+    runs-on: macOS-latest
+    timeout-minutes: 90
+    continue-on-error: true # It will timeout and appear to have failed, so let's ignore the warning
+    env:
+      CCACHE_TEMPDIR: /tmp/.ccache-temp
+    steps:
+    - uses: actions/checkout@v1
+      with:
+        submodules: recursive
+    # Volatile cache
+    - name: ccache
+      uses: actions/cache@v2
+      with:
+        path: /Users/runner/Library/Caches/ccache
+        key:          ccache03-${{ runner.os }}-${{ matrix.os }}-build-${{ github.sha }}
+        restore-keys: ccache03-${{ runner.os }}-${{ matrix.os }}-build-
+    # Less volatile cache
+    - name: data cache
+      uses: actions/cache@v2
+      with:
+        path: build/data/data/txt
+        key:          data-${{ hashFiles('build/data/data/txt/**/*') }}
+        restore-keys: data-${{ hashFiles('build/data/data/txt/**/*') }}
+    # Expendable, volatile & large cache
+    - name: diff cache
+      uses: actions/cache@v2
+      with:
+        path: /tmp/diff_XMR.pkl
+        key: data-diff-01-${{ github.sha }}
+        restore-keys: |
+          data-diff-01-${{ github.sha }}
+          data-diff-01
+    - name: prepare environment
+      run: util/prep-env.sh
+    - name: install dependencies
+      run: util/deps-pull.sh
+    - name: build & install the unmanaged dependencies
+      run: util/deps-build.sh
+    - name: build generic
+      run: ./util/ci.sh 1
+    - name: Run production
+      run: python3 ./src/prod.py
 
