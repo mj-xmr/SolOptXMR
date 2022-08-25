@@ -53,6 +53,8 @@ def get_args():
     parser.add_argument('-o', '--out-dir',  default=sunrise_lib.DIR_TMP, type=str, help="Output dir to exchange with tsqsim (default: {})".format(""))
     parser.add_argument('-n', '--net-diff', default=False, action='store_true', help="Plot network difficulty only (default: False)")
     parser.add_argument('-m', '--sim',      default=False, action='store_true', help="Plot simulation only (default: False)")
+    parser.add_argument('-of', '--offline-force', default=False, action='store_true', help="Offline run (default: False)")
+    parser.add_argument('-ot', '--offline-try',   default=False, action='store_true', help="Offline try if failing (default: False)")
     parser.add_argument('-np','--no-plot',  default=DISABLE_PLOTTING, action='store_true', help="No plotting at all (default: {})".format(DISABLE_PLOTTING))
     #parser.add_argument('-v', '--verbose',      default=TESTING, action='store_true', help="Test (default: False)")
     return parser.parse_args()
@@ -122,8 +124,10 @@ class BatterySimulatorCpp(generator.BatterySimulator):
         cwd = os.getcwd()
         install_path = getInstallPath(args.binaries_dir)
         os.chdir(install_path)
-
-        hashrate_bonus = get_hashrate_bonus(args.out_dir)
+        if args.offline_force:
+            hashrate_bonus = 0
+        else:
+            hashrate_bonus = get_hashrate_bonus(args.out_dir)
 
         #hashrate_bonus = -3.2 # For simulation only
         #hashrate_bonus =  5.2 # For simulation only
@@ -243,7 +247,8 @@ def main(args):
         #print(pos)
         show_plots = not args.no_plot
         #print('hori', args.days_horizon)
-        elev = generator.proc_data(elev, False, args.days_horizon)
+        simul_weather = args.offline_force
+        elev = generator.proc_data(elev, simul_weather, args.days_horizon)
         #elev = generator.extr_data(proc)
         #print(elev)
         run_main(args, elev, show_plots, args.battery_charge_ah, args.days_horizon)

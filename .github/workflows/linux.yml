@@ -125,7 +125,7 @@ jobs:
     - name: build generic
       run: ./util/ci.sh 1
     - name: Run production
-      run: python3 ./src/prod.py
+      run: python3 ./src/prod.py --offline-force
     - uses: actions/upload-artifact@v3
       with:
         name: SolOptXMR-ubuntu-latest
@@ -216,5 +216,5 @@ jobs:
     - name: build generic
       run: ./util/ci.sh 1
     - name: Run production
-      run: python3 ./src/prod.py
+      run: python3 ./src/prod.py --offline-force
 
