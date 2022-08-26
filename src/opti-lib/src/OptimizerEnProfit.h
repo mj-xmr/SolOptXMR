@@ -33,8 +33,7 @@ class OptimizerEnProfit : public EnjoLib::IMultiDimIterConsumerTpl //OptimizerBa
 
         bool IsUseHash() const;
 
-        //using BigInt = unsigned long;
-        using BigInt = int;
+        using BigInt = unsigned long long; // int is way too small.
 
         const int static HOURS_IN_DAY;
         const BigInt static MAX_NUM_COMBINATIONS;
