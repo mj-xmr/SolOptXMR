@@ -94,7 +94,7 @@ void OptimizerEnProfit::RandomSearch()
 
     // A heuristic to get the number of possible combinations.
     // TODO: Should check the variance changes
-    const BigInt maxIter = gmat.Pow(gmat.PowInt(horizonHours, 3), gmat.Pow(numComputers, 1/4.0));
+    const BigInt maxIter = gmat.Pow(gmat.PowInt(horizonHours, 3), gmat.Pow(numComputers, 1/3.5));
 
     {LOGL << GetT() << "Random search of " << maxIter << " solutions\n"
     << "Hours = " << horizonHours << ", computers = " << numComputers << Nl;}

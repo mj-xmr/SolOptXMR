@@ -39,9 +39,9 @@ EnjoLib::VecD SolUtil::GenSolar(const EnjoLib::VecD & aplitudes) const
     const int period = 24;
     for (const double & apml : aplitudes)
     {
-        for (int i = 0; i < 24; ++i)
+        for (int i = 0; i < period; ++i)
         {
-            double x = i / double(period);
+            const double x = i / static_cast<double>(period);
             double y = gmat.Sin(x * 2 * PI - PI * 0.5);
             if (y < 0)
             {
