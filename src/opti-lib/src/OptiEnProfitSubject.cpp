@@ -286,7 +286,7 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
                     using Par = AsciiPlot::Pars;
                     ELO
                     LOG << "Hashes cumul. [Hh]:\n" << StrColour::GenNorm(StrColour::Col::Magenta, AsciiPlot::Build()(Par::MAXIMUM, m_hashes.Max()).Finalize().Plot(m_hashes)) << Nl;
-                    LOG << "Energy input  [A] :\n" << StrColour::GenNorm(StrColour::Col::Yellow,  AsciiPlot::Build()(Par::MAXIMUM,   m_prod.Max()).Finalize().Plot(m_prod)) << Nl;
+                    LOG << "Energy input  [A] : (max = " << m_prod.Max() << ")\n" << StrColour::GenNorm(StrColour::Col::Yellow,  AsciiPlot::Build()(Par::MAXIMUM,   m_prod.Max()).Finalize().Plot(m_prod)) << Nl;
                     LOG << "Bat charge    [Ah]:\n"   << AsciiPlot::Build()(Par::MAXIMUM, batteryCopy.m_maxCapacityAmph)
                     (Par::MINIMUM, m_dataModel.GetBatPars().MIN_LOAD_AMPH)(Par::COLORS, true)
                     (Par::MULTILINE, true)
