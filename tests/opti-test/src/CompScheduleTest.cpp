@@ -176,6 +176,42 @@ TEST(CompSched_start_immediately)
     }
 }
 
+
+TEST(CompSched_start_immediately_restart_till_end)
+{
+    const VecD schedule = {1, 1, 1, 1, 1, 0, 1, 1, 1};
+
+    CompSchedTestGraph(schedule);
+
+    {
+        ELO
+        const int currHour = SCHEDULE_CURR_HOUR;
+        const int startHour = 0;
+        const int endHour = 4;
+
+        const VecStr & toksCmds = CompSchedTestCommands(schedule, currHour, startHour, endHour);
+        CHECK(toksCmds.size() >= 2);
+    }
+}
+
+
+TEST(CompSched_start_immediately_restart)
+{
+    const VecD schedule = {1, 1, 1, 1, 1, 0, 1, 1, 0};
+
+    CompSchedTestGraph(schedule);
+
+    {
+        ELO
+        const int currHour = SCHEDULE_CURR_HOUR;
+        const int startHour = 0;
+        const int endHour = 4;
+
+        const VecStr & toksCmds = CompSchedTestCommands(schedule, currHour, startHour, endHour);
+        CHECK(toksCmds.size() >= 2);
+    }
+}
+
 /// TODO: Quite a corner case:
 /*
 TEST(CompSched_start_immediately_dont_finish)

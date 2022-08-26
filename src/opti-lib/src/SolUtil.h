@@ -14,6 +14,8 @@ public:
 	virtual ~SolUtil();
 
 	EnjoLib::Str GetT() const;
+	EnjoLib::VecD GenSolar(int days, double aplitude) const;
+	EnjoLib::VecD GenSolar(const EnjoLib::VecD & aplitudes) const;
 
 	/*
 	mpz_class GetFactorial(int inp) const;

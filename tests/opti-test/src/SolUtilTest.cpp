@@ -1,13 +1,30 @@
 #include "SolUtil.h"
 #include <Util/CoutBuf.hpp>
+#include <Visual/Ascii.hpp>
 
 #include <UnitTest++/UnitTest++.h>
 
 using namespace EnjoLib;
 
+static const SolUtil sut;
+
 TEST(SolUtil_placeholder)
 {
 
+}
+
+TEST(SolUtil_genSolar)
+{
+    ELO
+    const int days = 3;
+    const double amplitude = 10;
+    const VecD sol = sut.GenSolar(days, amplitude);
+    CHECK_EQUAL(days * 24, sol.size());
+    CHECK(sol.Min() >= 0);
+    CHECK(sol.Max() <= amplitude);
+    
+    LOG << "Generated " << days << " days:\n";
+    LOG << AsciiPlot::Build()(AsciiPlot::Pars::MULTILINE, true).Finalize().Plot(sol) << Nl;
 }
 
 /*
