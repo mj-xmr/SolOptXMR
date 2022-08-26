@@ -17,6 +17,9 @@ class OptiEnProfitDataModel
 {
     public:
         OptiEnProfitDataModel(const ConfigSol & confSol, int horizonDays = 4, int statingPoint = 0);
+        OptiEnProfitDataModel(const ConfigSol & confSol, std::vector<Habit> habits,
+                                            const System & sys, const BatteryParams & batPars,
+                                            int horizonDays, int statingPoint);
         virtual ~OptiEnProfitDataModel();
 
         EnjoLib::Matrix GetData() const;
@@ -39,6 +42,12 @@ class OptiEnProfitDataModel
         const System & GetSystem() const { return m_sys; }
         bool IsAnimateProgressBar() const;
 
+
+        void SetComputers(const std::vector<Computer> & computers); // For testing
+        void SetPowerProduction(const EnjoLib::VecD & power); // For testing
+
+        static const char * SOLAR_POS_FILE;
+
     protected:
 
     private:
@@ -52,7 +61,7 @@ class OptiEnProfitDataModel
         //EnjoLib::Array<Computer> m_comps;
         std::vector<Computer> m_comps; // Choosing std::vector for runtime speed reasons.
         EnjoLib::Array<Habit> m_habits;
-        
+
         System m_sys;
         BatteryParams m_batPars;
 };

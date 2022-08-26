@@ -1,10 +1,12 @@
 #include "SolUtil.h"
 
+#include <Ios/Ifstream.hpp>
 #include <Ios/Osstream.hpp>
 #include <Util/CoutBuf.hpp>
 #include <Util/StrColour.hpp>
 #include <Util/Time.hpp>
 #include <Util/CharManipulations.hpp>
+#include <Util/Tokenizer.hpp>
 #include <Math/GeneralMath.hpp>
 #include <Math/Constants.hpp>
 #include <Statistical/Assertions.hpp>
@@ -45,14 +47,25 @@ EnjoLib::VecD SolUtil::GenSolar(const EnjoLib::VecD & aplitudes) const
             {
                 y = 0;
             }
+            y *= apml;
             ret.Add(y);
         }
     }
-    
-    
+
     return ret;
 }
-	
+
+EnjoLib::Str SolUtil::GetLinesAsSingle(const EnjoLib::Str & fname) const
+{
+    {Ifstream solPosIn(fname);}
+    Osstream oss;
+    const Tokenizer tok;
+    const VecStr & lines = tok.GetLines(fname);
+    for (const Str & line : lines)
+        oss << line << " ";
+    return oss.str();
+}
+
 /*
 mpz_class SolUtil::GetFactorial(int inp) const
 {

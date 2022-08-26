@@ -21,10 +21,13 @@ TEST(SolUtil_genSolar)
     const VecD sol = sut.GenSolar(days, amplitude);
     CHECK_EQUAL(days * 24, sol.size());
     CHECK(sol.Min() >= 0);
-    CHECK(sol.Max() <= amplitude);
-    
-    LOG << "Generated " << days << " days:\n";
-    LOG << AsciiPlot::Build()(AsciiPlot::Pars::MULTILINE, true).Finalize().Plot(sol) << Nl;
+    CHECK_CLOSE(amplitude, sol.Max(), 0.1);
+
+    LOG << "Generated " << days << " days. Max = " << sol.Max() << "\n";
+    LOG << AsciiPlot::Build()
+    (AsciiPlot::Pars::MULTILINE, true)
+    (AsciiPlot::Pars::MAXIMUM, sol.Max())
+    .Finalize().Plot(sol) << Nl;
 }
 
 /*

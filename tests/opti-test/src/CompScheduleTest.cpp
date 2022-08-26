@@ -2,7 +2,7 @@
 #include "OptiEnProfitResults.h"
 
 //#include "ConfigSol.h"
-#include "JsonReader.h"
+#include "Computer.h"
 #include "OptiTestUtil.h"
 
 #include <Visual/Ascii.hpp>
@@ -69,7 +69,7 @@ static Str GetStartHourToSleep(const Computer & comp, int endHour)
     }
     Osstream oss;
     oss
-    << "echo \"" << "ssh -o ConnectTimeout=" << OptiEnProfitResults::SSH_TIMEOUT_S 
+    << "echo \"" << "ssh -o ConnectTimeout=" << OptiEnProfitResults::SSH_TIMEOUT_S
     << " -n " << OptiTestUtil::compSched_hostname
     << " 'hostname; systemctl suspend'\" | at " << endHour << ":00";
     return oss.str();

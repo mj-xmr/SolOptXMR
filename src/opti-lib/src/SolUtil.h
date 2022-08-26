@@ -17,6 +17,8 @@ public:
 	EnjoLib::VecD GenSolar(int days, double aplitude) const;
 	EnjoLib::VecD GenSolar(const EnjoLib::VecD & aplitudes) const;
 
+	EnjoLib::Str GetLinesAsSingle(const EnjoLib::Str & fileName) const;
+
 	/*
 	mpz_class GetFactorial(int inp) const;
 	mpz_class GetPermutations(int available) const;

@@ -32,6 +32,8 @@ class OptimizerEnProfit : public EnjoLib::IMultiDimIterConsumerTpl //OptimizerBa
         void RecalcComputationCosts();
 
         bool IsUseHash() const;
+        const EnjoLib::VecD & GetGoals() const { return m_goals; }
+        double GetGoal() const { return m_goal; }
 
         using BigInt = unsigned long long; // int is way too small.
 
