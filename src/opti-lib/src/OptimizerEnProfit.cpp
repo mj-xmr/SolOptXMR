@@ -39,6 +39,7 @@ using namespace std;
 using namespace EnjoLib;
 
 const int OptimizerEnProfit::HOURS_IN_DAY = 24;
+const double OptimizerEnProfit::GOAL_INITIAL = -1000000;
 
 const OptimizerEnProfit::BigInt OptimizerEnProfit::MAX_NUM_COMBINATIONS = std::numeric_limits<BigInt>::max(); //1e7;
 //const OptimizerEnProfit::BigInt OptimizerEnProfit::MAX_NUM_COMBINATIONS = 3e6;

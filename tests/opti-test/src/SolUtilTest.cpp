@@ -30,6 +30,22 @@ TEST(SolUtil_genSolar)
     .Finalize().Plot(sol) << Nl;
 }
 
+TEST(SolUtil_round)
+{
+    ELO
+    const double exp = 10;
+    const double got = sut.round(10.1);
+    CHECK_EQUAL(exp, got);
+}
+
+TEST(SolUtil_round_2)
+{
+    ELO
+    const double exp = 10.01;
+    const double got = sut.round(10.009, 2);
+    CHECK_CLOSE(exp, got, 0.1);
+}
+
 /*
 TEST(SolUtil_factorial)
 {

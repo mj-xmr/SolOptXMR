@@ -41,6 +41,7 @@ class OptimizerEnProfit : public EnjoLib::IMultiDimIterConsumerTpl //OptimizerBa
         const BigInt static MAX_NUM_COMBINATIONS;
         const double static MAX_FAILED_COMBINATIONS;
         const double static MIN_POS_2_NEG_CHANGE_RATIO;
+        const double static GOAL_INITIAL;
 
     protected:
         void RandomSearch();
@@ -54,7 +55,7 @@ class OptimizerEnProfit : public EnjoLib::IMultiDimIterConsumerTpl //OptimizerBa
         const OptiEnProfitDataModel & m_dataModel;
         EnjoLib::Matrix m_data;
 
-        double m_goal = -1000000;
+        double m_goal = GOAL_INITIAL;
         int m_uniqueSolutions = 0;
         int m_uniqueSolutionsPrev = 0;
         EnjoLib::VecD m_goals;

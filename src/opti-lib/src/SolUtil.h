@@ -18,6 +18,7 @@ public:
 	EnjoLib::VecD GenSolar(const EnjoLib::VecD & aplitudes) const;
 
 	EnjoLib::Str GetLinesAsSingle(const EnjoLib::Str & fileName) const;
+	double round(double val, int decimals = 0) const;
 
 	/*
 	mpz_class GetFactorial(int inp) const;

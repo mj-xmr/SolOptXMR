@@ -66,6 +66,20 @@ EnjoLib::Str SolUtil::GetLinesAsSingle(const EnjoLib::Str & fname) const
     return oss.str();
 }
 
+double SolUtil::round(double val, int decimals) const
+{
+    if (decimals == 0)
+    {
+        return GMat().round(val);
+    }
+    Assertions::IsTrue(decimals > 0, "decimals < 0 in SolUtil::round");
+    const double mulVal = val * GMat().PowInt(10, decimals);
+    const double mulValRound = GMat().round(mulVal);
+    const double divValRound = mulValRound * GMat().PowInt(10, -decimals);
+
+    return divValRound;
+}
+
 /*
 mpz_class SolUtil::GetFactorial(int inp) const
 {
