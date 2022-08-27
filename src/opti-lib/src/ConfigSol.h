@@ -23,6 +23,7 @@ class ConfigSol : public ConfigBase
         void UpdateFromOther(const ConfigSol & cfgTSCmdLine);
 
         bool NO_PROGRESS_BAR = false; constexpr static const char * DESCR_NO_PROGRESS_BAR = "Disable progress bar";
+        bool NO_GNUPLOT = false;      constexpr static const char * DESCR_NO_GNUPLOT = "Disable gnuplot";
 
         long int DAYS_HORIZON = 3; constexpr static const char * DESCR_DAYS_HORIZON = "How many days ahead you'd like to predict";
         long int DAYS_START = 0;   constexpr static const char * DESCR_DAYS_START   = "The starting day";

@@ -34,6 +34,7 @@ class OptimizerEnProfit : public EnjoLib::IMultiDimIterConsumerTpl //OptimizerBa
         bool IsUseHash() const;
         const EnjoLib::VecD & GetGoals() const { return m_goals; }
         double GetGoal() const { return m_goal; }
+        double GetPenality() const { return m_penality; }
 
         using BigInt = unsigned long long; // int is way too small.
 
@@ -60,6 +61,7 @@ class OptimizerEnProfit : public EnjoLib::IMultiDimIterConsumerTpl //OptimizerBa
         int m_uniqueSolutionsPrev = 0;
         EnjoLib::VecD m_goals;
         int m_numFailed = 0;
+        double m_penality = 0;
         double m_relPos2Neg = 0;
         double m_relChangePositive = 0;
         double m_relChangeNegative = 0;

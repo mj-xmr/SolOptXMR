@@ -22,6 +22,7 @@ public:
     virtual ~OptiSubjectEnProfit();
 
     double GetGoal() const;
+    double GetPenality() const { return m_penalitySum; }
 
     double Get(const double * in, int n) override;
     double GetVerbose(const EnjoLib::Matrix & dataMat, bool verbose =false);
@@ -62,8 +63,9 @@ private:
     std::vector<OptiVarF> m_optiFloatResult;
 
     //EnjoLib::VecD m_iterData;
-    float m_sumMax = 0;
+    double m_sumMax = 0;
     int m_currHour = 0;
+    double m_penalitySum = 0;
 };
 
 #endif // OptiSubjectEnProfit_H

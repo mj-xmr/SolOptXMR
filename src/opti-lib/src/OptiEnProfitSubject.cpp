@@ -85,7 +85,8 @@ double BatterySimulation::iter_get_load(double inp, double out, double hours)
     const double discharge = hours * m_dischargePerHour * load;
     if (inp < 0)
     {
-        inp = 0;
+        Assertions::Throw("input < 0", "BatterySimulation::iter_get_load");
+        //inp = 0;
     }
     const double balance = inp - out - discharge;
     double change = balance * m_mulPowerToCapacity;
@@ -93,7 +94,7 @@ double BatterySimulation::iter_get_load(double inp, double out, double hours)
     {
         //if out > m_maxCapacityAmph: # A valid possibility
         ++num_overused;
-        change = pars.MAX_DISCHARGE_AMP;
+        //change = pars.MAX_DISCHARGE_AMP;
     }
     //#print(change)
     load += change;
@@ -104,7 +105,11 @@ double BatterySimulation::iter_get_load(double inp, double out, double hours)
         if (initial_load)
             ++num_overvolted_initial; /// TODO: Unit test this, as lack of this should cause a crash
         else
-            ++num_overvolted;
+        {
+            const double diff = load - m_maxCapacityAmph;
+            num_overvolted += 1 + diff;
+        }
+            
     }
     if (load < pars.MIN_LOAD_AMPH)
     {
@@ -141,7 +146,7 @@ double OptiSubjectEnProfit::Get(const double * inp, int n)
 double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool verbose)
 {
     //ELO
-    const int PENALITY_SUM_MUL = 10000;
+    const int PENALITY_SUM_MUL = 1;
     const GeneralMath gmat;
     const size_t n = dataMat.at(0).size();
     const EnjoLib::Array<Computer> & comps = m_dataModel.GetComputers();
@@ -164,8 +169,8 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
         simResult.Add(resLocal);
         const double load = battery.iter_get_load(powerProd, resLocal.sumPowerUsage);
         //const double pentalityUndervolted = load < 0 ? GMat().Fabs(load * load * load) : 0;
-        const double pentalityUndervolted = battery.num_undervolted;
-        const double pentalityOvervolted  = battery.num_overvolted / 10.0;
+        const double pentalityUndervolted = battery.num_undervolted * resLocal.sumHashes * 2; //  9.0;
+        const double pentalityOvervolted  = battery.num_overvolted;// 100.0;
 
         if (not sys.buying)
         {
@@ -173,7 +178,7 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
             {
                 if (not battery.initial_load)
                 {
-                    unacceptableSolution = true;
+                    //unacceptableSolution = true;
                 }
             }
         }
@@ -209,6 +214,7 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
                 return resLocal.sumHashes -penalityExtrapolated;
             }
         }
+        
         //LOGL << "acceptable solution. Penality undervolt = " << pentalityUndervolted << " Overvolt: " << pentalityOvervolted << "\n";
     }
 
@@ -216,12 +222,13 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
     //const double pentalityUndervolted = penalitySum * PENALITY_SUM_MUL;
     //const double pentalityOvervolted = battery.num_overvolted;
     const double penality = penalitySum * PENALITY_SUM_MUL; /// TODO: Penalize overvoltage differently than undervoltage
+    m_penalitySum = penality;
     /// TODO: The undervoltage / overvoltage penality should be non-linear.
     const double positive = simResult.sumHashes;
     double sumAdjusted = positive - penality;
     if (penality > 0 && sumAdjusted > 0)
     {
-        sumAdjusted -= positive; /// TODO: This looks like a mistake
+        //sumAdjusted -= positive; /// TODO: This looks like a mistake
     }
     //LOGL << "acceptable solution. Penality sum = " << penalitySum << " positive: " << positive << "\n";
     //LOGL << sum << ", adj = "  << sumAdjusted << Endl;
@@ -278,10 +285,13 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
                 //ToolsMixed().SystemCallWarn("clear", __PRETTY_FUNCTION__);
                 OutputVar(hashes, "hashrates");
                 OutputVar(usages, "usage", false);
-
-                //GnuplotPlotTerminal1d(input, "input", 1, 0.5);
-                GnuplotPlotTerminal1d(prod, "Energy production", 1, 0.5);
-                //GnuplotPlotTerminal1d(hashrateBonus, "Bashrate bonus seasonal", 1, 0.5);
+                if (not m_dataModel.GetConf().NO_GNUPLOT)
+                {
+                    //GnuplotPlotTerminal1d(input, "input", 1, 0.5);
+                    GnuplotPlotTerminal1d(prod, "Energy production", 1, 0.5);
+                    //GnuplotPlotTerminal1d(hashrateBonus, "Bashrate bonus seasonal", 1, 0.5);
+                }
+                
                 OutputVar(loads, "battery");
 
                 {
@@ -295,7 +305,7 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
                     LOG << "Bat charge    [Ah]: (max = " << sut.round(m_loads.Max(), 1) << ")\n";
                     LOG << AsciiPlot::Build()(Par::MAXIMUM, batteryCopy.m_maxCapacityAmph)
                     (Par::MINIMUM, m_dataModel.GetBatPars().MIN_LOAD_AMPH)(Par::COLORS, true)
-                    (Par::MULTILINE, true)
+                    (Par::LINE_TRIPLE, true)
                     .Finalize().Plot(m_loads) << Nl;
                     LOG << "Total usage   [A] : (max = " << sut.round(m_usages.Max(), 1) << ")\n";
                     LOG << AsciiPlot::Build()(Par::MAXIMUM, batteryCopy.pars.MAX_DISCHARGE_AMP)
@@ -357,7 +367,7 @@ OptiSubjectEnProfit::SimResult OptiSubjectEnProfit::Simulate(int i, int currHour
 
 void OptiSubjectEnProfit::OutputVar(const EnjoLib::VecD & data, const EnjoLib::Str & descr, bool plot) const
 {
-    if (plot)
+    if (plot && not m_dataModel.GetConf().NO_GNUPLOT)
     {
         GnuplotPlotTerminal1d(data, descr, 1, 0.5);
     }
