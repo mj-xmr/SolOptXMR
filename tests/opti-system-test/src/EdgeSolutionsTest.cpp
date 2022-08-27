@@ -15,7 +15,9 @@ using namespace EnjoLib;
 
 static OptimizerEnProfit TestEdgeSolGetOptimizer(const VecD & genPower, int horizon, int startingPoint)
 {
-    const ConfigSol cfg;
+    ConfigSol cfg;
+    cfg.RANDOM_SEED = 1;
+    cfg.NO_GNUPLOT = true;
     const Computer & comp0 = OptiTestUtil().GetCompTestSched();
     const Str dataFname = cfg.m_outDir + "/" + OptiEnProfitDataModel::SOLAR_POS_FILE;
     {
@@ -46,6 +48,7 @@ TEST(EdgeSol_happy)
 
     const OptimizerEnProfit & opti = TestEdgeSolGetOptimizer(genPower, horizon, startingPoint);
     CHECK(opti.GetGoal() > 0);
+    CHECK_EQUAL(0, opti.GetPenality());
 }
 
 TEST(EdgeSol_high)
@@ -59,6 +62,7 @@ TEST(EdgeSol_high)
 
     const OptimizerEnProfit & opti = TestEdgeSolGetOptimizer(genPower, horizon, startingPoint);
     CHECK(opti.GetGoal() > OptimizerEnProfit::GOAL_INITIAL);
+    CHECK(opti.GetPenality() > 0);
 }
 
 
@@ -74,5 +78,21 @@ TEST(EdgeSol_high_midday)
     const OptimizerEnProfit & opti = TestEdgeSolGetOptimizer(genPower, horizon, startingPoint);
     CHECK(opti.GetGoals().size() > 0);
     CHECK(opti.GetGoal() > OptimizerEnProfit::GOAL_INITIAL);
+    CHECK(opti.GetPenality() > 0);
 }
 
+
+TEST(EdgeSol_high_low_power)
+{
+    const Computer & comp0 = OptiTestUtil().GetCompTestSched();
+    const ConfigSol cfg;
+    const int horizon = 2;
+    const int startingPoint = 0;
+    const double amplitude = 1;
+    const VecD genPower = SolUtil().GenSolar(horizon, amplitude);
+
+    const OptimizerEnProfit & opti = TestEdgeSolGetOptimizer(genPower, horizon, startingPoint);
+    CHECK(opti.GetGoals().size() > 0);
+    CHECK(opti.GetGoal() > OptimizerEnProfit::GOAL_INITIAL);
+    CHECK_EQUAL(0, opti.GetPenality());
+}

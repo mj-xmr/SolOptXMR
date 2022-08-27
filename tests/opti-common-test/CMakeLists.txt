@@ -1,9 +1,10 @@
 cmake_minimum_required(VERSION 3.5.1)
+include(../../externals/tsqsim/cmake/util.cmake)
 project( opti-common-test )
 
 file( GLOB SRCS src/*.cpp */*.h */*.hpp)
 
-add_library(${PROJECT_NAME} ${SRCS})
+add_library (${PROJECT_NAME} ${LINK_TYPE} ${SRCS})
 enjoSetupTarget(${PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME} opti-lib test-common)
 tsqSetupDirStatic(${PROJECT_NAME})

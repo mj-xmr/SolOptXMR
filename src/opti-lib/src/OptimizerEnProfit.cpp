@@ -39,7 +39,7 @@ using namespace std;
 using namespace EnjoLib;
 
 const int OptimizerEnProfit::HOURS_IN_DAY = 24;
-const double OptimizerEnProfit::GOAL_INITIAL = -1000000;
+const double OptimizerEnProfit::GOAL_INITIAL = std::numeric_limits<double>::min();
 
 const OptimizerEnProfit::BigInt OptimizerEnProfit::MAX_NUM_COMBINATIONS = std::numeric_limits<BigInt>::max(); //1e7;
 //const OptimizerEnProfit::BigInt OptimizerEnProfit::MAX_NUM_COMBINATIONS = 3e6;
@@ -94,7 +94,7 @@ void OptimizerEnProfit::RandomSearch()
 
     // A heuristic to get the number of possible combinations.
     // TODO: Should check the variance changes
-    const BigInt maxIter = gmat.Pow(gmat.PowInt(horizonHours, 3), gmat.Pow(numComputers, 1/3.5));
+    const BigInt maxIter = gmat.Pow(gmat.Pow(horizonHours, 3), gmat.Pow(numComputers, 1/3.5));
 
     {LOGL << GetT() << "Random search of " << maxIter << " solutions\n"
     << "Hours = " << horizonHours << ", computers = " << numComputers << Nl;}
@@ -290,6 +290,7 @@ bool OptimizerEnProfit::Consume2(const EnjoLib::Matrix & dataMat, bool needNewli
         //osub.GetVerbose(dataMat, true);
         osub.GetVerbose(dataMat, false); /// TODO: Why would we recalculate it in a non-verbose mode? To store the final result?
         m_goal = goal;
+        m_penality = osub.GetPenality();
 
         return true;
     }

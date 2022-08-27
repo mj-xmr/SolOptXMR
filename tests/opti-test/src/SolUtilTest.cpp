@@ -25,7 +25,7 @@ TEST(SolUtil_genSolar)
 
     LOG << "Generated " << days << " days. Max = " << sol.Max() << "\n";
     LOG << AsciiPlot::Build()
-    (AsciiPlot::Pars::MULTILINE, true)
+    (AsciiPlot::Pars::LINE_DOUBLE, true)
     (AsciiPlot::Pars::MAXIMUM, sol.Max())
     .Finalize().Plot(sol) << Nl;
 }
