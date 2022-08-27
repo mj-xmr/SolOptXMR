@@ -1,7 +1,7 @@
 #ifndef __SYSTEM_H
 #define __SYSTEM_H
 
-#include <Util/Str.hpp>
+#include <Util/StrFwd.hpp>
 
 class System
 {

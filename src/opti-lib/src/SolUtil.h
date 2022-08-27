@@ -2,7 +2,7 @@
 #define __SOLUTIL_H
 
 #include <Util/CoutBuf.hpp>
-#include <Util/Str.hpp>
+#include <Util/StrFwd.hpp>
 #include <Util/VecD.hpp>
 
 //#include <gmpxx.h>

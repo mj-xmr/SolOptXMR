@@ -12,10 +12,13 @@
 #include <Ios/Ifstream.hpp>
 #include <Util/VecD.hpp>
 #include <Util/CoutBuf.hpp>
+#include <Util/Tokenizer.hpp>
 #include <Util/CharManipulations.hpp>
 #include <Template/Array.hpp>
 #include <Math/RandomMath.hpp>
 #include <Math/GeneralMath.hpp>
+
+#include <STD/String.hpp>
 
 using namespace EnjoLib;
 

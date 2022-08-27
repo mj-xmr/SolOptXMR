@@ -2,6 +2,7 @@
 
 #include <Ios/Ifstream.hpp>
 #include <Ios/Osstream.hpp>
+#include <Util/Str.hpp>
 #include <Util/CoutBuf.hpp>
 #include <Util/StrColour.hpp>
 #include <Util/Time.hpp>

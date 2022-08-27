@@ -3,7 +3,7 @@
 
 #include "CLI.h"
 
-#include <Util/Str.hpp>
+#include <Util/StrFwd.hpp>
 #include <Util/Result.hpp>
 
 struct CLIResultSol;

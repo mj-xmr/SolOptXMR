@@ -6,7 +6,7 @@
 #include "System.h"
 #include "BatteryParams.h"
 
-#include <Util/Str.hpp>
+#include <Util/StrFwd.hpp>
 #include <Template/Array.hpp>
 
 class ConfigSol;

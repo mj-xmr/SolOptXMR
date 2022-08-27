@@ -30,6 +30,7 @@
 #include <Template/CorradePointer.h>
 #include <Visual/AsciiPlot.hpp>
 
+#include <STD/VectorCpp.hpp>
 #include <STD/Set.hpp>
 #include <STD/String.hpp>
 

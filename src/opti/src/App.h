@@ -1,7 +1,7 @@
 #ifndef APPSOL_H
 #define APPSOL_H
 
-#include <Util/Str.hpp>
+#include <Util/StrFwd.hpp>
 
 class ConfigTS;
 class ConfigSym;

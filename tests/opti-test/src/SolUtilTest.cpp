@@ -1,4 +1,5 @@
 #include "SolUtil.h"
+#include <Util/Str.hpp>
 #include <Util/CoutBuf.hpp>
 #include <Visual/Ascii.hpp>
 

@@ -1,5 +1,6 @@
 #include "System.h"
 
+#include <Util/Str.hpp>
 #include <Ios/Osstream.hpp>
 
 using namespace EnjoLib;
