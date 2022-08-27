@@ -45,10 +45,7 @@ EnjoLib::Result<CLIResultSol> CLISol::GetConfigs(int argc, char ** argv) const
     const char * OPT_HASHRATE_BONUS  = "hashrate-bonus";
     const char * OPT_OUT_DIR   = "out";
     const char * OPT_NO_PROGRESS_BAR = "no-progress-bar";
-
-
-
-
+    
 
     EnjoLib::ProgramOptionsState popState;
     ////popState.AddStr(OPT_PLUGIN,    "Plugin name");

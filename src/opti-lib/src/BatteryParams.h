@@ -1,7 +1,7 @@
 #ifndef __BATTERYPARAMS_H
 #define __BATTERYPARAMS_H
 
-#include <Util/Str.hpp>
+#include <Util/StrFwd.hpp>
 
 struct BatteryParams
 {

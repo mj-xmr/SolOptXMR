@@ -4,6 +4,7 @@
 #include "OptimizerBase.h"
 #include "StartEnd.h"
 
+#include <Util/StrFwd.hpp>
 #include <Util/VecD.hpp>
 #include <Statistical/Matrix.hpp>
 
