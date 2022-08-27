@@ -107,9 +107,12 @@ double BatterySimulation::iter_get_load(double inp, double out, double hours)
         else
         {
             const double diff = load - m_maxCapacityAmph;
+            //num_overvolted += 1 + diff;
+            //num_overvolted += 1 + diff * 2;
             num_overvolted += 1 + diff;
+            //num_overvolted += GMat().Pow(1 + diff, 1.01);
         }
-            
+
     }
     if (load < pars.MIN_LOAD_AMPH)
     {
@@ -170,7 +173,7 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
         const double load = battery.iter_get_load(powerProd, resLocal.sumPowerUsage);
         //const double pentalityUndervolted = load < 0 ? GMat().Fabs(load * load * load) : 0;
         const double pentalityUndervolted = battery.num_undervolted * resLocal.sumHashes * 2; //  9.0;
-        const double pentalityOvervolted  = battery.num_overvolted;// 100.0;
+        const double pentalityOvervolted  = battery.num_overvolted * compSize;// 100.0;
 
         if (not sys.buying)
         {
@@ -214,7 +217,7 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
                 return resLocal.sumHashes -penalityExtrapolated;
             }
         }
-        
+
         //LOGL << "acceptable solution. Penality undervolt = " << pentalityUndervolted << " Overvolt: " << pentalityOvervolted << "\n";
     }
 
@@ -291,7 +294,7 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
                     GnuplotPlotTerminal1d(prod, "Energy production", 1, 0.5);
                     //GnuplotPlotTerminal1d(hashrateBonus, "Bashrate bonus seasonal", 1, 0.5);
                 }
-                
+
                 OutputVar(loads, "battery");
 
                 {

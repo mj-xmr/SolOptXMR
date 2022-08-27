@@ -13,7 +13,7 @@
 
 using namespace EnjoLib;
 
-static OptimizerEnProfit TestEdgeSolGetOptimizer(const VecD & genPower, int horizon, int startingPoint)
+static OptimizerEnProfit TestEdgeSolGetOptimizer(const VecD & genPower, int horizon, int startingPoint, int num_computers = 1)
 {
     ConfigSol cfg;
     cfg.RANDOM_SEED = 1;
@@ -30,7 +30,12 @@ static OptimizerEnProfit TestEdgeSolGetOptimizer(const VecD & genPower, int hori
 
     OptiEnProfitDataModel dataModel(cfg, habits, sys, batPars, horizon, startingPoint);
     dataModel.SetPowerProduction(genPower);
-    dataModel.SetComputers(std::vector<Computer>{comp0});
+    std::vector<Computer> comps;
+    for (int i = 0; i < num_computers; ++i)
+    {
+        comps.push_back(comp0);
+    }
+    dataModel.SetComputers(comps);
     OptimizerEnProfit opti(dataModel);
     opti();
 
@@ -53,8 +58,6 @@ TEST(EdgeSol_happy)
 
 TEST(EdgeSol_high)
 {
-    const Computer & comp0 = OptiTestUtil().GetCompTestSched();
-    const ConfigSol cfg;
     const int horizon = 2;
     const int startingPoint = 0;
     const double amplitude = 150;
@@ -68,8 +71,6 @@ TEST(EdgeSol_high)
 
 TEST(EdgeSol_high_midday)
 {
-    const Computer & comp0 = OptiTestUtil().GetCompTestSched();
-    const ConfigSol cfg;
     const int horizon = 2;
     const int startingPoint = 12;
     const double amplitude = 150;
@@ -84,7 +85,6 @@ TEST(EdgeSol_high_midday)
 
 TEST(EdgeSol_high_low_power)
 {
-    const Computer & comp0 = OptiTestUtil().GetCompTestSched();
     const ConfigSol cfg;
     const int horizon = 2;
     const int startingPoint = 0;
@@ -95,4 +95,18 @@ TEST(EdgeSol_high_low_power)
     CHECK(opti.GetGoals().size() > 0);
     CHECK(opti.GetGoal() > OptimizerEnProfit::GOAL_INITIAL);
     CHECK_EQUAL(0, opti.GetPenality());
+}
+
+TEST(EdgeSol_2computers)
+{
+    const int horizon = 2;
+    const int startingPoint = 0;
+    const int computers = 2;
+    const double amplitude = 120;
+    const VecD genPower = SolUtil().GenSolar(horizon, amplitude);
+
+    const OptimizerEnProfit & opti = TestEdgeSolGetOptimizer(genPower, horizon, startingPoint, computers);
+    CHECK(opti.GetGoal() > 0);
+    CHECK(opti.GetPenality() > 0);
+    CHECK(opti.GetPenality() < 2000);
 }
