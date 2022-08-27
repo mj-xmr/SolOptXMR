@@ -4,3 +4,7 @@
 [submodule "externals/croncpp"]
 	path = externals/croncpp
 	url = https://github.com/mariusbancila/croncpp.git
+[submodule "externals/GasPumpOCR-mj"]
+	path = externals/GasPumpOCR-mj
+	url = https://github.com/mj-xmr/GasPumpOCR-mj.git
+	branch = dev-pub

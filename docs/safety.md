@@ -10,10 +10,11 @@ In such case, the charge passes right through you and definitely causing harm.
 Unfortunatly a similar situation might occur, if you touch the (+) and are standing on the floor, without shoes, that would otherwise serve as isolation. If the floor is wet, it worsens the situation. 
 
 ## Terminals: connecting and disconnecting
-When connecting and disconnecting terminals the following rules apply, that minimize the risk of electro shock: 
+When connecting and disconnecting terminals the following rules apply, that minimize (though not eliminate) the risk of an electro shock: 
 - connecting: connect + first (red), then - (black)
 - disconnecting: disconnect - first (black) then + (red)
-Or as a rule of thumb easy to remember: the + (red) can always be hanging alone.
+
+Or as a rule of thumb easy to remember: the + (red) can always be connected alone.
 The same rule applies to all the other bipolar connectors as well.
 
 ## Voltage of the system
@@ -27,7 +28,7 @@ Except for the inverter, which produces 230V AC, the remaining parts of the syst
 In case of a fire event, make sure to keep as much distance to the device being extinguished as possible, as this reduces your risks.
 
 ## MPPT cutoff voltage
-The MPPT controllers cutoff any input that would exceed the maximal voltage, that you may set to prevent your batteries from overloading.
+The MPPT controllers cut off any input that would exceed the maximal voltage, that you may set to prevent your batteries from overloading.
 Overloading of the batteries leads not only to a temporary shut down of the inverter, but to such an increase of the batteries' internal temperature, that their liquids start to boil. 
 Obviously this accelerates corrosion but leads to other unwanted effects as well, like toxic and flammable gas emissions and consequently such an increase of the internal pressure, that they might leak or even explode.
 I personally set my maximal voltage to 13.4V for a 12V system.
@@ -46,7 +47,15 @@ Obviously protective gloves also wouldn't hurt.
 
 ## MPPT reaction time
 Bear in mind, that they react with a delay, so if you set the voltage high but still, say, 1V below the maximal sane batteries' voltage (14V vs 15V), exceeding of which would temporarly shut down your inverter, the delay in reaction of the MPPT controller may still lead to overvoltage, as defined by the inverter. 
-This is very apparent during cloudy days.
-The reason for this confusion is, that as soon as the battery is >80% charged, the voltage starts raising much faster with the same energy input, therefore the previous assumptions of slower growth and adjusted reaction don't hold anymore.
+This is very apparent during days with low clouds, resulting in switching your panels on and off multiple times. 
+The reason for this confusion is, that as soon as the battery is >80% charged, the voltage starts raising much faster with the same energy input, therefore the previous assumptions of slower growth and adjusted reaction time don't hold anymore.
+Below you can see the typical charge profiles of lead-acid batteries, where above the ~80% charge, you may see the sudden non-linearity of voltage, that confuses the MPPT controllers.
+
+![bat-charge](../data/voltage-2-soc-charge.png)
 
 Fingers crossed!
+
+# Appendix
+## Online resources
+- [Cable sizes vs current](https://www.spwales.com/cable-size-current-rating-chart) - TODO: explain
+- [Lead-Acid charging graphs](http://www.scubaengineer.com/documents/lead_acid_battery_charging_graphs.pdf)

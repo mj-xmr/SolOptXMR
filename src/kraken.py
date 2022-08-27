@@ -8,7 +8,7 @@ import sunrise_lib
 
 config = sunrise_lib.config
 DATE_NOW = sunrise_lib.DATE_NOW
-DIR_TMP = config.sunrise_lib.DIR_TMP
+DIR_TMP = sunrise_lib.DIR_TMP
 
 class coin(Enum):
     XMR = auto()

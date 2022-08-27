@@ -17,28 +17,32 @@
 #include "TimeUtil.h"
 
 #include <Math/GeneralMath.hpp>
+#include <Math/RandomMath.hpp>
 #include <Util/ProgressMonit.hpp>
 #include <Util/ProgressMonitHigh.hpp>
 #include <Util/CharManipulations.hpp>
 #include <Util/ToolsMixed.hpp>
 #include <Util/Except.hpp>
 #include <Util/CoutBuf.hpp>
+#include <Util/StrColour.hpp>
 #include <Statistical/Statistical.hpp>
 #include <Statistical/Distrib.hpp>
 #include <Template/CorradePointer.h>
+#include <Visual/AsciiPlot.hpp>
 
-#include <Math/RandomMath.hpp>
-#include <Math/GeneralMath.hpp>
-
-#include <STD/VectorCpp.hpp>
 #include <STD/Set.hpp>
 #include <STD/String.hpp>
+
+#include <limits>
 
 using namespace std;
 using namespace EnjoLib;
 
 const int OptimizerEnProfit::HOURS_IN_DAY = 24;
-const int OptimizerEnProfit::MAX_FAILED_COMBINATIONS = 600000;
+
+const OptimizerEnProfit::BigInt OptimizerEnProfit::MAX_NUM_COMBINATIONS = std::numeric_limits<BigInt>::max(); //1e7;
+//const OptimizerEnProfit::BigInt OptimizerEnProfit::MAX_NUM_COMBINATIONS = 3e6;
+const double OptimizerEnProfit::MAX_FAILED_COMBINATIONS = 0.40;
 const double OptimizerEnProfit::MIN_POS_2_NEG_CHANGE_RATIO = 0.01;
 
 OptimizerEnProfit::OptimizerEnProfit(const OptiEnProfitDataModel & dataModel)
@@ -74,12 +78,26 @@ void OptimizerEnProfit::operator()()
     }
 }
 
+EnjoLib::Str OptimizerEnProfit::GetT() const
+{
+    return SolUtil().GetT();
+}
+
 void OptimizerEnProfit::RandomSearch()
 {
-    SOL_LOG("Random search");
     const int horizonHours = m_dataModel.GetHorizonHours();
     const EnjoLib::Array<Computer> & comps = m_dataModel.GetComputers();
     const int numComputers = comps.size();
+
+    const GMat gmat;
+
+    // A heuristic to get the number of possible combinations.
+    // TODO: Should check the variance changes
+    const BigInt maxIter = gmat.Pow(gmat.PowInt(horizonHours, 3), gmat.Pow(numComputers, 1/4.0));
+
+    {LOGL << GetT() << "Random search of " << maxIter << " solutions\n"
+    << "Hours = " << horizonHours << ", computers = " << numComputers << Nl;}
+
     const RandomMath rmath;
     rmath.RandSeed(m_dataModel.GetConf().RANDOM_SEED);
     const VecD binaryZero(horizonHours);
@@ -95,20 +113,33 @@ void OptimizerEnProfit::RandomSearch()
     }
     Matrix binarBest = binaryMat;
 
+    bool foundFirstSolution = false;
     const bool useHash = IsUseHash();
-    const int maxEl = 1e7;
+    const BigInt maxCombisFailed = maxIter * MAX_FAILED_COMBINATIONS;
     short bit = 1;
     char bitC = '1';
     std::set<std::string> usedCombinations;
     int alreadyCombined = 0;
-    const GMat gmat;
-    ProgressMonitHigh progressMonitor;
-    for (int i = 0; i < maxEl; ++i)
+    //const Distrib distr;
+    const bool animateProgressBar = m_dataModel.IsAnimateProgressBar();
+    ProgressMonitHigh progressMonitor(20);
+    bool needNewLine = false;
+    for (BigInt i = 0; i < maxIter; ++i)
     {
-        if (i % 100000 == 0)
+        if (animateProgressBar)
         {
-            progressMonitor.PrintProgressBarTime(i, maxEl);
+            if (i % 100000 == 0)
+            {
+                progressMonitor.PrintProgressBarTime(i, maxIter, "Solutions");
+                //if (i > 0)
+                {
+                //const DistribData & data = distr.GetDistrib(m_goals, 20); const Str & dstr = distr.PlotLine(data, true, true, true);
+                //progressMonitor.PrintProgressBarTime(i, maxIter, dstr);
+                }
+                needNewLine = true;
+            }
         }
+
         const int icomp = gmat.round(rmath.Rand(0, numComputers-1));
         //for (int icomp = 0; icomp < numComputers; ++icomp)
         {
@@ -161,13 +192,16 @@ void OptimizerEnProfit::RandomSearch()
         }
         else
         {
-            if (Consume2(binaryMat))
+            if (Consume2(binaryMat, needNewLine))
             {
-                SOL_LOG("Consume success: " + binaryMat.Print());
+                SOL_LOG(GetT() + "Consume success: " + binaryMat.Print());
+                //LOGL << "Consume success: " << binaryMat.Print() << '\n';
                 m_numFailed = 0;
                 binarBest = binaryMat;
                 m_uniqueSolutionsPrev = m_uniqueSolutions;
                 m_uniqueSolutions = usedCombinations.size();
+                foundFirstSolution = true;
+                needNewLine = false;
             }
             else
             {
@@ -176,85 +210,38 @@ void OptimizerEnProfit::RandomSearch()
             }
             RecalcComputationCosts();
         }
-        const int maxFail = MAX_FAILED_COMBINATIONS;
         const bool changeLargeEnough = m_relPos2Neg == 0 || m_relPos2Neg > MIN_POS_2_NEG_CHANGE_RATIO;
-        const bool exceededNumFailed = m_numFailed >= maxFail;
+        const bool exceededNumFailed = m_numFailed >= maxCombisFailed;
         //if (exceededNumFailed && not changeLargeEnough)
-        if (exceededNumFailed)
+        if (exceededNumFailed && foundFirstSolution)
         {
             LOGL << "Early stop after " << m_numFailed << " last failed attempts "
                  // << and last change of " << m_relPos2Neg << " < " << MIN_POS_2_NEG_CHANGE_RATIO << Nl
                  << Nl
-                 << "Repeated combinations = " << alreadyCombined << " of " << maxFail << ": " << GMat().round(alreadyCombined/double(maxFail) * 100) << "%" << Nl
-                 << "Unique   combinations = " << usedCombinations.size() << " of " << maxFail << ": " << GMat().round(usedCombinations.size()/double(maxFail) * 100) << "%" << Nl;
+                 << "Repeated combinations = " << alreadyCombined << " of " << maxCombisFailed << ": " << GMat().round(alreadyCombined/double(maxCombisFailed) * 100) << "%" << Nl
+                 << "Unique   combinations = " << usedCombinations.size() << " of " << maxCombisFailed << ": " << GMat().round(usedCombinations.size()/double(maxCombisFailed) * 100) << "%" << Nl;
             break;
         }
     }
+    {LOGL << Nl << GetT() << "Finished." << Nl;}
+    const Str notFoundSolutionWarn = StrColour::GenWarn("Couldn't find a solution!\n"
+                                                        "The usual remedy is to increase the number of batteries, "
+                                                        "or reduce the load in 'habits' configuration file.\n"
+                                                        "If the batteries are overcharged already, "
+                                                        "the best thing to do is to start your machines now."
+                                                        );
+    if (not foundFirstSolution)
+    {
+        // TODO: Unit test it.
+        //Assertions::Throw("Couldn't find a solution!", "OptimizerEnProfit::RandomSearch");
+        LOGL << Nl << notFoundSolutionWarn << Nl;
+    }
 
     PrintSolution(binarBest);
-}
 
-void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat) const
-{
-    const int currHour = TimeUtil().GetCurrentHour();
-    OptiSubjectEnProfit osub(m_dataModel);
-    osub.GetVerbose(bestMat, true);
-    for (int i = 0; i < bestMat.size(); ++i)
+    if (not foundFirstSolution)
     {
-        //GnuplotPlotTerminal1d(bestMat.at(i), "Best solution = " + CharManipulations().ToStr(m_goal), 1, 0.5);
-    }
-    const Distrib distr;
-    const DistribData & distribDat = distr.GetDistrib(m_goals);
-    if (distribDat.IsValid())
-    {
-        //GnuplotPlotTerminal2d(distribDat.data, "Solution distribution", 1, 0.5);
-    }
-
-    ELO
-    LOG << "\nComputer start schedule:\n";
-    for (int i = 0; i < bestMat.size(); ++i)
-    {
-        LOG << m_dataModel.GetComputers().at(i).name << Nl;
-        const VecD & best = bestMat.at(i);
-        LOG << best.Print() << Nl;
-
-        int lastHourOn = -1;
-        int lastDayOn = -1;
-        const int horizonHours = m_dataModel.GetHorizonHours();
-        for (int i = 1; i < horizonHours; ++i)
-        {
-            const int ihour = i + currHour;
-            const int hour = ihour % HOURS_IN_DAY;
-            const int day  = GMat().round(ihour / static_cast<double>(HOURS_IN_DAY));
-            const int dayPrev  = GMat().round((ihour-1) / static_cast<double>(HOURS_IN_DAY));
-            if (day != dayPrev)
-            {
-                //LOG << Nl;
-            }
-
-            const bool onPrev = best.at(i-1);
-            const bool onCurr = best.at(i);
-            if (not onPrev && onCurr)
-            {
-                lastHourOn = hour;
-                lastDayOn = day;
-            }
-            if (lastHourOn > 0)
-            {
-                if (not onCurr) // Switch off
-                {
-                    const int hourPrev = (ihour - 1) % HOURS_IN_DAY;
-                    LOG << "day " << lastDayOn << ", hour " << lastHourOn << "-" << hourPrev<< Nl;
-                    lastHourOn = -1;
-                }
-                else if (i == horizonHours - 1)
-                {
-                    LOG << "day " << lastDayOn << ", hour " << lastHourOn << "-.." << Nl;
-                }
-            }
-
-        }
-        LOG << Nl;
+        LOGL << Nl << notFoundSolutionWarn << Nl;
     }
 }
 
@@ -277,27 +264,30 @@ static double GMatRatio(double val, double valRef)
     return val / valRef;
 }
 
-bool OptimizerEnProfit::Consume2(const EnjoLib::Matrix & dataMat)
+bool OptimizerEnProfit::Consume2(const EnjoLib::Matrix & dataMat, bool needNewline)
 {
     OptiSubjectEnProfit osub(m_dataModel);
-    float goal = osub.GetVerbose(dataMat);
+    const float goal = osub.GetVerbose(dataMat, false);
     //LOGL << "goal = " << goal << Nl;
     m_goals.Add(goal);
     if (goal > m_goal)
     {
         const double relChangePositive = GMat().RelativeChange(goal, m_goal);
         m_relChangePositive = relChangePositive;
-
+        ELO
         RecalcComputationCosts();
-
-        LOGL << "\nNew score = " << goal << " ->\t"
-        << GMat().round(relChangePositive * 100) << "%" << " costing: "
+        if (needNewline)
+        {
+            LOG << Nl; // Need an extra space to clear the progress bar
+        }
+        LOG << GetT() << "New score = " << goal << " ->\t"
+        << GMat().round(relChangePositive   * 100) << "%" << " costing: "
         << GMat().round(m_relChangeNegative * 100) << "%" << ", pos2neg: "
-        << GMat().round(m_relPos2Neg * 100) << "%" << Nl;
+        << GMat().round(m_relPos2Neg        * 100) << "%" << Nl;
 //        << GMat().round(relNeg2Pos * 100) << "%" << Nl;
 
         //osub.GetVerbose(dataMat, true);
-        osub.GetVerbose(dataMat, false);
+        osub.GetVerbose(dataMat, false); /// TODO: Why would we recalculate it in a non-verbose mode? To store the final result?
         m_goal = goal;
 
         return true;

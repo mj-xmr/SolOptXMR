@@ -31,7 +31,7 @@ Supported Operating Systems and features:
 | Mac OSX 12    | ?  | 
 | Mac OSX 11    | ?  | 
 | Mac OSX 10.15 | ?  | 
-| Raspbian      | X  | 
+| Raspbian      | ?  | 
 | Windows       | X  | 
 
 Legend:
@@ -48,21 +48,22 @@ When in doubt, please view their contents with `cat` for an objective assessment
 ```bash
 git clone --recursive https://github.com/mj-xmr/SolOptXMR.git # Clone this repo (assuming it's not a fork)
 cd SolOptXMR		# Enter the cloned repo's dir
-./util/prep-env.sh	# Prepare the environment - downloads example data and creates useful symlinks
+git checkout $(git describe --tags $(git rev-list --tags --max-count=1)) # Checkout latest tag (master is risky)
+./util/prep-env.sh	# Prepare the environment - downloads example data and creates useful symlinks 
 ./util/deps-pull.sh	# Download the maintaned dependencies
 ./util/deps-build.sh	# Build and install the unmanaged dependencies (uses sudo for installation)
-pip install -r requirements.txt # Install Python packages (either use this command or its fitting alternative) 
 ./util/config.sh	# Configure your rig
 ```
 
 ## Building & running
 ```bash
 ./ci-default          # Build and run the tests
-./soloptxmr.py        # Run the prediction with default parameters  
+./soloptxmr.py        # Run the prediction with default parameters
 ./soloptxmr.py --help # Print all the available options 
 ```
 By default the script performs the predictions 3 days ahead from now, assuming the battery charge at its reasonable minimum, set by the `battery.json`.
 
+### Fine configuration
 In order to alter the default behavior, the main script can be ran with the following example options:
 ```bash
 ./soloptxmr.py \
@@ -78,7 +79,17 @@ or equivalently:
 -s "2022-02-20 20:22"
 ```
 
-Setting the battery's voltage, rather than the Ah charge is a feature planned for the near future. For now, you have to resort to online resources in order to estimate the initial battery's state. [Example 1](http://www.scubaengineer.com/documents/lead_acid_battery_charging_graphs.pdf)
+### Simpler battery charge input via voltage and OCR
+Setting the battery's voltage directly, also via OCR, rather than the Ah or % charge is a feature currently being worked on. What's missing are measurements of batteries of various types, like in [Example 1](http://www.scubaengineer.com/documents/lead_acid_battery_charging_graphs.pdf)
+
+```bash
+./soloptxmr.py --battery-charge-v 12.3 # Set the voltage of your battery to be converted to its current charge
+# or:
+./soloptxmr.py --battery-charge-ocr    # Use image recognition to read the current battery voltage
+```
+
+### OCR
+It's possible to automate the process of reading the battery voltage, or % of charge directly, after capturing a picture of an LCD display and passing the picture to an OCR module. [See here](docs/ocr.md) for a more detailed description.
 
 ## Plotting the hashrate situation only
 Because the optimization takes some time and you might be only interested in the hashrate situation alone, the main script has an option to ommit the optimization part.
@@ -111,22 +122,39 @@ The script accepts an iso-formatted date as an input, allowing you to simulate e
 The title of the plot presents the sum of produced electricity in a given day. 
 It makes sense to compare and sum up this values for the extreme conditions.
 
+## Voltage plots
+To visualize the currently modelled (dis)charge rates, as described [in this paper](http://www.scubaengineer.com/documents/lead_acid_battery_charging_graphs.pdf), dubbed _C/100_, _C/20_, and so on, please run the `src/voltage_plot.py` script.
+
 # Further documentation
 - [safety](docs/safety.md): how to handle electrical systems safely. Tell me, that you "read and understood it", and I can sleep fine.
-- [economy](docs/economy.md): my economy views and the resulting dynamics tailored to production of electricity.
+- [economy](docs/economy.md): my economy views and the resulting dynamics tailored to production of electricity & mining crypto.
+- [config](docs/config.md): how to configure your instance of the project
+- [ocr](docs/ocr.md): deeper instructions on how to use and extend the OCR capabilities
+- [archive](docs/web-archive): crucial documents gathered from various sites, that deliver expert knowledge
 
 # Screenshots
 
 ## First production model
-A model with an integrated n-day weather prediction & multiple, user-defined mining rigs (here: 2).
+A model with an integrated n-day weather prediction & multiple, user-defined mining rigs (here: 2), simulating the battery drainage with a horizon of 5 days:
 
 ![solopt-prod](https://user-images.githubusercontent.com/63722585/167363580-978d0835-9d6c-40bb-94dd-ffa955bade10.png)
 
+## Alternative plots
 
-## First model
-A plot of the energetic balance, based on real astronomic data and contrived weather distortions, simulating the battery drainage with a horizon of 3 days:
+Below is the standard Python plot:
 
-![plot-1st](https://user-images.githubusercontent.com/63722585/163774847-7c3f522a-a6b9-43bf-b133-6ba0c6e007f8.png)
+![plots-python](docs/screenshots/various-plots-python.png)
+
+The same plot can represented in alternative ways for systems or remote connections, where Python plotting isn't available. 
+First the gnuplot-iostreams console output is presented, that mimics the energy input cycles, as well as the bettery charge from the above Python plot accordingly:
+
+![plots-python](docs/screenshots/various-plots-gnuplot-iostreams.png)
+
+Yet because it's quite cumbersome to install the gnuplot's dependencies under Windows and because these kinds of console plots take a lot of space to be printed in a readable form, the below dependency-free ASCII representation is also being used:
+
+![plots-python](docs/screenshots/various-plots-enjolib.png)
+
+This kind of ASCII plotting yields a very quick and compact way to deliver multi-layered information in just one screen area, that might be currently visible to you.
 
 ## Network difficulty
 These data are taken into account when making decision about starting a rig or not. 
@@ -145,8 +173,34 @@ Please note the prolonged production across the whole day, reflected by the inve
 
 ![array-modelling](https://user-images.githubusercontent.com/63722585/170349578-16f0965a-9c34-45ea-9d14-df740a562723.png)
 
+## Lead-acid battery (dis)charge profiles
+The currently modelled (dis)charge profiles:
 
-## Console interactive UI
+![bat-discharge](data/voltage-2-soc-discharge.png)
+
+![bat-charge](data/voltage-2-soc-charge.png)
+
+## OCR and generic image recognition
+These kinds of images are able to be successfully recognized:
+
+Translates into the displayed number:
+
+![lcd](https://user-images.githubusercontent.com/63722585/184493273-58239fe5-3e8b-4646-a3de-c06449d6c534.png)
+
+Similar as the LCD above but notice, that this one is backlit, the removal of which requires an additional inversion step:
+
+![lcd-backlit](https://user-images.githubusercontent.com/63722585/184493679-ed3a3a25-e297-481c-8aa4-a0c871ccac5f.png)
+
+
+Using custom code, translates into percentage - in this case 100%, since all the relevant rectangles, namely the ones representing the battery charge, are lit:
+
+![image](https://user-images.githubusercontent.com/63722585/184493343-3793b869-0284-4d49-8c27-57a3f5274c8f.png)
+
+
+More [examples here](src/data/img).
+
+
+## Console interactive UI (WIP)
 Accessible via `ssh`/`putty`, based on `curses`.
 
 ![image](https://user-images.githubusercontent.com/63722585/163773221-52705e53-167b-4468-ad7e-2038c2f822a8.png)
@@ -169,3 +223,4 @@ Total profit = 28.35 USD
 Profitability = 450.72 %
 Saving figure to: build//fig-Endor.png
 ```
+

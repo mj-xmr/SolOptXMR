@@ -29,7 +29,7 @@ OptiEnProfitDataModel::OptiEnProfitDataModel(const ConfigSol & confSol, int hori
 , m_batPars(JsonReader().ReadBatteries().at(0)) /// TODO: extend
 , m_habits(JsonReader().ReadHabits())
 {
-    const char * fname = "/tmp/solar_pos.txt";
+    const Str fname = m_confSol.m_outDir + "/solar_pos.txt";
     {Ifstream solPosIn(fname);}
     const Tokenizer tok;
     const VecStr & lines = tok.GetLines(fname);
@@ -131,4 +131,10 @@ double OptiEnProfitDataModel::GetHabitsUsage(int i) const
         m_habitsCache.push_back(sum);
         return sum;
     }
+}
+
+bool OptiEnProfitDataModel::IsAnimateProgressBar() const
+{
+    const bool animateProgressBar = not GetConf().NO_PROGRESS_BAR;
+    return animateProgressBar;
 }

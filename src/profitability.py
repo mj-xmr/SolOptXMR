@@ -8,10 +8,12 @@ import math
 
 from python_json_config import ConfigBuilder
 
+import sunrise_lib
+
 config_builder = ConfigBuilder()
 config = config_builder.parse_config('config.json')
 dict_config = config.to_dict()
-DIR_TMP = config.sunrise_lib.DIR_TMP
+DIR_TMP = sunrise_lib.DIR_TMP
 
 
 class POW_Coin:

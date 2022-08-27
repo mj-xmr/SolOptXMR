@@ -4,7 +4,6 @@
 #include "OptimizerBase.h"
 #include "StartEnd.h"
 
-#include <Util/Str.hpp>
 #include <Util/VecD.hpp>
 #include <Statistical/Matrix.hpp>
 
@@ -28,14 +27,17 @@ class OptimizerEnProfit : public EnjoLib::IMultiDimIterConsumerTpl //OptimizerBa
 
         void Consume(const EnjoLib::VecD & data) override; // IMultiDimIterConsumerTpl
 
-        bool Consume2(const EnjoLib::Matrix & data);
+        bool Consume2(const EnjoLib::Matrix & data, bool needNewline);
         void AddSpace(const EnjoLib::VecD & data);
         void RecalcComputationCosts();
 
         bool IsUseHash() const;
 
+        using BigInt = unsigned long long; // int is way too small.
+
         const int static HOURS_IN_DAY;
-        const int static MAX_FAILED_COMBINATIONS;
+        const BigInt static MAX_NUM_COMBINATIONS;
+        const double static MAX_FAILED_COMBINATIONS;
         const double static MIN_POS_2_NEG_CHANGE_RATIO;
 
     protected:
@@ -45,6 +47,8 @@ class OptimizerEnProfit : public EnjoLib::IMultiDimIterConsumerTpl //OptimizerBa
         //void PrintStats() const override;
         //void PrintStatsSummary() const override;
     private:
+        EnjoLib::Str GetT() const;
+
         const OptiEnProfitDataModel & m_dataModel;
         EnjoLib::Matrix m_data;
 

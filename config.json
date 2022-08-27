@@ -1,6 +1,5 @@
 {
     "sunrise_lib": {
-        "HOME": "/foo/bar",
         "FNAME": "/dev/shm/solar.txt",
         "DIR_CFG": ".config/solar",
         "FNAME_MASTER": "/.config/solar/master",
@@ -8,9 +7,7 @@
         "CPU_FREQ_APP": "/root/bin/cpu-freq.sh",
         "HOURS_DELTA": 2.5,
         "MIN_WEATHER": 0.4,
-        "DIR_TMP": "/tmp",
-        "DIR_XMRIG": "/progs/crypto/xmr/xmrig/b",
-        "TESTING": false
+        "DIR_XMRIG": "/progs/crypto/xmr/xmrig/b"
     },
     "generator": {
         "ELEVATION_KEY": "elevation",

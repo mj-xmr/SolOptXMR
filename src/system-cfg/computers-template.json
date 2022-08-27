@@ -2,7 +2,9 @@
     "computers": [
     	  {
     	  	"name" : "Fanless Intel, 4 core",
-    	  	"count" : 0,
+    	  	"hostname" : "intel4",
+    	  	"MAC" : "DE:AD:BE:EF:AA:BB",
+    	  	"count" : 1,
     	  	"cores" : 4,
     	  	"hash_per_core" : 250,
     	  	"watt_per_core" : 11.5,
@@ -13,7 +15,10 @@
     	  },
     	  {
     	  	"name" : "Fanless Ryzen, 2 core",
-    	  	"cores" : 1,
+    	  	"hostname" : "ryzen2",
+    	  	"MAC" : "C0:FF:EE:BA:BE:AA",
+    	  	"count" : 0,
+    	  	"cores" : 2,
     	  	"hash_per_core" : 100,
     	  	"watt_per_core" : 20,
     	  	"watt_idle" : 8,
@@ -23,6 +28,9 @@
     	  },
     	  {
     	  	"name" : "Ryzen 7, 8 cores",
+    	  	"hostname" : "ryzen8",
+    	  	"MAC" : "C0:FF:EE:BA:BE:BB",
+    	  	"count" : 1,
     	  	"cores" : 8,
     	  	"hash_per_core" : 400,
     	  	"watt_per_core" : 8,

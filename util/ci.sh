@@ -17,8 +17,16 @@ python3 src/tests.py
 python3 src/tests.py
 
 #util/build-debian.sh
+if [ "$(uname)" == "Linux" ]; then
 ./ci-default -o "VERBOSE_FUNCTIONS=OFF"
+else
+./ci-default -o "VERBOSE_FUNCTIONS=ON"
+fi
 
+if [ $# -eq 1 ]; then
+	echo "Production test not requested. Exiting."
+	exit 0
+fi
 echo "Testing the entire production chain:"
 # TODO: Make optional & derive a build script from tsqsim/util/build.py:
 export R_HOME=/usr/lib/R && export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$R_HOME/lib
@@ -28,6 +36,6 @@ else
 	# TODO: Mac OSX suffers from an endless loop (?) in prod.py
 	#python3 src/prod.py
 	cd build/default-static-release/bin/
-	./opti
+	./opti # --out "/tmp" # todo: should be defaulted in the CI App's CLI
 fi
 

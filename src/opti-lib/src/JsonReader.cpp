@@ -1,5 +1,6 @@
 #include "JsonReader.h"
 #include "Computer.h"
+#include "ConfigSol.h"
 
 #include <Ios/Ifstream.hpp>
 #include <Util/CoutBuf.hpp>
@@ -16,41 +17,80 @@ using namespace EnjoLib;
 JsonReader::JsonReader(){}
 JsonReader::~JsonReader(){}
 
-
-static const rapidjson::Value & GetArray(const EnjoLib::Str & name)
+static void parseJsonOrThrow(const Str & jsonFile, rapidjson::Document & d)
 {
-    const Str jsonFile = name + ".json";
     const Str & wholeJson = JsonReader::GetJson(jsonFile);
-    rapidjson::Document d;
     if (d.Parse(wholeJson.c_str()).HasParseError())
     {
-        Assertions::Throw((jsonFile + " failed to parse\n").c_str(), "GetArray");
+        Assertions::Throw((jsonFile + " failed to parse\n").c_str(), "parseJsonOrThrow");
     }
+}
+
+static const rapidjson::Value & GetArrayJson(const EnjoLib::Str & name)
+{
+    const Str jsonFile = name + ".json";
+    rapidjson::Document d;
+    {LOGL << "Reading array: " << name << Nl;}
+    parseJsonOrThrow(jsonFile, d);
     const rapidjson::Value& array_json = d[name.c_str()];
+    //{LOGL << "Reading array: " << name << " succeeded." << Nl;}
     return array_json;
+}
+
+class JsonValueWrapper
+{
+public:
+    JsonValueWrapper(const rapidjson::Value & obj, const EnjoLib::Str & identif)
+    : m_obj(obj)
+    , m_id(identif)
+    {
+
+    }
+    const rapidjson::Value & GetValueJson(const EnjoLib::Str & name) const;
+
+
+private:
+
+    const rapidjson::Value & m_obj;
+    const EnjoLib::Str m_id;
+};
+
+const rapidjson::Value & JsonValueWrapper::GetValueJson(const EnjoLib::Str & name) const
+{
+    //{LOGL << "Reading variable: " << name << " of " << m_id << Nl;}
+    if (not m_obj.HasMember(name.c_str()))
+    {
+        const EnjoLib::Str msg = "No member " + name + " in " + m_id;
+        Assertions::Throw(msg.c_str(), "GetValue");
+    }
+    return m_obj[name.c_str()];
 }
 
 EnjoLib::Array<BatteryParams> JsonReader::ReadBatteries(bool verbose) const
 {
     const CharManipulations cman;
     std::vector<BatteryParams> ret;
-    const rapidjson::Value& arr = GetArray("batteries");
+    const Str idd = "batteries";
+    const rapidjson::Value& arr = GetArrayJson(idd);
     for (auto objIt = arr.Begin(); objIt != arr.End(); ++objIt)
     {
         BatteryParams batObj;
         int count = 1;
         const rapidjson::Value & bat = *objIt;
+        JsonValueWrapper jwrap(bat, idd);
         ELO
 
-        batObj.MAX_DISCHARGE_AMP = bat["max_discharge_amp"].GetDouble();
-        batObj.MAX_CAPACITY_AMPH = bat["max_capacity_amph"].GetDouble();
-        batObj.MIN_LOAD_AMPH = bat["min_load_amph"].GetDouble();
-        batObj.DISCHARGE_PER_HOUR_PERCENT = bat["discharge_per_hour_percent"].GetDouble();
+        batObj.DISCHARGE_RATE_C_BY =    jwrap.GetValueJson("discharge_rate_c_by").GetInt();
+        batObj.MAX_CHARGE_V =           jwrap.GetValueJson("max_charge_v").GetDouble();
+        batObj.MAX_DISCHARGE_AMP =      jwrap.GetValueJson("max_discharge_amp").GetDouble();
+        batObj.MAX_CAPACITY_AMPH =      jwrap.GetValueJson("max_capacity_amph").GetDouble();
+        batObj.MIN_LOAD_AMPH =          jwrap.GetValueJson("min_load_amph").GetDouble();
+        batObj.DISCHARGE_PER_HOUR_PERCENT = jwrap.GetValueJson("discharge_per_hour_percent").GetDouble();
         //batObj.name = bat["name"].GetString();
         //LOG <<  << Nl;
         if (bat.HasMember("count")) /// TODO: Repeated pattern
         {
-            count = bat["count"].GetInt();
+            count = jwrap.GetValueJson("count").GetInt();
         }
         if (count == 0)
         {
@@ -79,30 +119,34 @@ EnjoLib::Array<Computer> JsonReader::ReadComputers(bool verbose) const
 {
     const CharManipulations cman;
     std::vector<Computer> ret;
-    const rapidjson::Value& arr = GetArray("computers");
+    const Str idd = "computers";
+    const rapidjson::Value& arr = GetArrayJson(idd);
     for (auto compIt = arr.Begin(); compIt != arr.End(); ++compIt)
     {
         Computer compObj;
         int count = 1;
         const rapidjson::Value & comp = *compIt;
+        JsonValueWrapper jwrap(comp, idd);
         ELO
 
-        compObj.cores = comp["cores"].GetInt();
-        compObj.wattPerCore = comp["watt_per_core"].GetDouble();
-        compObj.hashPerCore = comp["hash_per_core"].GetDouble();
+        compObj.cores =         jwrap.GetValueJson("cores").GetInt();
+        compObj.wattPerCore =   jwrap.GetValueJson("watt_per_core").GetDouble();
+        compObj.hashPerCore =   jwrap.GetValueJson("hash_per_core").GetDouble();
         /// TODO: hash per core scaling factor
         //compObj.scalingFactor = 0.85;
 
-        compObj.hashPerCore = comp["hash_per_core"].GetDouble();
-        compObj.wattAsleep = comp["watt_asleep"].GetDouble();
-        compObj.wattIdle = comp["watt_idle"].GetDouble();
-        compObj.maxTempCelcius = comp["max_temp_celcius"].GetDouble();
-        compObj.minRunHours = comp["min_run_hours"].GetInt();
-        compObj.name = comp["name"].GetString();
+        compObj.hashPerCore =    jwrap.GetValueJson("hash_per_core").GetDouble();
+        compObj.wattAsleep =     jwrap.GetValueJson("watt_asleep").GetDouble();
+        compObj.wattIdle =       jwrap.GetValueJson("watt_idle").GetDouble();
+        compObj.maxTempCelcius = jwrap.GetValueJson("max_temp_celcius").GetDouble();
+        compObj.minRunHours =    jwrap.GetValueJson("min_run_hours").GetInt();
+        compObj.name =           jwrap.GetValueJson("name").GetString();
+        compObj.hostname =       jwrap.GetValueJson("hostname").GetString();
+        compObj.macAddr =        jwrap.GetValueJson("MAC").GetString();
         //LOG <<  << Nl;
         if (comp.HasMember("count"))
         {
-            count = comp["count"].GetInt();
+            count = jwrap.GetValueJson("count").GetInt();
         }
         if (count == 0)
         {
@@ -138,31 +182,33 @@ EnjoLib::Array<Habit> JsonReader::ReadHabits(bool verbose) const
 {
     const CharManipulations cman;
     std::vector<Habit> ret;
-    const rapidjson::Value& arr = GetArray("habits");
+    const Str idd = "habits";
+    const rapidjson::Value& arr = GetArrayJson(idd);
     for (auto itr = arr.Begin(); itr != arr.End(); ++itr)
     {
         Habit obj;
         int count = 1;
         const rapidjson::Value & habit = *itr;
+        JsonValueWrapper jwrap(habit, idd);
         ELO
-        
-        obj.name = habit["name"].GetString();
-        {LOGL << obj.name << Nl;}
-        obj.watt = habit["watt"].GetDouble();
+
+        obj.name = jwrap.GetValueJson("name").GetString();
+        //{LOGL << obj.name << Nl;}
+        obj.watt = jwrap.GetValueJson("watt").GetDouble();
         if (habit.HasMember("watt_asleep"))
         {
-            obj.watt_asleep = habit["watt_asleep"].GetDouble();
+            obj.watt_asleep = jwrap.GetValueJson("watt_asleep").GetDouble();
         }
         if (habit.HasMember("schedule"))
         {
-             obj.schedule = habit["schedule"].GetString();
-             obj.duration_hours = habit["duration_hours"].GetDouble();
+             obj.schedule =         jwrap.GetValueJson("schedule").GetString();
+             obj.duration_hours =   jwrap.GetValueJson("duration_hours").GetDouble();
         }
-        
+
         //LOG <<  << Nl;
         if (habit.HasMember("count"))
         {
-            count = habit["count"].GetInt();
+            count = jwrap.GetValueJson("count").GetInt();
         }
         if (count == 0)
         {
@@ -194,15 +240,31 @@ EnjoLib::Array<Habit> JsonReader::ReadHabits(bool verbose) const
 System JsonReader::ReadSystem(bool verbose) const
 {
     System ret;
-    const Str & wholeJson = GetJson("system.json");
+    const Str jsonFile = "system.json";
+    const Str idd = jsonFile;
     rapidjson::Document d;
-    d.Parse(wholeJson.c_str());
+    parseJsonOrThrow(jsonFile, d);
+    JsonValueWrapper jwrap(d, idd);
+
+    ret.voltage     = jwrap.GetValueJson("voltage").GetInt();
+    ret.generating  = jwrap.GetValueJson("generate").GetBool();
+    ret.buying      = jwrap.GetValueJson("buy").GetBool();
+    ret.selling     = jwrap.GetValueJson("sell").GetBool();
+
+    return ret;
+}
+
+ConfigSol JsonReader::ReadConfigSol(bool verbose) const
+{
+    ConfigSol ret;
+    const Str jsonFile = "config-volatile.json";
+    const Str idd = jsonFile;
+    rapidjson::Document d;
+    parseJsonOrThrow(jsonFile, d);
+    JsonValueWrapper jwrap(d, idd);
     
-    ret.voltage     = d["voltage"].GetInt();
-    ret.generating  = d["generate"].GetBool();
-    ret.buying      = d["buy"].GetBool();
-    ret.selling     = d["sell"].GetBool();
-    
+    /// TODO: This should be secured better, like the rest, but it's multilayered.
+    ret.m_outDir     = d["paths"]["DIR_TMP"].GetString();
     return ret;
 }
 
@@ -221,7 +283,9 @@ EnjoLib::Str JsonReader::GetJson(const EnjoLib::Str & fileName)
     {
         Assertions::Throw("Not found home dir", "JsonReader::GetJson");
     }
-    Ifstream fcomps(Str(homedir) + "/.config/solar/" + fileName);
+    const Str path = Str(homedir) + "/.config/solar/" + fileName;
+    {LOGL << "Reading json: " << path << Nl;}
+    Ifstream fcomps(path);
     const Tokenizer tok;
     const VecStr & lines = tok.GetLines(fcomps);
     Str wholeJson;

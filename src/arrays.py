@@ -14,6 +14,8 @@ import argparse
 import dateutil
 import datetime
 
+import matplotlib
+#matplotlib.use('Agg')
 from matplotlib import pyplot as plt
 
 def get_args():

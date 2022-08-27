@@ -21,13 +21,16 @@ from matplotlib import pyplot as plt
 
 import sunrise_lib
 import weather_lib
+import voltage_lib
 import kraken
 from profitability import POW_Coin
 
 from python_json_config import ConfigBuilder
 
 config = sunrise_lib.config
+config_volatile = sunrise_lib.config_volatile
 config_batteries = sunrise_lib.config_batteries
+config_wind_turbines = sunrise_lib.config_wind_turbines
 config_system = sunrise_lib.config_system
 battery = config_batteries.batteries[0] # TODO: extend
 
@@ -39,11 +42,14 @@ MIN_POWER = 0
 MAX_POWER = config.generator.MAX_POWER
 MAX_USAGE = battery['max_discharge_amp']
 MIN_CAPACITY = battery['min_load_amph'] * battery['count']
-MAX_CAPACITY = battery['max_capacity_amph'] * battery['count']
+MAX_CAPACITY_PERCENTAGE = round(1/100 * voltage_lib.voltage_to_percentage(battery['max_charge_v'], discharge_rate=battery['discharge_rate_c_by'], charge_status=True), 3)
+MAX_CAPACITY_THEORETICAL = battery['max_capacity_amph'] * battery['count']
+MAX_CAPACITY = MAX_CAPACITY_THEORETICAL * MAX_CAPACITY_PERCENTAGE
+
 MUL_POWER_2_CAPACITY = config.generator.MUL_POWER_2_CAPACITY
 T_DELTA_HOURS = config.generator.T_DELTA_HOURS
 DATE_NOW = sunrise_lib.DATE_NOW
-PATH_POSITIONS_BASE = config.sunrise_lib.DIR_TMP + config.generator.PATH_POSITIONS # TODO: Parametrize based on keys
+PATH_POSITIONS_BASE = sunrise_lib.DIR_TMP + config.generator.PATH_POSITIONS # TODO: Parametrize based on keys
 ELECTRICITY_PRICE = config.generator.ELECTRICITY_PRICE
 POOL_FEE = config.generator.POOL_FEE / 100  # Must be a float!
 TARGET_PRICE = config.generator.TARGET_PRICE
@@ -129,6 +135,7 @@ def plot_sun(name, elev, bat, usage, show_plots):
     plt.xlabel("Time")
     plt.xticks(rotation=25, ha='right')
     plt.ylabel("Power [W] [Wh] & capacity [Ah]")
+    plt.plot(list_to_pd([MAX_CAPACITY_THEORETICAL]   * len(elev), elev))
     plt.plot(list_to_pd([MAX_CAPACITY]   * len(elev), elev))
     plt.plot(bat,   'g')
     plt.plot(list_to_pd([MIN_CAPACITY]   * len(elev), elev))
@@ -136,7 +143,7 @@ def plot_sun(name, elev, bat, usage, show_plots):
     plt.plot(list_to_pd([MAX_USAGE]      * len(elev), elev), 'r')
     plt.plot(usage, 'b')
     plt.grid()
-    plt.legend(['max bat charge', 'bat charge', 'min bat charge', 'sun input', 'max power usage', 'power usage'])
+    plt.legend(['max bat charge theo', 'max bat charge real', 'bat charge', 'min bat charge', 'sun input', 'max power usage', 'power usage'])
     os.makedirs(BUILD_DIR, exist_ok=True)
     fout_rel_path = "{}/fig-{}.png".format(BUILD_DIR, name)
     print("Saving figure to:",fout_rel_path)
@@ -347,7 +354,9 @@ def proc_data(elev, is_simul_weather=False, horizon=0):
         pos = simul_weather(elev)
     else:
         pos = add_weather(elev, horizon)
-    pos = adj_losses(pos) # TODO: This will be a solar panel parameter
+        pos = add_wind(pos, horizon) # Not sure if this is the right position
+        
+    #pos = adj_losses(pos) # TODO: This will be a solar panel parameter
 
     print("Dumping data to:", path_positions_txt)
     np.savetxt(path_positions_txt, elev)
@@ -357,6 +366,34 @@ def proc_data(elev, is_simul_weather=False, horizon=0):
 def extr_data(pos):
     elev = pos[ELEVATION_KEY]
     return elev
+
+def add_wind(pos, horizon):
+    temp_wind_arr = weather_lib.get_temp_wind(horizon)
+    print("Len pos =", len(pos), ", len wind =", len(temp_wind_arr))
+    #assert len(temp_wind_arr) == len(pos)
+
+    for i, row in enumerate(temp_wind_arr):
+        wind_m_per_s = row[1]
+
+        power_sum = 0
+        for turbine in config_wind_turbines.wind:
+            power = sunrise_lib.get_wind_power(
+                turbine["watt_min"],
+                turbine["watt_max"],
+                turbine["wind_speed_min_ms"],
+                turbine["wind_speed_max_ms"],
+                wind_m_per_s)
+
+            power *= turbine["count"]
+            #power /= config_system.voltage # TODO: Converting to Amperes. Not sure!
+
+            power_sum += power
+        #print(i, "wind power = ", power_sum, ', wind =', wind_m_per_s, 'm/s')
+
+        pos[i] += power_sum
+
+    return pos
+    
 
 def adj_losses(pos):
     # TODO: This will be a solar panel parameter

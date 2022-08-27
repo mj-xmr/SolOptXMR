@@ -1,0 +1,3 @@
+Min = 800 MHz
+Max = 2.90 GHz
+Curr = 1.42 GHz
