@@ -214,7 +214,7 @@ jobs:
     - name: build & install the unmanaged dependencies
       run: util/deps-build.sh
     - name: build generic
-      run: ./util/ci.sh 1
+      run: ./util/ci.sh
     - name: Run production
       run: python3 ./src/prod.py
 
