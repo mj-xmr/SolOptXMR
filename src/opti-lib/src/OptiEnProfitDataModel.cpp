@@ -3,6 +3,7 @@
 #include "JsonReader.h"
 #include "ConfigSol.h"
 #include "TimeUtil.h"
+#include "SolUtil.h"
 
 //#define BOOST_JSON_STACK_BUFFER_SIZE 1024
 //#include <boost/json/src.hpp>
@@ -11,13 +12,14 @@
 #include <Ios/Ifstream.hpp>
 #include <Util/VecD.hpp>
 #include <Util/CoutBuf.hpp>
-#include <Util/Tokenizer.hpp>
 #include <Util/CharManipulations.hpp>
 #include <Template/Array.hpp>
 #include <Math/RandomMath.hpp>
 #include <Math/GeneralMath.hpp>
 
 using namespace EnjoLib;
+
+const char * OptiEnProfitDataModel::SOLAR_POS_FILE = "solar_pos.txt";
 
 OptiEnProfitDataModel::OptiEnProfitDataModel(const ConfigSol & confSol, int horizonDays, int statingPoint)
 : m_confSol(confSol)
@@ -29,15 +31,25 @@ OptiEnProfitDataModel::OptiEnProfitDataModel(const ConfigSol & confSol, int hori
 , m_batPars(JsonReader().ReadBatteries().at(0)) /// TODO: extend
 , m_habits(JsonReader().ReadHabits())
 {
-    const Str fname = m_confSol.m_outDir + "/solar_pos.txt";
-    {Ifstream solPosIn(fname);}
-    const Tokenizer tok;
-    const VecStr & lines = tok.GetLines(fname);
-    for (const Str line : lines)
-        m_power.Add(CharManipulations().ToDouble(line));
-        
-    const auto comps = JsonReader().ReadComputers();
+    const Str fname = m_confSol.m_outDir + "/" + SOLAR_POS_FILE;
+    const Str powerData = SolUtil().GetLinesAsSingle(fname);
+    m_power = VecD(powerData);
+    const auto & comps = JsonReader().ReadComputers();
     AR2VEC(comps, m_comps);
+}
+
+OptiEnProfitDataModel::OptiEnProfitDataModel(const ConfigSol & confSol, std::vector<Habit> habits,
+                                            const System & sys, const BatteryParams & batPars,
+                                            int horizonDays, int statingPoint)
+: m_confSol(confSol)
+, m_horizonHours(horizonDays * 24)
+, m_statingPoint(statingPoint)
+, m_currHour(TimeUtil().GetCurrentHour())
+//, m_comps(JsonReader().ReadComputers())
+, m_sys(sys)
+, m_batPars(batPars)
+, m_habits(habits)
+{
 }
 
 OptiEnProfitDataModel::~OptiEnProfitDataModel()
@@ -47,6 +59,16 @@ OptiEnProfitDataModel::~OptiEnProfitDataModel()
 const EnjoLib::VecD & OptiEnProfitDataModel::GetPowerProductionData() const
 {
     return m_power;
+}
+
+void OptiEnProfitDataModel::SetComputers(const std::vector<Computer> & computers)
+{
+    m_comps = computers;
+}
+
+void OptiEnProfitDataModel::SetPowerProduction(const EnjoLib::VecD & power)
+{
+    m_power = power;
 }
 
 template <int bits>

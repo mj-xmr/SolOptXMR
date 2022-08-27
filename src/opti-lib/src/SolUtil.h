@@ -14,6 +14,11 @@ public:
 	virtual ~SolUtil();
 
 	EnjoLib::Str GetT() const;
+	EnjoLib::VecD GenSolar(int days, double aplitude) const;
+	EnjoLib::VecD GenSolar(const EnjoLib::VecD & aplitudes) const;
+
+	EnjoLib::Str GetLinesAsSingle(const EnjoLib::Str & fileName) const;
+	double round(double val, int decimals = 0) const;
 
 	/*
 	mpz_class GetFactorial(int inp) const;
