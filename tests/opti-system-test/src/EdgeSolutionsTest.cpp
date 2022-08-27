@@ -108,5 +108,5 @@ TEST(EdgeSol_2computers)
     const OptimizerEnProfit & opti = TestEdgeSolGetOptimizer(genPower, horizon, startingPoint, computers);
     CHECK(opti.GetGoal() > 0);
     CHECK(opti.GetPenality() > 0);
-    CHECK(opti.GetPenality() < 2000);
+    CHECK(opti.GetPenality() < 3500);
 }
