@@ -97,8 +97,22 @@ TEST(EdgeSol_high_low_power)
     CHECK_EQUAL(0, opti.GetPenality());
 }
 
+TEST(EdgeSol_2computers_short)
+{
+    const int horizon = 1;
+    const int startingPoint = 0;
+    const int computers = 2;
+    const double amplitude = 120;
+    const VecD genPower = SolUtil().GenSolar(horizon, amplitude);
+
+    const OptimizerEnProfit & opti = TestEdgeSolGetOptimizer(genPower, horizon, startingPoint, computers);
+    CHECK(opti.GetGoal() > 0);
+    CHECK_EQUAL(0, opti.GetPenality());
+}
+
 TEST(EdgeSol_2computers)
 {
+    /// TODO: This one should also have a penalty of 0, since the miners are not used enough. Minimize for over- under-voltage first, then for hashrate?
     const int horizon = 2;
     const int startingPoint = 0;
     const int computers = 2;
