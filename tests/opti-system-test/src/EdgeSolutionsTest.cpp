@@ -16,6 +16,7 @@ using namespace EnjoLib;
 static OptimizerEnProfit TestEdgeSolGetOptimizer(const VecD & genPower, int horizon, int startingPoint)
 {
     ConfigSol cfg;
+    cfg.RANDOM_SEED = 1;
     cfg.NO_GNUPLOT = true;
     const Computer & comp0 = OptiTestUtil().GetCompTestSched();
     const Str dataFname = cfg.m_outDir + "/" + OptiEnProfitDataModel::SOLAR_POS_FILE;
