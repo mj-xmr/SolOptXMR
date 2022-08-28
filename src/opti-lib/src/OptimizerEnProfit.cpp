@@ -12,6 +12,7 @@
 //#include "OptiGoalFactory.h"
 #include "OptiEnProfitSubject.h"
 #include "OptiEnProfitDataModel.h"
+#include "OptiEnProfitResults.h"
 #include "GnuplotIOSWrap.h"
 #include "SolUtil.h"
 #include "TimeUtil.h"
@@ -266,7 +267,7 @@ void OptimizerEnProfit::RandomSearch()
 
     if (solutions0Penality.empty())
     {
-        PrintSolution(binarBest);
+        LOGL << OptiEnProfitResults().PrintSolution(m_dataModel, binarBest);
     }
     else
     {
@@ -293,7 +294,7 @@ void OptimizerEnProfit::RandomSearch()
                 LOG << AsciiMisc().GenChars("-", len) << Nl;
             }
             const double hashes = soldatBest.sol.hashes;
-            PrintSolution(soldat.dat, hashes);
+            LOGL << OptiEnProfitResults().PrintSolution(m_dataModel, soldat.dat, hashes);
         }
         //const Sol0Penality & soldatBest = solutions0Penality.at(solutions0Penality.size() - 1);
         //PrintSolution(soldatBest.dat);

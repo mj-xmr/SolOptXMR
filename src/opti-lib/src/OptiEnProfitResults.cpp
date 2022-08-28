@@ -23,28 +23,28 @@ using namespace EnjoLib;
 const int OptiEnProfitResults::SSH_TIMEOUT_S = 60;
 
 /// TODO: UTest & refactor
-void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat, double maxHashes) const
+EnjoLib::Str OptiEnProfitResults::PrintSolution(const OptiEnProfitDataModel & dataModel, const EnjoLib::Matrix & bestMat, double maxHashes) const
 {
-    ELO
-    OptiSubjectEnProfit osub(m_dataModel);
+    Osstream ossLog;
+    OptiSubjectEnProfit osub(dataModel);
     osub.GetVerbose(bestMat, true, maxHashes);
     const CharManipulations cman;
     const SolUtil sot;
-    const ConfigSol & conf = m_dataModel.GetConf();
+    const ConfigSol & conf = dataModel.GetConf();
     for (int i = 0; i < bestMat.size(); ++i)
     {
         //GnuplotPlotTerminal1d(bestMat.at(i), "Best solution = " + CharManipulations().ToStr(m_goal), 1, 0.5);
     }
-    const Distrib distr;
-    const DistribData & distribDat = distr.GetDistrib(m_goals);
-    if (distribDat.IsValid())
+    //const Distrib distr;
+    //const DistribData & distribDat = distr.GetDistrib(m_goals);
+    //if (distribDat.IsValid())
     {
-        const Str & dstr = distr.PlotLine(distribDat, false, true, true);
-        //LOG << Nl << sot.GetT() <<  "Distribution of solutions:" << Nl<< dstr << Nl;
+        //const Str & dstr = distr.PlotLine(distribDat, false, true, true);
+        //ossLog << Nl << sot.GetT() <<  "Distribution of solutions:" << Nl<< dstr << Nl;
         //GnuplotPlotTerminal2d(distribDat.data, "Solution distribution", 1, 0.5);
     }
 
-    LOG << "\nComputer start schedule:\n";
+    ossLog << "\nComputer start schedule:\n";
     Osstream oss;
     const int currHour = TimeUtil().GetCurrentHour();
     const int maxDayLimit = conf.DAYS_LIMIT_COMMANDS; /// TODO: Unstable, as it would require that at uses time AND day, not just time.
@@ -55,22 +55,24 @@ void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat, double ma
     const OptiEnProfitResults resPrinter;
     for (int i = 0; i < bestMat.size(); ++i)
     {
-        const Computer & comp = m_dataModel.GetComputers().at(i);
+        const Computer & comp = dataModel.GetComputers().at(i);
         const VecD & best = bestMat.at(i);
         const OptiEnProfitResults::CommandsInfos & cmdInfo = resPrinter.PrintCommandsComp(comp, best, currHour, maxDayLimit);
-        LOG << resPrinter.PrintScheduleCompGraph(comp, best);
-        LOG << cmdInfo.infos;
+        ossLog << resPrinter.PrintScheduleCompGraph(comp, best);
+        ossLog << cmdInfo.infos;
         oss << cmdInfo.commands;
     }
 
-    LOG << "Commands:\n\n";
-    LOG << oss.str();
+    ossLog << "Commands:\n\n";
+    ossLog << oss.str();
 
     const Str fileCmds = conf.m_outDir + "/sol-cmds.sh";
     Ofstream ofs(fileCmds);
     ofs << oss.str();
 
-    LOG << Nl << sot.GetT() << "Saved commands to:\n" << fileCmds << Nl;
+    ossLog << Nl << sot.GetT() << "Saved commands to:\n" << fileCmds << Nl;
+
+    return ossLog.str();
 }
 
 OptiEnProfitResults:: OptiEnProfitResults() {}
