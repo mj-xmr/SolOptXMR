@@ -147,7 +147,8 @@ class BatterySimulatorCpp(generator.BatterySimulator):
         if result.returncode != 0:
             raise RuntimeError("Failed to run opti")
 
-        basePathIn = "/tmp/soloptout-{}.txt"
+        
+        basePathIn = sunrise_lib.DIR_TMP + "/soloptout-{}.txt"
 
         self.hashrates  = np.loadtxt(basePathIn.format('hashrates'))
         self.loads      = np.loadtxt(basePathIn.format('battery'))

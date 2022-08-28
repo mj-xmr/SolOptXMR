@@ -135,8 +135,8 @@ void OptimizerEnProfit::RandomSearch()
     bool foundFirstSolution = false;
     const bool useHash = IsUseHash();
     const BigInt maxCombisFailed = maxIter * MAX_FAILED_COMBINATIONS;
-    short bit = 1;
-    char bitC = '1';
+    const short bit = 1;
+    const char bitC = '1';
     std::set<std::string> usedCombinations;
     int alreadyCombined = 0;
     //const Distrib distr;
