@@ -70,11 +70,11 @@ TEST(EdgeSol_2computers_short)
 {
     const int horizon = 1;
     const int startingPoint = 0;
-    const int computers = 2;
+    const VecD computersHashrateMul = {1, 2};
     const double amplitude = 120;
     const VecD genPower = SolUtil().GenSolar(horizon, amplitude);
 
-    const OptimizerEnProfit & opti = OptiTestUtil().TestEdgeSolGetOptimizer(genPower, horizon, startingPoint, computers);
+    const OptimizerEnProfit & opti = OptiTestUtil().TestEdgeSolGetOptimizer(genPower, horizon, startingPoint, computersHashrateMul);
     CHECK(opti.GetHashes() > 0);
     //CHECK(opti.GetPenality() < 350);
     CHECK_EQUAL(0, opti.GetPenality()); //fails on mac

@@ -25,7 +25,7 @@ Computer OptiTestUtil::GetCompTestSched() const
     return compTest;
 }
 
-OptimizerEnProfit OptiTestUtil::TestEdgeSolGetOptimizer(const VecD & genPower, int horizon, int startingPoint, int num_computers) const
+OptimizerEnProfit OptiTestUtil::TestEdgeSolGetOptimizer(const VecD & genPower, int horizon, int startingPoint, const EnjoLib::VecD & compHashMultpliers) const
 {
     ConfigSol cfg;
     cfg.RANDOM_SEED = 1;
@@ -43,9 +43,11 @@ OptimizerEnProfit OptiTestUtil::TestEdgeSolGetOptimizer(const VecD & genPower, i
     OptiEnProfitDataModel dataModel(cfg, habits, sys, batPars, horizon, startingPoint);
     dataModel.SetPowerProduction(genPower);
     std::vector<Computer> comps;
-    for (int i = 0; i < num_computers; ++i)
+    for (int i = 0; i < compHashMultpliers.size(); ++i)
     {
-        comps.push_back(comp0);
+        Computer comp = comp0;
+        comp.hashPerCore *= compHashMultpliers.at(i);
+        comps.push_back(comp);
     }
     dataModel.SetComputers(comps);
     OptimizerEnProfit opti(dataModel);

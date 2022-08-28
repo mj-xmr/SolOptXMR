@@ -2,7 +2,9 @@
 #define __OPTITESTUTIL_H
 
 #include <Util/Str.hpp>
-#include <Util/VecFwd.hpp>
+#include <Util/VecD.hpp>
+
+#include <initializer_list>
 
 class Computer;
 class OptimizerEnProfit;
@@ -17,7 +19,8 @@ public:
     static EnjoLib::Str compSched_hostname;
 
     Computer GetCompTestSched() const;
-    OptimizerEnProfit TestEdgeSolGetOptimizer(const EnjoLib::VecD & genPower, int horizon, int startingPoint, int num_computers = 1) const;
+    OptimizerEnProfit TestEdgeSolGetOptimizer(const EnjoLib::VecD & genPower, int horizon, int startingPoint,
+                                              const EnjoLib::VecD & compHashMultpliers = {1}) const;
 
 protected:
 
