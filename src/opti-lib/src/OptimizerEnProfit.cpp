@@ -30,14 +30,12 @@
 #include <Statistical/Distrib.hpp>
 #include <Template/CorradePointer.h>
 #include <Visual/AsciiPlot.hpp>
-#include <Visual/AsciiMisc.hpp>
 
 #include "OptiEnProfitSubject.h" /// TODO: Remove
 
 #include <STD/VectorCpp.hpp>
 #include <STD/Set.hpp>
 #include <STD/String.hpp>
-#include <STD/Algorithm.hpp>
 
 #include <limits>
 
@@ -113,16 +111,6 @@ void OptimizerEnProfit::RandomSearch()
     const std::string hashStrZero(horizonHours * numComputers, '0');
     std::string hashStr = hashStrZero;
     Matrix binaryMat;
-    struct Sol0Penality
-    {
-        Solution sol;
-        Matrix  dat;
-
-        bool operator < (const Sol0Penality & other) const
-        {
-            return sol.hashes < other.sol.hashes;
-        }
-    };
     std::vector<Sol0Penality> solutions0Penality;
     VecT<int> minHoursTogetherHalfVec;
     for (const Computer & comp : comps)
@@ -271,33 +259,7 @@ void OptimizerEnProfit::RandomSearch()
     }
     else
     {
-        std::sort(solutions0Penality.begin(), solutions0Penality.end());
-        std::reverse(solutions0Penality.begin(), solutions0Penality.end());
-        std::vector<Sol0Penality> solutions0PenalitySelected;
-        for (int i = 0; i < solutions0Penality.size() && i < MAX_NUM_SOLUTIONS; ++i)
-        {
-            const Sol0Penality & soldat = solutions0Penality.at(i);
-            solutions0PenalitySelected.push_back(soldat);
-
-            //PrintSolution(soldat.dat);
-        }
-        const Sol0Penality & soldatBest = solutions0Penality.at(0);
-        std::reverse(solutions0PenalitySelected.begin(), solutions0PenalitySelected.end());
-        for (int i = 0; i < solutions0PenalitySelected.size(); ++i)
-        {
-            const Sol0Penality & soldat = solutions0PenalitySelected.at(i);
-            {
-                ELO
-                const int len = 20;
-                LOG << AsciiMisc().GenChars("-", len) << Nl;
-                LOG << "Solution " << i+1 << " of " << MAX_NUM_SOLUTIONS << Nl;
-                LOG << AsciiMisc().GenChars("-", len) << Nl;
-            }
-            const double hashes = soldatBest.sol.hashes;
-            LOGL << OptiEnProfitResults().PrintSolution(m_dataModel, soldat.dat, hashes);
-        }
-        //const Sol0Penality & soldatBest = solutions0Penality.at(solutions0Penality.size() - 1);
-        //PrintSolution(soldatBest.dat);
+        LOGL << OptiEnProfitResults().PrintMultipleSolutions(m_dataModel, solutions0Penality, MAX_NUM_SOLUTIONS);
     }
 
     if (not foundFirstSolution)
@@ -324,11 +286,14 @@ bool OptimizerEnProfit::Consume2(const EnjoLib::Matrix & dataMat, bool needNewli
             {
                 LOG << Nl; // Need an extra space to clear the progress bar
             }
-            LOG << GetT() << "New score = " << goal.hashes << " ->\t"
+            LOG << GetT() << "New score: Penalty = " << -goal.penality << "\t, hashes = +" << goal.hashes << Nl;
+            /*
+            << " ->\t"
             << GMat().round(relChangePositive   * 100) << "%" << " costing: "
             << GMat().round(m_relChangeNegative * 100) << "%" << ", pos2neg: "
             << GMat().round(m_relPos2Neg        * 100) << "%" << Nl;
     //        << GMat().round(relNeg2Pos * 100) << "%" << Nl;
+            */
         }
 
 

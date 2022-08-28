@@ -79,7 +79,7 @@ Solution OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool v
             {
                 if (not battery.initial_load)
                 {
-                    unacceptableSolution = true;
+                    //unacceptableSolution = true;
                 }
             }
         }
@@ -160,7 +160,7 @@ Solution OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool v
             if (not gcfgMan.cfgOpti->IsXValid())
             {
                 LOGL << SolUtil().GetT() << Nl <<
-                ": New goal = " << penality << ", m_sumMax = " << m_sumMax << ", penality = " << penality << ", after " << 0 << " iterations\n";
+                ": New goal = " << penality << ", hashes = " << simResult.sumHashes << Nl;
 
                 SimResult resVisual{};
                 BatterySimulation batteryCopy(m_dataModel.GetConf(), m_dataModel.GetBatPars(), m_dataModel.GetSystem());

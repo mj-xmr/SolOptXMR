@@ -23,6 +23,17 @@ struct Solution
     double penality = 0;
 };
 
+struct Sol0Penality
+{
+    Solution sol;
+    EnjoLib::Matrix  dat;
+
+    bool operator < (const Sol0Penality & other) const
+    {
+        return sol.hashes < other.sol.hashes;
+    }
+};
+
 class OptimizerEnProfit : public EnjoLib::IMultiDimIterConsumerTpl //OptimizerBase
 {
     public:

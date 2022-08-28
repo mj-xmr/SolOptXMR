@@ -16,11 +16,52 @@
 #include <Util/ToolsMixed.hpp>
 #include <Util/CharManipulations.hpp>
 #include <Visual/AsciiPlot.hpp>
+#include <Visual/AsciiMisc.hpp>
+
+#include <STD/Algorithm.hpp>
 
 using namespace std;
 using namespace EnjoLib;
 
 const int OptiEnProfitResults::SSH_TIMEOUT_S = 60;
+
+EnjoLib::Str OptiEnProfitResults::PrintMultipleSolutions(const OptiEnProfitDataModel & dataModel,
+                                                         const std::vector<Sol0Penality> & solutions0Penality, int maxSolutions) const
+{
+    Osstream oss;
+    std::vector<Sol0Penality> sols0Pen = solutions0Penality;
+
+    std::sort   (sols0Pen.begin(), sols0Pen.end());
+    std::reverse(sols0Pen.begin(), sols0Pen.end());
+    std::vector<Sol0Penality> sols0PenSelected;
+    for (int i = 0; i < sols0Pen.size() && i < maxSolutions; ++i)
+    {
+        const Sol0Penality & soldat = sols0Pen.at(i);
+        sols0PenSelected.push_back(soldat);
+
+        //PrintSolution(soldat.dat);
+    }
+    const Sol0Penality & soldatBest = sols0Pen.at(0);
+    std::reverse(sols0PenSelected.begin(), sols0PenSelected.end());
+    for (int i = 0; i < sols0PenSelected.size(); ++i)
+    {
+        ELO
+        const Sol0Penality & soldat = sols0PenSelected.at(i);
+        const double hashes = soldatBest.sol.hashes;
+        //{
+            const int len = 20;
+            LOG << AsciiMisc().GenChars("-", len) << Nl;
+            LOG << "Solution " << i+1 << " of " << maxSolutions << Nl;
+            LOG << AsciiMisc().GenChars("-", len) << Nl;
+        //}
+
+        LOG << OptiEnProfitResults().PrintSolution(dataModel, soldat.dat, hashes);
+    }
+    //const Sol0Penality & soldatBest = sols0Pen.at(sols0Pen.size() - 1);
+    //PrintSolution(soldatBest.dat);
+
+    return oss.str();
+}
 
 /// TODO: UTest & refactor
 EnjoLib::Str OptiEnProfitResults::PrintSolution(const OptiEnProfitDataModel & dataModel, const EnjoLib::Matrix & bestMat, double maxHashes) const

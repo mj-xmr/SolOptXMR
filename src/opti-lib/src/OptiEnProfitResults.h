@@ -7,6 +7,7 @@
 
 class Computer;
 class OptiEnProfitDataModel;
+class Sol0Penality;
 
 class OptiEnProfitResults
 {
@@ -20,6 +21,7 @@ class OptiEnProfitResults
             EnjoLib::Str infos;
         };
 
+        EnjoLib::Str PrintMultipleSolutions(const OptiEnProfitDataModel & dataModel, const STDFWD::vector<Sol0Penality> & solutions0Penality, int maxSolutions) const;
         EnjoLib::Str PrintSolution(const OptiEnProfitDataModel & dataModel, const EnjoLib::Matrix & bestMat, double maxHashes = 0) const;
         EnjoLib::Str PrintScheduleCompGraph(const Computer & comp, const EnjoLib::VecD & best) const;
         CommandsInfos PrintCommandsComp(const Computer & comp, const EnjoLib::VecD & best, int currHour, int maxDayCmdsLimit = 1) const;
