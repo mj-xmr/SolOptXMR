@@ -23,11 +23,11 @@ using namespace EnjoLib;
 const int OptiEnProfitResults::SSH_TIMEOUT_S = 60;
 
 /// TODO: UTest & refactor
-void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat) const
+void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat, double maxHashes) const
 {
     ELO
     OptiSubjectEnProfit osub(m_dataModel);
-    osub.GetVerbose(bestMat, true);
+    osub.GetVerbose(bestMat, true, maxHashes);
     const CharManipulations cman;
     const SolUtil sot;
     const ConfigSol & conf = m_dataModel.GetConf();

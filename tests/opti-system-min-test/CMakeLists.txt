@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5.1)
-project( opti-system-test )
+project( opti-system-min-test )
 
 file( GLOB SRCS src/*.cpp */*.h */*.hpp)
 

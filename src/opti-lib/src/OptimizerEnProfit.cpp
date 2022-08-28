@@ -29,10 +29,14 @@
 #include <Statistical/Distrib.hpp>
 #include <Template/CorradePointer.h>
 #include <Visual/AsciiPlot.hpp>
+#include <Visual/AsciiMisc.hpp>
+
+#include "OptiEnProfitSubject.h" /// TODO: Remove
 
 #include <STD/VectorCpp.hpp>
 #include <STD/Set.hpp>
 #include <STD/String.hpp>
+#include <STD/Algorithm.hpp>
 
 #include <limits>
 
@@ -44,7 +48,7 @@ const double OptimizerEnProfit::GOAL_INITIAL = std::numeric_limits<double>::min(
 
 const OptimizerEnProfit::BigInt OptimizerEnProfit::MAX_NUM_COMBINATIONS = std::numeric_limits<BigInt>::max(); //1e7;
 //const OptimizerEnProfit::BigInt OptimizerEnProfit::MAX_NUM_COMBINATIONS = 3e6;
-const double OptimizerEnProfit::MAX_FAILED_COMBINATIONS = 0.40;
+const double OptimizerEnProfit::MAX_FAILED_COMBINATIONS = 0.60;
 const double OptimizerEnProfit::MIN_POS_2_NEG_CHANGE_RATIO = 0.01;
 
 OptimizerEnProfit::OptimizerEnProfit(const OptiEnProfitDataModel & dataModel)
@@ -87,6 +91,8 @@ EnjoLib::Str OptimizerEnProfit::GetT() const
 
 void OptimizerEnProfit::RandomSearch()
 {
+    const int MAX_NUM_SOLUTIONS = 3;
+
     const int horizonHours = m_dataModel.GetHorizonHours();
     const EnjoLib::Array<Computer> & comps = m_dataModel.GetComputers();
     const int numComputers = comps.size();
@@ -95,7 +101,7 @@ void OptimizerEnProfit::RandomSearch()
 
     // A heuristic to get the number of possible combinations.
     // TODO: Should check the variance changes
-    const BigInt maxIter = gmat.Pow(gmat.Pow(horizonHours, 3), gmat.Pow(numComputers, 1/3.5));
+    const BigInt maxIter = gmat.Pow(gmat.Pow(horizonHours, 3), gmat.Pow(numComputers, 1/2.5));
 
     {LOGL << GetT() << "Random search of " << maxIter << " solutions\n"
     << "Hours = " << horizonHours << ", computers = " << numComputers << Nl;}
@@ -106,6 +112,17 @@ void OptimizerEnProfit::RandomSearch()
     const std::string hashStrZero(horizonHours * numComputers, '0');
     std::string hashStr = hashStrZero;
     Matrix binaryMat;
+    struct Sol0Penality
+    {
+        Solution sol;
+        Matrix  dat;
+
+        bool operator < (const Sol0Penality & other) const
+        {
+            return sol.hashes < other.sol.hashes;
+        }
+    };
+    std::vector<Sol0Penality> solutions0Penality;
     VecT<int> minHoursTogetherHalfVec;
     for (const Computer & comp : comps)
     {
@@ -204,6 +221,14 @@ void OptimizerEnProfit::RandomSearch()
                 m_uniqueSolutions = usedCombinations.size();
                 foundFirstSolution = true;
                 needNewLine = false;
+
+                if (m_penality == 0)
+                {
+                    Sol0Penality soldat;
+                    soldat.sol = m_currSolution;
+                    soldat.dat = binaryMat;
+                    solutions0Penality.push_back(soldat);
+                }
             }
             else
             {
@@ -239,13 +264,94 @@ void OptimizerEnProfit::RandomSearch()
         LOGL << Nl << notFoundSolutionWarn << Nl;
     }
 
-    PrintSolution(binarBest);
+    if (solutions0Penality.empty())
+    {
+        PrintSolution(binarBest);
+    }
+    else
+    {
+        std::sort(solutions0Penality.begin(), solutions0Penality.end());
+        std::reverse(solutions0Penality.begin(), solutions0Penality.end());
+        std::vector<Sol0Penality> solutions0PenalitySelected;
+        for (int i = 0; i < solutions0Penality.size() && i < MAX_NUM_SOLUTIONS; ++i)
+        {
+            const Sol0Penality & soldat = solutions0Penality.at(i);
+            solutions0PenalitySelected.push_back(soldat);
+
+            //PrintSolution(soldat.dat);
+        }
+        const Sol0Penality & soldatBest = solutions0Penality.at(0);
+        std::reverse(solutions0PenalitySelected.begin(), solutions0PenalitySelected.end());
+        for (int i = 0; i < solutions0PenalitySelected.size(); ++i)
+        {
+            const Sol0Penality & soldat = solutions0PenalitySelected.at(i);
+            {
+                ELO
+                const int len = 20;
+                LOG << AsciiMisc().GenChars("-", len) << Nl;
+                LOG << "Solution " << i+1 << " of " << MAX_NUM_SOLUTIONS << Nl;
+                LOG << AsciiMisc().GenChars("-", len) << Nl;
+            }
+            const double hashes = soldatBest.sol.hashes;
+            PrintSolution(soldat.dat, hashes);
+        }
+        //const Sol0Penality & soldatBest = solutions0Penality.at(solutions0Penality.size() - 1);
+        //PrintSolution(soldatBest.dat);
+    }
 
     if (not foundFirstSolution)
     {
         LOGL << Nl << notFoundSolutionWarn << Nl;
     }
 }
+
+bool OptimizerEnProfit::Consume2(const EnjoLib::Matrix & dataMat, bool needNewline)
+{
+    OptiSubjectEnProfit osub(m_dataModel);
+    const Solution & goal = osub.GetVerbose(dataMat, false);
+    //LOGL << "goal = " << goal << Nl;
+    m_goals.Add(goal.penality);
+    if (goal.penality < m_goal || m_goal == GOAL_INITIAL || goal.penality == 0)
+    {
+        const double relChangePositive = GMat().RelativeChange(goal.penality, m_goal);
+        m_relChangePositive = relChangePositive;
+        ELO
+        RecalcComputationCosts();
+        if (goal.penality < m_goal)
+        {
+            if (needNewline)
+            {
+                LOG << Nl; // Need an extra space to clear the progress bar
+            }
+            LOG << GetT() << "New score = " << goal.hashes << " ->\t"
+            << GMat().round(relChangePositive   * 100) << "%" << " costing: "
+            << GMat().round(m_relChangeNegative * 100) << "%" << ", pos2neg: "
+            << GMat().round(m_relPos2Neg        * 100) << "%" << Nl;
+    //        << GMat().round(relNeg2Pos * 100) << "%" << Nl;
+        }
+
+
+        //osub.GetVerbose(dataMat, true);
+        osub.GetVerbose(dataMat, false); /// TODO: Why would we recalculate it in a non-verbose mode? To store the final result?
+        m_goal = goal.penality;
+        m_penality = osub.GetPenality();
+
+        if (goal.penality == 0)
+        {
+            m_currSolution = goal;
+            //LOG << GetT() << "0 = Penality!" << Nl;
+        }
+
+        m_hashes = goal.hashes;
+
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
 
 void OptimizerEnProfit::AddSpace(const EnjoLib::VecD & data)
 {
@@ -266,40 +372,6 @@ static double GMatRatio(double val, double valRef)
     return val / valRef;
 }
 
-bool OptimizerEnProfit::Consume2(const EnjoLib::Matrix & dataMat, bool needNewline)
-{
-    OptiSubjectEnProfit osub(m_dataModel);
-    const float goal = osub.GetVerbose(dataMat, false);
-    //LOGL << "goal = " << goal << Nl;
-    m_goals.Add(goal);
-    if (goal > m_goal)
-    {
-        const double relChangePositive = GMat().RelativeChange(goal, m_goal);
-        m_relChangePositive = relChangePositive;
-        ELO
-        RecalcComputationCosts();
-        if (needNewline)
-        {
-            LOG << Nl; // Need an extra space to clear the progress bar
-        }
-        LOG << GetT() << "New score = " << goal << " ->\t"
-        << GMat().round(relChangePositive   * 100) << "%" << " costing: "
-        << GMat().round(m_relChangeNegative * 100) << "%" << ", pos2neg: "
-        << GMat().round(m_relPos2Neg        * 100) << "%" << Nl;
-//        << GMat().round(relNeg2Pos * 100) << "%" << Nl;
-
-        //osub.GetVerbose(dataMat, true);
-        osub.GetVerbose(dataMat, false); /// TODO: Why would we recalculate it in a non-verbose mode? To store the final result?
-        m_goal = goal;
-        m_penality = osub.GetPenality();
-
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
 
 void OptimizerEnProfit::RecalcComputationCosts()
 {

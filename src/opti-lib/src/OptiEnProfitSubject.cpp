@@ -9,6 +9,7 @@
 #include "ConfigSol.h"
 #include "ConfigDirs.h"
 #include "OptiEnProfitDataModel.h"
+#include "OptimizerEnProfit.h" /// TODO: Remove
 #include "BatteryParams.h"
 #include "TimeUtil.h"
 #include "SolUtil.h"
@@ -21,6 +22,7 @@
 #include <Util/StrColour.hpp>
 #include <Template/Array.hpp>
 #include <Visual/AsciiPlot.hpp>
+#include <Visual/AsciiMisc.hpp>
 
 #include <STD/Vector.hpp>
 
@@ -146,9 +148,10 @@ double OptiSubjectEnProfit::Get(const double * inp, int n)
 {
     return 0;
 }
-double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool verbose)
+Solution OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool verbose, double maxHashes)
 {
     //ELO
+    Solution sol;
     const int PENALITY_SUM_MUL = 1;
     const GeneralMath gmat;
     const size_t n = dataMat.at(0).size();
@@ -172,8 +175,8 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
         simResult.Add(resLocal);
         const double load = battery.iter_get_load(powerProd, resLocal.sumPowerUsage);
         //const double pentalityUndervolted = load < 0 ? GMat().Fabs(load * load * load) : 0;
-        const double pentalityUndervolted = battery.num_undervolted * resLocal.sumHashes * 2; //  9.0;
-        const double pentalityOvervolted  = battery.num_overvolted * compSize;// 100.0;
+        const double pentalityUndervolted = battery.num_undervolted * 10;// * resLocal.sumHashes * 2; //  9.0;
+        const double pentalityOvervolted  = battery.num_overvolted;// * compSize;// 100.0;
 
         if (not sys.buying)
         {
@@ -181,7 +184,7 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
             {
                 if (not battery.initial_load)
                 {
-                    //unacceptableSolution = true;
+                    unacceptableSolution = true;
                 }
             }
         }
@@ -203,6 +206,7 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
         penalitySum += pentalityUndervolted;
         penalitySum += pentalityOvervolted;
 
+
         if (unacceptableSolution)
         {
             if  (LOG_UNACCEPTABLE_SOLUTIONS)
@@ -211,10 +215,15 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
                  << ", hashes = " << resLocal.sumHashes << "\n";
             }
             const double penality = penalitySum * PENALITY_SUM_MUL;
-            const double penalityExtrapolated = penality * (n - i) * 3; // Extrapolate across the remaining simulation steps
+            const double penalityExtrapolated = penality * (n - i) * 10000; // Extrapolate across the remaining simulation steps
             if (not verbose)
             {
-                return resLocal.sumHashes -penalityExtrapolated;
+                sol.hashes   = simResult.sumHashes;
+                sol.penality = penalityExtrapolated; //penality;
+
+                return sol;
+
+                //return resLocal.sumHashes -penalityExtrapolated;
             }
         }
 
@@ -228,8 +237,8 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
     m_penalitySum = penality;
     /// TODO: The undervoltage / overvoltage penality should be non-linear.
     const double positive = simResult.sumHashes;
-    double sumAdjusted = positive - penality;
-    if (penality > 0 && sumAdjusted > 0)
+    //double sumAdjusted = positive - penality;
+    //if (penality > 0 && sumAdjusted > 0)
     {
         //sumAdjusted -= positive; /// TODO: This looks like a mistake
     }
@@ -246,8 +255,8 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
     }
     else
     {
-        LOGL << m_sumMax << ", adj = "  << sumAdjusted << Endl;
-        m_sumMax = sumAdjusted;
+        LOGL << m_sumMax << ", adj = "  << m_penalitySum << Nl;
+        m_sumMax = m_penalitySum;
 
         //if (gcfgMan.cfgOpti->OPTI_VERBOSE && m_isVerbose)
         if (gcfgMan.cfgOpti->OPTI_VERBOSE)
@@ -256,7 +265,7 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
             if (not gcfgMan.cfgOpti->IsXValid())
             {
                 LOGL << SolUtil().GetT() << Nl <<
-                ": New goal = " << sumAdjusted << ", m_sumMax = " << m_sumMax << ", penality = " << penality << ", after " << 0 << " iterations\n";
+                ": New goal = " << penality << ", m_sumMax = " << m_sumMax << ", penality = " << penality << ", after " << 0 << " iterations\n";
 
                 SimResult resVisual{};
                 BatterySimulation batteryCopy(m_dataModel.GetConf(), m_dataModel.GetBatPars(), m_dataModel.GetSystem());
@@ -301,8 +310,10 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
                     using Par = AsciiPlot::Pars;
                     const SolUtil sut;
                     ELO
+                    const double maxHashes2display = maxHashes > 0 ? maxHashes : m_hashes.Max();
                     LOG << "Hashes cumul. [Hh]: (max = " << sut.round(m_hashes.Max(), 1) << ")\n";
-                    LOG << StrColour::GenNorm(StrColour::Col::Magenta, AsciiPlot::Build()(Par::MAXIMUM, m_hashes.Max()).Finalize().Plot(m_hashes)) << Nl;
+                    LOG << AsciiMisc().GenChars("_", m_hashes.size()) << Nl;
+                    LOG << StrColour::GenNorm(StrColour::Col::Magenta, AsciiPlot::Build()(Par::MAXIMUM, maxHashes2display).Finalize().Plot(m_hashes)) << Nl;
                     LOG << "Energy input  [A] : (max = " << sut.round(m_prod.Max(), 1) << ")\n";
                     LOG << StrColour::GenNorm(StrColour::Col::Yellow,  AsciiPlot::Build()(Par::MAXIMUM,   m_prod.Max()).Finalize().Plot(m_prod)) << Nl;
                     LOG << "Bat charge    [Ah]: (max = " << sut.round(m_loads.Max(), 1) << ")\n";
@@ -319,8 +330,11 @@ double OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool ver
             }
         }
     }
+    sol.hashes   = positive;
+    sol.penality = m_penalitySum;
 
-    return sumAdjusted;
+    return sol;
+    //return sumAdjusted;
     //return -sum;
 }
 

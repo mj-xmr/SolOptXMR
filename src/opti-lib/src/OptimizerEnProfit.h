@@ -17,6 +17,11 @@ class TSFunFactory;
 template<class T> class OptiVar;
 
 class OptiEnProfitDataModel;
+struct Solution
+{
+    double hashes = 0;
+    double penality = 0;
+};
 
 class OptimizerEnProfit : public EnjoLib::IMultiDimIterConsumerTpl //OptimizerBase
 {
@@ -26,6 +31,8 @@ class OptimizerEnProfit : public EnjoLib::IMultiDimIterConsumerTpl //OptimizerBa
 
         void operator()();
 
+
+
         void Consume(const EnjoLib::VecD & data) override; // IMultiDimIterConsumerTpl
 
         bool Consume2(const EnjoLib::Matrix & data, bool needNewline);
@@ -34,7 +41,7 @@ class OptimizerEnProfit : public EnjoLib::IMultiDimIterConsumerTpl //OptimizerBa
 
         bool IsUseHash() const;
         const EnjoLib::VecD & GetGoals() const { return m_goals; }
-        double GetGoal() const { return m_goal; }
+        double GetHashes() const { return m_hashes; }
         double GetPenality() const { return m_penality; }
 
         using BigInt = unsigned long long; // int is way too small.
@@ -47,7 +54,7 @@ class OptimizerEnProfit : public EnjoLib::IMultiDimIterConsumerTpl //OptimizerBa
 
     protected:
         void RandomSearch();
-        void PrintSolution(const EnjoLib::Matrix & best) const;
+        void PrintSolution(const EnjoLib::Matrix & best, double maxHashes = 0) const;
         //STDFWD::vector<const IPeriod *> GetPeriods() const override;
         //void PrintStats() const override;
         //void PrintStatsSummary() const override;
@@ -58,6 +65,7 @@ class OptimizerEnProfit : public EnjoLib::IMultiDimIterConsumerTpl //OptimizerBa
         EnjoLib::Matrix m_data;
 
         double m_goal = GOAL_INITIAL;
+        double m_hashes = 0;
         int m_uniqueSolutions = 0;
         int m_uniqueSolutionsPrev = 0;
         EnjoLib::VecD m_goals;
@@ -66,6 +74,7 @@ class OptimizerEnProfit : public EnjoLib::IMultiDimIterConsumerTpl //OptimizerBa
         double m_relPos2Neg = 0;
         double m_relChangePositive = 0;
         double m_relChangeNegative = 0;
+        Solution m_currSolution;
 };
 
 #endif // OPTIMIZER_H
