@@ -78,7 +78,7 @@ class OptimizerEnProfit : public EnjoLib::IMultiDimIterConsumerTpl //OptimizerBa
         double m_hashes = 0;
         int m_uniqueSolutions = 0;
         int m_uniqueSolutionsPrev = 0;
-        EnjoLib::VecD m_goals;
+        EnjoLib::VecD m_goals, m_hashesProgress;
         int m_numFailed = 0;
         double m_penality = 0;
         double m_relPos2Neg = 0;

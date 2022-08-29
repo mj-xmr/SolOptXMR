@@ -129,7 +129,7 @@ void OptimizerEnProfit::RandomSearch()
     int alreadyCombined = 0;
     //const Distrib distr;
     const bool animateProgressBar = m_dataModel.IsAnimateProgressBar();
-    ProgressMonitHigh progressMonitor(20);
+    ProgressMonitHigh progressMonitor(13);
     bool needNewLine = false;
     for (BigInt i = 0; i < maxIter; ++i)
     {
@@ -137,7 +137,10 @@ void OptimizerEnProfit::RandomSearch()
         {
             if (i % 100000 == 0)
             {
-                progressMonitor.PrintProgressBarTime(i, maxIter, "Solutions");
+                //const Str & progressStr = "Solutions";
+                //const Str & progressStr = OptiEnProfitResults().PrintOptiPenality(m_goals, 10);
+                const Str & progressStr = OptiEnProfitResults().PrintOptiSingle(m_hashesProgress, 10);
+                progressMonitor.PrintProgressBarTime(i, maxIter, progressStr);
                 //if (i > 0)
                 {
                 //const DistribData & data = distr.GetDistrib(m_goals, 20); const Str & dstr = distr.PlotLine(data, true, true, true);
@@ -255,13 +258,13 @@ void OptimizerEnProfit::RandomSearch()
     if (solutions0Penality.empty())
     {
         ELO
-        LOG << OptiEnProfitResults().PrintOptiProgression(m_goals, horizonHours);
+        LOG << OptiEnProfitResults().PrintOptiProgression(m_goals, m_hashesProgress, horizonHours);
         LOG << OptiEnProfitResults().PrintSolution(m_dataModel, binarBest);
     }
     else
     {
         ELO
-        LOG << OptiEnProfitResults().PrintOptiProgression(m_goals, horizonHours);
+        LOG << OptiEnProfitResults().PrintOptiProgression(m_goals, m_hashesProgress, horizonHours);
         LOG << OptiEnProfitResults().PrintMultipleSolutions(m_dataModel, solutions0Penality, conf.NUM_SOLUTIONS);
     }
 
@@ -279,6 +282,7 @@ bool OptimizerEnProfit::Consume2(const EnjoLib::Matrix & dataMat, bool needNewli
     if (goal.penality < m_goal || m_goal == GOAL_INITIAL || goal.penality == 0)
     {
         m_goals.Add(goal.penality);
+        m_hashesProgress.Add(goal.hashes);
         const double relChangePositive = GMat().RelativeChange(goal.penality, m_goal);
         m_relChangePositive = relChangePositive;
         ELO

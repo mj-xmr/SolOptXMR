@@ -77,6 +77,7 @@ TEST(EdgeSol_2computers_short)
     const VecD genPower = SolUtil().GenSolar(horizon, amplitude);
 
     auto builder = OptiTestUtilConf::Build();
+    builder(OptiTestUtilConf::Pars::NO_SCHEDULE, false);
     const OptimizerEnProfit & opti = builder.Finalize().TestEdgeSolGetOptimizer(genPower, horizon, startingPoint, computersHashrateMul);
     CHECK(opti.GetHashes() > 0);
     CHECK_EQUAL(0, opti.GetPenality());

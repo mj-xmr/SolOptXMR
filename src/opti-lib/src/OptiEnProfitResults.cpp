@@ -125,26 +125,43 @@ EnjoLib::Str OptiEnProfitResults::PrintSolution(const OptiEnProfitDataModel & da
     return ossLog.str();
 }
 
-EnjoLib::Str OptiEnProfitResults::PrintOptiProgression(const EnjoLib::VecD & goals, int horizonHours) const
+EnjoLib::Str OptiEnProfitResults::PrintOptiProgression(const EnjoLib::VecD & goals, const EnjoLib::VecD & hashesProgress, int horizonHours) const
 {
     Osstream oss;
-    oss << "Solutions progression: ";
+    oss << "Penalities/hashes progression: " << Nl;
+
+    const int length = 24;
+    //const int length = horizonHours; /// TODO: Uncovers a bug
+    oss << PrintOptiPenality(goals, length) << Nl;
+    oss << PrintOptiSingle(hashesProgress, length) << Nl;
+
+    return oss.str();
+}
+
+EnjoLib::Str OptiEnProfitResults::PrintOptiPenality(const EnjoLib::VecD & penality, int horizonHours) const
+{
+    return PrintOptiSingle(penality.Abs(), horizonHours);
+}
+
+EnjoLib::Str OptiEnProfitResults::PrintOptiSingle(const EnjoLib::VecD & vec, int horizonHours) const
+{
+    Osstream oss;
     try
     {
-        const EnjoLib::VecD & goalsMod = goals.Abs();
-        const double maxx = goalsMod.Max();
-        const double minn = goalsMod.Min();
-        oss << Nl << AsciiPlot::Build()
+        const double maxx = vec.Max();
+        const double minn = vec.Min();
+        oss << AsciiPlot::Build()
         (AsciiPlot::Pars::MAXIMUM, maxx)
         (AsciiPlot::Pars::MINIMUM, minn)
         (AsciiPlot::Pars::COMPRESS, horizonHours) /// TODO: uncovers a bug
         //(AsciiPlot::Pars::COMPRESS, 24) // "safe" option
-        .Finalize().Plot(goalsMod) << Nl;
+        .Finalize().Plot(vec);
     }
     catch (const std::exception & exc)
     {
-        oss << EnjoLib::StrColour::GenWarn("Printing failed!") << Nl;
+        oss << EnjoLib::StrColour::GenWarn("Printing failed!");
     }
+
     return oss.str();
 }
 
