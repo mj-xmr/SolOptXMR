@@ -20,7 +20,8 @@ TEST(EdgeSol_happy)
     const double amplitude = 30;
     const VecD genPower = SolUtil().GenSolar(horizon, amplitude);
 
-    const OptimizerEnProfit & opti = OptiTestUtil().TestEdgeSolGetOptimizer(genPower, horizon, startingPoint);
+    auto builder = OptiTestUtilConf::Build();
+    const OptimizerEnProfit & opti = builder.Finalize().TestEdgeSolGetOptimizer(genPower, horizon, startingPoint);
     CHECK(opti.GetHashes() > 0);
     CHECK_EQUAL(0, opti.GetPenality());
 }
@@ -32,11 +33,11 @@ TEST(EdgeSol_high)
     const double amplitude = 150;
     const VecD genPower = SolUtil().GenSolar(horizon, amplitude);
 
-    const OptimizerEnProfit & opti = OptiTestUtil().TestEdgeSolGetOptimizer(genPower, horizon, startingPoint);
+    auto builder = OptiTestUtilConf::Build();
+    const OptimizerEnProfit & opti = builder.Finalize().TestEdgeSolGetOptimizer(genPower, horizon, startingPoint);
     CHECK(opti.GetHashes() > 0);
     CHECK(opti.GetPenality() > 0);
 }
-
 
 TEST(EdgeSol_high_midday)
 {
@@ -45,12 +46,12 @@ TEST(EdgeSol_high_midday)
     const double amplitude = 150;
     const VecD genPower = SolUtil().GenSolar(horizon + 1, amplitude);
 
-    const OptimizerEnProfit & opti = OptiTestUtil().TestEdgeSolGetOptimizer(genPower, horizon, startingPoint);
+    auto builder = OptiTestUtilConf::Build();
+    const OptimizerEnProfit & opti = builder.Finalize().TestEdgeSolGetOptimizer(genPower, horizon, startingPoint);
     CHECK(opti.GetGoals().size() > 0);
     CHECK(opti.GetHashes() > 0);
     CHECK(opti.GetPenality() > 0);
 }
-
 
 TEST(EdgeSol_high_low_power)
 {
@@ -60,7 +61,8 @@ TEST(EdgeSol_high_low_power)
     const double amplitude = 1;
     const VecD genPower = SolUtil().GenSolar(horizon, amplitude);
 
-    const OptimizerEnProfit & opti = OptiTestUtil().TestEdgeSolGetOptimizer(genPower, horizon, startingPoint);
+    auto builder = OptiTestUtilConf::Build();
+    const OptimizerEnProfit & opti = builder.Finalize().TestEdgeSolGetOptimizer(genPower, horizon, startingPoint);
     CHECK(opti.GetGoals().size() > 0);
     CHECK(opti.GetHashes() > 0);
     CHECK_EQUAL(0, opti.GetPenality());
@@ -70,13 +72,30 @@ TEST(EdgeSol_2computers_short)
 {
     const int horizon = 1;
     const int startingPoint = 0;
-    const int computers = 2;
+    const VecD computersHashrateMul = {1, 2};
     const double amplitude = 120;
     const VecD genPower = SolUtil().GenSolar(horizon, amplitude);
 
-    const OptimizerEnProfit & opti = OptiTestUtil().TestEdgeSolGetOptimizer(genPower, horizon, startingPoint, computers);
+    auto builder = OptiTestUtilConf::Build();
+    builder(OptiTestUtilConf::Pars::NO_SCHEDULE, false);
+    const OptimizerEnProfit & opti = builder.Finalize().TestEdgeSolGetOptimizer(genPower, horizon, startingPoint, computersHashrateMul);
     CHECK(opti.GetHashes() > 0);
-    //CHECK(opti.GetPenality() < 350);
-    CHECK_EQUAL(0, opti.GetPenality()); //fails on mac
+    CHECK_EQUAL(0, opti.GetPenality());
 }
 
+TEST(EdgeSol_overcharged)
+{
+    const int horizon = 2;
+    const int startingPoint = 0;
+    const VecD computersHashrateMul = {1};
+    const double amplitude = 30;
+    const double batChargeAh = 100;
+    const VecD genPower = SolUtil().GenSolar(horizon, amplitude);
+
+    auto builder = OptiTestUtilConf::Build();
+    builder(OptiTestUtilConf::Pars::BATTERY_CHARGE, batChargeAh);
+    const OptimizerEnProfit & opti = builder.Finalize().TestEdgeSolGetOptimizer(genPower, horizon, startingPoint, computersHashrateMul);
+    CHECK(opti.GetHashes() > 0);
+    CHECK(opti.GetPenality() > 0); /// TODO: Try not to penalize the initial load
+    //CHECK_EQUAL(0, opti.GetPenality());
+}

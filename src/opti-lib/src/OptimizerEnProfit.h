@@ -23,6 +23,17 @@ struct Solution
     double penality = 0;
 };
 
+struct Sol0Penality
+{
+    Solution sol;
+    EnjoLib::Matrix  dat;
+
+    bool operator < (const Sol0Penality & other) const
+    {
+        return sol.hashes < other.sol.hashes;
+    }
+};
+
 class OptimizerEnProfit : public EnjoLib::IMultiDimIterConsumerTpl //OptimizerBase
 {
     public:
@@ -54,7 +65,6 @@ class OptimizerEnProfit : public EnjoLib::IMultiDimIterConsumerTpl //OptimizerBa
 
     protected:
         void RandomSearch();
-        void PrintSolution(const EnjoLib::Matrix & best, double maxHashes = 0) const;
         //STDFWD::vector<const IPeriod *> GetPeriods() const override;
         //void PrintStats() const override;
         //void PrintStatsSummary() const override;
@@ -68,7 +78,7 @@ class OptimizerEnProfit : public EnjoLib::IMultiDimIterConsumerTpl //OptimizerBa
         double m_hashes = 0;
         int m_uniqueSolutions = 0;
         int m_uniqueSolutionsPrev = 0;
-        EnjoLib::VecD m_goals;
+        EnjoLib::VecD m_goals, m_hashesProgress;
         int m_numFailed = 0;
         double m_penality = 0;
         double m_relPos2Neg = 0;

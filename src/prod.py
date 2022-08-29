@@ -32,6 +32,10 @@ DEFAULT_BATTERY_STATE = 0
 DEFAULT_CHARGE_STATE = 'discharging'
 config_system = sunrise_lib.config_system
 DISABLE_PLOTTING = not sunrise_lib.config_volatile.glob.ENABLE_PLOTTING
+NUM_SOLUTIONS   = sunrise_lib.config_volatile.glob.NUM_SOLUTIONS
+NO_GNUPLOT      = sunrise_lib.config_volatile.cli.NO_GNUPLOT
+NO_SCHEDULE     = sunrise_lib.config_volatile.cli.NO_SCHEDULE
+
 FILE_HASHRATE_BONUS = "/hashrate_bonus_ma.dat"
 FILE_HASHRATE_SEASONAL = "/seasonal.dat"
 FILE_HASHRATE_BONUS_SINGLE = "/hashrate_bonus_ma_single.dat"
@@ -42,7 +46,8 @@ def get_args():
     parser.add_argument('-p', '--battery-charge-percent',  default=DEFAULT_BATTERY_STATE, type=float, help="Initial battery charge [0-100]  (default: {} which means: minimal charge)".format(DEFAULT_BATTERY_STATE))
     parser.add_argument('-a', '--battery-charge-ah', default=DEFAULT_BATTERY_STATE, type=float, help="Initial battery charge [Ah] (default: {} which means: minimal charge)".format(DEFAULT_BATTERY_STATE))
     parser.add_argument('-v', '--battery-charge-v',  default=DEFAULT_BATTERY_STATE, type=float, help="Initial battery charge [V]  (default: {} which means: minimal charge)".format(DEFAULT_BATTERY_STATE))
-    parser.add_argument('--random-seed',       default=1, type=int, help="Random seed for debugging (default: 1)")
+    parser.add_argument('-rs','--random-seed',       default=1, type=int, help="Random seed for debugging (default: 1)")
+    parser.add_argument('-nsol','--num-solutions',   default=NUM_SOLUTIONS, type=int, help="Number of solutions to display (default: {})".format(NUM_SOLUTIONS))
     sunrise_lib.add_date_arguments_to_parser(parser)
     # TODO:
     # parser.add_argument('-f', '--file-image-ocr',  default="", type=str, help="Image path to OCR (default: {})".format(""))
@@ -55,7 +60,9 @@ def get_args():
     parser.add_argument('-m', '--sim',      default=False, action='store_true', help="Plot simulation only (default: False)")
     parser.add_argument('-of', '--offline-force', default=False, action='store_true', help="Offline run (default: False)")
     parser.add_argument('-ot', '--offline-try',   default=False, action='store_true', help="Offline try if failing (default: False)")
-    parser.add_argument('-np','--no-plot',  default=DISABLE_PLOTTING, action='store_true', help="No plotting at all (default: {})".format(DISABLE_PLOTTING))
+    parser.add_argument('-np','--no-plot',  default=DISABLE_PLOTTING, action='store_true', help="No Python plotting at all (default: {})".format(DISABLE_PLOTTING))
+    parser.add_argument('-ng','--no-gnuplot',   default=NO_GNUPLOT, action='store_true',  help="No CLI Gnuplot (default: {})".format(NO_GNUPLOT))
+    parser.add_argument('-ns','--no-schedule',  default=NO_SCHEDULE, action='store_true', help="No CLI schedule (default: {})".format(NO_SCHEDULE))
     #parser.add_argument('-v', '--verbose',      default=TESTING, action='store_true', help="Test (default: False)")
     return parser.parse_args()
 
@@ -139,6 +146,11 @@ class BatterySimulatorCpp(generator.BatterySimulator):
         #cmd += " --out {}" .format(args.out_dir) # Moved to json
         cmd += " --random-seed {}".format(args.random_seed)
         cmd += " --no-progress-bar" # Looks poorly under CI logging
+        cmd += " --num-solutions {}".format(args.num_solutions)
+        if args.no_gnuplot:
+            cmd += " --no-gnuplot"
+        if args.no_schedule:
+            cmd += " --no-schedule"
         #cmd += " --system-type {}".format(config_system.type)
         #cmd += " --system-voltage {}".format(config_system.voltage)
 
@@ -147,7 +159,8 @@ class BatterySimulatorCpp(generator.BatterySimulator):
         if result.returncode != 0:
             raise RuntimeError("Failed to run opti")
 
-        basePathIn = "/tmp/soloptout-{}.txt"
+        
+        basePathIn = sunrise_lib.DIR_TMP + "/soloptout-{}.txt"
 
         self.hashrates  = np.loadtxt(basePathIn.format('hashrates'))
         self.loads      = np.loadtxt(basePathIn.format('battery'))

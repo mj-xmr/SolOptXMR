@@ -2,7 +2,13 @@
     "glob": {
         "TESTING": false,
         "ENABLE_PLOTTING": true,
-        "ARCHIVE_IMAGES": true
+        "ARCHIVE_IMAGES": true,
+        "NUM_SOLUTIONS": 3
+    },
+    "cli": {
+        "NO_PROGRESS_BAR": false,
+        "NO_GNUPLOT": false,
+        "NO_SCHEDULE": false
     },
     "hosts": {
 	"IMG_CAPTURE_HOST": "localhost"

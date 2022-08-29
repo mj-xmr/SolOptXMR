@@ -13,38 +13,83 @@
 #include <Statistical/Assertions.hpp>
 #include <Math/GeneralMath.hpp>
 #include <Util/CoutBuf.hpp>
+#include <Util/StrColour.hpp>
 #include <Util/ToolsMixed.hpp>
 #include <Util/CharManipulations.hpp>
 #include <Visual/AsciiPlot.hpp>
+#include <Visual/AsciiMisc.hpp>
+
+#include <STD/Algorithm.hpp>
 
 using namespace std;
 using namespace EnjoLib;
 
 const int OptiEnProfitResults::SSH_TIMEOUT_S = 60;
 
-/// TODO: UTest & refactor
-void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat, double maxHashes) const
+OptiEnProfitResults:: OptiEnProfitResults() {}
+OptiEnProfitResults::~OptiEnProfitResults() {}
+
+EnjoLib::Str OptiEnProfitResults::PrintMultipleSolutions(const OptiEnProfitDataModel & dataModel,
+                                                         const std::vector<Sol0Penality> & solutions0Penality, int maxSolutions) const
 {
-    ELO
-    OptiSubjectEnProfit osub(m_dataModel);
+    Osstream oss;
+    std::vector<Sol0Penality> sols0Pen = solutions0Penality;
+
+    std::sort   (sols0Pen.begin(), sols0Pen.end());
+    std::reverse(sols0Pen.begin(), sols0Pen.end());
+    std::vector<Sol0Penality> sols0PenSelected;
+    for (int i = 0; i < sols0Pen.size() && i < maxSolutions; ++i)
+    {
+        const Sol0Penality & soldat = sols0Pen.at(i);
+        sols0PenSelected.push_back(soldat);
+
+        //PrintSolution(soldat.dat);
+    }
+    const Sol0Penality & soldatBest = sols0Pen.at(0);
+    std::reverse(sols0PenSelected.begin(), sols0PenSelected.end());
+    for (int i = 0; i < sols0PenSelected.size(); ++i)
+    {
+        ELO
+        const Sol0Penality & soldat = sols0PenSelected.at(i);
+        const double hashes = soldatBest.sol.hashes;
+        //{
+            const int len = 20;
+            LOG << AsciiMisc().GenChars("-", len) << Nl;
+            LOG << "Solution " << i+1 << " of " << maxSolutions << Nl;
+            LOG << AsciiMisc().GenChars("-", len) << Nl;
+        //}
+
+        LOG << OptiEnProfitResults().PrintSolution(dataModel, soldat.dat, hashes);
+    }
+    //const Sol0Penality & soldatBest = sols0Pen.at(sols0Pen.size() - 1);
+    //PrintSolution(soldatBest.dat);
+
+    return oss.str();
+}
+
+/// TODO: UTest & refactor
+EnjoLib::Str OptiEnProfitResults::PrintSolution(const OptiEnProfitDataModel & dataModel, const EnjoLib::Matrix & bestMat, double maxHashes) const
+{
+    Osstream ossLog;
+    OptiSubjectEnProfit osub(dataModel);
     osub.GetVerbose(bestMat, true, maxHashes);
     const CharManipulations cman;
     const SolUtil sot;
-    const ConfigSol & conf = m_dataModel.GetConf();
+    const ConfigSol & conf = dataModel.GetConf();
     for (int i = 0; i < bestMat.size(); ++i)
     {
         //GnuplotPlotTerminal1d(bestMat.at(i), "Best solution = " + CharManipulations().ToStr(m_goal), 1, 0.5);
     }
-    const Distrib distr;
-    const DistribData & distribDat = distr.GetDistrib(m_goals);
-    if (distribDat.IsValid())
+    //const Distrib distr;
+    //const DistribData & distribDat = distr.GetDistrib(m_goals);
+    //if (distribDat.IsValid())
     {
-        const Str & dstr = distr.PlotLine(distribDat, false, true, true);
-        //LOG << Nl << sot.GetT() <<  "Distribution of solutions:" << Nl<< dstr << Nl;
+        //const Str & dstr = distr.PlotLine(distribDat, false, true, true);
+        //ossLog << Nl << sot.GetT() <<  "Distribution of solutions:" << Nl<< dstr << Nl;
         //GnuplotPlotTerminal2d(distribDat.data, "Solution distribution", 1, 0.5);
     }
 
-    LOG << "\nComputer start schedule:\n";
+    ossLog << "\nComputer start schedule:\n";
     Osstream oss;
     const int currHour = TimeUtil().GetCurrentHour();
     const int maxDayLimit = conf.DAYS_LIMIT_COMMANDS; /// TODO: Unstable, as it would require that at uses time AND day, not just time.
@@ -55,26 +100,70 @@ void OptimizerEnProfit::PrintSolution(const EnjoLib::Matrix & bestMat, double ma
     const OptiEnProfitResults resPrinter;
     for (int i = 0; i < bestMat.size(); ++i)
     {
-        const Computer & comp = m_dataModel.GetComputers().at(i);
+        const Computer & comp = dataModel.GetComputers().at(i);
         const VecD & best = bestMat.at(i);
         const OptiEnProfitResults::CommandsInfos & cmdInfo = resPrinter.PrintCommandsComp(comp, best, currHour, maxDayLimit);
-        LOG << resPrinter.PrintScheduleCompGraph(comp, best);
-        LOG << cmdInfo.infos;
+        ossLog << resPrinter.PrintScheduleCompGraph(comp, best);
+        ossLog << cmdInfo.infos;
         oss << cmdInfo.commands;
     }
 
-    LOG << "Commands:\n\n";
-    LOG << oss.str();
+    ossLog << "Commands:\n\n";
+    ossLog << oss.str();
 
     const Str fileCmds = conf.m_outDir + "/sol-cmds.sh";
     Ofstream ofs(fileCmds);
     ofs << oss.str();
 
-    LOG << Nl << sot.GetT() << "Saved commands to:\n" << fileCmds << Nl;
+    ossLog << Nl << sot.GetT() << "Saved commands to:\n" << fileCmds << Nl;
+
+    if (conf.NO_SCHEDULE)
+    {
+        return "";
+    }
+
+    return ossLog.str();
 }
 
-OptiEnProfitResults:: OptiEnProfitResults() {}
-OptiEnProfitResults::~OptiEnProfitResults() {}
+EnjoLib::Str OptiEnProfitResults::PrintOptiProgression(const EnjoLib::VecD & goals, const EnjoLib::VecD & hashesProgress, int horizonHours) const
+{
+    Osstream oss;
+    oss << "Penalities/hashes progression: " << Nl;
+
+    const int length = 24;
+    //const int length = horizonHours; /// TODO: Uncovers a bug
+    oss << PrintOptiPenality(goals, length) << Nl;
+    oss << PrintOptiSingle(hashesProgress, length) << Nl;
+
+    return oss.str();
+}
+
+EnjoLib::Str OptiEnProfitResults::PrintOptiPenality(const EnjoLib::VecD & penality, int horizonHours) const
+{
+    return PrintOptiSingle(penality.Abs(), horizonHours);
+}
+
+EnjoLib::Str OptiEnProfitResults::PrintOptiSingle(const EnjoLib::VecD & vec, int horizonHours) const
+{
+    Osstream oss;
+    try
+    {
+        const double maxx = vec.Max();
+        const double minn = vec.Min();
+        oss << AsciiPlot::Build()
+        (AsciiPlot::Pars::MAXIMUM, maxx)
+        (AsciiPlot::Pars::MINIMUM, minn)
+        (AsciiPlot::Pars::COMPRESS, horizonHours) /// TODO: uncovers a bug
+        //(AsciiPlot::Pars::COMPRESS, 24) // "safe" option
+        .Finalize().Plot(vec);
+    }
+    catch (const std::exception & exc)
+    {
+        oss << EnjoLib::StrColour::GenWarn("Printing failed!");
+    }
+
+    return oss.str();
+}
 
 EnjoLib::Str OptiEnProfitResults::PrintScheduleCompGraph(const Computer & comp, const VecD & best) const
 {

@@ -43,24 +43,31 @@ EnjoLib::Result<CLIResultSol> CLISol::GetConfigs(int argc, char ** argv) const
     const char * OPT_SYSTEM_TYPE  = "system-type";
     const char * OPT_SYSTEM_VOLTAGE  = "system-voltage";
     const char * OPT_HASHRATE_BONUS  = "hashrate-bonus";
+    const char * OPT_NUM_SOLUTIONS = "num-solutions";
     const char * OPT_OUT_DIR   = "out";
     const char * OPT_NO_PROGRESS_BAR = "no-progress-bar";
-    
+    const char * OPT_NO_GNUPLOT = "no-gnuplot";
+    const char * OPT_NO_SCHEDULE = "no-schedule";
+
 
     EnjoLib::ProgramOptionsState popState;
     ////popState.AddStr(OPT_PLUGIN,    "Plugin name");
     popState.AddInt(OPT_DAYS_HORIZON,        ConfigSol::DESCR_DAYS_HORIZON);
     popState.AddInt(OPT_DAYS_START,          ConfigSol::DESCR_DAYS_START);
     popState.AddInt(OPT_DAYS_LIMIT_COMMANDS, ConfigSol::DESCR_DAYS_LIMIT_COMMANDS);
-
+    popState.AddInt(OPT_NUM_SOLUTIONS,    ConfigSol::DESCR_NUM_SOLUTIONS);
     popState.AddInt(OPT_RANDOM_SEED,         ConfigSol::DESCR_RANDOM_SEED);
+
     popState.AddFloat(OPT_BATTERY_CHARGE,    ConfigSol::DESCR_BATTERY_CHARGE);
     popState.AddFloat(OPT_BATTERY_CHARGE_MAX_PERCENTAGE,   ConfigSol::DESCR_BATTERY_CHARGE_MAX_PERCENTAGE);
     popState.AddFloat(OPT_HASHRATE_BONUS,    ConfigSol::DESCR_HASHRATE_BONUS);
+
     //popState.AddStr(OPT_SYSTEM_TYPE,        ConfigSol::DESCR_SYSTEM_TYPE);
     //popState.AddInt(OPT_SYSTEM_VOLTAGE,     ConfigSol::DESCR_SYSTEM_VOLTAGE);
     popState.AddStr(OPT_OUT_DIR,    "Output directory");
     popState.AddBool(OPT_NO_PROGRESS_BAR, ConfigSol::DESCR_NO_PROGRESS_BAR);
+    popState.AddBool(OPT_NO_GNUPLOT,        ConfigSol::DESCR_NO_GNUPLOT);
+    popState.AddBool(OPT_NO_SCHEDULE,       ConfigSol::DESCR_NO_SCHEDULE);
 
     popState.ReadArgs(argc, argv);
     const EnjoLib::ProgramOptions pops(popState);
@@ -97,6 +104,7 @@ EnjoLib::Result<CLIResultSol> CLISol::GetConfigs(int argc, char ** argv) const
     confSol.DAYS_HORIZON    = pops.GetIntFromMap(OPT_DAYS_HORIZON);
     confSol.DAYS_START 	    = pops.GetIntFromMap(OPT_DAYS_START);
     confSol.RANDOM_SEED     = pops.GetIntFromMap(OPT_RANDOM_SEED);
+    confSol.NUM_SOLUTIONS     = pops.GetIntFromMap(OPT_NUM_SOLUTIONS);
     confSol.DAYS_LIMIT_COMMANDS     = pops.GetIntFromMap(OPT_DAYS_LIMIT_COMMANDS, 1);
 
     confSol.HASHRATE_BONUS  = pops.GetFloatFromMap(OPT_HASHRATE_BONUS);
@@ -104,6 +112,8 @@ EnjoLib::Result<CLIResultSol> CLISol::GetConfigs(int argc, char ** argv) const
     confSol.BATTERY_CHARGE_MAX_PERCENTAGE = pops.GetFloatFromMap(OPT_BATTERY_CHARGE_MAX_PERCENTAGE);
     confSol.m_outDir        = pops.GetStrFromMap(OPT_OUT_DIR, confSol.m_outDir);
     confSol.NO_PROGRESS_BAR  = pops.GetBoolFromMap(OPT_NO_PROGRESS_BAR);
+    confSol.NO_GNUPLOT  = pops.GetBoolFromMap(OPT_NO_GNUPLOT);
+    confSol.NO_SCHEDULE  = pops.GetBoolFromMap(OPT_NO_SCHEDULE);
     //confSol.SYSTEM_TYPE     = pops.GetStrFromMap(OPT_SYSTEM_TYPE);
     //confSol.SYSTEM_VOLTAGE  = pops.GetIntFromMap(OPT_SYSTEM_VOLTAGE);
     //confSym.period     		    = pops.GetStrFromMap(OPT_PERIOD);

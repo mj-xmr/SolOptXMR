@@ -12,6 +12,7 @@
 //#include "OptiGoalFactory.h"
 #include "OptiEnProfitSubject.h"
 #include "OptiEnProfitDataModel.h"
+#include "OptiEnProfitResults.h"
 #include "GnuplotIOSWrap.h"
 #include "SolUtil.h"
 #include "TimeUtil.h"
@@ -29,14 +30,12 @@
 #include <Statistical/Distrib.hpp>
 #include <Template/CorradePointer.h>
 #include <Visual/AsciiPlot.hpp>
-#include <Visual/AsciiMisc.hpp>
 
 #include "OptiEnProfitSubject.h" /// TODO: Remove
 
 #include <STD/VectorCpp.hpp>
 #include <STD/Set.hpp>
 #include <STD/String.hpp>
-#include <STD/Algorithm.hpp>
 
 #include <limits>
 
@@ -91,8 +90,7 @@ EnjoLib::Str OptimizerEnProfit::GetT() const
 
 void OptimizerEnProfit::RandomSearch()
 {
-    const int MAX_NUM_SOLUTIONS = 3;
-
+    const ConfigSol & conf = m_dataModel.GetConf();
     const int horizonHours = m_dataModel.GetHorizonHours();
     const EnjoLib::Array<Computer> & comps = m_dataModel.GetComputers();
     const int numComputers = comps.size();
@@ -107,21 +105,11 @@ void OptimizerEnProfit::RandomSearch()
     << "Hours = " << horizonHours << ", computers = " << numComputers << Nl;}
 
     const RandomMath rmath;
-    rmath.RandSeed(m_dataModel.GetConf().RANDOM_SEED);
+    rmath.RandSeed(conf.RANDOM_SEED);
     const VecD binaryZero(horizonHours);
     const std::string hashStrZero(horizonHours * numComputers, '0');
     std::string hashStr = hashStrZero;
     Matrix binaryMat;
-    struct Sol0Penality
-    {
-        Solution sol;
-        Matrix  dat;
-
-        bool operator < (const Sol0Penality & other) const
-        {
-            return sol.hashes < other.sol.hashes;
-        }
-    };
     std::vector<Sol0Penality> solutions0Penality;
     VecT<int> minHoursTogetherHalfVec;
     for (const Computer & comp : comps)
@@ -135,13 +123,13 @@ void OptimizerEnProfit::RandomSearch()
     bool foundFirstSolution = false;
     const bool useHash = IsUseHash();
     const BigInt maxCombisFailed = maxIter * MAX_FAILED_COMBINATIONS;
-    short bit = 1;
-    char bitC = '1';
+    const short bit = 1;
+    const char bitC = '1';
     std::set<std::string> usedCombinations;
     int alreadyCombined = 0;
     //const Distrib distr;
     const bool animateProgressBar = m_dataModel.IsAnimateProgressBar();
-    ProgressMonitHigh progressMonitor(20);
+    ProgressMonitHigh progressMonitor(13);
     bool needNewLine = false;
     for (BigInt i = 0; i < maxIter; ++i)
     {
@@ -149,7 +137,10 @@ void OptimizerEnProfit::RandomSearch()
         {
             if (i % 100000 == 0)
             {
-                progressMonitor.PrintProgressBarTime(i, maxIter, "Solutions");
+                //const Str & progressStr = "Solutions";
+                //const Str & progressStr = OptiEnProfitResults().PrintOptiPenality(m_goals, 10);
+                const Str & progressStr = OptiEnProfitResults().PrintOptiSingle(m_hashesProgress, 10);
+                progressMonitor.PrintProgressBarTime(i, maxIter, progressStr);
                 //if (i > 0)
                 {
                 //const DistribData & data = distr.GetDistrib(m_goals, 20); const Str & dstr = distr.PlotLine(data, true, true, true);
@@ -266,37 +257,15 @@ void OptimizerEnProfit::RandomSearch()
 
     if (solutions0Penality.empty())
     {
-        PrintSolution(binarBest);
+        ELO
+        LOG << OptiEnProfitResults().PrintOptiProgression(m_goals, m_hashesProgress, horizonHours);
+        LOG << OptiEnProfitResults().PrintSolution(m_dataModel, binarBest);
     }
     else
     {
-        std::sort(solutions0Penality.begin(), solutions0Penality.end());
-        std::reverse(solutions0Penality.begin(), solutions0Penality.end());
-        std::vector<Sol0Penality> solutions0PenalitySelected;
-        for (int i = 0; i < solutions0Penality.size() && i < MAX_NUM_SOLUTIONS; ++i)
-        {
-            const Sol0Penality & soldat = solutions0Penality.at(i);
-            solutions0PenalitySelected.push_back(soldat);
-
-            //PrintSolution(soldat.dat);
-        }
-        const Sol0Penality & soldatBest = solutions0Penality.at(0);
-        std::reverse(solutions0PenalitySelected.begin(), solutions0PenalitySelected.end());
-        for (int i = 0; i < solutions0PenalitySelected.size(); ++i)
-        {
-            const Sol0Penality & soldat = solutions0PenalitySelected.at(i);
-            {
-                ELO
-                const int len = 20;
-                LOG << AsciiMisc().GenChars("-", len) << Nl;
-                LOG << "Solution " << i+1 << " of " << MAX_NUM_SOLUTIONS << Nl;
-                LOG << AsciiMisc().GenChars("-", len) << Nl;
-            }
-            const double hashes = soldatBest.sol.hashes;
-            PrintSolution(soldat.dat, hashes);
-        }
-        //const Sol0Penality & soldatBest = solutions0Penality.at(solutions0Penality.size() - 1);
-        //PrintSolution(soldatBest.dat);
+        ELO
+        LOG << OptiEnProfitResults().PrintOptiProgression(m_goals, m_hashesProgress, horizonHours);
+        LOG << OptiEnProfitResults().PrintMultipleSolutions(m_dataModel, solutions0Penality, conf.NUM_SOLUTIONS);
     }
 
     if (not foundFirstSolution)
@@ -310,9 +279,10 @@ bool OptimizerEnProfit::Consume2(const EnjoLib::Matrix & dataMat, bool needNewli
     OptiSubjectEnProfit osub(m_dataModel);
     const Solution & goal = osub.GetVerbose(dataMat, false);
     //LOGL << "goal = " << goal << Nl;
-    m_goals.Add(goal.penality);
     if (goal.penality < m_goal || m_goal == GOAL_INITIAL || goal.penality == 0)
     {
+        m_goals.Add(goal.penality);
+        m_hashesProgress.Add(goal.hashes);
         const double relChangePositive = GMat().RelativeChange(goal.penality, m_goal);
         m_relChangePositive = relChangePositive;
         ELO
@@ -323,11 +293,14 @@ bool OptimizerEnProfit::Consume2(const EnjoLib::Matrix & dataMat, bool needNewli
             {
                 LOG << Nl; // Need an extra space to clear the progress bar
             }
-            LOG << GetT() << "New score = " << goal.hashes << " ->\t"
+            LOG << GetT() << "New score: Penalty = " << -goal.penality << "\t, hashes = +" << goal.hashes << Nl;
+            /*
+            << " ->\t"
             << GMat().round(relChangePositive   * 100) << "%" << " costing: "
             << GMat().round(m_relChangeNegative * 100) << "%" << ", pos2neg: "
             << GMat().round(m_relPos2Neg        * 100) << "%" << Nl;
     //        << GMat().round(relNeg2Pos * 100) << "%" << Nl;
+            */
         }
 
 
