@@ -27,6 +27,7 @@ BatterySimulation::BatterySimulation(const ConfigSol & confSol, const BatteryPar
 
 double BatterySimulation::iter_get_load(double inp, double out, double hours)
 {
+    //initial_load = false;
     if (initial_load)
     {
         //out = 0; // dangerous
@@ -50,18 +51,15 @@ double BatterySimulation::iter_get_load(double inp, double out, double hours)
     //LOGL << "Cap " <<  m_maxCapacityAmph << Nl;
     if (load > m_maxCapacityAmph)
     {
-        //load = m_maxCapacityAmph; /// TODO: This is quite wrong to assume this.
         if (initial_load)
-            ++num_overvolted_initial; /// TODO: Unit test this, as lack of this should cause a crash
-        else
         {
-            const double diff = load - m_maxCapacityAmph;
-            //num_overvolted += 1 + diff;
-            //num_overvolted += 1 + diff * 2;
-            num_overvolted += 1 + diff;
-            //num_overvolted += GMat().Pow(1 + diff, 1.01);
+            ++num_overvolted_initial; // this should be only informational
         }
-
+        const double diff = load - m_maxCapacityAmph;
+        //num_overvolted += 1 + diff;
+        //num_overvolted += 1 + diff * 2;
+        num_overvolted += 1 + diff;
+        //num_overvolted += GMat().Pow(1 + diff, 1.01);
     }
     if (load < pars.MIN_LOAD_AMPH)
     {
@@ -75,8 +73,7 @@ double BatterySimulation::iter_get_load(double inp, double out, double hours)
     //  load = 0;
 
     if (initial_load)
-        if (pars.MIN_LOAD_AMPH < load && load < m_maxCapacityAmph)
-        //if (load > pars.MIN_LOAD_AMPH)
+        if (load > pars.MIN_LOAD_AMPH)
         {
             /// TODO: Unit test this, as lack of this should cause a crash
             //LOGL << "Initial load done.\n";

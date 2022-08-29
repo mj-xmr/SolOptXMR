@@ -113,6 +113,11 @@ EnjoLib::Str OptiEnProfitResults::PrintSolution(const OptiEnProfitDataModel & da
 
     ossLog << Nl << sot.GetT() << "Saved commands to:\n" << fileCmds << Nl;
 
+    if (conf.NO_SCHEDULE)
+    {
+        return "";
+    }
+
     return ossLog.str();
 }
 

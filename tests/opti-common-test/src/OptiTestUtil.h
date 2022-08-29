@@ -20,7 +20,7 @@ public:
 
     Computer GetCompTestSched() const;
     OptimizerEnProfit TestEdgeSolGetOptimizer(const EnjoLib::VecD & genPower, int horizon, int startingPoint,
-                                              const EnjoLib::VecD & compHashMultpliers = {1}) const;
+                                              const EnjoLib::VecD & compHashMultpliers = {1}, double batteryChargeAH = 0) const;
 
 protected:
 

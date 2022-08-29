@@ -25,11 +25,13 @@ Computer OptiTestUtil::GetCompTestSched() const
     return compTest;
 }
 
-OptimizerEnProfit OptiTestUtil::TestEdgeSolGetOptimizer(const VecD & genPower, int horizon, int startingPoint, const EnjoLib::VecD & compHashMultpliers) const
+OptimizerEnProfit OptiTestUtil::TestEdgeSolGetOptimizer(const VecD & genPower, int horizon, int startingPoint, const EnjoLib::VecD & compHashMultpliers, double batteryChargeAH) const
 {
     ConfigSol cfg;
     cfg.RANDOM_SEED = 1;
     cfg.NO_GNUPLOT = true;
+    cfg.NO_SCHEDULE = true;
+    cfg.BATTERY_CHARGE = batteryChargeAH;
     const Computer & comp0 = GetCompTestSched();
     const Str dataFname = cfg.m_outDir + "/" + OptiEnProfitDataModel::SOLAR_POS_FILE;
     {

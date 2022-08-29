@@ -233,7 +233,8 @@ Solution OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool v
     //return -sum;
 }
 
-OptiSubjectEnProfit::SimResult OptiSubjectEnProfit::Simulate(int i, int currHour, size_t compSize, const EnjoLib::Matrix & dataMat, double bonusMul, double bonusMulMA, bool isInitialLoad) const
+OptiSubjectEnProfit::SimResult OptiSubjectEnProfit::Simulate(int i, int currHour, size_t compSize, const EnjoLib::Matrix & dataMat,
+                                                             double bonusMul, double bonusMulMA, bool isInitialLoad) const
 {
     SimResult res{};
     //const EnjoLib::Array<Computer> & comps = m_dataModel.GetComputers();
