@@ -13,6 +13,7 @@
 #include <Statistical/Assertions.hpp>
 #include <Math/GeneralMath.hpp>
 #include <Util/CoutBuf.hpp>
+#include <Util/StrColour.hpp>
 #include <Util/ToolsMixed.hpp>
 #include <Util/CharManipulations.hpp>
 #include <Visual/AsciiPlot.hpp>
@@ -127,16 +128,23 @@ EnjoLib::Str OptiEnProfitResults::PrintSolution(const OptiEnProfitDataModel & da
 EnjoLib::Str OptiEnProfitResults::PrintOptiProgression(const EnjoLib::VecD & goals, int horizonHours) const
 {
     Osstream oss;
-    oss << "Solutions progression:" << Nl;
-    const EnjoLib::VecD & goalsMod = goals.Abs();
-    const double maxx = goalsMod.Max();
-    const double minn = goalsMod.Min();
-    oss << AsciiPlot::Build()
-    (AsciiPlot::Pars::MAXIMUM, maxx)
-    (AsciiPlot::Pars::MINIMUM, minn)
-    //(AsciiPlot::Pars::COMPRESS, horizonHours) /// TODO: uncovers a bug
-    (AsciiPlot::Pars::COMPRESS, 24)
-    .Finalize().Plot(goalsMod) << Nl;
+    oss << "Solutions progression: ";
+    try
+    {
+        const EnjoLib::VecD & goalsMod = goals.Abs();
+        const double maxx = goalsMod.Max();
+        const double minn = goalsMod.Min();
+        oss << Nl << AsciiPlot::Build()
+        (AsciiPlot::Pars::MAXIMUM, maxx)
+        (AsciiPlot::Pars::MINIMUM, minn)
+        (AsciiPlot::Pars::COMPRESS, horizonHours) /// TODO: uncovers a bug
+        //(AsciiPlot::Pars::COMPRESS, 24) // "safe" option
+        .Finalize().Plot(goalsMod) << Nl;
+    }
+    catch (const std::exception & exc)
+    {
+        oss << EnjoLib::StrColour::GenWarn("Printing failed!") << Nl;
+    }
     return oss.str();
 }
 
