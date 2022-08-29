@@ -25,6 +25,9 @@ using namespace EnjoLib;
 
 const int OptiEnProfitResults::SSH_TIMEOUT_S = 60;
 
+OptiEnProfitResults:: OptiEnProfitResults() {}
+OptiEnProfitResults::~OptiEnProfitResults() {}
+
 EnjoLib::Str OptiEnProfitResults::PrintMultipleSolutions(const OptiEnProfitDataModel & dataModel,
                                                          const std::vector<Sol0Penality> & solutions0Penality, int maxSolutions) const
 {
@@ -121,8 +124,21 @@ EnjoLib::Str OptiEnProfitResults::PrintSolution(const OptiEnProfitDataModel & da
     return ossLog.str();
 }
 
-OptiEnProfitResults:: OptiEnProfitResults() {}
-OptiEnProfitResults::~OptiEnProfitResults() {}
+EnjoLib::Str OptiEnProfitResults::PrintOptiProgression(const EnjoLib::VecD & goals, int horizonHours) const
+{
+    Osstream oss;
+    oss << "Solutions progression:" << Nl;
+    const EnjoLib::VecD & goalsMod = goals.Abs();
+    const double maxx = goalsMod.Max();
+    const double minn = goalsMod.Min();
+    oss << AsciiPlot::Build()
+    (AsciiPlot::Pars::MAXIMUM, maxx)
+    (AsciiPlot::Pars::MINIMUM, minn)
+    //(AsciiPlot::Pars::COMPRESS, horizonHours) /// TODO: uncovers a bug
+    (AsciiPlot::Pars::COMPRESS, 24)
+    .Finalize().Plot(goalsMod) << Nl;
+    return oss.str();
+}
 
 EnjoLib::Str OptiEnProfitResults::PrintScheduleCompGraph(const Computer & comp, const VecD & best) const
 {

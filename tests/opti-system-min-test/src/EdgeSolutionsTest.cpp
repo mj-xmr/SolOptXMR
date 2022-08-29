@@ -39,7 +39,6 @@ TEST(EdgeSol_high)
     CHECK(opti.GetPenality() > 0);
 }
 
-
 TEST(EdgeSol_high_midday)
 {
     const int horizon = 2;
@@ -53,7 +52,6 @@ TEST(EdgeSol_high_midday)
     CHECK(opti.GetHashes() > 0);
     CHECK(opti.GetPenality() > 0);
 }
-
 
 TEST(EdgeSol_high_low_power)
 {

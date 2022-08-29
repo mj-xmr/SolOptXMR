@@ -254,11 +254,15 @@ void OptimizerEnProfit::RandomSearch()
 
     if (solutions0Penality.empty())
     {
-        LOGL << OptiEnProfitResults().PrintSolution(m_dataModel, binarBest);
+        ELO
+        LOG << OptiEnProfitResults().PrintOptiProgression(m_goals, horizonHours);
+        LOG << OptiEnProfitResults().PrintSolution(m_dataModel, binarBest);
     }
     else
     {
-        LOGL << OptiEnProfitResults().PrintMultipleSolutions(m_dataModel, solutions0Penality, conf.NUM_SOLUTIONS);
+        ELO
+        LOG << OptiEnProfitResults().PrintOptiProgression(m_goals, horizonHours);
+        LOG << OptiEnProfitResults().PrintMultipleSolutions(m_dataModel, solutions0Penality, conf.NUM_SOLUTIONS);
     }
 
     if (not foundFirstSolution)
@@ -272,9 +276,9 @@ bool OptimizerEnProfit::Consume2(const EnjoLib::Matrix & dataMat, bool needNewli
     OptiSubjectEnProfit osub(m_dataModel);
     const Solution & goal = osub.GetVerbose(dataMat, false);
     //LOGL << "goal = " << goal << Nl;
-    m_goals.Add(goal.penality);
     if (goal.penality < m_goal || m_goal == GOAL_INITIAL || goal.penality == 0)
     {
+        m_goals.Add(goal.penality);
         const double relChangePositive = GMat().RelativeChange(goal.penality, m_goal);
         m_relChangePositive = relChangePositive;
         ELO
