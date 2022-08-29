@@ -1,8 +1,10 @@
 #ifndef __OPTITESTUTIL_H
 #define __OPTITESTUTIL_H
 
+
 #include <Util/Str.hpp>
 #include <Util/VecD.hpp>
+#include <Template/BuilderTpl.hpp>
 
 #include <initializer_list>
 
@@ -19,13 +21,47 @@ public:
     static EnjoLib::Str compSched_hostname;
 
     Computer GetCompTestSched() const;
-    OptimizerEnProfit TestEdgeSolGetOptimizer(const EnjoLib::VecD & genPower, int horizon, int startingPoint,
-                                              const EnjoLib::VecD & compHashMultpliers = {1}, double batteryChargeAH = 0) const;
 
 protected:
 
 private:
+};
+
+class OptiTestUtilConf
+{
+public:
+    enum class Pars
+    {
+        NO_GNUPLOT,
+        NO_SCHEDULE,
+        BATTERY_CHARGE,
+        NUM_SOLUTIONS,
+        END
+    };
+
+    using BuilderT = EnjoLib::BuilderTpl<OptiTestUtilConf, Pars, double>;
+    static BuilderT Build() { return BuilderT(); }
+
+	OptiTestUtilConf(const BuilderT & builder);
+	virtual ~OptiTestUtilConf();
+
+	static EnjoLib::Str compSched_macAddr;
+    static EnjoLib::Str compSched_hostname;
+
+
+    OptimizerEnProfit TestEdgeSolGetOptimizer(const EnjoLib::VecD & genPower, int horizon, int startingPoint,
+                                              const EnjoLib::VecD & compHashMultpliers = {1}) const;
+
+    void Add(const Pars & key, double val);
+    double Get(const Pars & key) const;
+
+protected:
+    OptiTestUtilConf();
+
+private:
+    EnjoLib::VecD m_pars;
 
 };
+
 
 #endif // __OPTITESTUTIL_H

@@ -90,8 +90,7 @@ EnjoLib::Str OptimizerEnProfit::GetT() const
 
 void OptimizerEnProfit::RandomSearch()
 {
-    const int MAX_NUM_SOLUTIONS = 3;
-
+    const ConfigSol & conf = m_dataModel.GetConf();
     const int horizonHours = m_dataModel.GetHorizonHours();
     const EnjoLib::Array<Computer> & comps = m_dataModel.GetComputers();
     const int numComputers = comps.size();
@@ -106,7 +105,7 @@ void OptimizerEnProfit::RandomSearch()
     << "Hours = " << horizonHours << ", computers = " << numComputers << Nl;}
 
     const RandomMath rmath;
-    rmath.RandSeed(m_dataModel.GetConf().RANDOM_SEED);
+    rmath.RandSeed(conf.RANDOM_SEED);
     const VecD binaryZero(horizonHours);
     const std::string hashStrZero(horizonHours * numComputers, '0');
     std::string hashStr = hashStrZero;
@@ -259,7 +258,7 @@ void OptimizerEnProfit::RandomSearch()
     }
     else
     {
-        LOGL << OptiEnProfitResults().PrintMultipleSolutions(m_dataModel, solutions0Penality, MAX_NUM_SOLUTIONS);
+        LOGL << OptiEnProfitResults().PrintMultipleSolutions(m_dataModel, solutions0Penality, conf.NUM_SOLUTIONS);
     }
 
     if (not foundFirstSolution)
