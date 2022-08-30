@@ -201,6 +201,7 @@ TEST(CompSched_start_immediately_restart)
 
         const VecStr & toksCmds = CompSchedTestCommands(schedule, currHour, startHour, endHour);
         CHECK(toksCmds.size() >= 2);
+        /// CHECK_EQUAL(5, toksCmds.size()); /// TODO
     }
 }
 
