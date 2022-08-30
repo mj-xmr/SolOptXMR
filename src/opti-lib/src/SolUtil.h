@@ -3,7 +3,7 @@
 
 #include <Util/CoutBuf.hpp>
 #include <Util/StrFwd.hpp>
-#include <Util/VecD.hpp>
+#include <Statistical/MatrixFwd.hpp>
 
 //#include <gmpxx.h>
 
@@ -19,6 +19,7 @@ public:
 
 	EnjoLib::Str GetLinesAsSingle(const EnjoLib::Str & fileName) const;
 	double round(double val, int decimals = 0) const;
+	double SumMat(const EnjoLib::Matrix & mat) const;
 
 	/*
 	mpz_class GetFactorial(int inp) const;

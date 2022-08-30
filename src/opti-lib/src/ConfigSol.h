@@ -23,6 +23,7 @@ class ConfigSol : public ConfigBase
         void UpdateFromOther(const ConfigSol & cfgTSCmdLine);
 
         bool NO_PROGRESS_BAR = false; constexpr static const char * DESCR_NO_PROGRESS_BAR = "Disable progress bar";
+        bool NO_NEW_SOLUTIONS = false; constexpr static const char * DESCR_NO_NEW_SOLUTIONS = "Disable solutions progress";
         bool NO_GNUPLOT = false;      constexpr static const char * DESCR_NO_GNUPLOT = "Disable gnuplot";
         bool NO_SCHEDULE = false;     constexpr static const char * DESCR_NO_SCHEDULE = "Disable computer schedule";
 

@@ -55,7 +55,10 @@ EnjoLib::Str OptiEnProfitResults::PrintMultipleSolutions(const OptiEnProfitDataM
         //{
             const int len = 20;
             LOG << AsciiMisc().GenChars("-", len) << Nl;
-            LOG << "Solution " << i+1 << " of " << maxSolutions << Nl;
+            if (maxSolutions > 1)
+            {
+                LOG << "Solution " << i+1 << " of " << maxSolutions << Nl;
+            }
             LOG << AsciiMisc().GenChars("-", len) << Nl;
         //}
 

@@ -7,7 +7,7 @@
     },
     "cli": {
         "NO_PROGRESS_BAR": false,
-        "NO_GNUPLOT": false,
+        "NO_GNUPLOT": true,
         "NO_SCHEDULE": false
     },
     "hosts": {

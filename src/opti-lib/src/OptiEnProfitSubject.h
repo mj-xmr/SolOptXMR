@@ -39,22 +39,6 @@ public:
     double HashrateBonusNonCached(int hour) const;
     void OutputVar(const EnjoLib::VecD & data, const EnjoLib::Str & descr, bool plot = true) const;
 
-
-    struct SimResult
-    {
-        double sumHashes = 0;
-        double sumPowerUsage = 0;
-
-        void Add(const SimResult & other)
-        {
-            sumHashes += other.sumHashes;
-            sumPowerUsage += other.sumPowerUsage;
-        }
-    };
-
-    SimResult Simulate(int i, int currHour, size_t compSize, const EnjoLib::Matrix & dataMat, double bonusMul, double bonusMulMA, bool isInitialLoad) const;
-
-
 protected:
 
 private:
