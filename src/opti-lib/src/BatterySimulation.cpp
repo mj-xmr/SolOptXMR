@@ -27,11 +27,7 @@ BatterySimulation::BatterySimulation(const ConfigSol & confSol, const BatteryPar
 
 double BatterySimulation::iter_get_load(double inp, double out, double hours)
 {
-    initial_load = false;
-    if (initial_load)
-    {
-        //out = 0; // dangerous
-    }
+    //initial_load = false;
     const double discharge = hours * m_dischargePerHour * load;
     if (inp < 0)
     {
@@ -65,21 +61,6 @@ double BatterySimulation::iter_get_load(double inp, double out, double hours)
     {
         const double diff = pars.MIN_LOAD_AMPH - load;
         num_undervolted += 1 + diff;
-        if (initial_load)
-        {
-            //++num_undervolted_initial;
-            //++num_undervolted;
-        }
-        else
-        {
-            //++num_undervolted;
-            if (num_undervolted_initial > 0)
-            {
-                //num_undervolted -= num_undervolted_initial;
-            }
-
-            //num_undervolted_initial = 0;
-        }
     }
     //if (load < 0)
     //  load = 0;

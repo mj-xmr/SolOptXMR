@@ -61,7 +61,6 @@ Solution OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool v
     PowerUsageSimulation::SimResult simResult{};
     const size_t compSize = m_dataModel.GetComputers().size();
     Assertions::SizesEqual(compSize, dataMat.size(), "OptiSubjectEnProfit::GetVerbose");
-    bool unacceptableSolution = false;
     for (int i = 0; i < n; ++i)
     {
         const double bonusMul = HashrateBonus(i % 24);
@@ -71,7 +70,7 @@ Solution OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool v
         //if (false)
         const PowerUsageSimulation::SimResult & resLocal = powSim.Simulate(i, m_currHour, compSize, dataMat, bonusMul, battery.initial_load);
         simResult.Add(resLocal);
-        const double load = battery.iter_get_load(powerProd, resLocal.sumPowerUsage);
+        battery.iter_get_load(powerProd, resLocal.sumPowerUsage);
         //const double pentalityUndervolted = load < 0 ? GMat().Fabs(load * load * load) : 0;
         const double pentalityUndervolted = battery.num_undervolted * 10;// * resLocal.sumHashes * 2; //  9.0;
         const double pentalityOvervolted  = battery.num_overvolted;// * compSize;// 100.0;
@@ -107,56 +106,13 @@ Solution OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool v
         //penalityUnder.Add(pentalityUndervolted);
         penalitySum += pentalityUndervolted;
         penalitySum += pentalityOvervolted;
-
-
-        if (unacceptableSolution)
-        {
-            if  (LOG_UNACCEPTABLE_SOLUTIONS)
-            {
-                LOGL << "Unacceptable solution. Penality undervolt = " << pentalityUndervolted << " Overvolt: " << pentalityOvervolted
-                 << ", hashes = " << resLocal.sumHashes << "\n";
-            }
-            const double penality = penalitySum * PENALITY_SUM_MUL;
-            const double penalityExtrapolated = penality * (n - i) * 10000; // Extrapolate across the remaining simulation steps
-            //if (not verbose)
-            {
-                sol.hashes   = simResult.sumHashes;
-                sol.penality = penalityExtrapolated; //penality;
-                sol.acceptable = false;
-
-                return sol;
-
-                //return resLocal.sumHashes -penalityExtrapolated;
-            }
-        }
-
         //LOGL << "acceptable solution. Penality undervolt = " << pentalityUndervolted << " Overvolt: " << pentalityOvervolted << "\n";
     }
-
-    //const double pentalityUndervolted = m_battery.num_undervolted * m_battery.num_undervolted;
-    //const double pentalityUndervolted = penalitySum * PENALITY_SUM_MUL;
-    //const double pentalityOvervolted = battery.num_overvolted;
     const double penality = penalitySum * PENALITY_SUM_MUL; /// TODO: Penalize overvoltage differently than undervoltage
     m_penalitySum = penality;
     /// TODO: The undervoltage / overvoltage penality should be non-linear.
     const double positive = simResult.sumHashes;
-    //double sumAdjusted = positive - penality;
-    //if (penality > 0 && sumAdjusted > 0)
-    {
-        //sumAdjusted -= positive; /// TODO: This looks like a mistake
-    }
-    //LOGL << "acceptable solution. Penality sum = " << penalitySum << " positive: " << positive << "\n";
-    //LOGL << sum << ", adj = "  << sumAdjusted << Endl;
-
-    //if (GMat().round(sumAdjusted) > GMat().round(m_sumMax) || m_sumMax == 0)
-    if (not verbose)
-    {
-        if (unacceptableSolution)
-        {
-            Assertions::Throw("Logic error: unacceptableSolution went through", "GetVerbose");
-        }
-    }
-    else
+    if (verbose)
     {
         LOGL << m_sumMax << ", adj = "  << m_penalitySum << Nl;
         m_sumMax = m_penalitySum;

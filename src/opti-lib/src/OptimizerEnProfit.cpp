@@ -101,8 +101,8 @@ void OptimizerEnProfit::RandomSearch()
     // TODO: Should check the variance changes
     const BigInt maxIter = gmat.Pow(gmat.Pow(horizonHours, 3), gmat.Pow(numComputers, 1/2.0));
 
-    {LOGL << GetT() << "Random search of " << maxIter << " solutions\n"
-    << "Hours = " << horizonHours << ", computers = " << numComputers << Nl;}
+    {LOGL << GetT() << "Random search of " << maxIter << " solutions; "
+    << horizonHours << "h, rigs = " << numComputers << Nl;}
 
     const RandomMath rmath;
     rmath.RandSeed(conf.RANDOM_SEED);
@@ -289,7 +289,7 @@ bool OptimizerEnProfit::Consume2(const EnjoLib::Matrix & dataMat, bool needNewli
         return false;
     }
     //LOGL << "goal = " << goal << Nl;
-    if (goal.penality <= m_goal || m_goal == GOAL_INITIAL || goal.penality == 0)
+    if (goal.penality < m_goal || m_goal == GOAL_INITIAL || goal.penality == 0)
     {
         m_goals.Add(goal.penality);
         m_hashesProgress.Add(goal.hashes);
@@ -297,7 +297,7 @@ bool OptimizerEnProfit::Consume2(const EnjoLib::Matrix & dataMat, bool needNewli
         m_relChangePositive = relChangePositive;
         ELO
         RecalcComputationCosts();
-        if (goal.penality <= m_goal)
+        if (goal.penality < m_goal)
         {
             if (not m_dataModel.GetConf().NO_NEW_SOLUTIONS)
             {
