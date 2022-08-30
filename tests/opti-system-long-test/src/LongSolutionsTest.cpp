@@ -21,13 +21,15 @@ TEST(EdgeSol_2computers)
     const VecD computersHashrateMul = {1, 4};
     const double amplitude = 120;
     const double batChargeAh = 70;
+    const Str name = "2 computers long";
     const VecD genPower = SolUtil().GenSolar(horizon, amplitude);
-
 
     auto builder = OptiTestUtilConf::Build()
     (OptiTestUtilConf::Pars::BATTERY_CHARGE, batChargeAh)
-    (OptiTestUtilConf::Pars::NO_SCHEDULE, false);
-    const OptimizerEnProfit & opti = builder.Finalize().TestEdgeSolGetOptimizer(genPower, horizon, startingPoint, computersHashrateMul);
+    (OptiTestUtilConf::Pars::NO_SCHEDULE, false)
+    (OptiTestUtilConf::Pars::NO_NEW_SOLUTIONS, false)
+    ;
+    const OptimizerEnProfit & opti = builder.Finalize().TestEdgeSolGetOptimizer(name, genPower, horizon, startingPoint, computersHashrateMul);
     CHECK(opti.GetHashes() > 0);
     //CHECK_EQUAL(0, opti.GetPenality());
     CHECK(opti.GetPenality() > 0);

@@ -18,10 +18,7 @@ PowerUsageSimulation::SimResult PowerUsageSimulation::Simulate(int i, int currHo
     //const EnjoLib::Array<Computer> & comps = m_dataModel.GetComputers();
     res.sumPowerUsage += m_dataModel.GetHabitsUsage(i);
     const double bonusMulMA = m_dataModel.GetConf().HASHRATE_BONUS;
-    if (isInitialLoad)
-    {
-        return res;
-    }
+
     const auto & comps = m_dataModel.GetComputers();
     for (int ic = 0; ic < compSize; ++ic)
     {
@@ -38,6 +35,10 @@ PowerUsageSimulation::SimResult PowerUsageSimulation::Simulate(int i, int currHo
             res.sumHashes += hashe;
         }
         res.sumPowerUsage += comp.GetUsage(val);
+    }
+    if (isInitialLoad)
+    {
+        //res.sumHashes = 0; // Penalize mining during the initial load
     }
 
     /*

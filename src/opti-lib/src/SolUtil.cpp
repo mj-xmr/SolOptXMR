@@ -11,6 +11,7 @@
 #include <Math/GeneralMath.hpp>
 #include <Math/Constants.hpp>
 #include <Statistical/Assertions.hpp>
+#include <Statistical/Matrix.hpp>
 
 
 using namespace EnjoLib;
@@ -79,6 +80,16 @@ double SolUtil::round(double val, int decimals) const
     const double divValRound = mulValRound * GMat().PowInt(10, -decimals);
 
     return divValRound;
+}
+
+double SolUtil::SumMat(const EnjoLib::Matrix & mat) const
+{
+    double matSum = 0;
+    for (const VecD & row : mat)
+    {
+        matSum += row.Sum();
+    }
+    return matSum;
 }
 
 /*

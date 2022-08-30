@@ -21,6 +21,7 @@ struct Solution
 {
     double hashes = 0;
     double penality = 0;
+    bool acceptable = true;
 };
 
 struct Sol0Penality
@@ -54,6 +55,7 @@ class OptimizerEnProfit : public EnjoLib::IMultiDimIterConsumerTpl //OptimizerBa
         const EnjoLib::VecD & GetGoals() const { return m_goals; }
         double GetHashes() const { return m_hashes; }
         double GetPenality() const { return m_penality; }
+        const EnjoLib::Matrix & GetScheduleBest() const { return m_binarBest; }
 
         using BigInt = unsigned long long; // int is way too small.
 
@@ -73,6 +75,7 @@ class OptimizerEnProfit : public EnjoLib::IMultiDimIterConsumerTpl //OptimizerBa
 
         const OptiEnProfitDataModel & m_dataModel;
         EnjoLib::Matrix m_data;
+        EnjoLib::Matrix m_binarBest;
 
         double m_goal = GOAL_INITIAL;
         double m_hashes = 0;

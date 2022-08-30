@@ -51,6 +51,7 @@ Solution OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool v
     const int PENALITY_SUM_MUL = 1;
     const GeneralMath gmat;
     const size_t n = dataMat.at(0).size();
+    const double matSum = SolUtil().SumMat(dataMat);
     const EnjoLib::Array<Computer> & comps = m_dataModel.GetComputers();
     const bool LOG_UNACCEPTABLE_SOLUTIONS = false;
     const System & sys = m_dataModel.GetSystem();
@@ -79,9 +80,13 @@ Solution OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool v
         {
             if (pentalityUndervolted > 0)
             {
-                if (not battery.initial_load)
+                if (battery.initial_load)
                 {
-                    //unacceptableSolution = true;
+                    if (matSum != 0)
+                    {
+                        //unacceptableSolution = true;
+                    }
+
                 }
             }
         }
@@ -113,10 +118,11 @@ Solution OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool v
             }
             const double penality = penalitySum * PENALITY_SUM_MUL;
             const double penalityExtrapolated = penality * (n - i) * 10000; // Extrapolate across the remaining simulation steps
-            if (not verbose)
+            //if (not verbose)
             {
                 sol.hashes   = simResult.sumHashes;
                 sol.penality = penalityExtrapolated; //penality;
+                sol.acceptable = false;
 
                 return sol;
 
