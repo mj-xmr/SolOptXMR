@@ -125,6 +125,11 @@ It makes sense to compare and sum up this values for the extreme conditions.
 ## Voltage plots
 To visualize the currently modelled (dis)charge rates, as described [in this paper](http://www.scubaengineer.com/documents/lead_acid_battery_charging_graphs.pdf), dubbed _C/100_, _C/20_, and so on, please run the `src/voltage_plot.py` script.
 
+## Querying the scheduled jobs
+Executing the script `./util/query-jobs.sh` will print any scheduled jobs, that you decided to execute after the calculations and reviewing their result. 
+The script's special ability is presenting the output of the `at` command in a simplified form.
+Obviously it should be ran from the machine, where the schedule has been set.
+
 # Further documentation
 - [safety](docs/safety.md): how to handle electrical systems safely. Tell me, that you "read and understood it", and I can sleep fine.
 - [economy](docs/economy.md): my economy views and the resulting dynamics tailored to production of electricity & mining crypto.

@@ -6,11 +6,13 @@ cd ../..
 
 if [ "$(uname)" == "Darwin" ]; then
 	HOMEBREW_NO_AUTO_UPDATE=1 brew install rapidjson libffi osx-cpu-temp
+	echo "Please enable the `at` scheduler manually:"
+	echo "https://unix.stackexchange.com/questions/478823/making-at-work-on-macos/478840#478840"
 elif [ "$(uname)" == "Linux" ]; then
 	sudo apt install gfortran libffi-dev python3-testresources
 	#sudo apt install libboost-all-dev # Only JSON is needed for now
 	#sudo apt install libffi-dev
-	sudo apt install rapidjson-dev lm-sensors fswebcam
+	sudo apt install rapidjson-dev lm-sensors fswebcam at
 fi
 
 if pip3 install -r requirements.txt ; then
