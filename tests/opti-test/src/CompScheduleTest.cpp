@@ -10,6 +10,7 @@
 #include <Util/CoutBuf.hpp>
 #include <Util/Tokenizer.hpp>
 #include <Util/CharManipulations.hpp>
+#include <Math/GeneralMath.hpp>
 
 #include <UnitTest++/UnitTest++.h>
 //#include <initializer_list>
@@ -36,7 +37,7 @@ static Str GetStartHourToSchedule(int startHour, int endHour = -1)
     oss << "day 0, hour " << (startHour > 0 ? cman.ToStr(startHour) : "!") << "-";
     if (endHour >= 0)
     {
-        oss << endHour;
+        oss << endHour % 24;
     }
     else
     {
@@ -71,7 +72,15 @@ static Str GetStartHourToSleep(const Computer & comp, int endHour)
     oss
     << "echo \"" << "ssh -o ConnectTimeout=" << OptiEnProfitResults::SSH_TIMEOUT_S
     << " -n " << OptiTestUtil::compSched_hostname
-    << " 'hostname; systemctl suspend'\" | at " << endHour << ":00";
+    << " 'hostname; systemctl suspend'\" | at ";
+    if (endHour >= 24)
+    {
+        oss << endHour % 24 << ":00" << " + " << GMat().Floor(endHour / 24.0) << " days";
+    }
+    else
+    {
+        oss << endHour << ":00";
+    }
     return oss.str();
 }
 
@@ -199,6 +208,30 @@ TEST(CompSched_start_immediately_restart)
         const int startHour = 0;
         const int endHour = 4;
 
+        const VecStr & toksCmds = CompSchedTestCommands(schedule, currHour, startHour, endHour);
+        CHECK(toksCmds.size() >= 2);
+        //CHECK_EQUAL(5, toksCmds.size()); /// TODO
+    }
+}
+
+TEST(CompSched_more_than_2_days)
+{
+    const int maxHour = 48;
+    VecD schedule(maxHour);
+    
+    {
+        ELO
+        const int currHour = SCHEDULE_CURR_HOUR;
+        const int startHour = 21;
+        const int endHour = 28;
+
+        for (int i = startHour; i <= endHour && i < maxHour; ++i)
+        {
+            schedule.at(i) = 1;
+        }
+        CompSchedTestGraph(schedule);
+
+    
         const VecStr & toksCmds = CompSchedTestCommands(schedule, currHour, startHour, endHour);
         CHECK(toksCmds.size() >= 2);
         //CHECK_EQUAL(5, toksCmds.size()); /// TODO

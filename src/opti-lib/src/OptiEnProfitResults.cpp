@@ -195,14 +195,15 @@ OptiEnProfitResults::CommandsInfos OptiEnProfitResults::PrintCommandsComp(const 
     bool onAtFirstHour = false;
     int lastHourOn = -1;
     int lastDayOn = -1;
+    int firstDayOn = -1;
     //const int horizonHours = m_dataModel.GetHorizonHours();
     const int horizonHours = best.size();
     for (int i = 1; i < horizonHours; ++i)
     {
         const int ihour = i + currHour;
         const int hour = ihour % OptimizerEnProfit::HOURS_IN_DAY;
-        const int day  =     GMat().round(ihour     / static_cast<double>(OptimizerEnProfit::HOURS_IN_DAY));
-        const int dayPrev  = GMat().round((ihour-1) / static_cast<double>(OptimizerEnProfit::HOURS_IN_DAY));
+        const int day  =     GMat().Floor(ihour     / static_cast<double>(OptimizerEnProfit::HOURS_IN_DAY));
+        const int dayPrev  = GMat().Floor((ihour-1) / static_cast<double>(OptimizerEnProfit::HOURS_IN_DAY));
         if (day != dayPrev)
         {
             //ossInfo << Nl;
@@ -215,26 +216,41 @@ OptiEnProfitResults::CommandsInfos OptiEnProfitResults::PrintCommandsComp(const 
             lastHourOn = hour;
             lastDayOn = day;
         }
+        if (onCurr)
+        {
+            if (firstDayOn < 0)
+            {
+                firstDayOn = day;
+            }
+        }
         const bool isInDayLimit = maxDayCmdsLimit < 0 || lastDayOn <= maxDayCmdsLimit;
         const int hourPrev = (ihour - 1) % OptimizerEnProfit::HOURS_IN_DAY;
         if (lastHourOn > 0)
         {
             if (not onCurr) // Switch off
             {
-                ossInfo << "day " << lastDayOn << ", hour " << lastHourOn << "-" << hourPrev << Nl;
+                ossInfo << "day " << firstDayOn << ", hour " << lastHourOn << "-" << hourPrev << Nl;
                 if (isInDayLimit)
                 {
                     // Wake up
                     ossCmd << "echo \"" << cmdWOL << "\" | at " << lastHourOn << cmdMinuteSuffix << Nl;
                     // Put to sleep
-                    ossCmd << cmdsSSH << cmdSuspendAt << hourPrev << cmdMinuteSuffix << Nl;
+                    ossCmd << cmdsSSH << cmdSuspendAt;
+                    if (ihour - 1 < 24)
+                    {
+                        ossCmd << hourPrev << cmdMinuteSuffix << Nl;
+                    }
+                    else
+                    {
+                        ossCmd << hourPrev % 24 << cmdMinuteSuffix << " + " << GMat().Ceil(hourPrev / 24.0) << " days";
+                    }
                 }
 
                 lastHourOn = -1;
             }
             else if (i == horizonHours - 1)
             {
-                ossInfo << "day " << lastDayOn << ", hour " << lastHourOn << "-.." << Nl;
+                ossInfo << "day " << firstDayOn << ", hour " << lastHourOn << "-.." << Nl;
                 if (isInDayLimit)
                 {
                     // Wake up
