@@ -106,9 +106,11 @@ Saved commands to:
 
 It's adviced to perform the simulation and the subsequent scheduling each morning and before the sunrise, as only then the voltage measurement is unaffected by the charging, and the battery's state of charge is closest to the reality of the new day, rather than simply being assumed by the simulation ran at the previous day.   
 
-If you are confident enough to let the system execute (schedule) the commands without your supervision, then this is what you'd enter to your crontab to plan the day at 6:05 a.m., assuming that your `SolOptXMR` installation resides in your `home` directory and that you use OCR to automatically read the voltage or the State of Charge in %:
+If you are confident enough to let the system execute (schedule) the commands without your supervision, then this is what you'd enter to your crontab to plan the day at 6:05 a.m., assuming that your `SolOptXMR` installation resides in your `home` directory and that you use OCR to automatically read the  battery voltage or its State of Charge in %:
 
 `5 6 * * *  cd /home/yoname/SolOptXMR && ./soloptxmr.py --battery-charge-ocr --np && /bin/sh /home/yoname/temp/solar/sol-cmds.sh`
+
+Speaking of trust towards the system, the section [testing](docs/testing.md) presents the currently handled corner cases.
 
 ## Plotting the hashrate situation only
 Because the optimization takes some time and you might be only interested in the hashrate situation alone, the main script has an option to ommit the optimization part.
