@@ -116,6 +116,8 @@ If you are confident enough to let the system execute (schedule) the commands wi
 
 `5 6 * * *  cd /home/yoname/SolOptXMR && ./soloptxmr.py --battery-charge-ocr --np && /bin/sh /home/yoname/temp/solar/sol-cmds.sh`
 
+More information in the [automation docs](docs/automation.md).
+
 Speaking of trust towards the system, the section [testing](docs/testing.md) presents the currently handled corner cases.
 
 ## Plotting the hashrate situation only
@@ -164,6 +166,7 @@ If you're unhappy with the result, you may use `./util/jobs-remove-all.sh` to cl
 - [economy](docs/economy.md): my economy views and the resulting dynamics tailored to production of electricity & mining crypto.
 - [config](docs/config.md): how to configure your instance of the project
 - [ocr](docs/ocr.md): deeper instructions on how to use and extend the OCR capabilities
+- [automation](docs/automation.md): how to automate the system
 - [testing](docs/testing.md): all about testing and a visual demo of special corner cases
 - [archive](docs/web-archive): crucial documents gathered from various sites, that deliver expert knowledge
 
