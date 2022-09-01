@@ -183,6 +183,7 @@ OptiEnProfitResults::CommandsInfos OptiEnProfitResults::PrintCommandsComp(const 
     Osstream ossCmd, ossInfo;
     const CharManipulations cman;
     //oss << cman.Replace(best.Print(), " ", "") << Nl;
+    ossCmd << "\"$(pwd)/util/jobs-remove-all.sh\"" << Nl;
 
     const Str cmdsSSHbare = "ssh -o ConnectTimeout=" + cman.ToStr(SSH_TIMEOUT_S) + " -n " + comp.hostname + " ";
     const Str cmdsSSH = "echo \"" + cmdsSSHbare + "'hostname; ";
