@@ -9,25 +9,25 @@ using namespace EnjoLib;
 
 TEST(Json_ReadComputers)
 {
-    JsonReader().ReadComputers();
+    JsonReader(false).ReadComputers();
     CHECK(true);
 }
 
 TEST(Json_ReadBatteries)
 {
-    JsonReader().ReadBatteries();
+    JsonReader(false).ReadBatteries();
     CHECK(true);
 }
 
 TEST(Json_ReadSystem)
 {
-    JsonReader().ReadSystem();
+    JsonReader(false).ReadSystem();
     CHECK(true);
 }
 
 TEST(Json_ReadHabits)
 {
-    JsonReader().ReadHabits();
+    JsonReader(false).ReadHabits();
     //const bool result = habit.HasHour(0);
     //const bool expected = false;
     //CHECK_EQUAL(expected, result);
@@ -36,6 +36,6 @@ TEST(Json_ReadHabits)
 
 TEST(Json_ReadConfigSol)
 {
-    JsonReader().ReadConfigSol();
+    JsonReader(false).ReadConfigSol();
     CHECK(true);
 }

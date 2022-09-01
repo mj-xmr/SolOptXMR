@@ -9,8 +9,10 @@
 
 #include "croncpp.h"
 
-HabitCron::HabitCron(){}
 HabitCron::~HabitCron(){}
+HabitCron::HabitCron(bool verbose)
+: m_verbose(verbose)
+{}
 
 EnjoLib::VecT<int> HabitCron::GetNextHoursOn(const Habit & hab, int horizonDays) const
 {
@@ -47,8 +49,9 @@ EnjoLib::VecT<int> HabitCron::GetNextHoursOn(const Habit & hab, int horizonDays)
             }
             hours.push_back(diffHours);
             prev = next;
-            LOGL << "HabitCron:: " << hab.name << ": " << diffDays << ", " << diffHours << EnjoLib::Nl;
-
+            if (m_verbose) {
+                LOGL << "HabitCron:: " << hab.name << ": " << diffDays << ", " << diffHours << EnjoLib::Nl;
+            }
             next = cron::cron_next(cron, next);
         }
     }
