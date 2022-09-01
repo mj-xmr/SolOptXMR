@@ -111,9 +111,9 @@ static VecStr CompSchedTestCommands(const VecD & schedule, int currHour, int sta
     const Str & expTextCmdWakeUp = GetStartHourToWakeup(startHour, comp0);
     const Str & expTextCmdSleep  = GetStartHourToSleep(comp0, endHour);
 
-    CHECK_EQUAL(expTextCmdWakeUp, toksCmds.at(0));
-    LOG << "Was & exp:\n" << toksCmds.at(1) << Nl << expTextCmdSleep << Nl;
-    CHECK_EQUAL(expTextCmdSleep,  toksCmds.at(1));
+    CHECK_EQUAL(expTextCmdWakeUp, toksCmds.at(1));
+    LOG << "Was & exp:\n" << toksCmds.at(2) << Nl << expTextCmdSleep << Nl;
+    CHECK_EQUAL(expTextCmdSleep,  toksCmds.at(2));
 
     return toksCmds;
 }
@@ -201,7 +201,7 @@ TEST(CompSched_start_immediately_restart)
 
         const VecStr & toksCmds = CompSchedTestCommands(schedule, currHour, startHour, endHour);
         CHECK(toksCmds.size() >= 2);
-        /// CHECK_EQUAL(5, toksCmds.size()); /// TODO
+        //CHECK_EQUAL(5, toksCmds.size()); /// TODO
     }
 }
 
