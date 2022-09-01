@@ -104,6 +104,12 @@ Saved commands to:
 /home/yoname/temp/solar/sol-cmds.sh
 ```
 
+In the above case, to schedule the displayed commands in one go, you'd simply execute: 
+
+``` 
+sh /home/yoname/temp/solar/sol-cmds.sh
+```
+
 It's adviced to perform the simulation and the subsequent scheduling each morning and before the sunrise, as only then the voltage measurement is unaffected by the charging, and the battery's state of charge is closest to the reality of the new day, rather than simply being assumed by the simulation ran at the previous day.   
 
 If you are confident enough to let the system execute (schedule) the commands without your supervision, then this is what you'd enter to your crontab to plan the day at 6:05 a.m., assuming that your `SolOptXMR` installation resides in your `home` directory and that you use OCR to automatically read the  battery voltage or its State of Charge in %:
