@@ -48,6 +48,8 @@ EnjoLib::Result<CLIResultSol> CLISol::GetConfigs(int argc, char ** argv) const
     const char * OPT_NO_PROGRESS_BAR = "no-progress-bar";
     const char * OPT_NO_GNUPLOT = "no-gnuplot";
     const char * OPT_NO_SCHEDULE = "no-schedule";
+    const char * OPT_IGNORE_COMPUTERS = "ignore-computers";
+    const char * OPT_ONLY_COMPUTERS = "only-computers";
 
 
     EnjoLib::ProgramOptionsState popState;
@@ -64,10 +66,16 @@ EnjoLib::Result<CLIResultSol> CLISol::GetConfigs(int argc, char ** argv) const
 
     //popState.AddStr(OPT_SYSTEM_TYPE,        ConfigSol::DESCR_SYSTEM_TYPE);
     //popState.AddInt(OPT_SYSTEM_VOLTAGE,     ConfigSol::DESCR_SYSTEM_VOLTAGE);
-    popState.AddStr(OPT_OUT_DIR,    "Output directory");
+    popState.AddStr(OPT_OUT_DIR,             ConfigSol::DESCR_OUT_DIR);
+    popState.AddStr(OPT_IGNORE_COMPUTERS,    ConfigSol::DESCR_IGNORE_COMPUTERS);
+    popState.AddStr(OPT_ONLY_COMPUTERS,      ConfigSol::DESCR_ONLY_COMPUTERS);
+    
+     
     popState.AddBool(OPT_NO_PROGRESS_BAR, ConfigSol::DESCR_NO_PROGRESS_BAR);
     popState.AddBool(OPT_NO_GNUPLOT,        ConfigSol::DESCR_NO_GNUPLOT);
     popState.AddBool(OPT_NO_SCHEDULE,       ConfigSol::DESCR_NO_SCHEDULE);
+    
+   
 
     popState.ReadArgs(argc, argv);
     const EnjoLib::ProgramOptions pops(popState);
@@ -111,6 +119,11 @@ EnjoLib::Result<CLIResultSol> CLISol::GetConfigs(int argc, char ** argv) const
     confSol.BATTERY_CHARGE  = pops.GetFloatFromMap(OPT_BATTERY_CHARGE);
     confSol.BATTERY_CHARGE_MAX_PERCENTAGE = pops.GetFloatFromMap(OPT_BATTERY_CHARGE_MAX_PERCENTAGE);
     confSol.m_outDir        = pops.GetStrFromMap(OPT_OUT_DIR, confSol.m_outDir);
+    confSol.m_ignoreComputers = pops.GetStrFromMap(OPT_IGNORE_COMPUTERS, confSol.m_ignoreComputers);
+    confSol.m_onlyComputers   = pops.GetStrFromMap(OPT_ONLY_COMPUTERS, confSol.m_onlyComputers);
+    
+
+    
     confSol.NO_PROGRESS_BAR  = pops.GetBoolFromMap(OPT_NO_PROGRESS_BAR);
     confSol.NO_GNUPLOT  = pops.GetBoolFromMap(OPT_NO_GNUPLOT);
     confSol.NO_SCHEDULE  = pops.GetBoolFromMap(OPT_NO_SCHEDULE);

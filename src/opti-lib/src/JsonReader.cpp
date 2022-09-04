@@ -144,6 +144,10 @@ EnjoLib::Array<Computer> JsonReader::ReadComputers(bool verbose) const
         compObj.name =           jwrap.GetValueJson("name").GetString();
         compObj.hostname =       jwrap.GetValueJson("hostname").GetString();
         compObj.macAddr =        jwrap.GetValueJson("MAC").GetString();
+        if (comp.HasMember("is_reboot_after_wakeup"))
+        {
+            compObj.isRebootAfterWakeup = jwrap.GetValueJson("is_reboot_after_wakeup").GetBool();
+        }
         //LOG <<  << Nl;
         if (comp.HasMember("count"))
         {

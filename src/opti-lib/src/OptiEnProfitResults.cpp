@@ -186,10 +186,12 @@ OptiEnProfitResults::CommandsInfos OptiEnProfitResults::PrintCommandsComp(const 
     ossCmd << "\"$(pwd)/util/jobs-remove-all.sh\"" << Nl;
 
     const Str cmdsSSHbare = "ssh -o ConnectTimeout=" + cman.ToStr(SSH_TIMEOUT_S) + " -n " + comp.hostname + " ";
-    const Str cmdsSSH = "echo \"" + cmdsSSHbare + "'hostname; ";
+    const Str cmdsSSH = "echo \"" + cmdsSSHbare + "'hostname";
     const Str cmdWOL = "wakeonlan " + comp.macAddr;
     //const Str cmdSuspendAt = "systemctl suspend\"           | at ";
-    const Str cmdSuspendAt = "systemctl suspend'\" | at ";
+    const Str cmdSysCtl = "; systemctl --no-wall ";
+    const Str cmdReboot = comp.isRebootAfterWakeup ? (cmdSysCtl + "reboot") : "";
+    const Str cmdSuspendAt = cmdSysCtl + "suspend" + cmdReboot + "'\" | at ";
     const Str cmdMinuteSuffix = ":00";
 
     bool onAtFirstHour = false;

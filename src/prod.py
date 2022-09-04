@@ -60,6 +60,8 @@ def get_args():
     parser.add_argument('-m', '--sim',      default=False, action='store_true', help="Plot simulation only (default: False)")
     parser.add_argument('-of', '--offline-force', default=False, action='store_true', help="Offline run (default: False)")
     parser.add_argument('-ot', '--offline-try',   default=False, action='store_true', help="Offline try if failing (default: False)")
+    parser.add_argument('-ci', '--ignore-computers',    default="", type=str, help="Ignore   these computers (comma sep.) (default: {})".format(""))
+    parser.add_argument('-co', '--only-computers',      default="", type=str, help="Use only these computers (comma sep.) (default: {})".format(""))
     parser.add_argument('-np','--no-plot',  default=DISABLE_PLOTTING, action='store_true', help="No Python plotting at all (default: {})".format(DISABLE_PLOTTING))
     parser.add_argument('-ng','--no-gnuplot',   default=NO_GNUPLOT, action='store_true',  help="No CLI Gnuplot (default: {})".format(NO_GNUPLOT))
     parser.add_argument('-ns','--no-schedule',  default=NO_SCHEDULE, action='store_true', help="No CLI schedule (default: {})".format(NO_SCHEDULE))
@@ -145,7 +147,6 @@ class BatterySimulatorCpp(generator.BatterySimulator):
         cmd += " --hashrate-bonus {}".format(hashrate_bonus)
         #cmd += " --out {}" .format(args.out_dir) # Moved to json
         cmd += " --random-seed {}".format(args.random_seed)
-        cmd += " --no-progress-bar" # Looks poorly under CI logging
         cmd += " --num-solutions {}".format(args.num_solutions)
         if args.no_gnuplot:
             cmd += " --no-gnuplot"
@@ -153,6 +154,11 @@ class BatterySimulatorCpp(generator.BatterySimulator):
             cmd += " --no-schedule"
         #cmd += " --system-type {}".format(config_system.type)
         #cmd += " --system-voltage {}".format(config_system.voltage)
+        if args.ignore_computers:
+            cmd += " --ignore-computers {}".format(args.ignore_computers)
+        if args.only_computers:
+            cmd += " --only-computers {}".format(args.only_computers)
+        cmd += " --no-progress-bar" # Looks poorly under CI logging
 
         
         result = sunrise_lib.run_cmd(cmd, True)

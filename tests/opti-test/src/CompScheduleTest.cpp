@@ -72,7 +72,13 @@ static Str GetStartHourToSleep(const Computer & comp, int endHour)
     oss
     << "echo \"" << "ssh -o ConnectTimeout=" << OptiEnProfitResults::SSH_TIMEOUT_S
     << " -n " << OptiTestUtil::compSched_hostname
-    << " 'hostname; systemctl suspend'\" | at ";
+    << " 'hostname; systemctl --no-wall suspend";
+    if (comp.isRebootAfterWakeup)
+    {
+        oss << "; systemctl --no-wall reboot";
+    }
+    oss
+    << "'\" | at ";
     if (endHour >= 24)
     {
         oss << endHour % 24 << ":00" << " + " << GMat().Floor(endHour / 24.0) << " days";
@@ -102,12 +108,11 @@ static void CompSchedTestGraph(const VecD & schedule)
     CHECK_EQUAL(exp, toks.at(1));
 }
 
-static VecStr CompSchedTestCommands(const VecD & schedule, int currHour, int startHour, int endHour)
+static VecStr CompSchedTestCommands(const VecD & schedule, int currHour, int startHour, int endHour, const Computer & comp0 = OptiTestUtil().GetCompTestSched())
 {
     ELO
     const OptiEnProfitResults proRes;
     const Tokenizer tok;
-    const Computer & comp0 = OptiTestUtil().GetCompTestSched();
     const OptiEnProfitResults::CommandsInfos & cmdInfo = proRes.PrintCommandsComp(comp0, schedule, currHour);
     LOG << "Info: " << cmdInfo.infos;
     LOG << "Cmds: " << cmdInfo.commands;
@@ -237,6 +242,27 @@ TEST(CompSched_more_than_2_days)
         //CHECK_EQUAL(5, toksCmds.size()); /// TODO
     }
 }
+
+
+TEST(CompSched_reboot_after_wakeup)
+{
+    const VecD schedule = {0, 0, 0, 1, 1, 1, 1, 1, 0};
+
+    CompSchedTestGraph(schedule);
+
+    {
+        ELO
+        const int currHour = SCHEDULE_CURR_HOUR;
+        const int startHour = 3;
+        const int endHour = 7;
+        Computer comp0 = OptiTestUtil().GetCompTestSched();
+        comp0.isRebootAfterWakeup = true;
+        
+        const VecStr & toksCmds = CompSchedTestCommands(schedule, currHour, startHour, endHour, comp0);
+        CHECK(toksCmds.size() >= 2);
+    }
+}
+//const Computer & comp0 = OptiTestUtil().GetCompTestSched())
 
 /// TODO: Quite a corner case:
 /*
