@@ -85,7 +85,7 @@ Setting the battery's voltage directly, also via OCR, rather than the Ah or % ch
 ```bash
 ./soloptxmr.py --battery-charge-v 12.3 # Set the voltage of your battery to be converted to its current charge
 ```
-# or:
+or:
 ```bash
 ./soloptxmr.py --battery-charge-ocr    # Use image recognition to read the current battery voltage
 ```
