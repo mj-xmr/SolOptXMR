@@ -22,6 +22,7 @@ class ConfigSol : public ConfigBase
 
         void UpdateFromOther(const ConfigSol & cfgTSCmdLine);
 
+        bool POWEROFF = false;     constexpr static const char * DESCR_POWEROFF = "Poweroff all computers rather than suspending them.";
         bool NO_PROGRESS_BAR = false; constexpr static const char * DESCR_NO_PROGRESS_BAR = "Disable progress bar";
         bool NO_NEW_SOLUTIONS = false; constexpr static const char * DESCR_NO_NEW_SOLUTIONS = "Disable solutions progress";
         bool NO_GNUPLOT = false;      constexpr static const char * DESCR_NO_GNUPLOT = "Disable gnuplot";
@@ -39,7 +40,10 @@ class ConfigSol : public ConfigBase
         float HASHRATE_BONUS = 0;  constexpr static const char * DESCR_HASHRATE_BONUS = "Hashrate bonus for the current hour";
 
         //EnjoLib::Str SYSTEM_TYPE = "island"; constexpr static const char * DESCR_SYSTEM_TYPE = "System type: island / gen+buy / gen+buy+sell / gen+sell";
-        EnjoLib::Str m_outDir = "/tmp/";
+        EnjoLib::Str m_outDir = "/tmp/";  constexpr static const char * DESCR_OUT_DIR = "Output directory";
+        
+        EnjoLib::Str m_ignoreComputers = ""; constexpr static const char * DESCR_IGNORE_COMPUTERS  = "Ignore these computers (comma separated)";
+        EnjoLib::Str m_onlyComputers = "";   constexpr static const char * DESCR_ONLY_COMPUTERS  = "Use only these computers (comma separated)";
 
 
     protected:

@@ -1,7 +1,7 @@
 //#include "OptimizerEnProfit.h" /// TODO: Use a smaller header after the extraction
 #include "OptiEnProfitResults.h"
 
-//#include "ConfigSol.h"
+#include "ConfigSol.h"
 #include "Computer.h"
 #include "OptiTestUtil.h"
 
@@ -10,6 +10,7 @@
 #include <Util/CoutBuf.hpp>
 #include <Util/Tokenizer.hpp>
 #include <Util/CharManipulations.hpp>
+#include <Math/GeneralMath.hpp>
 
 #include <UnitTest++/UnitTest++.h>
 //#include <initializer_list>
@@ -36,7 +37,7 @@ static Str GetStartHourToSchedule(int startHour, int endHour = -1)
     oss << "day 0, hour " << (startHour > 0 ? cman.ToStr(startHour) : "!") << "-";
     if (endHour >= 0)
     {
-        oss << endHour;
+        oss << endHour % 24;
     }
     else
     {
@@ -71,7 +72,25 @@ static Str GetStartHourToSleep(const Computer & comp, int endHour)
     oss
     << "echo \"" << "ssh -o ConnectTimeout=" << OptiEnProfitResults::SSH_TIMEOUT_S
     << " -n " << OptiTestUtil::compSched_hostname
-    << " 'hostname; systemctl suspend'\" | at " << endHour << ":00";
+    << " 'hostname; systemctl --no-wall ";
+    if (comp.isPoweroff)
+    {
+        oss << "poweroff";
+    }
+    else
+    {
+        oss << "suspend";
+    }
+    oss
+    << "'\" | at ";
+    if (endHour >= 24)
+    {
+        oss << endHour % 24 << ":00" << " + " << GMat().Floor(endHour / 24.0) << " days";
+    }
+    else
+    {
+        oss << endHour << ":00";
+    }
     return oss.str();
 }
 
@@ -93,13 +112,13 @@ static void CompSchedTestGraph(const VecD & schedule)
     CHECK_EQUAL(exp, toks.at(1));
 }
 
-static VecStr CompSchedTestCommands(const VecD & schedule, int currHour, int startHour, int endHour)
+static VecStr CompSchedTestCommands(const VecD & schedule, int currHour, int startHour, int endHour, const Computer & comp0 = OptiTestUtil().GetCompTestSched())
 {
     ELO
     const OptiEnProfitResults proRes;
     const Tokenizer tok;
-    const Computer & comp0 = OptiTestUtil().GetCompTestSched();
-    const OptiEnProfitResults::CommandsInfos & cmdInfo = proRes.PrintCommandsComp(comp0, schedule, currHour);
+    const ConfigSol conf;
+    const OptiEnProfitResults::CommandsInfos & cmdInfo = proRes.PrintCommandsComp(conf, comp0, schedule, currHour);
     LOG << "Info: " << cmdInfo.infos;
     LOG << "Cmds: " << cmdInfo.commands;
     const VecStr & toksInfo = tok.Tokenize(cmdInfo.infos, '\n');
@@ -111,9 +130,9 @@ static VecStr CompSchedTestCommands(const VecD & schedule, int currHour, int sta
     const Str & expTextCmdWakeUp = GetStartHourToWakeup(startHour, comp0);
     const Str & expTextCmdSleep  = GetStartHourToSleep(comp0, endHour);
 
-    CHECK_EQUAL(expTextCmdWakeUp, toksCmds.at(0));
-    LOG << "Was & exp:\n" << toksCmds.at(1) << Nl << expTextCmdSleep << Nl;
-    CHECK_EQUAL(expTextCmdSleep,  toksCmds.at(1));
+    CHECK_EQUAL(expTextCmdWakeUp, toksCmds.at(1));
+    LOG << "Was & exp:\n" << toksCmds.at(2) << Nl << expTextCmdSleep << Nl;
+    CHECK_EQUAL(expTextCmdSleep,  toksCmds.at(2));
 
     return toksCmds;
 }
@@ -201,9 +220,54 @@ TEST(CompSched_start_immediately_restart)
 
         const VecStr & toksCmds = CompSchedTestCommands(schedule, currHour, startHour, endHour);
         CHECK(toksCmds.size() >= 2);
-        /// CHECK_EQUAL(5, toksCmds.size()); /// TODO
+        //CHECK_EQUAL(5, toksCmds.size()); /// TODO
     }
 }
+
+TEST(CompSched_more_than_2_days)
+{
+    const int maxHour = 48;
+    VecD schedule(maxHour);
+    
+    {
+        ELO
+        const int currHour = SCHEDULE_CURR_HOUR;
+        const int startHour = 21;
+        const int endHour = 28;
+
+        for (int i = startHour; i <= endHour && i < maxHour; ++i)
+        {
+            schedule.at(i) = 1;
+        }
+        CompSchedTestGraph(schedule);
+
+    
+        const VecStr & toksCmds = CompSchedTestCommands(schedule, currHour, startHour, endHour);
+        CHECK(toksCmds.size() >= 2);
+        //CHECK_EQUAL(5, toksCmds.size()); /// TODO
+    }
+}
+
+
+TEST(CompSched_poweroff)
+{
+    const VecD schedule = {0, 0, 0, 1, 1, 1, 1, 1, 0};
+
+    CompSchedTestGraph(schedule);
+
+    {
+        ELO
+        const int currHour = SCHEDULE_CURR_HOUR;
+        const int startHour = 3;
+        const int endHour = 7;
+        Computer comp0 = OptiTestUtil().GetCompTestSched();
+        comp0.isPoweroff = true;
+        
+        const VecStr & toksCmds = CompSchedTestCommands(schedule, currHour, startHour, endHour, comp0);
+        CHECK(toksCmds.size() >= 2);
+    }
+}
+//const Computer & comp0 = OptiTestUtil().GetCompTestSched())
 
 /// TODO: Quite a corner case:
 /*

@@ -38,7 +38,34 @@ OptiEnProfitDataModel::OptiEnProfitDataModel(const ConfigSol & confSol, int hori
     const Str powerData = SolUtil().GetLinesAsSingle(fname);
     m_power = VecD(powerData);
     const auto & comps = JsonReader().ReadComputers();
-    AR2VEC(comps, m_comps);
+    std::vector<Computer> vecComps;
+    AR2VEC(comps, vecComps);
+    const CharManipulations cman;
+    const Tokenizer tok;
+    const char delimiter = ',';
+    const VecStr & tokCompIgnore = tok.Tokenize(m_confSol.m_ignoreComputers, delimiter);
+    const VecStr & tokCompAllow  = tok.Tokenize(m_confSol.m_onlyComputers, delimiter);
+    for (const Computer & comp : vecComps)
+    {
+        const Str & name = comp.hostname;
+        if (tokCompIgnore.size())
+        {
+            if (tokCompIgnore.Contains(name))
+            {
+                LOGL << "Found and ignoring computer: " << name << Nl;
+                continue;
+            }
+        }
+        if (tokCompAllow.size())
+        {
+            if (not tokCompAllow.Contains(name))
+            {
+                LOGL << "Computer not allowed: " << name << Nl;
+                continue;
+            }
+        }
+        m_comps.push_back(comp);
+    }
 }
 
 OptiEnProfitDataModel::OptiEnProfitDataModel(const ConfigSol & confSol, std::vector<Habit> habits,

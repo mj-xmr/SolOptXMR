@@ -52,7 +52,7 @@
     	  	"name" : "Inverter",
     	  	"inverter" : true,
     	  	"count" : 1,
-    	  	"watt" : 1.1
+    	  	"watt" : 14.5
     	  }
     ]
 }

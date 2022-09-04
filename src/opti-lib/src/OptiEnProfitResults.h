@@ -8,6 +8,7 @@
 class Computer;
 class OptiEnProfitDataModel;
 class Sol0Penality;
+class ConfigSol;
 
 class OptiEnProfitResults
 {
@@ -27,7 +28,7 @@ class OptiEnProfitResults
         EnjoLib::Str PrintMultipleSolutions(const OptiEnProfitDataModel & dataModel, const STDFWD::vector<Sol0Penality> & solutions0Penality, int maxSolutions) const;
         EnjoLib::Str PrintSolution(const OptiEnProfitDataModel & dataModel, const EnjoLib::Matrix & bestMat, double maxHashes = 0) const;
         EnjoLib::Str PrintScheduleCompGraph(const Computer & comp, const EnjoLib::VecD & best) const;
-        CommandsInfos PrintCommandsComp(const Computer & comp, const EnjoLib::VecD & best, int currHour, int maxDayCmdsLimit = 1) const;
+        CommandsInfos PrintCommandsComp(const ConfigSol & conf, const Computer & comp, const EnjoLib::VecD & best, int currHour, int maxDayCmdsLimit = 1) const;
 
         static const int SSH_TIMEOUT_S;
 

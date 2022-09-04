@@ -105,7 +105,7 @@ EnjoLib::Str OptiEnProfitResults::PrintSolution(const OptiEnProfitDataModel & da
     {
         const Computer & comp = dataModel.GetComputers().at(i);
         const VecD & best = bestMat.at(i);
-        const OptiEnProfitResults::CommandsInfos & cmdInfo = resPrinter.PrintCommandsComp(comp, best, currHour, maxDayLimit);
+        const OptiEnProfitResults::CommandsInfos & cmdInfo = resPrinter.PrintCommandsComp(conf, comp, best, currHour, maxDayLimit);
         ossLog << resPrinter.PrintScheduleCompGraph(comp, best);
         ossLog << cmdInfo.infos;
         oss << cmdInfo.commands;
@@ -131,7 +131,7 @@ EnjoLib::Str OptiEnProfitResults::PrintSolution(const OptiEnProfitDataModel & da
 EnjoLib::Str OptiEnProfitResults::PrintOptiProgression(const EnjoLib::VecD & goals, const EnjoLib::VecD & hashesProgress, int horizonHours) const
 {
     Osstream oss;
-    oss << "Penalities/hashes progression: " << Nl;
+    oss << "Penalties/hashes progression: " << Nl;
 
     const int length = 24;
     //const int length = horizonHours; /// TODO: Uncovers a bug
@@ -177,31 +177,35 @@ EnjoLib::Str OptiEnProfitResults::PrintScheduleCompGraph(const Computer & comp, 
     return oss.str();
 }
 
-OptiEnProfitResults::CommandsInfos OptiEnProfitResults::PrintCommandsComp(const Computer & comp, const VecD & best, int currHour, int maxDayCmdsLimit) const
+OptiEnProfitResults::CommandsInfos OptiEnProfitResults::PrintCommandsComp(const ConfigSol & conf, const Computer & comp, const VecD & best, int currHour, int maxDayCmdsLimit) const
 {
     CommandsInfos ret;
     Osstream ossCmd, ossInfo;
     const CharManipulations cman;
     //oss << cman.Replace(best.Print(), " ", "") << Nl;
+    ossCmd << "\"$(pwd)/util/jobs-remove-all.sh\"" << Nl;
 
     const Str cmdsSSHbare = "ssh -o ConnectTimeout=" + cman.ToStr(SSH_TIMEOUT_S) + " -n " + comp.hostname + " ";
-    const Str cmdsSSH = "echo \"" + cmdsSSHbare + "'hostname; ";
+    const Str cmdsSSH = "echo \"" + cmdsSSHbare + "'hostname";
     const Str cmdWOL = "wakeonlan " + comp.macAddr;
     //const Str cmdSuspendAt = "systemctl suspend\"           | at ";
-    const Str cmdSuspendAt = "systemctl suspend'\" | at ";
+    const Str cmdSysCtl = "; systemctl --no-wall ";
+    const bool isPoweroff = conf.POWEROFF || comp.isPoweroff ;
+    const Str cmdSuspendAt = cmdSysCtl + (isPoweroff ? "poweroff" : "suspend") + "'\" | at ";
     const Str cmdMinuteSuffix = ":00";
 
     bool onAtFirstHour = false;
     int lastHourOn = -1;
     int lastDayOn = -1;
+    int firstDayOn = -1;
     //const int horizonHours = m_dataModel.GetHorizonHours();
     const int horizonHours = best.size();
     for (int i = 1; i < horizonHours; ++i)
     {
         const int ihour = i + currHour;
         const int hour = ihour % OptimizerEnProfit::HOURS_IN_DAY;
-        const int day  =     GMat().round(ihour     / static_cast<double>(OptimizerEnProfit::HOURS_IN_DAY));
-        const int dayPrev  = GMat().round((ihour-1) / static_cast<double>(OptimizerEnProfit::HOURS_IN_DAY));
+        const int day  =     GMat().Floor(ihour     / static_cast<double>(OptimizerEnProfit::HOURS_IN_DAY));
+        const int dayPrev  = GMat().Floor((ihour-1) / static_cast<double>(OptimizerEnProfit::HOURS_IN_DAY));
         if (day != dayPrev)
         {
             //ossInfo << Nl;
@@ -214,26 +218,41 @@ OptiEnProfitResults::CommandsInfos OptiEnProfitResults::PrintCommandsComp(const 
             lastHourOn = hour;
             lastDayOn = day;
         }
+        if (onCurr)
+        {
+            if (firstDayOn < 0)
+            {
+                firstDayOn = day;
+            }
+        }
         const bool isInDayLimit = maxDayCmdsLimit < 0 || lastDayOn <= maxDayCmdsLimit;
         const int hourPrev = (ihour - 1) % OptimizerEnProfit::HOURS_IN_DAY;
         if (lastHourOn > 0)
         {
             if (not onCurr) // Switch off
             {
-                ossInfo << "day " << lastDayOn << ", hour " << lastHourOn << "-" << hourPrev << Nl;
+                ossInfo << "day " << firstDayOn << ", hour " << lastHourOn << "-" << hourPrev << Nl;
                 if (isInDayLimit)
                 {
                     // Wake up
                     ossCmd << "echo \"" << cmdWOL << "\" | at " << lastHourOn << cmdMinuteSuffix << Nl;
                     // Put to sleep
-                    ossCmd << cmdsSSH << cmdSuspendAt << hourPrev << cmdMinuteSuffix << Nl;
+                    ossCmd << cmdsSSH << cmdSuspendAt;
+                    if (ihour - 1 < 24)
+                    {
+                        ossCmd << hourPrev << cmdMinuteSuffix << Nl;
+                    }
+                    else
+                    {
+                        ossCmd << hourPrev % 24 << cmdMinuteSuffix << " + " << GMat().Ceil(hourPrev / 24.0) << " days";
+                    }
                 }
 
                 lastHourOn = -1;
             }
             else if (i == horizonHours - 1)
             {
-                ossInfo << "day " << lastDayOn << ", hour " << lastHourOn << "-.." << Nl;
+                ossInfo << "day " << firstDayOn << ", hour " << lastHourOn << "-.." << Nl;
                 if (isInDayLimit)
                 {
                     // Wake up
