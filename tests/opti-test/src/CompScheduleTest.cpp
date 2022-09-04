@@ -1,7 +1,7 @@
 //#include "OptimizerEnProfit.h" /// TODO: Use a smaller header after the extraction
 #include "OptiEnProfitResults.h"
 
-//#include "ConfigSol.h"
+#include "ConfigSol.h"
 #include "Computer.h"
 #include "OptiTestUtil.h"
 
@@ -72,10 +72,14 @@ static Str GetStartHourToSleep(const Computer & comp, int endHour)
     oss
     << "echo \"" << "ssh -o ConnectTimeout=" << OptiEnProfitResults::SSH_TIMEOUT_S
     << " -n " << OptiTestUtil::compSched_hostname
-    << " 'hostname; systemctl --no-wall suspend";
-    if (comp.isRebootAfterWakeup)
+    << " 'hostname; systemctl --no-wall ";
+    if (comp.isPoweroff)
     {
-        oss << "; systemctl --no-wall reboot";
+        oss << "poweroff";
+    }
+    else
+    {
+        oss << "suspend";
     }
     oss
     << "'\" | at ";
@@ -113,7 +117,8 @@ static VecStr CompSchedTestCommands(const VecD & schedule, int currHour, int sta
     ELO
     const OptiEnProfitResults proRes;
     const Tokenizer tok;
-    const OptiEnProfitResults::CommandsInfos & cmdInfo = proRes.PrintCommandsComp(comp0, schedule, currHour);
+    const ConfigSol conf;
+    const OptiEnProfitResults::CommandsInfos & cmdInfo = proRes.PrintCommandsComp(conf, comp0, schedule, currHour);
     LOG << "Info: " << cmdInfo.infos;
     LOG << "Cmds: " << cmdInfo.commands;
     const VecStr & toksInfo = tok.Tokenize(cmdInfo.infos, '\n');
@@ -244,7 +249,7 @@ TEST(CompSched_more_than_2_days)
 }
 
 
-TEST(CompSched_reboot_after_wakeup)
+TEST(CompSched_poweroff)
 {
     const VecD schedule = {0, 0, 0, 1, 1, 1, 1, 1, 0};
 
@@ -256,7 +261,7 @@ TEST(CompSched_reboot_after_wakeup)
         const int startHour = 3;
         const int endHour = 7;
         Computer comp0 = OptiTestUtil().GetCompTestSched();
-        comp0.isRebootAfterWakeup = true;
+        comp0.isPoweroff = true;
         
         const VecStr & toksCmds = CompSchedTestCommands(schedule, currHour, startHour, endHour, comp0);
         CHECK(toksCmds.size() >= 2);

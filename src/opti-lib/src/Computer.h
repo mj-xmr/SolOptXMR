@@ -21,7 +21,7 @@ public:
 	double scalingFactor = 0.85;
 	int minRunHours = 2;
 
-	bool isRebootAfterWakeup = false; // For computers that get stuck
+	bool isPoweroff = false; // For computers that get stuck or just should be powered off
 
 	EnjoLib::Str Print() const;
 	double GetHashRate(double freqGhz) const;

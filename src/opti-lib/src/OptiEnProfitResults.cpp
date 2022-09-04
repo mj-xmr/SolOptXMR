@@ -105,7 +105,7 @@ EnjoLib::Str OptiEnProfitResults::PrintSolution(const OptiEnProfitDataModel & da
     {
         const Computer & comp = dataModel.GetComputers().at(i);
         const VecD & best = bestMat.at(i);
-        const OptiEnProfitResults::CommandsInfos & cmdInfo = resPrinter.PrintCommandsComp(comp, best, currHour, maxDayLimit);
+        const OptiEnProfitResults::CommandsInfos & cmdInfo = resPrinter.PrintCommandsComp(conf, comp, best, currHour, maxDayLimit);
         ossLog << resPrinter.PrintScheduleCompGraph(comp, best);
         ossLog << cmdInfo.infos;
         oss << cmdInfo.commands;
@@ -177,7 +177,7 @@ EnjoLib::Str OptiEnProfitResults::PrintScheduleCompGraph(const Computer & comp, 
     return oss.str();
 }
 
-OptiEnProfitResults::CommandsInfos OptiEnProfitResults::PrintCommandsComp(const Computer & comp, const VecD & best, int currHour, int maxDayCmdsLimit) const
+OptiEnProfitResults::CommandsInfos OptiEnProfitResults::PrintCommandsComp(const ConfigSol & conf, const Computer & comp, const VecD & best, int currHour, int maxDayCmdsLimit) const
 {
     CommandsInfos ret;
     Osstream ossCmd, ossInfo;
@@ -190,8 +190,8 @@ OptiEnProfitResults::CommandsInfos OptiEnProfitResults::PrintCommandsComp(const 
     const Str cmdWOL = "wakeonlan " + comp.macAddr;
     //const Str cmdSuspendAt = "systemctl suspend\"           | at ";
     const Str cmdSysCtl = "; systemctl --no-wall ";
-    const Str cmdReboot = comp.isRebootAfterWakeup ? (cmdSysCtl + "reboot") : "";
-    const Str cmdSuspendAt = cmdSysCtl + "suspend" + cmdReboot + "'\" | at ";
+    const bool isPoweroff = conf.POWEROFF || comp.isPoweroff ;
+    const Str cmdSuspendAt = cmdSysCtl + (isPoweroff ? "poweroff" : "suspend") + "'\" | at ";
     const Str cmdMinuteSuffix = ":00";
 
     bool onAtFirstHour = false;
