@@ -11,6 +11,7 @@
 #include <Statistical/Assertions.hpp>
 
 #include <json/json.h>
+#include <memory>
 //#include <rapidjson/document.h>
 
 #include <STD/VectorCpp.hpp>
