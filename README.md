@@ -84,7 +84,9 @@ Setting the battery's voltage directly, also via OCR, rather than the Ah or % ch
 
 ```bash
 ./soloptxmr.py --battery-charge-v 12.3 # Set the voltage of your battery to be converted to its current charge
+```
 # or:
+```bash
 ./soloptxmr.py --battery-charge-ocr    # Use image recognition to read the current battery voltage
 ```
 
@@ -96,7 +98,7 @@ Upon a successful execution of the `./soloptxmr.py` script, you will be presente
 If you're satisfied with the proposal, you may execute the commands (thus scheduling them) individually by copy-pasting them, or you may accept all of them in one go, by simply executing their file-stored version via `sh`.
 For example:
 
-```
+```bash
 echo "wakeonlan C0:FF:EE:BA:BE:BB" | at 11:00
 echo "ssh -o ConnectTimeout=60 -n ryzen8 'hostname; systemctl suspend'" | at 18:00
 
@@ -106,15 +108,18 @@ Saved commands to:
 
 In the above case, to schedule the displayed commands in one go, you'd simply execute: 
 
-``` 
+```bash
 sh /home/yoname/temp/solar/sol-cmds.sh
 ```
 
 It's adviced to perform the simulation and the subsequent scheduling each morning and before the sunrise, as only then the voltage measurement is unaffected by the charging, and the battery's state of charge is closest to the reality of the new day, rather than simply being assumed by the simulation ran at the previous day.   
 
-If you are confident enough to let the system execute (schedule) the commands without your supervision, then this is what you'd enter to your crontab to plan the day at 6:05 a.m., assuming that your `SolOptXMR` installation resides in your `home` directory and that you use OCR to automatically read the  battery voltage or its State of Charge in %:
+If you are confident enough to let the system execute (schedule) the commands without your supervision, then this is what you'd enter to your `crontab` to plan the day at 6:05 a.m., assuming that your `SolOptXMR` installation resides in your `home` directory and that you use OCR to automatically read the battery voltage or its State of Charge in %:
 
-`5 6 * * *  cd /home/yoname/SolOptXMR && ./soloptxmr.py --battery-charge-ocr --np && /bin/sh /home/yoname/temp/solar/sol-cmds.sh`
+```bash
+crontab # The command that lets you edit the schedule
+5 6 * * *  cd /home/yoname/SolOptXMR && ./soloptxmr.py --battery-charge-ocr --np && /bin/sh /home/yoname/temp/solar/sol-cmds.sh
+```
 
 More information in the [automation docs](docs/automation.md).
 
