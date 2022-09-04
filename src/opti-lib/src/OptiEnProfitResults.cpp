@@ -131,7 +131,7 @@ EnjoLib::Str OptiEnProfitResults::PrintSolution(const OptiEnProfitDataModel & da
 EnjoLib::Str OptiEnProfitResults::PrintOptiProgression(const EnjoLib::VecD & goals, const EnjoLib::VecD & hashesProgress, int horizonHours) const
 {
     Osstream oss;
-    oss << "Penalities/hashes progression: " << Nl;
+    oss << "Penalties/hashes progression: " << Nl;
 
     const int length = 24;
     //const int length = horizonHours; /// TODO: Uncovers a bug
