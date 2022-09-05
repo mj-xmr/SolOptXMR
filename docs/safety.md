@@ -62,7 +62,9 @@ Below you can see the typical charge profiles of lead-acid batteries, where abov
 
 ## Cable sizes vs current
 
-TODO: picture
+TODO: description
+
+![cable-sizes](screenshots/cable-load-length.jpg)
 
 
 Fingers crossed!
