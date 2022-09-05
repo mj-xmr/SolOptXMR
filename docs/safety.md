@@ -21,7 +21,8 @@ The same rule applies to all the other bipolar connectors as well.
 Below is a coloured diagram that represents a generic procedure of connection of 2 elements - 
 a charged battery and a dead battery, which may serve as an alias for an energy consumer, that can't be switched off during the connection:
 
-TODO: PICTURE 
+![image](https://user-images.githubusercontent.com/63722585/188509515-9e9f888c-ca7c-4a7c-ba38-dd03b8bbf9e7.png)
+
 
 ## Voltage of the system
 The general rule is, that from the safety perspective's alone, the lower the voltage, the safer the system is.
