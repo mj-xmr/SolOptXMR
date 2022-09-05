@@ -93,7 +93,7 @@ EnjoLib::Str OptiEnProfitResults::PrintSolution(const OptiEnProfitDataModel & da
     }
 
     ossLog << "\nComputer start schedule:\n";
-    Osstream oss;
+    Osstream ossCmd;
     const int currHour = TimeUtil().GetCurrentHour();
     const int maxDayLimit = conf.DAYS_LIMIT_COMMANDS; /// TODO: Unstable, as it would require that at uses time AND day, not just time.
     if (maxDayLimit > 1)
@@ -101,24 +101,24 @@ EnjoLib::Str OptiEnProfitResults::PrintSolution(const OptiEnProfitDataModel & da
         Assertions::Throw("Not implemented max day limit > 1", "OptimizerEnProfit::PrintSolution");
     }
     const OptiEnProfitResults resPrinter;
-    for (int i = 0; i < bestMat.size(); ++i)
+    for (int i = 0; i < bestMat.size() && dataModel.GetComputers().size(); ++i)
     {
         const Computer & comp = dataModel.GetComputers().at(i);
         const VecD & best = bestMat.at(i);
         const OptiEnProfitResults::CommandsInfos & cmdInfo = resPrinter.PrintCommandsComp(conf, comp, best, currHour, maxDayLimit);
         ossLog << resPrinter.PrintScheduleCompGraph(comp, best);
         ossLog << cmdInfo.infos;
-        oss << cmdInfo.commands;
+        ossCmd << cmdInfo.commands;
     }
 
     ossLog << "Commands:\n\n";
-    ossLog << oss.str();
+    ossLog << ossCmd.str();
 
     const Str fileCmds = conf.m_outDir + "/sol-cmds.sh";
     Ofstream ofs(fileCmds);
-    ofs << oss.str();
+    ofs << ossCmd.str();
 
-    ossLog << Nl << sot.GetT() << "Saved commands to:\n" << fileCmds << Nl;
+    ossLog << sot.GetT() << "Saved commands to:\n" << fileCmds << Nl;
 
     if (conf.NO_SCHEDULE)
     {

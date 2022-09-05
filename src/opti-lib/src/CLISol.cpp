@@ -49,6 +49,7 @@ EnjoLib::Result<CLIResultSol> CLISol::GetConfigs(int argc, char ** argv) const
     const char * OPT_NO_PROGRESS_BAR = "no-progress-bar";
     const char * OPT_NO_GNUPLOT = "no-gnuplot";
     const char * OPT_NO_SCHEDULE = "no-schedule";
+    const char * OPT_NO_COMPUTERS = "no-computers";
     const char * OPT_POWEROFF = "poweroff";
     const char * OPT_IGNORE_COMPUTERS = "ignore-computers";
     const char * OPT_ONLY_COMPUTERS = "only-computers";
@@ -72,11 +73,12 @@ EnjoLib::Result<CLIResultSol> CLISol::GetConfigs(int argc, char ** argv) const
     popState.AddStr(OPT_OUT_DIR,             ConfigSol::DESCR_OUT_DIR);
     popState.AddStr(OPT_IGNORE_COMPUTERS,    ConfigSol::DESCR_IGNORE_COMPUTERS);
     popState.AddStr(OPT_ONLY_COMPUTERS,      ConfigSol::DESCR_ONLY_COMPUTERS);
-    
      
     popState.AddBool(OPT_NO_PROGRESS_BAR,   ConfigSol::DESCR_NO_PROGRESS_BAR);
     popState.AddBool(OPT_NO_GNUPLOT,        ConfigSol::DESCR_NO_GNUPLOT);
     popState.AddBool(OPT_NO_SCHEDULE,       ConfigSol::DESCR_NO_SCHEDULE);
+    popState.AddBool(OPT_NO_COMPUTERS,      ConfigSol::DESCR_NO_COMPUTERS);
+    
     popState.AddBool(OPT_POWEROFF,          ConfigSol::DESCR_POWEROFF);
     
    
@@ -133,6 +135,8 @@ EnjoLib::Result<CLIResultSol> CLISol::GetConfigs(int argc, char ** argv) const
     confSol.NO_PROGRESS_BAR  = pops.GetBoolFromMap(OPT_NO_PROGRESS_BAR);
     confSol.NO_GNUPLOT  = pops.GetBoolFromMap(OPT_NO_GNUPLOT);
     confSol.NO_SCHEDULE  = pops.GetBoolFromMap(OPT_NO_SCHEDULE);
+    confSol.NO_COMPUTERS = pops.GetBoolFromMap(OPT_NO_COMPUTERS);
+    
     //confSol.SYSTEM_TYPE     = pops.GetStrFromMap(OPT_SYSTEM_TYPE);
     //confSol.SYSTEM_VOLTAGE  = pops.GetIntFromMap(OPT_SYSTEM_VOLTAGE);
     //confSym.period     		    = pops.GetStrFromMap(OPT_PERIOD);

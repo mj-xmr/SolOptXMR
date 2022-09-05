@@ -61,7 +61,7 @@ Solution OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool v
     PowerUsageSimulation powSim(m_dataModel);
     PowerUsageSimulation::SimResult simResult{};
     const size_t compSize = m_dataModel.GetComputers().size();
-    Assertions::SizesEqual(compSize, dataMat.size(), "OptiSubjectEnProfit::GetVerbose");
+    //Assertions::SizesEqual(compSize, dataMat.size(), "OptiSubjectEnProfit::GetVerbose");
     for (int i = 0; i < n; ++i)
     {
         const double bonusMul = HashrateBonus(i % 24);
@@ -69,7 +69,7 @@ Solution OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool v
         //LOG << "i = " << i << ", val = " << inp[i] << Nl;
         //if (not battery.initial_load)
         //if (false)
-        const PowerUsageSimulation::SimResult & resLocal = powSim.Simulate(i, m_currHour, compSize, dataMat, bonusMul, battery.initial_load);
+        const PowerUsageSimulation::SimResult & resLocal = powSim.Simulate(i, m_currHour, dataMat, bonusMul, battery.initial_load);
         simResult.Add(resLocal);
         battery.iter_get_load(powerProd, resLocal.sumPowerUsage);
         //const double pentalityUndervolted = load < 0 ? GMat().Fabs(load * load * load) : 0;
@@ -130,7 +130,7 @@ Solution OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool v
                 PowerUsageSimulation::SimResult resVisual{};
                 BatterySimulation batteryCopy(conf, m_dataModel.GetBatPars(), m_dataModel.GetSystem());
                 VecD hashes, loads, penalityUnder, input, prod, hashrateBonus, usages;
-                Assertions::SizesEqual(m_dataModel.GetComputers().size(), dataMat.size(), "OptiSubjectEnProfit::GetVerbose");
+                //Assertions::SizesEqual(m_dataModel.GetComputers().size(), dataMat.size(), "OptiSubjectEnProfit::GetVerbose");
                 for (int i = 0; i < n; ++i)
                 {
                     const double bonusMul = HashrateBonus(i % 24);
@@ -138,7 +138,7 @@ Solution OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool v
                     //LOG << "i = " << i << ", val = " << inp[i] << Nl;
                     //if (not battery.initial_load)
                     //if (false)
-                    const PowerUsageSimulation::SimResult & resLocal = powSim.Simulate(i, m_currHour, compSize, dataMat, bonusMul, batteryCopy.initial_load);
+                    const PowerUsageSimulation::SimResult & resLocal = powSim.Simulate(i, m_currHour, dataMat, bonusMul, batteryCopy.initial_load);
                     resVisual.Add(resLocal);
                     const double load = batteryCopy.iter_get_load(powerProd, resLocal.sumPowerUsage);
                     usages.Add(resLocal.sumPowerUsage * batteryCopy.pars.GetMulPowerToCapacity(m_dataModel.GetSystem().voltage));

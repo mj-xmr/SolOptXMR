@@ -27,6 +27,7 @@ class ConfigSol : public ConfigBase
         bool NO_NEW_SOLUTIONS = false; constexpr static const char * DESCR_NO_NEW_SOLUTIONS = "Disable solutions progress";
         bool NO_GNUPLOT = false;      constexpr static const char * DESCR_NO_GNUPLOT = "Disable gnuplot";
         bool NO_SCHEDULE = false;     constexpr static const char * DESCR_NO_SCHEDULE = "Disable computer schedule";
+        bool NO_COMPUTERS = false;     constexpr static const char * DESCR_NO_COMPUTERS = "Don't simulate mining on computers";
 
         long int DAYS_HORIZON = 3; constexpr static const char * DESCR_DAYS_HORIZON = "How many days ahead you'd like to predict";
         long int DAYS_START = 0;   constexpr static const char * DESCR_DAYS_START   = "The starting day";

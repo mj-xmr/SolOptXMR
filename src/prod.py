@@ -63,6 +63,7 @@ def get_args():
     parser.add_argument('-po', '--poweroff', default=False, action='store_true', help="Poweroff machines, rather than suspending (default: False)")
     parser.add_argument('-of', '--offline-force', default=False, action='store_true', help="Offline run (default: False)")
     parser.add_argument('-ot', '--offline-try',   default=False, action='store_true', help="Offline try if failing (default: False)")
+    parser.add_argument('-cn', '--no-computers',   default=False, action='store_true', help="Don't simulate mining at all (default: False)")
     parser.add_argument('-ci', '--ignore-computers',    default="", type=str, help="Ignore   these computers (comma sep.) (default: {})".format(""))
     parser.add_argument('-co', '--only-computers',      default="", type=str, help="Use only these computers (comma sep.) (default: {})".format(""))
     parser.add_argument('-np','--no-plot',  default=DISABLE_PLOTTING, action='store_true', help="No Python plotting at all (default: {})".format(DISABLE_PLOTTING))
@@ -158,14 +159,15 @@ class BatterySimulatorCpp(generator.BatterySimulator):
             cmd += " --no-schedule"
         if args.poweroff:
             cmd += " --poweroff"
-        #cmd += " --system-type {}".format(config_system.type)
-        #cmd += " --system-voltage {}".format(config_system.voltage)
+        if args.no_computers:
+            cmd += " --no-computers"
         if args.ignore_computers:
             cmd += " --ignore-computers {}".format(args.ignore_computers)
         if args.only_computers:
             cmd += " --only-computers {}".format(args.only_computers)
         cmd += " --no-progress-bar" # Looks poorly under CI logging
-
+        #cmd += " --system-type {}".format(config_system.type)
+        #cmd += " --system-voltage {}".format(config_system.voltage)
         
         result = sunrise_lib.run_cmd(cmd, True)
         if result.returncode != 0:

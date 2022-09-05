@@ -107,16 +107,20 @@ void OptimizerEnProfit::RandomSearch()
     const RandomMath rmath;
     rmath.RandSeed(conf.RANDOM_SEED);
     const VecD binaryZero(horizonHours);
-    const std::string hashStrZero(horizonHours * numComputers, '0');
+    const std::string hashStrZero(horizonHours * (numComputers > 0 ? numComputers : 1), '0');
     std::string hashStr = hashStrZero;
     Matrix binaryMat;
-    std::vector<Sol0Penality> solutions0Penality;
     VecT<int> minHoursTogetherHalfVec;
     for (const Computer & comp : comps)
     {
         binaryMat.Add(binaryZero);
         const int minHoursTogetherHalf = GMat().round(comp.minRunHours/2.0);
         minHoursTogetherHalfVec.push_back(minHoursTogetherHalf);
+    }
+    if (numComputers == 0)
+    {
+        binaryMat.Add(binaryZero);
+        minHoursTogetherHalfVec.push_back(1);
     }
     const Matrix binaryMatZero = binaryMat;
     m_binarBest = binaryMat;
@@ -130,6 +134,7 @@ void OptimizerEnProfit::RandomSearch()
     int alreadyCombined = 0;
     //const Distrib distr;
     const SolUtil sut;
+    std::vector<Sol0Penality> solutions0Penality;
     const bool animateProgressBar = m_dataModel.IsAnimateProgressBar();
     ProgressMonitHigh progressMonitor(13);
     bool needNewLine = false;
@@ -153,7 +158,8 @@ void OptimizerEnProfit::RandomSearch()
             }
         }
 
-        const int icomp = gmat.round(rmath.Rand(0, numComputers-1));
+        const int icompRandom = gmat.round(rmath.Rand(0, numComputers-1));
+        const int icomp = icompRandom >= 0 ? icompRandom : 0;
         //for (int icomp = 0; icomp < numComputers; ++icomp)
         {
             //LOGL << "icomp = " << icomp << Nl;
