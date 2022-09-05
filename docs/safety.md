@@ -17,6 +17,12 @@ When connecting and disconnecting terminals the following rules apply, that mini
 Or as a rule of thumb easy to remember: the + (red) can always be connected alone.
 The same rule applies to all the other bipolar connectors as well.
 
+### Advanced and generic terminal handling
+Below is a coloured diagram that represents a generic procedure of connection of 2 elements - 
+a charged battery and a dead battery, which may serve as an alias for an energy consumer, that can't be switched off during the connection:
+
+TODO: PICTURE 
+
 ## Voltage of the system
 The general rule is, that from the safety perspective's alone, the lower the voltage, the safer the system is.
 While a 24V system delivers slightly more economic alternative (in an optimistic case) to the safer 12V system, it might not be worth it, especially if you have nasty kids running around.
@@ -52,6 +58,11 @@ The reason for this confusion is, that as soon as the battery is >80% charged, t
 Below you can see the typical charge profiles of lead-acid batteries, where above the ~80% charge, you may see the sudden non-linearity of voltage, that confuses the MPPT controllers.
 
 ![bat-charge](../data/voltage-2-soc-charge.png)
+
+## Cable sizes vs current
+
+TODO: picture
+
 
 Fingers crossed!
 
