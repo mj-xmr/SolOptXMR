@@ -30,7 +30,7 @@
     	  	"name" : "Ryzen 7, 8 cores",
     	  	"hostname" : "ryzen8",
     	  	"MAC" : "C0:FF:EE:BA:BE:BB",
-                "is_poweroff" : true,
+          "is_poweroff" : true,
     	  	"count" : 1,
     	  	"cores" : 8,
     	  	"hash_per_core" : 400,
