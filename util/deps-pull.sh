@@ -12,7 +12,10 @@ elif [ "$(uname)" == "Linux" ]; then
 	sudo apt install gfortran libffi-dev python3-testresources
 	#sudo apt install libboost-all-dev # Only JSON is needed for now
 	#sudo apt install libffi-dev
-	sudo apt install libjsoncpp-dev lm-sensors fswebcam at
+	sudo apt install lm-sensors fswebcam at
+	sudo apt install libboost-all-dev # Only this includes the Boost JSON
+	#sudo apt install libjsoncpp-dev
+	#sudo apt install rapidjson-dev
 fi
 
 if pip3 install -r requirements.txt ; then
