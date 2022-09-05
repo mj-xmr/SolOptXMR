@@ -10,20 +10,27 @@
 #include <Util/CharManipulations.hpp>
 #include <Statistical/Assertions.hpp>
 
-#include <json/json.h>
+//#include <json/json.h>
 #include <memory>
 //#include <rapidjson/document.h>
+
+#define BOOST_JSON_STACK_BUFFER_SIZE 1024
+#include <boost/json/src.hpp>
+#include <boost/json.hpp>
+
+//using namespace boost::json;
 
 #include <STD/VectorCpp.hpp>
 
 using namespace EnjoLib;
 //namespace JSONLib = rapidjson;
-namespace JSONLib = Json;
+//namespace JSONLib = Json;
+namespace JSONLib = boost::json;
+
 JsonReader::JsonReader(bool verbose): m_verbose(verbose){}
 JsonReader::~JsonReader(){}
 
-
-static void parseJsonOrThrow(const Str & jsonFile, bool verbose, Json::Value & root)
+static void parseJsonOrThrow(const Str & jsonFile, bool verbose, JSONLib::Value & root)
 {
     const Str & wholeJson = JsonReader::GetJson(jsonFile, verbose);
     
@@ -41,6 +48,26 @@ static void parseJsonOrThrow(const Str & jsonFile, bool verbose, Json::Value & r
     }
 }
 
+
+/*
+static void parseJsonOrThrow(const Str & jsonFile, bool verbose, Json::Value & root)
+{
+    const Str & wholeJson = JsonReader::GetJson(jsonFile, verbose);
+    
+    Json::CharReaderBuilder builder;
+    JSONCPP_STRING err;
+    
+    const auto rawJsonLength = static_cast<int>(wholeJson.length());
+  
+    const std::unique_ptr<Json::CharReader> reader(builder.newCharReader());
+    if (!reader->parse(wholeJson.c_str(), wholeJson.c_str() + rawJsonLength, &root,
+                       &err)) {
+        Osstream oss;
+        oss << jsonFile + ": failed to parse! Error: " << err << Nl;
+      Assertions::Throw(oss.str().c_str(), "parseJsonOrThrow");
+    }
+}
+*/
 
 static const JSONLib::Value & GetArrayJson(const EnjoLib::Str & name, bool verbose)
 {
