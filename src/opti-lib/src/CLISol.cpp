@@ -43,6 +43,7 @@ EnjoLib::Result<CLIResultSol> CLISol::GetConfigs(int argc, char ** argv) const
     const char * OPT_SYSTEM_TYPE  = "system-type";
     const char * OPT_SYSTEM_VOLTAGE  = "system-voltage";
     const char * OPT_HASHRATE_BONUS  = "hashrate-bonus";
+    const char * OPT_MAX_RAW_SOLAR_INPUT  = "max-raw-solar-input"; 
     const char * OPT_NUM_SOLUTIONS = "num-solutions";
     const char * OPT_OUT_DIR   = "out";
     const char * OPT_NO_PROGRESS_BAR = "no-progress-bar";
@@ -64,6 +65,7 @@ EnjoLib::Result<CLIResultSol> CLISol::GetConfigs(int argc, char ** argv) const
     popState.AddFloat(OPT_BATTERY_CHARGE,    ConfigSol::DESCR_BATTERY_CHARGE);
     popState.AddFloat(OPT_BATTERY_CHARGE_MAX_PERCENTAGE,   ConfigSol::DESCR_BATTERY_CHARGE_MAX_PERCENTAGE);
     popState.AddFloat(OPT_HASHRATE_BONUS,    ConfigSol::DESCR_HASHRATE_BONUS);
+    popState.AddFloat(OPT_MAX_RAW_SOLAR_INPUT, ConfigSol::DESCR_RAW_SOLAR_INPUT);
 
     //popState.AddStr(OPT_SYSTEM_TYPE,        ConfigSol::DESCR_SYSTEM_TYPE);
     //popState.AddInt(OPT_SYSTEM_VOLTAGE,     ConfigSol::DESCR_SYSTEM_VOLTAGE);
@@ -120,6 +122,8 @@ EnjoLib::Result<CLIResultSol> CLISol::GetConfigs(int argc, char ** argv) const
     confSol.HASHRATE_BONUS  = pops.GetFloatFromMap(OPT_HASHRATE_BONUS);
     confSol.BATTERY_CHARGE  = pops.GetFloatFromMap(OPT_BATTERY_CHARGE);
     confSol.BATTERY_CHARGE_MAX_PERCENTAGE = pops.GetFloatFromMap(OPT_BATTERY_CHARGE_MAX_PERCENTAGE);
+    confSol.MAX_RAW_SOLAR_INPUT = pops.GetFloatFromMap(OPT_MAX_RAW_SOLAR_INPUT);
+    
     confSol.m_outDir        = pops.GetStrFromMap(OPT_OUT_DIR, confSol.m_outDir);
     confSol.m_ignoreComputers = pops.GetStrFromMap(OPT_IGNORE_COMPUTERS, confSol.m_ignoreComputers);
     confSol.m_onlyComputers   = pops.GetStrFromMap(OPT_ONLY_COMPUTERS, confSol.m_onlyComputers);

@@ -40,6 +40,8 @@ FILE_HASHRATE_BONUS = "/hashrate_bonus_ma.dat"
 FILE_HASHRATE_SEASONAL = "/seasonal.dat"
 FILE_HASHRATE_BONUS_SINGLE = "/hashrate_bonus_ma_single.dat"
 
+MAX_RAW_SUN_INPUT_INFO = 0
+
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-r', '--battery-charge-ocr',      default=False, action='store_true', help="Initial battery charge OCR (default: OFF)")
@@ -146,6 +148,7 @@ class BatterySimulatorCpp(generator.BatterySimulator):
         cmd += " --battery-charge-max-percent {}".format(generator.MAX_CAPACITY_PERCENTAGE)        
         cmd += " --horizon-days {}".format(horizon)
         cmd += " --hashrate-bonus {}".format(hashrate_bonus)
+        cmd += " --max-raw-solar-input {}".format(round(MAX_RAW_SUN_INPUT_INFO, 2))
         #cmd += " --out {}" .format(args.out_dir) # Moved to json
         cmd += " --random-seed {}".format(args.random_seed)
         cmd += " --num-solutions {}".format(args.num_solutions)
@@ -264,15 +267,17 @@ def main(args):
         hashrate_bonus = get_hashrate_bonus(args.out_dir)
         plot_hashrates()
     else:
+        global MAX_RAW_SUN_INPUT_INFO
         start_date = dateutil.parser.parse(args.start_date)
         elev = generator.get_power(start_date, args.days_horizon, unpickle=False)
         #print(pos)
         show_plots = not args.no_plot
         #print('hori', args.days_horizon)
         simul_weather = args.offline_force
-        elev = generator.proc_data(elev, simul_weather, args.days_horizon)
+        elev, max_raw = generator.proc_data(elev, simul_weather, args.days_horizon)
         #elev = generator.extr_data(proc)
         #print(elev)
+        MAX_RAW_SUN_INPUT_INFO = max_raw
         run_main(args, elev, show_plots, args.battery_charge_ah, args.days_horizon)
 
 if __name__ == "__main__":

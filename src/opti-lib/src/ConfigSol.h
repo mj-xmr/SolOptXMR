@@ -38,6 +38,7 @@ class ConfigSol : public ConfigBase
         float BATTERY_CHARGE = 0;  constexpr static const char * DESCR_BATTERY_CHARGE = "Initial battery charge in Ah";
         float BATTERY_CHARGE_MAX_PERCENTAGE = 0;  constexpr static const char * DESCR_BATTERY_CHARGE_MAX_PERCENTAGE = "Max percentage to which the battery can be charged";
         float HASHRATE_BONUS = 0;  constexpr static const char * DESCR_HASHRATE_BONUS = "Hashrate bonus for the current hour";
+        float MAX_RAW_SOLAR_INPUT = 0;  constexpr static const char * DESCR_RAW_SOLAR_INPUT = "The maximum wattage, that your panels can produce today (excluding weather conditions)";
 
         //EnjoLib::Str SYSTEM_TYPE = "island"; constexpr static const char * DESCR_SYSTEM_TYPE = "System type: island / gen+buy / gen+buy+sell / gen+sell";
         EnjoLib::Str m_outDir = "/tmp/";  constexpr static const char * DESCR_OUT_DIR = "Output directory";
