@@ -40,6 +40,8 @@ FILE_HASHRATE_BONUS = "/hashrate_bonus_ma.dat"
 FILE_HASHRATE_SEASONAL = "/seasonal.dat"
 FILE_HASHRATE_BONUS_SINGLE = "/hashrate_bonus_ma_single.dat"
 
+MAX_RAW_SUN_INPUT_INFO = 0
+
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-r', '--battery-charge-ocr',      default=False, action='store_true', help="Initial battery charge OCR (default: OFF)")
@@ -61,6 +63,7 @@ def get_args():
     parser.add_argument('-po', '--poweroff', default=False, action='store_true', help="Poweroff machines, rather than suspending (default: False)")
     parser.add_argument('-of', '--offline-force', default=False, action='store_true', help="Offline run (default: False)")
     parser.add_argument('-ot', '--offline-try',   default=False, action='store_true', help="Offline try if failing (default: False)")
+    parser.add_argument('-cn', '--no-computers',   default=False, action='store_true', help="Don't simulate mining at all (default: False)")
     parser.add_argument('-ci', '--ignore-computers',    default="", type=str, help="Ignore   these computers (comma sep.) (default: {})".format(""))
     parser.add_argument('-co', '--only-computers',      default="", type=str, help="Use only these computers (comma sep.) (default: {})".format(""))
     parser.add_argument('-np','--no-plot',  default=DISABLE_PLOTTING, action='store_true', help="No Python plotting at all (default: {})".format(DISABLE_PLOTTING))
@@ -146,6 +149,7 @@ class BatterySimulatorCpp(generator.BatterySimulator):
         cmd += " --battery-charge-max-percent {}".format(generator.MAX_CAPACITY_PERCENTAGE)        
         cmd += " --horizon-days {}".format(horizon)
         cmd += " --hashrate-bonus {}".format(hashrate_bonus)
+        cmd += " --max-raw-solar-input {}".format(round(MAX_RAW_SUN_INPUT_INFO, 2))
         #cmd += " --out {}" .format(args.out_dir) # Moved to json
         cmd += " --random-seed {}".format(args.random_seed)
         cmd += " --num-solutions {}".format(args.num_solutions)
@@ -155,14 +159,15 @@ class BatterySimulatorCpp(generator.BatterySimulator):
             cmd += " --no-schedule"
         if args.poweroff:
             cmd += " --poweroff"
-        #cmd += " --system-type {}".format(config_system.type)
-        #cmd += " --system-voltage {}".format(config_system.voltage)
+        if args.no_computers:
+            cmd += " --no-computers"
         if args.ignore_computers:
             cmd += " --ignore-computers {}".format(args.ignore_computers)
         if args.only_computers:
             cmd += " --only-computers {}".format(args.only_computers)
         cmd += " --no-progress-bar" # Looks poorly under CI logging
-
+        #cmd += " --system-type {}".format(config_system.type)
+        #cmd += " --system-voltage {}".format(config_system.voltage)
         
         result = sunrise_lib.run_cmd(cmd, True)
         if result.returncode != 0:
@@ -264,15 +269,17 @@ def main(args):
         hashrate_bonus = get_hashrate_bonus(args.out_dir)
         plot_hashrates()
     else:
+        global MAX_RAW_SUN_INPUT_INFO
         start_date = dateutil.parser.parse(args.start_date)
         elev = generator.get_power(start_date, args.days_horizon, unpickle=False)
         #print(pos)
         show_plots = not args.no_plot
         #print('hori', args.days_horizon)
         simul_weather = args.offline_force
-        elev = generator.proc_data(elev, simul_weather, args.days_horizon)
+        elev, max_raw = generator.proc_data(elev, simul_weather, args.days_horizon)
         #elev = generator.extr_data(proc)
         #print(elev)
+        MAX_RAW_SUN_INPUT_INFO = max_raw
         run_main(args, elev, show_plots, args.battery_charge_ah, args.days_horizon)
 
 if __name__ == "__main__":

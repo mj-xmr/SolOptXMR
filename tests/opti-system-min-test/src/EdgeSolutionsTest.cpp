@@ -162,3 +162,20 @@ TEST(EdgeSol_undercharged_plus)
     CHECK(opti.GetPenality() > 0);
     //CHECK_EQUAL(0, opti.GetPenality());
 }
+
+TEST(EdgeSol_empty_computers)
+{
+    const int horizon = 2;
+    const int startingPoint = 0;
+    const double amplitude = 55;
+    const double batChargeAh = 20;
+    const Str name = "Empty list of computers";
+    const VecD genPower = SolUtil().GenSolar(horizon, amplitude);
+
+    auto builder = OptiTestUtilConf::Build();
+    builder(OptiTestUtilConf::Pars::BATTERY_CHARGE, batChargeAh)
+    (OptiTestUtilConf::Pars::NO_PROGRESS_BAR, true)
+    ;
+    const OptimizerEnProfit & opti = builder.Finalize().TestEdgeSolGetOptimizer(name, genPower, horizon, startingPoint, {});
+    CHECK(opti.GetPenality() > 0);
+}

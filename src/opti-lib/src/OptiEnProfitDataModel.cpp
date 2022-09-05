@@ -47,6 +47,10 @@ OptiEnProfitDataModel::OptiEnProfitDataModel(const ConfigSol & confSol, int hori
     const VecStr & tokCompAllow  = tok.Tokenize(m_confSol.m_onlyComputers, delimiter);
     for (const Computer & comp : vecComps)
     {
+        if (confSol.NO_COMPUTERS)
+        {
+            continue;
+        }
         const Str & name = comp.hostname;
         if (tokCompIgnore.size())
         {

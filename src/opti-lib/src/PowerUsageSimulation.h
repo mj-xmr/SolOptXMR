@@ -25,7 +25,7 @@ public:
         }
     };
 
-	SimResult Simulate(int i, int currHour, size_t compSize, const EnjoLib::Matrix & dataMat,
+	SimResult Simulate(int i, int currHour, const EnjoLib::Matrix & dataMat,
                         double bonusMul, bool isInitialLoad) const;
 
 protected:

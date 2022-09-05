@@ -11,7 +11,7 @@ PowerUsageSimulation::PowerUsageSimulation(const OptiEnProfitDataModel & dataMod
 : m_dataModel(dataModel)
 {}
 
-PowerUsageSimulation::SimResult PowerUsageSimulation::Simulate(int i, int currHour, size_t compSize, const EnjoLib::Matrix & dataMat,
+PowerUsageSimulation::SimResult PowerUsageSimulation::Simulate(int i, int currHour, const EnjoLib::Matrix & dataMat,
                                                              double bonusMul, bool isInitialLoad) const
 {
     SimResult res{};
@@ -20,6 +20,7 @@ PowerUsageSimulation::SimResult PowerUsageSimulation::Simulate(int i, int currHo
     const double bonusMulMA = m_dataModel.GetConf().HASHRATE_BONUS;
 
     const auto & comps = m_dataModel.GetComputers();
+    const size_t compSize = comps.size();
     for (int ic = 0; ic < compSize; ++ic)
     {
         const Computer & comp = comps[ic];

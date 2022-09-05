@@ -55,12 +55,13 @@ Solution OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool v
     const EnjoLib::Array<Computer> & comps = m_dataModel.GetComputers();
     const bool LOG_UNACCEPTABLE_SOLUTIONS = false;
     const System & sys = m_dataModel.GetSystem();
-    BatterySimulation battery(m_dataModel.GetConf(), m_dataModel.GetBatPars(), sys);
+    const ConfigSol & conf = m_dataModel.GetConf();
+    BatterySimulation battery(conf, m_dataModel.GetBatPars(), sys);
     double penalitySum = 0;
     PowerUsageSimulation powSim(m_dataModel);
     PowerUsageSimulation::SimResult simResult{};
     const size_t compSize = m_dataModel.GetComputers().size();
-    Assertions::SizesEqual(compSize, dataMat.size(), "OptiSubjectEnProfit::GetVerbose");
+    //Assertions::SizesEqual(compSize, dataMat.size(), "OptiSubjectEnProfit::GetVerbose");
     for (int i = 0; i < n; ++i)
     {
         const double bonusMul = HashrateBonus(i % 24);
@@ -68,7 +69,7 @@ Solution OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool v
         //LOG << "i = " << i << ", val = " << inp[i] << Nl;
         //if (not battery.initial_load)
         //if (false)
-        const PowerUsageSimulation::SimResult & resLocal = powSim.Simulate(i, m_currHour, compSize, dataMat, bonusMul, battery.initial_load);
+        const PowerUsageSimulation::SimResult & resLocal = powSim.Simulate(i, m_currHour, dataMat, bonusMul, battery.initial_load);
         simResult.Add(resLocal);
         battery.iter_get_load(powerProd, resLocal.sumPowerUsage);
         //const double pentalityUndervolted = load < 0 ? GMat().Fabs(load * load * load) : 0;
@@ -127,9 +128,9 @@ Solution OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool v
                 ": New goal = " << penality << ", hashes = " << simResult.sumHashes << Nl;
 
                 PowerUsageSimulation::SimResult resVisual{};
-                BatterySimulation batteryCopy(m_dataModel.GetConf(), m_dataModel.GetBatPars(), m_dataModel.GetSystem());
+                BatterySimulation batteryCopy(conf, m_dataModel.GetBatPars(), m_dataModel.GetSystem());
                 VecD hashes, loads, penalityUnder, input, prod, hashrateBonus, usages;
-                Assertions::SizesEqual(m_dataModel.GetComputers().size(), dataMat.size(), "OptiSubjectEnProfit::GetVerbose");
+                //Assertions::SizesEqual(m_dataModel.GetComputers().size(), dataMat.size(), "OptiSubjectEnProfit::GetVerbose");
                 for (int i = 0; i < n; ++i)
                 {
                     const double bonusMul = HashrateBonus(i % 24);
@@ -137,7 +138,7 @@ Solution OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool v
                     //LOG << "i = " << i << ", val = " << inp[i] << Nl;
                     //if (not battery.initial_load)
                     //if (false)
-                    const PowerUsageSimulation::SimResult & resLocal = powSim.Simulate(i, m_currHour, compSize, dataMat, bonusMul, batteryCopy.initial_load);
+                    const PowerUsageSimulation::SimResult & resLocal = powSim.Simulate(i, m_currHour, dataMat, bonusMul, batteryCopy.initial_load);
                     resVisual.Add(resLocal);
                     const double load = batteryCopy.iter_get_load(powerProd, resLocal.sumPowerUsage);
                     usages.Add(resLocal.sumPowerUsage * batteryCopy.pars.GetMulPowerToCapacity(m_dataModel.GetSystem().voltage));
@@ -174,7 +175,8 @@ Solution OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool v
                     LOG << AsciiMisc().GenChars("▁", m_hashes.size()) << Nl;
                     LOG << StrColour::GenNorm(StrColour::Col::Magenta, AsciiPlot::Build()(Par::MAXIMUM, maxHashes2display).Finalize().Plot(m_hashes)) << Nl;
                     LOG << "Energy input  [A] : (max = " << sut.round(m_prod.Max(), 1) << ")\n";
-                    LOG << StrColour::GenNorm(StrColour::Col::Yellow,  AsciiPlot::Build()(Par::MAXIMUM,   m_prod.Max()).Finalize().Plot(m_prod)) << Nl;
+                    const float maxSol = std::max(conf.MAX_RAW_SOLAR_INPUT, static_cast<float>(m_prod.Max()));
+                    LOG << StrColour::GenNorm(StrColour::Col::Yellow,  AsciiPlot::Build()(Par::MAXIMUM, maxSol).Finalize().Plot(m_prod)) << Nl;
                     LOG << "Bat charge    [Ah]: (max = " << sut.round(m_loads.Max(), 1) << ")\n";
                     LOG << AsciiPlot::Build()(Par::MAXIMUM, batteryCopy.m_maxCapacityAmph)
                     (Par::MINIMUM, m_dataModel.GetBatPars().MIN_LOAD_AMPH)(Par::COLORS, true)

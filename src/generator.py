@@ -350,6 +350,7 @@ def add_weather(elev, horizon):
     return elev
 
 def proc_data(elev, is_simul_weather=False, horizon=0):
+    max_raw = max(elev)
     if is_simul_weather:
         pos = simul_weather(elev)
     else:
@@ -361,7 +362,7 @@ def proc_data(elev, is_simul_weather=False, horizon=0):
     print("Dumping data to:", path_positions_txt)
     np.savetxt(path_positions_txt, elev)
     
-    return pos
+    return pos, max_raw
 
 def extr_data(pos):
     elev = pos[ELEVATION_KEY]
@@ -422,7 +423,9 @@ def test(show_plots=False):
     #elev = extr_data(pos)
     
     #proc = proc_data(elev, True)
-    proc = proc_data(elev, False, 3)
+    proc, max_raw = proc_data(elev, False, 3)
+    print("Max raw =", max_raw)
+    print("Max proc =", max(proc))
     #
     #run_main(proc, show_plots)
 
