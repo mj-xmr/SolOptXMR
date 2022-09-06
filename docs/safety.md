@@ -21,7 +21,7 @@ The same rule applies to all the other bipolar connectors as well.
 Below is a coloured diagram that represents a generic procedure of connection of 2 elements - 
 a charged battery and a dead battery, which may serve as an alias for an energy consumer, that can't be switched off during the connection:
 
-![image](https://user-images.githubusercontent.com/63722585/188509515-9e9f888c-ca7c-4a7c-ba38-dd03b8bbf9e7.png)
+![cable-advanced](screenshots/cable-advanced.jpg)
 
 
 ## Voltage of the system
@@ -56,7 +56,7 @@ Obviously protective gloves also wouldn't hurt.
 Bear in mind, that they react with a delay, so if you set the voltage high but still, say, 1V below the maximal sane batteries' voltage (14V vs 15V), exceeding of which would temporarly shut down your inverter, the delay in reaction of the MPPT controller may still lead to overvoltage, as defined by the inverter. 
 This is very apparent during days with low clouds, resulting in switching your panels on and off multiple times. 
 The reason for this confusion is, that as soon as the battery is >80% charged, the voltage starts raising much faster with the same energy input, therefore the previous assumptions of slower growth and adjusted reaction time don't hold anymore.
-Below you can see the typical charge profiles of lead-acid batteries, where above the ~80% charge, you may see the sudden non-linearity of voltage, that confuses the MPPT controllers.
+Below you can see the typical charge profiles of lead-acid batteries, where above the ~80% charge, you may experience the sudden non-linearity of voltage, that confuses the MPPT controllers.
 
 ![bat-charge](../data/voltage-2-soc-charge.png)
 
@@ -65,6 +65,18 @@ Below you can see the typical charge profiles of lead-acid batteries, where abov
 TODO: description
 
 ![cable-sizes](screenshots/cable-load-length.jpg)
+
+## Cables parallel
+
+TODO: description
+
+![cable-paralell](screenshots/cable-paralell.jpg)
+
+## Cables configurations
+
+TODO: description & maybe move somewhere else as it's not safety related?
+
+![cable-configurations](screenshots/cable-configurations.jpg)
 
 
 Fingers crossed!
