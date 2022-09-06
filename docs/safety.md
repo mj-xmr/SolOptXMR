@@ -19,9 +19,13 @@ The same rule applies to all the other bipolar connectors as well.
 
 ### Advanced and generic terminal handling
 Below is a coloured diagram that represents a generic procedure of connection of 2 elements - 
-a charged battery and a dead battery, which may serve as an alias for an energy consumer, that can't be switched off during the connection:
+a charged battery and a dead battery, the latter of which may serve as an alias for an energy consumer. 
 
 ![cable-advanced](screenshots/cable-advanced.jpg)
+
+Notice the irrelevant (to our case), instruction to connect the negative terminal to an engine's block for grounding. 
+We'd connect it to the negative pole of an inverter.
+Just for completeness sake, [here's a better explanation](https://www.youtube.com/watch?v=THvk09liu00) of the nuance.
 
 
 ## Voltage of the system
