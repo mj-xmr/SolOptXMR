@@ -160,7 +160,7 @@ Solution OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool v
                 if (not m_dataModel.GetConf().NO_GNUPLOT)
                 {
                     //GnuplotPlotTerminal1d(input, "input", 1, 0.5);
-                    GnuplotPlotTerminal1d(prod, "Energy production", 1, 0.5);
+                    GnuplotPlotTerminal1d(prod, "Energy production [W]", 1, 0.5);
                     //GnuplotPlotTerminal1d(hashrateBonus, "Bashrate bonus seasonal", 1, 0.5);
                 }
 
@@ -174,7 +174,7 @@ Solution OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool v
                     LOG << "Hashes cumul. [Hh]: (max = " << sut.round(m_hashes.Max(), 1) << ")\n";
                     LOG << AsciiMisc().GenChars("▁", m_hashes.size()) << Nl;
                     LOG << StrColour::GenNorm(StrColour::Col::Magenta, AsciiPlot::Build()(Par::MAXIMUM, maxHashes2display).Finalize().Plot(m_hashes)) << Nl;
-                    LOG << "Energy input  [A] : (max = " << sut.round(m_prod.Max(), 1) << ")\n";
+                    LOG << "Energy input  [W] : (max = " << sut.round(m_prod.Max(), 1) << ")\n";
                     const float maxSol = std::max(conf.MAX_RAW_SOLAR_INPUT, static_cast<float>(m_prod.Max()));
                     LOG << StrColour::GenNorm(StrColour::Col::Yellow,  AsciiPlot::Build()(Par::MAXIMUM, maxSol).Finalize().Plot(m_prod)) << Nl;
                     LOG << "Bat charge    [Ah]: (max = " << sut.round(m_loads.Max(), 1) << ")\n";
