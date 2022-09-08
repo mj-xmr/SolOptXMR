@@ -52,6 +52,12 @@ Note, that it doesn't use the required seconds part though.
 
 As with the `computers.json`, a given habit may be disabled by setting its `count` field to `0`.
 
+A special case of a habit is the `Inverter` - the piece of hardware that flips Direct Current to Alternating Current. 
+If you don't intend to make any use of the inverter and the AC that it produces during the night, it makes a lot of sense to switch it off for that time, since it can consume even 25 W in idle mode. 
+This greatly contributes to the battery drainage, yielding no benefits, if you only can switch it on by yourself on the next day. 
+In order to model this act, you may schedule the usage of the inverter, just like any other habit. 
+Next, you need to set the variable `"default_use_schedule" : false` of the Inverter to `true`.  
+
 ## System system.json
 Defines the voltage of the system (12, 24 or 48 V) used for conversions.
 Other 3 options include the ability to independently: generate, buy and/or sell the electricity. 
@@ -76,4 +82,4 @@ For OCR related entries, please have a look [here](ocr.md)
 
 ## Electricity price
 TODO: enable scheduling the electricity buy/sell prices via cron, like in the Habits json.
-
+//
