@@ -28,13 +28,14 @@ EnjoLib::VecT<int> HabitCron::GetNextHoursOn(const Habit & hab, int horizonDays)
     {
         return retAlwaysOn;
     }
-    const std::string str = hab.schedule.str();
-    const auto cron = cron::make_cron(str);
-
     /// TODO: This assumes, that if anything started at least an hour before, and lasted more than that hour, it won't be registered here.
     /// Solution: start asking cron 24 hours before, and finally cut the first 24 hours. Unit tests needed for this.
-    std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+    const std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+    const std::string str = hab.schedule.str();
+    
     EnjoLib::VecT<int> hours;
+    // Trying to isolate the cron library.
+    const auto cron = cron::make_cron(str);
     //try
     {
 
@@ -46,7 +47,7 @@ EnjoLib::VecT<int> HabitCron::GetNextHoursOn(const Habit & hab, int horizonDays)
         {
             const double diffSeconds = std::difftime(next, now);
             const double diffHours = EnjoLib::GMat().round(diffSeconds / 3600.0);
-            const double diffDays = EnjoLib::GMat().round(diffHours / hoursInDay);
+            const double diffDays = EnjoLib::GMat().round(diffHours / static_cast<double>(hoursInDay));
             if (diffDays > horizonDays)
             {
                 break;
