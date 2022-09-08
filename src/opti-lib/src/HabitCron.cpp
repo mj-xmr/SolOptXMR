@@ -1,13 +1,11 @@
 #include "HabitCron.h"
 #include "Habit.h"
 #include "TimeUtil.h"
+#include "HabitCron3rd.h"
 
-#include <Template/Array.hpp>
 #include <Util/CoutBuf.hpp>
 #include <Math/GeneralMath.hpp>
 #include <Statistical/Assertions.hpp>
-
-#include "croncpp.h"
 
 HabitCron::~HabitCron(){}
 HabitCron::HabitCron(bool verbose)
@@ -28,38 +26,8 @@ EnjoLib::VecT<int> HabitCron::GetNextHoursOn(const Habit & hab, int horizonDays)
     {
         return retAlwaysOn;
     }
-    /// TODO: This assumes, that if anything started at least an hour before, and lasted more than that hour, it won't be registered here.
-    /// Solution: start asking cron 24 hours before, and finally cut the first 24 hours. Unit tests needed for this.
-    const std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-    const std::string str = hab.schedule.str();
     
-    EnjoLib::VecT<int> hours;
-    // Trying to isolate the cron library.
-    const auto cron = cron::make_cron(str);
-    //try
-    {
-
-        std::time_t next = cron::cron_next(cron, now);
-        std::time_t prev = {};
-        int iter = 0;
-        const int maxIter = 100;
-        while(next != prev && next > prev && iter++ < maxIter)
-        {
-            const double diffSeconds = std::difftime(next, now);
-            const double diffHours = EnjoLib::GMat().round(diffSeconds / 3600.0);
-            const double diffDays = EnjoLib::GMat().round(diffHours / static_cast<double>(hoursInDay));
-            if (diffDays > horizonDays)
-            {
-                break;
-            }
-            hours.push_back(diffHours);
-            prev = next;
-            if (m_verbose) {
-                LOGL << "HabitCron:: " << hab.name << ": " << diffDays << ", " << diffHours << EnjoLib::Nl;
-            }
-            next = cron::cron_next(cron, next);
-        }
-    }
+    const EnjoLib::VecT<int> & hours = HabitCron3rd(m_verbose).GetNextHoursOn(hab, horizonDays);
     for (unsigned i = 1; i < hours.size(); ++i)
     {
         const int prev = hours.at(i - 1);
