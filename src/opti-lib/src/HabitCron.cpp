@@ -1,13 +1,11 @@
 #include "HabitCron.h"
 #include "Habit.h"
 #include "TimeUtil.h"
+#include "HabitCron3rd.h"
 
-#include <Template/Array.hpp>
 #include <Util/CoutBuf.hpp>
 #include <Math/GeneralMath.hpp>
 #include <Statistical/Assertions.hpp>
-
-#include "croncpp.h"
 
 HabitCron::~HabitCron(){}
 HabitCron::HabitCron(bool verbose)
@@ -19,42 +17,17 @@ EnjoLib::VecT<int> HabitCron::GetNextHoursOn(const Habit & hab, int horizonDays)
     const int hoursInDay = 24;
     const int maxI = hoursInDay * horizonDays;
     EnjoLib::VecT<int> ret(maxI);
+    EnjoLib::VecT<int> retAlwaysOn(maxI, 1);
     if (hab.schedule.empty())
     {
-        EnjoLib::VecT<int> retAlwaysOn(maxI, 1);
         return retAlwaysOn;
     }
-    const std::string str = hab.schedule.str();
-    const auto cron = cron::make_cron(str);
-
-    /// TODO: This assumes, that if anything started at least an hour before, and lasted more than that hour, it won't be registered here.
-    /// Solution: start asking cron 24 hours before, and finally cut the first 24 hours. Unit tests needed for this.
-    std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-    EnjoLib::VecT<int> hours;
-    //try
+    if (not hab.defaultUseSchedule)
     {
-
-        std::time_t next = cron::cron_next(cron, now);
-        std::time_t prev = {};
-        int iter = 0;
-        const int maxIter = 100;
-        while(next != prev && next > prev && iter++ < maxIter)
-        {
-            const double diffSeconds = std::difftime(next, now);
-            const double diffHours = EnjoLib::GMat().round(diffSeconds / 3600.0);
-            const double diffDays = EnjoLib::GMat().round(diffHours / hoursInDay);
-            if (diffDays > horizonDays)
-            {
-                break;
-            }
-            hours.push_back(diffHours);
-            prev = next;
-            if (m_verbose) {
-                LOGL << "HabitCron:: " << hab.name << ": " << diffDays << ", " << diffHours << EnjoLib::Nl;
-            }
-            next = cron::cron_next(cron, next);
-        }
+        return retAlwaysOn;
     }
+    
+    const EnjoLib::VecT<int> & hours = HabitCron3rd(m_verbose).GetNextHoursOn(hab, horizonDays);
     for (unsigned i = 1; i < hours.size(); ++i)
     {
         const int prev = hours.at(i - 1);

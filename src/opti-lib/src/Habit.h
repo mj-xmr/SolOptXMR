@@ -21,6 +21,7 @@ public:
 	double watt_asleep = 0.1;
 	double duration_hours = 1;
 	size_t szz = 0;
+	bool defaultUseSchedule = true;
 
 protected:
 

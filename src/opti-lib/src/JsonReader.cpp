@@ -206,10 +206,14 @@ EnjoLib::Array<Habit> JsonReader::ReadHabits(bool verbose) const
         }
         if (habit.HasMember("schedule"))
         {
-             obj.schedule =         jwrap.GetValueJson("schedule").GetString();
-             obj.duration_hours =   jwrap.GetValueJson("duration_hours").GetDouble();
+            obj.schedule =         jwrap.GetValueJson("schedule").GetString();
+            obj.duration_hours =   jwrap.GetValueJson("duration_hours").GetDouble();
         }
-
+        const char * defSched = "default_use_schedule";
+        if (habit.HasMember(defSched))
+        {
+            obj.defaultUseSchedule = jwrap.GetValueJson(defSched).GetBool();
+        }
         //LOG <<  << Nl;
         if (habit.HasMember("count"))
         {

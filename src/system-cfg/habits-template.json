@@ -1,6 +1,15 @@
 {
     "habits": [
           {
+    	  	"name" : "Inverter",
+    	  	"inverter" : true,
+    	  	"default_use_schedule" : false,
+    	  	"count" : 1,
+    	  	"watt" : 15,
+    	  	"duration_hours" : 12,
+    	  	"schedule" : "0 0 8 * * *"
+    	  },
+          {
     	  	"name" : "Controlling lo-powered PC",
     	  	"count" : 1,
     	  	"watt" : 2.5,
@@ -47,12 +56,6 @@
     	  	"name" : "Network switch",
     	  	"count" : 1,
     	  	"watt" : 0.9
-    	  },
-    	  {
-    	  	"name" : "Inverter",
-    	  	"inverter" : true,
-    	  	"count" : 1,
-    	  	"watt" : 14.5
     	  }
     ]
 }
