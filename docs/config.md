@@ -28,7 +28,7 @@ Below are the parameters and example values:
 | ------------- | -- | --- |
 | `"name"` | "Ca-Ca" | An arbitrary name. In this case the abbreviation means "Calcium-Calcium" lead-acid battery. |
 | `"count"` | 2 | The number of batteries of the same type. |  
-| `"discharge_rate_c_by"` | 10 | The discharge rate of the battery at discharge. See [this paper](http://www.scubaengineer.com/documents/lead_acid_battery_charging_graphs.pdf) about lead-acid batteries. Available choices: 1, 3, 5, 10, 20, 40, 100 | 
+| `"discharge_rate_c_by"` | 10 | The discharge rate of the battery at discharge. See [this paper](http://www.scubaengineer.com/documents/lead_acid_battery_charging_graphs.pdf) about lead-acid batteries. For LiFePO4, you'd typically select 1. Available choices: 1, 3, 5, 10, 20, 40, 100. | 
 | `"max_discharge_amp"` | 11 | The maximum amount of Amperes, that the battery can deliver. |
 | `"max_capacity_amph"` | 60 | The maximum capacity of the battery in Ampere-hours, as provided by the manufacturer. |
 | `"max_charge_v"` | 13.2 | The maximum charging voltage, that you set in the MPPT controller. |
