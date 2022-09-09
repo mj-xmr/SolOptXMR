@@ -7,8 +7,10 @@ Inside the `~/.config/solar/arrays.json` it's important to understand, that an a
 `surface_azimuth` uses 0 as north, 90 as east, 180 as south and 270 as west.
 
 ## Wind turbines wind.json
-TODO.
-Enter min/max wattage and wind tolerance.
+Wind turbines operate between a minimum and maximum wind speed. 
+Below the minimum they will not generate anything while above the maximum a good quality wind turbine should use its magnetic breaks, in order not to work above the speed. 
+You need to enter the wind speed range in meters per second (as it's presented by the manufacturers), while the resulting minimal and maximal production in wattage. 
+The system will calculate the produced power value from proportion between the two ranges.
 
 ## Geo geo.json
 Is expected to be modified by you, according to the physical location of the solar farm, the northern hemisphere and eastern side of globe are represented with positive numbers of Lat / Lon in degrees. 
