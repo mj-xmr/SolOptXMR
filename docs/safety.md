@@ -110,6 +110,7 @@ As you might conclude, there's a chain of responsibility there: Panels -> MPPT -
 If any of them fails, the prior one tries to take over, until it can't. 
 That's why scheduled mining is not only a way of making some money, but also a flexible safety procedure. 
 Even if a given desktop computer doesn't mine at all, if it can only be switched on just to consume 50 W in its idle mode, these are 50 W, that the MPPT controller doesn't have to dissipate, thus reducing a risk of a failure in the long run. 
+Or in other words: the energy dissipation is being offset, quite like a hot potato, to a different entity. 
  
 My Lead-Acid batteries broke down in the process, but in the end, I was able to repair them with a relatively cheap (~50$ as of year 2022) rectifier. 
 Another conclusion here is, that there are usually solid reasons why such installations catch fire, rather than them being purely random events. 
