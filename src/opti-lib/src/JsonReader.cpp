@@ -14,24 +14,25 @@
 
 using namespace EnjoLib;
 
-JsonReader::JsonReader(){}
+JsonReader::JsonReader(bool verbose): m_verbose(verbose){}
 JsonReader::~JsonReader(){}
 
-static void parseJsonOrThrow(const Str & jsonFile, rapidjson::Document & d)
+static void parseJsonOrThrow(const Str & jsonFile, bool verbose, rapidjson::Document & d)
 {
-    const Str & wholeJson = JsonReader::GetJson(jsonFile);
+    const Str & wholeJson = JsonReader::GetJson(jsonFile, verbose);
     if (d.Parse(wholeJson.c_str()).HasParseError())
     {
         Assertions::Throw((jsonFile + " failed to parse\n").c_str(), "parseJsonOrThrow");
     }
 }
 
-static const rapidjson::Value & GetArrayJson(const EnjoLib::Str & name)
+static const rapidjson::Value & GetArrayJson(const EnjoLib::Str & name, bool verbose)
 {
     const Str jsonFile = name + ".json";
     rapidjson::Document d;
+    if (verbose)
     {LOGL << "Reading array: " << name << Nl;}
-    parseJsonOrThrow(jsonFile, d);
+    parseJsonOrThrow(jsonFile, verbose, d);
     const rapidjson::Value& array_json = d[name.c_str()];
     //{LOGL << "Reading array: " << name << " succeeded." << Nl;}
     return array_json;
@@ -71,7 +72,7 @@ EnjoLib::Array<BatteryParams> JsonReader::ReadBatteries(bool verbose) const
     const CharManipulations cman;
     std::vector<BatteryParams> ret;
     const Str idd = "batteries";
-    const rapidjson::Value& arr = GetArrayJson(idd);
+    const rapidjson::Value& arr = GetArrayJson(idd, m_verbose);
     for (auto objIt = arr.Begin(); objIt != arr.End(); ++objIt)
     {
         BatteryParams batObj;
@@ -120,7 +121,7 @@ EnjoLib::Array<Computer> JsonReader::ReadComputers(bool verbose) const
     const CharManipulations cman;
     std::vector<Computer> ret;
     const Str idd = "computers";
-    const rapidjson::Value& arr = GetArrayJson(idd);
+    const rapidjson::Value& arr = GetArrayJson(idd, m_verbose);
     for (auto compIt = arr.Begin(); compIt != arr.End(); ++compIt)
     {
         Computer compObj;
@@ -143,6 +144,10 @@ EnjoLib::Array<Computer> JsonReader::ReadComputers(bool verbose) const
         compObj.name =           jwrap.GetValueJson("name").GetString();
         compObj.hostname =       jwrap.GetValueJson("hostname").GetString();
         compObj.macAddr =        jwrap.GetValueJson("MAC").GetString();
+        if (comp.HasMember("is_poweroff"))
+        {
+            compObj.isPoweroff = jwrap.GetValueJson("is_poweroff").GetBool();
+        }
         //LOG <<  << Nl;
         if (comp.HasMember("count"))
         {
@@ -183,7 +188,7 @@ EnjoLib::Array<Habit> JsonReader::ReadHabits(bool verbose) const
     const CharManipulations cman;
     std::vector<Habit> ret;
     const Str idd = "habits";
-    const rapidjson::Value& arr = GetArrayJson(idd);
+    const rapidjson::Value& arr = GetArrayJson(idd, m_verbose);
     for (auto itr = arr.Begin(); itr != arr.End(); ++itr)
     {
         Habit obj;
@@ -201,10 +206,14 @@ EnjoLib::Array<Habit> JsonReader::ReadHabits(bool verbose) const
         }
         if (habit.HasMember("schedule"))
         {
-             obj.schedule =         jwrap.GetValueJson("schedule").GetString();
-             obj.duration_hours =   jwrap.GetValueJson("duration_hours").GetDouble();
+            obj.schedule =         jwrap.GetValueJson("schedule").GetString();
+            obj.duration_hours =   jwrap.GetValueJson("duration_hours").GetDouble();
         }
-
+        const char * defSched = "default_use_schedule";
+        if (habit.HasMember(defSched))
+        {
+            obj.defaultUseSchedule = jwrap.GetValueJson(defSched).GetBool();
+        }
         //LOG <<  << Nl;
         if (habit.HasMember("count"))
         {
@@ -243,7 +252,7 @@ System JsonReader::ReadSystem(bool verbose) const
     const Str jsonFile = "system.json";
     const Str idd = jsonFile;
     rapidjson::Document d;
-    parseJsonOrThrow(jsonFile, d);
+    parseJsonOrThrow(jsonFile, m_verbose, d);
     JsonValueWrapper jwrap(d, idd);
 
     ret.voltage     = jwrap.GetValueJson("voltage").GetInt();
@@ -260,7 +269,7 @@ ConfigSol JsonReader::ReadConfigSol(bool verbose) const
     const Str jsonFile = "config-volatile.json";
     const Str idd = jsonFile;
     rapidjson::Document d;
-    parseJsonOrThrow(jsonFile, d);
+    parseJsonOrThrow(jsonFile, m_verbose, d);
     JsonValueWrapper jwrap(d, idd);
     
     /// TODO: This should be secured better, like the rest, but it's multilayered.
@@ -272,7 +281,7 @@ ConfigSol JsonReader::ReadConfigSol(bool verbose) const
 #include <sys/types.h>
 #include <pwd.h>
 
-EnjoLib::Str JsonReader::GetJson(const EnjoLib::Str & fileName)
+EnjoLib::Str JsonReader::GetJson(const EnjoLib::Str & fileName, bool verbose)
 {
     const char *homedir = nullptr;
 
@@ -284,6 +293,7 @@ EnjoLib::Str JsonReader::GetJson(const EnjoLib::Str & fileName)
         Assertions::Throw("Not found home dir", "JsonReader::GetJson");
     }
     const Str path = Str(homedir) + "/.config/solar/" + fileName;
+    if (verbose)
     {LOGL << "Reading json: " << path << Nl;}
     Ifstream fcomps(path);
     const Tokenizer tok;

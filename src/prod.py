@@ -32,9 +32,15 @@ DEFAULT_BATTERY_STATE = 0
 DEFAULT_CHARGE_STATE = 'discharging'
 config_system = sunrise_lib.config_system
 DISABLE_PLOTTING = not sunrise_lib.config_volatile.glob.ENABLE_PLOTTING
+NUM_SOLUTIONS   = sunrise_lib.config_volatile.glob.NUM_SOLUTIONS
+NO_GNUPLOT      = sunrise_lib.config_volatile.cli.NO_GNUPLOT
+NO_SCHEDULE     = sunrise_lib.config_volatile.cli.NO_SCHEDULE
+
 FILE_HASHRATE_BONUS = "/hashrate_bonus_ma.dat"
 FILE_HASHRATE_SEASONAL = "/seasonal.dat"
 FILE_HASHRATE_BONUS_SINGLE = "/hashrate_bonus_ma_single.dat"
+
+MAX_RAW_SUN_INPUT_INFO = 0
 
 def get_args():
     parser = argparse.ArgumentParser()
@@ -42,7 +48,8 @@ def get_args():
     parser.add_argument('-p', '--battery-charge-percent',  default=DEFAULT_BATTERY_STATE, type=float, help="Initial battery charge [0-100]  (default: {} which means: minimal charge)".format(DEFAULT_BATTERY_STATE))
     parser.add_argument('-a', '--battery-charge-ah', default=DEFAULT_BATTERY_STATE, type=float, help="Initial battery charge [Ah] (default: {} which means: minimal charge)".format(DEFAULT_BATTERY_STATE))
     parser.add_argument('-v', '--battery-charge-v',  default=DEFAULT_BATTERY_STATE, type=float, help="Initial battery charge [V]  (default: {} which means: minimal charge)".format(DEFAULT_BATTERY_STATE))
-    parser.add_argument('--random-seed',       default=1, type=int, help="Random seed for debugging (default: 1)")
+    parser.add_argument('-rs','--random-seed',       default=1, type=int, help="Random seed for debugging (default: 1)")
+    parser.add_argument('-nsol','--num-solutions',   default=NUM_SOLUTIONS, type=int, help="Number of solutions to display (default: {})".format(NUM_SOLUTIONS))
     sunrise_lib.add_date_arguments_to_parser(parser)
     # TODO:
     # parser.add_argument('-f', '--file-image-ocr',  default="", type=str, help="Image path to OCR (default: {})".format(""))
@@ -53,9 +60,15 @@ def get_args():
     parser.add_argument('-o', '--out-dir',  default=sunrise_lib.DIR_TMP, type=str, help="Output dir to exchange with tsqsim (default: {})".format(""))
     parser.add_argument('-n', '--net-diff', default=False, action='store_true', help="Plot network difficulty only (default: False)")
     parser.add_argument('-m', '--sim',      default=False, action='store_true', help="Plot simulation only (default: False)")
+    parser.add_argument('-po', '--poweroff', default=False, action='store_true', help="Poweroff machines, rather than suspending (default: False)")
     parser.add_argument('-of', '--offline-force', default=False, action='store_true', help="Offline run (default: False)")
     parser.add_argument('-ot', '--offline-try',   default=False, action='store_true', help="Offline try if failing (default: False)")
-    parser.add_argument('-np','--no-plot',  default=DISABLE_PLOTTING, action='store_true', help="No plotting at all (default: {})".format(DISABLE_PLOTTING))
+    parser.add_argument('-cn', '--no-computers',   default=False, action='store_true', help="Don't simulate mining at all (default: False)")
+    parser.add_argument('-ci', '--ignore-computers',    default="", type=str, help="Ignore   these computers (comma sep.) (default: {})".format(""))
+    parser.add_argument('-co', '--only-computers',      default="", type=str, help="Use only these computers (comma sep.) (default: {})".format(""))
+    parser.add_argument('-np','--no-plot',  default=DISABLE_PLOTTING, action='store_true', help="No Python plotting at all (default: {})".format(DISABLE_PLOTTING))
+    parser.add_argument('-ng','--no-gnuplot',   default=NO_GNUPLOT, action='store_true',  help="No CLI Gnuplot (default: {})".format(NO_GNUPLOT))
+    parser.add_argument('-ns','--no-schedule',  default=NO_SCHEDULE, action='store_true', help="No CLI schedule (default: {})".format(NO_SCHEDULE))
     #parser.add_argument('-v', '--verbose',      default=TESTING, action='store_true', help="Test (default: False)")
     return parser.parse_args()
 
@@ -136,18 +149,32 @@ class BatterySimulatorCpp(generator.BatterySimulator):
         cmd += " --battery-charge-max-percent {}".format(generator.MAX_CAPACITY_PERCENTAGE)        
         cmd += " --horizon-days {}".format(horizon)
         cmd += " --hashrate-bonus {}".format(hashrate_bonus)
+        cmd += " --max-raw-solar-input {}".format(round(MAX_RAW_SUN_INPUT_INFO, 2))
         #cmd += " --out {}" .format(args.out_dir) # Moved to json
         cmd += " --random-seed {}".format(args.random_seed)
+        cmd += " --num-solutions {}".format(args.num_solutions)
+        if args.no_gnuplot:
+            cmd += " --no-gnuplot"
+        if args.no_schedule:
+            cmd += " --no-schedule"
+        if args.poweroff:
+            cmd += " --poweroff"
+        if args.no_computers:
+            cmd += " --no-computers"
+        if args.ignore_computers:
+            cmd += " --ignore-computers {}".format(args.ignore_computers)
+        if args.only_computers:
+            cmd += " --only-computers {}".format(args.only_computers)
         cmd += " --no-progress-bar" # Looks poorly under CI logging
         #cmd += " --system-type {}".format(config_system.type)
         #cmd += " --system-voltage {}".format(config_system.voltage)
-
         
         result = sunrise_lib.run_cmd(cmd, True)
         if result.returncode != 0:
             raise RuntimeError("Failed to run opti")
 
-        basePathIn = "/tmp/soloptout-{}.txt"
+        
+        basePathIn = sunrise_lib.DIR_TMP + "/soloptout-{}.txt"
 
         self.hashrates  = np.loadtxt(basePathIn.format('hashrates'))
         self.loads      = np.loadtxt(basePathIn.format('battery'))
@@ -242,15 +269,17 @@ def main(args):
         hashrate_bonus = get_hashrate_bonus(args.out_dir)
         plot_hashrates()
     else:
+        global MAX_RAW_SUN_INPUT_INFO
         start_date = dateutil.parser.parse(args.start_date)
         elev = generator.get_power(start_date, args.days_horizon, unpickle=False)
         #print(pos)
         show_plots = not args.no_plot
         #print('hori', args.days_horizon)
         simul_weather = args.offline_force
-        elev = generator.proc_data(elev, simul_weather, args.days_horizon)
+        elev, max_raw = generator.proc_data(elev, simul_weather, args.days_horizon)
         #elev = generator.extr_data(proc)
         #print(elev)
+        MAX_RAW_SUN_INPUT_INFO = max_raw
         run_main(args, elev, show_plots, args.battery_charge_ah, args.days_horizon)
 
 if __name__ == "__main__":

@@ -17,6 +17,20 @@ When connecting and disconnecting terminals the following rules apply, that mini
 Or as a rule of thumb easy to remember: the + (red) can always be connected alone.
 The same rule applies to all the other bipolar connectors as well.
 
+### Advanced and generic terminal handling
+Below is a coloured diagram that represents a generic procedure of connection of 2 elements - 
+a charged battery and a dead battery, the latter of which may serve as an alias for an energy consumer. 
+If it's only possible, "the consumer" should be switched off during the act connection. 
+
+![cable-advanced](screenshots/cable-advanced.jpg)
+
+As before, the disconnection should proceed in exacly the opposite order of the connection. 
+
+Notice the irrelevant (to our case), instruction to connect the negative terminal to an engine's block for grounding. 
+We'd rather connect it to the negative pole of an inverter.
+Just for completeness sake, [here's a better explanation (YT)](https://www.youtube.com/watch?v=THvk09liu00) of the nuance.
+
+
 ## Voltage of the system
 The general rule is, that from the safety perspective's alone, the lower the voltage, the safer the system is.
 While a 24V system delivers slightly more economic alternative (in an optimistic case) to the safer 12V system, it might not be worth it, especially if you have nasty kids running around.
@@ -49,9 +63,58 @@ Obviously protective gloves also wouldn't hurt.
 Bear in mind, that they react with a delay, so if you set the voltage high but still, say, 1V below the maximal sane batteries' voltage (14V vs 15V), exceeding of which would temporarly shut down your inverter, the delay in reaction of the MPPT controller may still lead to overvoltage, as defined by the inverter. 
 This is very apparent during days with low clouds, resulting in switching your panels on and off multiple times. 
 The reason for this confusion is, that as soon as the battery is >80% charged, the voltage starts raising much faster with the same energy input, therefore the previous assumptions of slower growth and adjusted reaction time don't hold anymore.
-Below you can see the typical charge profiles of lead-acid batteries, where above the ~80% charge, you may see the sudden non-linearity of voltage, that confuses the MPPT controllers.
+Below you can see the typical charge profiles of lead-acid batteries, where above the ~80% charge, you may experience the sudden non-linearity of voltage, that confuses the MPPT controllers.
 
 ![bat-charge](../data/voltage-2-soc-charge.png)
+
+## Cable sizes vs current
+
+TODO: description
+
+![cable-sizes](screenshots/cable-load-length.jpg)
+
+## Cables parallel
+
+TODO: description
+
+![cable-paralell](screenshots/cable-paralell.jpg)
+
+## Cables configurations
+
+TODO: description & maybe move somewhere else as it's not safety related?
+
+![cable-configurations](screenshots/cable-configurations.jpg)
+
+
+## Chain of safety and responsibility
+After mounting a somewhat powerful set of energy related devices, you automatically take some responsibility for keeping if fault free, else you risk fire and explosion. 
+The solar panels will keep producing the electricity regardless of whether you can use it or not. 
+The excess energy is being buffered in the batteries. 
+In the event of overcharging the batteries, the MPPT controller dissipates the excess energy in form of heat via its quite large radiator. 
+Imagine the extreme situation, which happened to me: 
+
+- you leave the apartment for a week
+- the Sun shines for the entire time, thus producing both energy via your panels and increases the air temperature by a lot
+- your batteries get charged to 100% in just one day of your absense, but
+- you forgot to schedule the automated mining.
+
+The consequences are the following:
+
+- the batteries have no chance to dissipate the excess energy and the MPPT controller has to dissipate it 12 h/day while it's already very hot
+- after just 3 days of working overtime and in extreme conditions the MPPT controller's internal electronics starts to melt down
+- the MPPT controller malfuntioned electronics can't read the battery voltage anymore and assumes it's 0
+- the MPPT controller stops dissipating heat and pushes all it has to the batteries
+- the batteries start to boil, leading to sulfation, in case of Lead-Acid batteries, and risk an explosion, especially if somebody around is having a smoke, or worse, in case of Lithium batteries, *almost guarantee* an explosion.
+
+As you might conclude, there's a chain of responsibility there: Panels -> MPPT -> Batteries -> Mining rigs. 
+If any of them fails, the prior one tries to take over, until it can't. 
+That's why scheduled mining is not only a way of making some money, but also a flexible safety procedure. 
+Even if a given desktop computer doesn't mine at all, if it can only be switched on just to consume 50 W in its idle mode, these are 50 W, that the MPPT controller doesn't have to dissipate, thus reducing a risk of a failure in the long run. 
+Or in other words: the energy dissipation is being offset, quite like a hot potato, to a different entity that is able to handle it. 
+ 
+My Lead-Acid batteries broke down in the process, but in the end, I was able to repair them with a relatively cheap (~50$ as of year 2022) rectifier. 
+Another conclusion here is, that there are usually solid reasons why such installations catch fire, rather than them being purely random events. 
+
 
 Fingers crossed!
 

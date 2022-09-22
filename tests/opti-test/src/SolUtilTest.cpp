@@ -1,13 +1,50 @@
 #include "SolUtil.h"
+#include <Util/Str.hpp>
 #include <Util/CoutBuf.hpp>
+#include <Visual/Ascii.hpp>
 
 #include <UnitTest++/UnitTest++.h>
 
 using namespace EnjoLib;
 
+static const SolUtil sut;
+
 TEST(SolUtil_placeholder)
 {
 
+}
+
+TEST(SolUtil_genSolar)
+{
+    ELO
+    const int days = 3;
+    const double amplitude = 10;
+    const VecD sol = sut.GenSolar(days, amplitude);
+    CHECK_EQUAL(days * 24, sol.size());
+    CHECK(sol.Min() >= 0);
+    CHECK_CLOSE(amplitude, sol.Max(), 0.1);
+
+    LOG << "Generated " << days << " days. Max = " << sol.Max() << "\n";
+    LOG << AsciiPlot::Build()
+    (AsciiPlot::Pars::LINE_DOUBLE, true)
+    (AsciiPlot::Pars::MAXIMUM, sol.Max())
+    .Finalize().Plot(sol) << Nl;
+}
+
+TEST(SolUtil_round)
+{
+    ELO
+    const double exp = 10;
+    const double got = sut.round(10.1);
+    CHECK_EQUAL(exp, got);
+}
+
+TEST(SolUtil_round_2)
+{
+    ELO
+    const double exp = 10.01;
+    const double got = sut.round(10.009, 2);
+    CHECK_CLOSE(exp, got, 0.1);
 }
 
 /*

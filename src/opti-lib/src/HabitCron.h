@@ -8,7 +8,7 @@ class Habit;
 class HabitCron
 {
 public:
-	HabitCron();
+	HabitCron(bool verbose = false);
 	virtual ~HabitCron();
 	
 	EnjoLib::VecT<int> GetNextHoursOn(const Habit & hab, int horizonDays = 10) const; /// TODO: Pass on horizon days
@@ -16,6 +16,7 @@ public:
 protected:
 
 private:
+    bool m_verbose = false;
 
 };
 

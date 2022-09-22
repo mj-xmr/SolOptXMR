@@ -6,7 +6,7 @@ file( GLOB SRCS src/*.cpp */*.h */*.hpp)
 add_executable(${PROJECT_NAME} ${SRCS})
 add_test(${PROJECT_NAME} ${PROJECT_NAME})
 enjoSetupTarget(${PROJECT_NAME})
-target_link_libraries(${PROJECT_NAME} opti-lib test-common)
+target_link_libraries(${PROJECT_NAME} opti-common-test)
 tsqSetupDirStatic(${PROJECT_NAME})
 enjo_target_unity(${PROJECT_NAME})
 

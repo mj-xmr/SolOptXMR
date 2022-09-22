@@ -7,8 +7,10 @@ Inside the `~/.config/solar/arrays.json` it's important to understand, that an a
 `surface_azimuth` uses 0 as north, 90 as east, 180 as south and 270 as west.
 
 ## Wind turbines wind.json
-TODO.
-Enter min/max wattage and wind tolerance.
+Wind turbines operate between a minimum and maximum wind speed. 
+Below the minimum they will not generate anything while above the maximum a good quality wind turbine should use its magnetic breaks, in order not to work above the speed. 
+You need to enter the wind speed range in meters per second (as it's presented by the manufacturers), while the resulting minimal and maximal production in wattage. 
+The system will calculate the produced power value from proportion between the two ranges.
 
 ## Geo geo.json
 Is expected to be modified by you, according to the physical location of the solar farm, the northern hemisphere and eastern side of globe are represented with positive numbers of Lat / Lon in degrees. 
@@ -28,7 +30,7 @@ Below are the parameters and example values:
 | ------------- | -- | --- |
 | `"name"` | "Ca-Ca" | An arbitrary name. In this case the abbreviation means "Calcium-Calcium" lead-acid battery. |
 | `"count"` | 2 | The number of batteries of the same type. |  
-| `"discharge_rate_c_by"` | 10 | The discharge rate of the battery at discharge. See [this paper](http://www.scubaengineer.com/documents/lead_acid_battery_charging_graphs.pdf) about lead-acid batteries. Available choices: 3, 5, 10, 20, 100 | 
+| `"discharge_rate_c_by"` | 10 | The discharge rate of the battery at discharge. See [this paper](http://www.scubaengineer.com/documents/lead_acid_battery_charging_graphs.pdf) about lead-acid batteries. For LiFePO4, you'd typically select 1. Available choices: 1, 3, 5, 10, 20, 40, 100. | 
 | `"max_discharge_amp"` | 11 | The maximum amount of Amperes, that the battery can deliver. |
 | `"max_capacity_amph"` | 60 | The maximum capacity of the battery in Ampere-hours, as provided by the manufacturer. |
 | `"max_charge_v"` | 13.2 | The maximum charging voltage, that you set in the MPPT controller. |
@@ -51,6 +53,12 @@ A single example:
 Note, that it doesn't use the required seconds part though.
 
 As with the `computers.json`, a given habit may be disabled by setting its `count` field to `0`.
+
+A special case of a habit is the `Inverter` - the piece of hardware that flips Direct Current to Alternating Current. 
+If you don't intend to make any use of the inverter and the AC that it produces during the night, it makes a lot of sense to switch it off for that time, since it can consume even 25 W in idle mode. 
+This greatly contributes to the battery drainage, yielding no benefits, if you only can switch it on by yourself on the next day. 
+In order to model this act, you may schedule the usage of the inverter, just like any other habit. 
+Next, you need to set the variable `"default_use_schedule" : false` of the Inverter to `true`.  
 
 ## System system.json
 Defines the voltage of the system (12, 24 or 48 V) used for conversions.
@@ -76,4 +84,4 @@ For OCR related entries, please have a look [here](ocr.md)
 
 ## Electricity price
 TODO: enable scheduling the electricity buy/sell prices via cron, like in the Habits json.
-
+//
