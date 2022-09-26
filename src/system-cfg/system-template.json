@@ -2,6 +2,8 @@
 	"voltage" : 12,
 	"generate" : true,
 	"buy" : false,
-	"sell" : false
+	"sell" : false,
+	"max_temp_celcius" : 70,
+	"cooled_temp_celcius" : 45
 }
 

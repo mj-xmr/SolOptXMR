@@ -38,7 +38,7 @@
     	  	"watt_idle" : 20,
     	  	"watt_asleep" : 1,
     	  	"min_run_hours" : 4,
-    	  	"max_temp_celcius" : 45
+    	  	"max_temp_celcius" : 60
     	  }
     ]
 }
