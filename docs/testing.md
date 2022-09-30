@@ -93,7 +93,7 @@ This option serves as a simple and fast weather prediction forecast, showing its
 
 ![2 comp](screenshots/testing/10-2-computers-long.png)
 
-More complex, yet more common case, where 2 computers are being used and the balance between the under- and overcharge is kept.
+A more complex, yet more common case, where 2 computers are being used and the balance between the under- and overcharge is kept.
 Please note, that the more computers are used, the more combinations are possible and that - non linearly.
 
 Below the schedule the shell commands are printed, that, assuming a proper configuration in the `computers.json`, may be directly copy-pasted to the controlling computer.
