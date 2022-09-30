@@ -38,7 +38,7 @@ This translates to battery damage in both cases and wasted energy in the case of
 The solar panels deliver so much energy, that neither the batteries can store it, nor the computer is able to fully take it away.
 Although it will try later, the computer first waits some time before it starts, not to undervolt the batteries, which damages them.
 
-### High input noon
+### High input at noon
 
 ![high-load-midday](screenshots/testing/03-high-load-midday.png)
 
