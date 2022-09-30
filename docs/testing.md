@@ -43,7 +43,7 @@ Although it will try later, the computer first waits some time before it starts,
 ![high-load-midday](screenshots/testing/03-high-load-midday.png)
 
 The same as above but the simulation starts from noon.
-This allows to track if the computers started right at the beginning to reduce the inevitable overvoltage.
+This allows to track if the computer started right at the beginning to reduce the inevitable overvoltage.
 
 ### Low input
 
