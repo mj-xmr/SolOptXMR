@@ -49,7 +49,7 @@ This allows to track if the computers started right at the beginning to reduce t
 
 ![low-load](screenshots/testing/04-low-input.png)
 
-With Wattage as low as 5W peak, it's interesting to see if the system is able to try to mine anything while keeping the batteries above the minimum.
+With the wattage as low as 5W peak, it's interesting to see if the system is able to try to mine anything while keeping the batteries above the minimum.
 
 ### 2 computers on one day
 
@@ -70,7 +70,7 @@ Instead of panicking, we try to dissipate the energy immedately and even spare s
 ![undercharged](screenshots/testing/07-undercharged-batteries.png)
 
 For the entire day the batteries were so undercharged, that the optimal solution doesn't include starting the computer for any period of time.
-In the Penalities/hashes progression plot you may see, that one of the 1st solutions tried the mining was indeed considered, but ended up rejecting thes idea due to high penalities associated with even more undervoltage.
+In the Penalities/hashes progression plot you may see, that in one of the 1st solutions the mining was indeed considered, but ended up rejecting this idea due to high penalities associated with even more undervoltage.
 
 As you may see, beneath there's a warning produced, yet the application exits cleanly.
 
@@ -86,7 +86,7 @@ The day starts with undercharged batteries, but as soon as enough energy is amas
 
 A very special case, when the `--no-computers` or its shorter version: `-cn` option is selected. 
 In such case, it's not even considered to run any computers for the mining, but taking the pre-defined habits into account only.
-This option serves as a simple and fast weather prediction forecast as well, and the weather's impact on your batteries.
+This option serves as a simple and fast weather prediction forecast, showing its impact on your batteries.
 
 ### 2 computers - 2 days
 
