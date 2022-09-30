@@ -35,8 +35,8 @@ This translates to battery damage in both cases and wasted energy in the case of
 
 ![high-load](screenshots/testing/02-high-load.png)
 
-The solar panels deliver so much energy, that neither the batteries can store it, nor the computers are able to fully take it away.
-Although they'll try later, the computers first wait some time before they start, not to undervolt the batteries, which damages them.
+The solar panels deliver so much energy, that neither the batteries can store it, nor the computer is able to fully take it away.
+Although it will try later, the computer first waits some time before it starts, not to undervolt the batteries, which damages them.
 
 ### High input noon
 
