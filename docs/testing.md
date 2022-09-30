@@ -27,7 +27,7 @@ The main components are:
 - batteries as a buffer, large enough to store the input
 - computers as the consumers
 
-The Penalities/hashes progression depicts how these values decreased / increased accordingly, across the progressing iterations of the simulation. 
+The Penalities/hashes progression at the bottom depict how these values decreased / increased accordingly, across the progressing iterations of the simulation. 
 While the hashes value is self-explanatory, the penalities constitute of under- and overvoltage counting of the batteries. 
 This translates to battery damage in both cases and wasted energy in the case of overvoltage alone.
 
