@@ -72,6 +72,8 @@ Instead of panicking, we try to dissipate the energy immedately and even spare s
 For the entire day the batteries were so undercharged, that the optimal solution doesn't include starting the computer for any period of time.
 In the Penalities/hashes progression plot you may see, that one of the 1st solutions tried the mining was indeed considered, but ended up rejecting thes idea due to high penalities associated with even more undervoltage.
 
+As you may see, beneath there's a warning produced, yet the application exits cleanly.
+
 ### Undercharged batteries but mining
 
 ![undercharged-mining](screenshots/testing/08-undercharged-but-loading.png)
@@ -91,6 +93,8 @@ This option serves as a simple and fast weather prediction forecast as well, and
 ![2 comp](screenshots/testing/10-2-computers-long.png)
 
 More complex, yet more common case, where 2 computers are being used and the balance between the under- and overcharge is kept.
-Please note, that the more computers are used, the more combinations are possible and non linearly.
+Please note, that the more computers are used, the more combinations are possible and that - non linearly.
+
+Below the schedule the shell commands are printed, that, assuming a proper configuration in the `computers.json`, may be directly copy-pasted to the controlling computer.
 
 
