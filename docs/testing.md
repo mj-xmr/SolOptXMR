@@ -70,7 +70,7 @@ Instead of panicking, we try to dissipate the energy immedately and even spare s
 
 ![undercharged](screenshots/testing/07-undercharged-batteries.png)
 
-For the entire day the batteries were so undercharged, that the optimal solution doesn't include starting the computer for any period of time.
+Throughout the entire day the batteries were so undercharged, that the optimal solution doesn't include starting the computer for any period of time.
 In the Penalities/hashes progression plot you may see, that in one of the 1st solutions the mining was indeed considered, but we ended up rejecting this idea due to high penalities associated with even more undervoltage, measured quantitatively.
 
 As you may see, beneath there's a warning produced, yet the application exits cleanly.
