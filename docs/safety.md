@@ -61,11 +61,14 @@ Obviously protective gloves also wouldn't hurt.
 
 ## MPPT reaction time
 Bear in mind, that they react with a delay, so if you set the voltage high but still, say, 1V below the maximal sane batteries' voltage (14V vs 15V), exceeding of which would temporarly shut down your inverter, the delay in reaction of the MPPT controller may still lead to overvoltage, as defined by the inverter. 
-This is very apparent during days with low clouds, resulting in switching your panels on and off multiple times. 
+This is very apparent during days with low clouds with gaps, resulting in switching your panels on and off multiple times. 
 The reason for this confusion is, that as soon as the battery is >80% charged, the voltage starts raising much faster with the same energy input, therefore the previous assumptions of slower growth and adjusted reaction time don't hold anymore.
 Below you can see the typical charge profiles of lead-acid batteries, where above the ~80% charge, you may experience the sudden non-linearity of voltage, that confuses the MPPT controllers.
 
 ![bat-charge](../data/voltage-2-soc-charge.png)
+
+In case your MPPT controller does lead to shutdowns of your inverter anyway, a good solution is a light UPS, connected as one of the users of the inverter. 
+I've had very good experience with `APC SurgeArrest®`, model `BE325`, which consumes little instantaneous power during charging, so that the inverter can easily handle it.
 
 ## Cable sizes vs current
 
