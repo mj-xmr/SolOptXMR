@@ -14,6 +14,7 @@ using namespace EnjoLib;
 ConfigSol::~ConfigSol(){}
 ConfigSol::ConfigSol()
 {
+    BATTERY_CHARGE_MAX_PERCENTAGE = 0.90;
 }
 
 EnjoLib::Str ConfigSol::GetFileNameProt() const

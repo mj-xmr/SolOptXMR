@@ -56,6 +56,13 @@ double BatterySimulation::iter_get_load(double inp, double out, double hours)
         //num_overvolted += 1 + diff * 2;
         num_overvolted += 1 + diff;
         //num_overvolted += GMat().Pow(1 + diff, 1.01);
+
+        // Warning: You may do this only AFTER the penalty was calculated.
+        // It will however impact the penalty in the NEXT iteration, which is very bad.
+        if (load > pars.MAX_CAPACITY_AMPH)
+        {
+            //load -= inp * m_mulPowerToCapacity;
+        }
     }
     if (load < pars.MIN_LOAD_AMPH)
     {
