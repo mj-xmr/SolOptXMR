@@ -43,11 +43,12 @@ While a 24V system delivers slightly more economic alternative (in an optimistic
 
 ## Fire extinguishers
 We recommend keeping at least a small fire extinguisher (FE) near the batteries, MPPT controller and the inverter (in that order). 
-Make sure that the FE is suitable for dealing with electrical devices. You can buy cheaply FE rated up to 1000V. 
+Make sure that the FE is suitable for dealing with electrical devices. You can buy FE rated up to 1000V rather cheaply. 
 Except for the inverter, which produces 230V AC, the remaining parts of the system are mere 24V DC at best, if not the recommended 12V DC.
-In case of a fire event, make sure to keep as much distance to the device being extinguished as possible, as this reduces your risks.
-Use short bursts of the extinguisher's material and observe the reaction. 
-Keep in mind, that the material stored in the fire extinguisher's tank is quite time limited and would suffice for only up to a minute of a continuous burst.
+In case of a fire event, make sure to keep as much distance to the device being extinguished as possible, as this reduces your risks. 
+Use only short bursts of the extinguisher's material and observe the reaction. 
+Keep in mind, that the material stored in an FE's tank is quite time limited and would suffice for only up to a minute of a continuous burst. 
+After the event make sure to move all the electronic hardware away from the place, where you were using the FE, as the FE's material is highly corrosive.
 
 ## MPPT cutoff voltage
 The MPPT controllers cut off any input that would exceed the maximal voltage, that you may set to prevent your batteries from overloading.
