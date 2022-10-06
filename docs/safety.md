@@ -109,11 +109,13 @@ Please take a special note of the _Fire Hazard_ warning: the need of using pairs
 It describes a special case of what has already been described in the "_Cable sizes_" section, where the "_(narrow parts of) cables_" were mentioned. 
 Here the "_narrow part_" would simply be the entire pair of the narrower parallel cables.  
 
-## Cables configurations
-
-TODO: description & maybe move somewhere else as it's not safety related?
+## Battery configurations
+For the completeness sake, below is the schematics of the battery configurations:
 
 ![cable-configurations](screenshots/cable-configurations.jpg)
+
+Note, that even though for the series configuration, the capacity, as measured in Ah, remains the same, for the reason of the voltages being larger, the available instaneous power, measured in Watts [W] becomes proportionally larger, as P = V * A (W = V * A). 
+The cable thickness / length limitations however remain. 
 
 
 ## Chain of safety and responsibility
