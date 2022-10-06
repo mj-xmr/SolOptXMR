@@ -2,7 +2,13 @@
 This section describes safety considerations, subjectively sorted by the most important to the least important. Please read the section, even if most parts sound obvious to you.
 Bear in mind, that I'm not an electrician and I can't take legal responsibility for injuries or financial damages, that I might cause by giving you wrong advice. 
 
-## Short circuiting (SC)
+## Glossary
+- V - Volt (as an SI unit) or Voltage
+- DC - Direct Current: produced by the renewables. Usually describes systems sharing the common voltage of 12V, 24V or 36V. This is also the type of current stored within the batteries (lead-acid, LiFePo4, etc.).
+- AC - Alternating Current: The sinusoidal "household" current produced by the Inverter, accepting the DC as its input. The AC comes in 230V in the EU or 110V in Canada (TODO: Anywhere else?). The sinusoidal nature of this current allows it to generate sqrt3 (???) more power than the DC of the same voltage would.
+- SC - Short Circuiting (see below)
+
+## Short Circuiting (SC)
 SC means connecting (+) and (-) to each other while there's energy stored or being produced, that would cause the electricity to flow between them. 
 If this doesn't cause death or injury, it could at least damage your hardware. 
 A SC can be caused not only by connecting the nodes directly, but also indirectly, when you for example touch the (+) and the (-) with your hands simultaneously. 
@@ -40,6 +46,8 @@ We recommend keeping at least a small fire extinguisher (FE) near the batteries,
 Make sure that the FE is suitable for dealing with electrical devices. You can buy cheaply FE rated up to 1000V. 
 Except for the inverter, which produces 230V AC, the remaining parts of the system are mere 24V DC at best, if not the recommended 12V DC.
 In case of a fire event, make sure to keep as much distance to the device being extinguished as possible, as this reduces your risks.
+Use short bursts of the extinguisher's material and observe the reaction. 
+Keep in mind, that the material stored in the fire extinguisher's tank is quite time limited and would suffice for only up to a minute of a continuous burst.
 
 ## MPPT cutoff voltage
 The MPPT controllers cut off any input that would exceed the maximal voltage, that you may set to prevent your batteries from overloading.
@@ -71,9 +79,7 @@ In case your MPPT controller does lead to shutdowns of your inverter anyway, a g
 I've had very good experience with `APC SurgeArrest®`, model `BE325`, which consumes little instantaneous power during charging, so that the inverter can easily handle it.
 
 ## Cable sizes vs current
-
-TODO: description
-
+It should be noted, that the low voltages assocciated with the DC
 ![cable-sizes](screenshots/cable-load-length.jpg)
 
 ## Cables parallel
@@ -112,11 +118,11 @@ The consequences are the following:
 As you might conclude, there's a chain of responsibility there: Panels -> MPPT -> Batteries -> Mining rigs. 
 If any of them fails, the prior one tries to take over, until it can't. 
 That's why scheduled mining is not only a way of making some money, but also a flexible safety procedure. 
-Even if a given desktop computer doesn't mine at all, if it can only be switched on just to consume 50 W in its idle mode, these are 50 W, that the MPPT controller doesn't have to dissipate, thus reducing a risk of a failure in the long run. 
-Or in other words: the energy dissipation is being offset, quite like a hot potato, to a different entity that is able to handle it. 
+Even if a given desktop computer doesn't mine at all, if it can only be switched on just to consume 50 W in its idle mode, these are 50 W, that the MPPT controller doesn't have to dissipate, thus reducing a risk of its failure in the long run. 
+Or in other words: the energy dissipation is being offset, quite like a hot potato, to a different entity that is able to handle it at a given span of time. 
  
-My Lead-Acid batteries broke down in the process, but in the end, I was able to repair them with a relatively cheap (~50$ as of year 2022) rectifier. 
-Another conclusion here is, that there are usually solid reasons why such installations catch fire, rather than them being purely random events. 
+My Lead-Acid batteries broke down in the process, but in the end, I was able to repair them with a relatively cheap (~50$ as of year 2022), but reliable rectifier from China. 
+Another conclusion to draw here is, that there are usually solid reasons why such installations catch fire, rather than them being purely random events. 
 
 
 Fingers crossed!
