@@ -7,4 +7,4 @@ All copyright belong to the authors of the sites and/or authors of the content i
 # Catalogue of documents
 - [LiFePo4 Footprinthero.com](lifepo4/footprinthero.com/)  
 - [Lead-Acid charging/discharging graphs '93](lead-acid/lead_acid_battery_charging_graphs.pdf)
-
+- TODO: proof for charging up to 80% from BatteryAcademy
