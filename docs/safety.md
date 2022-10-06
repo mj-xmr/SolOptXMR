@@ -1,5 +1,5 @@
-# Safety
-This section desribes safety considerations, subjectively sorted by the most important to the least important. Please read the section, even if most parts sound obvious to you.
+﻿# Safety
+This section describes safety considerations, subjectively sorted by the most important to the least important. Please read the section, even if most parts sound obvious to you.
 Bear in mind, that I'm not an electrician and I can't take legal responsibility for injuries or financial damages, that I might cause by giving you wrong advice. 
 
 ## Short circuiting (SC)
@@ -7,7 +7,7 @@ SC means connecting (+) and (-) to each other while there's energy stored or bei
 If this doesn't cause death or injury, it could at least damage your hardware. 
 A SC can be caused not only by connecting the nodes directly, but also indirectly, when you for example touch the (+) and the (-) with your hands simultaneously. 
 In such case, the charge passes right through you and definitely causing harm.
-Unfortunatly a similar situation might occur, if you touch the (+) and are standing on the floor, without shoes, that would otherwise serve as isolation. If the floor is wet, it worsens the situation. 
+Unfortunately a similar situation might occur, if you touch the (+) and are standing on the floor, without shoes, that would otherwise serve as isolation. If the floor is wet, it worsens the situation. 
 
 ## Terminals: connecting and disconnecting
 When connecting and disconnecting terminals the following rules apply, that minimize (though not eliminate) the risk of an electro shock: 
@@ -18,13 +18,13 @@ Or as a rule of thumb easy to remember: the + (red) can always be connected alon
 The same rule applies to all the other bipolar connectors as well.
 
 ### Advanced and generic terminal handling
-Below is a coloured diagram that represents a generic procedure of connection of 2 elements - 
+Below is a colored diagram that represents a generic procedure of connection of 2 elements - 
 a charged battery and a dead battery, the latter of which may serve as an alias for an energy consumer. 
 If it's only possible, "the consumer" should be switched off during the act connection. 
 
 ![cable-advanced](screenshots/cable-advanced.jpg)
 
-As before, the disconnection should proceed in exacly the opposite order of the connection. 
+As before, the disconnection should proceed in exactly the opposite order of the connection. 
 
 Notice the irrelevant (to our case), instruction to connect the negative terminal to an engine's block for grounding. 
 We'd rather connect it to the negative pole of an inverter.
@@ -51,7 +51,7 @@ I personally set my maximal voltage to 13.4V for a 12V system.
 In the case of calcium batteries, their conservation involves refilling their cell(s) with a tiny dose of distilled water.
 The reason for this requirement is that as the batteries' internal temperature rises, the electrolyte evaporates.
 In order to refill the electrolyte, one of the screws on top of the battery has to be unscrewed. 
-**Before staring to unscrew the screwes put on protective googles**.
+**Before staring to unscrew the screws put on protective googles**.
 The reason for this is, that depending on how much cumulative overheats the batteries had to experience, so will be the built up pressure inside. 
 This pressure will find its way out as soon as you start unscrewing the battery.
 At the same time the air will typically contain traces of the electrolyte, that can be dangerous to your health.
@@ -60,7 +60,7 @@ Obviously protective gloves also wouldn't hurt.
 
 
 ## MPPT reaction time
-Bear in mind, that they react with a delay, so if you set the voltage high but still, say, 1V below the maximal sane batteries' voltage (14V vs 15V), exceeding of which would temporarly shut down your inverter, the delay in reaction of the MPPT controller may still lead to overvoltage, as defined by the inverter. 
+Bear in mind, that they react with a delay, so if you set the voltage high but still, say, 1V below the maximal sane batteries' voltage (14V vs 15V), exceeding of which would temporarily shut down your inverter, the delay in reaction of the MPPT controller may still lead to overvoltage, as defined by the inverter. 
 This is very apparent during days with low clouds with gaps, resulting in switching your panels on and off multiple times. 
 The reason for this confusion is, that as soon as the battery is >80% charged, the voltage starts raising much faster with the same energy input, therefore the previous assumptions of slower growth and adjusted reaction time don't hold anymore.
 Below you can see the typical charge profiles of lead-acid batteries, where above the ~80% charge, you may experience the sudden non-linearity of voltage, that confuses the MPPT controllers.
@@ -98,14 +98,14 @@ Imagine the extreme situation, which happened to me:
 
 - you leave the apartment for a week
 - the Sun shines for the entire time, thus producing both energy via your panels and increases the air temperature by a lot
-- your batteries get charged to 100% in just one day of your absense, but
+- your batteries get charged to 100% in just one day of your absence, but
 - you forgot to schedule the automated mining.
 
 The consequences are the following:
 
 - the batteries have no chance to dissipate the excess energy and the MPPT controller has to dissipate it 12 h/day while it's already very hot
 - after just 3 days of working overtime and in extreme conditions the MPPT controller's internal electronics starts to melt down
-- the MPPT controller malfuntioned electronics can't read the battery voltage anymore and assumes it's 0
+- the MPPT controller malfunctioned electronics can't read the battery voltage anymore and assumes it's 0
 - the MPPT controller stops dissipating heat and pushes all it has to the batteries
 - the batteries start to boil, leading to sulfation, in case of Lead-Acid batteries, and risk an explosion, especially if somebody around is having a smoke, or worse, in case of Lithium batteries, *almost guarantee* an explosion.
 
