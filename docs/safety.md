@@ -80,14 +80,34 @@ In case your MPPT controller does lead to shutdowns of your inverter anyway, a g
 I've had very good experience with `APC SurgeArrest®`, model `BE325`, which consumes little instantaneous power during charging, so that the inverter can easily handle it.
 
 ## Cable sizes vs current
-It should be noted, that the low voltages assocciated with the DC
+It should be noted, that the low voltages typically associated with the DC, suffer from being unable to be "pushed" through narrow cables for even moderate distances. 
+As an analogy, try think of a decent volume of water trying to be pushed trough a pipe. 
+The pipe would have to be wide enough to be able to accept that larger volume of water. 
+The producer of the inverter that I bought, provides the following sheet, that quantifies the above relationship: 
+
 ![cable-sizes](screenshots/cable-load-length.jpg)
+
+As you may conclude, we aren't really talking about long distances, that can be serviced at such low voltages of the DC current.
+A consequence of violating these limitations are:
+
+- an instability between the input MPPT controller and the batteries, leading to a slowdown of its reactions, hence instability
+- a loss of voltage available to the inverter w.r.t. what the current charge of the batteries might be, ultimately leading to a lower available Wattage, that the inverter can deliver to the end consumers
+- an overheat of the abused (narrow parts of) cables and possibly a fire event 
+ 
+This might be one reason for you to consider a 24V system, as it increases the cables' tolerance (see the table again). 
+Another reason would be suffering fewer losses during the conversion from 24V DC up to 230V AC, compared to the conversion from 12V DC up to 230V AC. 
 
 ## Cables parallel
 
-TODO: description
+You've probably noticed the 3rd column of the table presented in the "_Cable sizes_" section, titled "_Number of sets_". 
+It depicts the relaxed cable parameters under the condition of an optional, additional, parallel connection of the cables between the batteries and the inverter's two pairs of terminators. 
+Conceptually, the connection would look like on the following picture:
 
 ![cable-paralell](screenshots/cable-paralell.jpg)
+
+Please take a special note of the _Fire Hazard_ warning: the need of using pairs of cables of only __the same__ thickness. 
+It describes a special case of what has already been described in the "_Cable sizes_" section, where the "_(narrow parts of) cables_" were mentioned. 
+Here the "_narrow part_" would simply be the entire pair of the narrower parallel cables.  
 
 ## Cables configurations
 
