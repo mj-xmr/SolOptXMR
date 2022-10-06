@@ -14,6 +14,10 @@ og@ghetto:~/devel/github/SolOptXMR/build/default-static-release$
 ctest -V -R opti-system-min-test
 ```
 
+In order to run all the tests, you'd just execute: `ctest` from the build directory. 
+However, currently all the tests are a part of the build step.
+
+
 ## Corner cases
 
 In this section the corner cases are presented, that have been isolated so far, together with their short description. 
