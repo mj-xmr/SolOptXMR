@@ -74,15 +74,26 @@ or:
 ``` 
 
 ## Offline mode force
-Doesn't use 
--of
---offline-force
+Doesn't use any network connections and tries to use assumptions instead. 
+This option is useful to simulate connection failures. 
+
+
+```bash
+./soloptxmr --offline-force
+``` 
+
+or: 
+
+```bash
+./soloptxmr -of 
+``` 
 
 ## Offline mode try
-
 TODO: Not fully implemented
+
  
-Treats individual subsystems' connection problems as warnings and tries to move on with the according static calculations.
+Treats individual subsystems' connection problems as warnings and tries to move on with the according static calculations for the individual ones.
+
 
 To trigger this behaviour, execute:
 
@@ -96,7 +107,7 @@ or:
 ./soloptxmr -ot 
 ``` 
 
-## Network difficulty only
+## Plot network difficulty only
 Displays the current network difficulty only, without running any parts of the simulation. 
 This might help you in planning quickly the opportunistic scooping of coins during reduced network difficulty periods.
 

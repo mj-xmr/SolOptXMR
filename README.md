@@ -79,6 +79,8 @@ or equivalently:
 -s "2022-02-20 20:22"
 ```
 
+More examples can be found under [use cases documentation](docs/use-cases.md).
+
 ### Simpler battery charge input via voltage and OCR
 Setting the battery's voltage directly, also via OCR, rather than the Ah or % charge is a feature currently being worked on. What's missing are measurements of batteries of various types, like in [Example 1](http://www.scubaengineer.com/documents/lead_acid_battery_charging_graphs.pdf)
 
@@ -121,22 +123,9 @@ crontab # The command that lets you edit the schedule
 5 6 * * *  cd /home/yoname/SolOptXMR && ./soloptxmr.py --battery-charge-ocr --np && /bin/sh /home/yoname/temp/solar/sol-cmds.sh
 ```
 
-More information in the [automation docs](docs/automation.md).
+More information can be found in the [automation docs](docs/automation.md).
 
 Speaking of trust towards the system, the section [testing](docs/testing.md) presents the currently handled corner cases.
-
-## Plotting the hashrate situation only
-Because the optimization takes some time and you might be only interested in the hashrate situation alone, the main script has an option to ommit the optimization part.
-
-```bash
-./soloptxmr.py --net-diff
-```
-or equivalently:
-```bash
-./soloptxmr.py -n
-```
-... shows the network difficulty situation only. 
-This ususeful, because when you know, that your battery is charged, you don't plan on using the accumulated electricity domestically and there's a dip in the hashrate at the same time, it's simply obvious that you should start mining without being told to do so by the optimizer.
 
 ## Configuration
 After running the `./util/config.sh` script, you'll be presented with paths to configuration scripts, that have just been copied to your `~/.config` directory. 
@@ -168,11 +157,12 @@ If you're unhappy with the result, you may use `./util/jobs-remove-all.sh` to cl
 
 # Further documentation
 - [safety](docs/safety.md): how to handle electrical systems safely. Tell me, that you "read and understood it", and I can sleep fine.
-- [economy](docs/economy.md): my economy views and the resulting dynamics tailored to production of electricity & mining crypto.
 - [config](docs/config.md): how to configure your instance of the project
+- [use cases](docs/use-cases.md): lists various ways of interacting with the software
 - [ocr](docs/ocr.md): deeper instructions on how to use and extend the OCR capabilities
 - [automation](docs/automation.md): how to automate the system
 - [testing](docs/testing.md): all about testing and a visual demo of special corner cases
+- [economy](docs/economy.md): my economy views and the resulting dynamics tailored to production of electricity & mining crypto.
 - [archive](docs/web-archive): crucial documents gathered from various sites, that deliver expert knowledge
 
 # Screenshots
