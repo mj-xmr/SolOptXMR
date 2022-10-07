@@ -1,4 +1,4 @@
-# Use cases
+﻿# Use cases
 
 ## Intro
 In this document, we'll describe some interesting use cases, that might come in handy, even for the situations now yet discovered by the authors. 
@@ -19,13 +19,13 @@ These are:
 - the changes of the batteries' charge, 
 - and even all the "static" consumers, as declared in the `habits.json` ( [see here](habits.md) ), as their calculations cost just a little CPU time. 
 
-To trigger this behaviour, execute:
+To trigger this behavior, execute:
 
 ```bash
 ./soloptxmr --no-computers
 ``` 
 
-or: 
+or: -cn
 
 ```bash
 ./soloptxmr -cn
@@ -42,17 +42,11 @@ The reasons for doing this might be:
 - you'd simply like to experiment a bit, without the need of altering your config file, that you assume to be rather fixed.
 
 
-To trigger this behaviour, execute:
+To trigger this behavior, execute:
 
 ```bash
-./soloptxmr --ignore-computers host1,host2,host3
-``` 
-
-or: 
-
-```bash
-./soloptxmr -ci host1,host2,host3 
-``` 
+./soloptxmr --ignore-computers host1,host2,host3 # or: -ci host1,host2,host3
+```  
 
 ## Computer inclusion
 
@@ -61,52 +55,63 @@ The reasons for this may be very similar to the _exclusion_ case, but might also
 
 - you know that your batteries have an unusually low charge, because they were abused yesterday, against the yesterday's plan. In such case you already know that it's enough to start just one of the machines to balance out the battery charge. For instance this would be the computer that you plan to work on, while it mines in the background. 
 
-To trigger this behaviour, execute:
+To trigger this behavior, execute:
 
 ```bash
-./soloptxmr --only-computers host1,host2
-``` 
+./soloptxmr --only-computers host1,host2 # or: -co host1,host2
 
-or: 
-
-```bash
-./soloptxmr -co host1,host2 
 ``` 
 
 ## Offline mode force
-Doesn't use 
--of
---offline-force
+Doesn't use any network connections and tries to use assumptions instead. 
+This option is useful to simulate connection failures. 
+
+
+```bash
+./soloptxmr --offline-force # or: -of
+``` 
 
 ## Offline mode try
-
 TODO: Not fully implemented
+
  
-Treats individual subsystems' connection problems as warnings and tries to move on with the according static calculations.
+Treats individual subsystems' connection problems as warnings and tries to move on with the according static calculations for the individual ones.
 
-To trigger this behaviour, execute:
 
-```bash
-./soloptxmr --offline-try
-``` 
-
-or: 
+To trigger this behavior, execute:
 
 ```bash
-./soloptxmr -ot 
+./soloptxmr --offline-try # or: -ot
 ``` 
 
-## Network difficulty only
+## Plot network difficulty only
 Displays the current network difficulty only, without running any parts of the simulation. 
 This might help you in planning quickly the opportunistic scooping of coins during reduced network difficulty periods.
 
 ```bash
-./soloptxmr --net-diff
+./soloptxmr --net-diff # or: -n
 ``` 
 
-or: 
+## No Python plotting
+Disables Python plotting to spare some time, even if Python is available.
 
 ```bash
-./soloptxmr -n 
+./soloptxmr --no-plot # or: -np
 ``` 
+
+## No Gnuplot plotting
+Disables Gnuplot console plotting, as it consumes quite some vertical space. 
+The default setting in this application can be controlled via `config-volatile.json`.
+
+```bash
+./soloptxmr --no-gnuplot # or: -ng
+``` 
+
+## No Gnuplot plotting
+Disables the schedule console display, as it consumes quite some vertical space. 
+The default setting in this application can be controlled via `config-volatile.json`.
+
+```bash
+./soloptxmr --no-schedule # or: -ns
+```
 

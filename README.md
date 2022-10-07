@@ -1,4 +1,4 @@
-# SolOptXMR
+﻿# SolOptXMR
 Solar Optimal mining of XMR.
 
 ![soloptxmr-logo](https://user-images.githubusercontent.com/63722585/163665392-cae163e6-a405-4692-8b05-b98480bc0911.svg)
@@ -79,16 +79,26 @@ or equivalently:
 -s "2022-02-20 20:22"
 ```
 
-### Simpler battery charge input via voltage and OCR
-Setting the battery's voltage directly, also via OCR, rather than the Ah or % charge is a feature currently being worked on. What's missing are measurements of batteries of various types, like in [Example 1](http://www.scubaengineer.com/documents/lead_acid_battery_charging_graphs.pdf)
+More examples can be found under [use cases documentation](docs/use-cases.md).
+
+### Simple battery charge input via voltage and OCR
+Setting the battery's voltage directly, also via OCR, rather than the Ah or % charge is a feature currently being worked on. What's missing are measurements of batteries of various types, like in [Example 1](http://www.scubaengineer.com/documents/lead_acid_battery_charging_graphs.pdf).
 
 ```bash
 ./soloptxmr.py --battery-charge-v 12.3 # Set the voltage of your battery to be converted to its current charge
 ```
-or:
+
+or for OCR:
+
 ```bash
 ./soloptxmr.py --battery-charge-ocr    # Use image recognition to read the current battery voltage
 ```
+
+It is recommended to perform the voltage measurements only when the batteries aren't being charged (like: before the sunrise), as this delivers a more objective value. 
+It this is not the case, you may enter the current charging voltage, which will be higher than the discharging voltage, but you need to let the system know of the fact with the `--charge-status charging` option, or its shorter form: `-c c`. 
+Bear in mind, that the charging voltage will react on the actual alterations of the voltage of the input itself - clouds & Sun's position. 
+For this reason, it's hardly an objective measurement.
+
 
 ### OCR
 It's possible to automate the process of reading the battery voltage, or % of charge directly, after capturing a picture of an LCD display and passing the picture to an OCR module. [See here](docs/ocr.md) for a more detailed description.
@@ -112,7 +122,7 @@ In the above case, to schedule the displayed commands in one go, you'd simply ex
 sh /home/yoname/temp/solar/sol-cmds.sh
 ```
 
-It's adviced to perform the simulation and the subsequent scheduling each morning and before the sunrise, as only then the voltage measurement is unaffected by the charging, and the battery's state of charge is closest to the reality of the new day, rather than simply being assumed by the simulation ran at the previous day.   
+It's advised to perform the simulation and the subsequent scheduling each morning and before the sunrise, as only then the voltage measurement is unaffected by the charging, and the battery's state of charge is closest to the reality of the new day, rather than simply being assumed by the simulation ran at the previous day.   
 
 If you are confident enough to let the system execute (schedule) the commands without your supervision, then this is what you'd enter to your `crontab` to plan the day at 6:05 a.m., assuming that your `SolOptXMR` installation resides in your `home` directory and that you use OCR to automatically read the battery voltage or its State of Charge in %:
 
@@ -121,22 +131,9 @@ crontab # The command that lets you edit the schedule
 5 6 * * *  cd /home/yoname/SolOptXMR && ./soloptxmr.py --battery-charge-ocr --np && /bin/sh /home/yoname/temp/solar/sol-cmds.sh
 ```
 
-More information in the [automation docs](docs/automation.md).
+More information can be found in the [automation docs](docs/automation.md).
 
 Speaking of trust towards the system, the section [testing](docs/testing.md) presents the currently handled corner cases.
-
-## Plotting the hashrate situation only
-Because the optimization takes some time and you might be only interested in the hashrate situation alone, the main script has an option to ommit the optimization part.
-
-```bash
-./soloptxmr.py --net-diff
-```
-or equivalently:
-```bash
-./soloptxmr.py -n
-```
-... shows the network difficulty situation only. 
-This ususeful, because when you know, that your battery is charged, you don't plan on using the accumulated electricity domestically and there's a dip in the hashrate at the same time, it's simply obvious that you should start mining without being told to do so by the optimizer.
 
 ## Configuration
 After running the `./util/config.sh` script, you'll be presented with paths to configuration scripts, that have just been copied to your `~/.config` directory. 
@@ -168,11 +165,12 @@ If you're unhappy with the result, you may use `./util/jobs-remove-all.sh` to cl
 
 # Further documentation
 - [safety](docs/safety.md): how to handle electrical systems safely. Tell me, that you "read and understood it", and I can sleep fine.
-- [economy](docs/economy.md): my economy views and the resulting dynamics tailored to production of electricity & mining crypto.
 - [config](docs/config.md): how to configure your instance of the project
+- [use cases](docs/use-cases.md): lists various ways of interacting with the software
 - [ocr](docs/ocr.md): deeper instructions on how to use and extend the OCR capabilities
 - [automation](docs/automation.md): how to automate the system
 - [testing](docs/testing.md): all about testing and a visual demo of special corner cases
+- [economy](docs/economy.md): my economy views and the resulting dynamics tailored to production of electricity & mining crypto.
 - [archive](docs/web-archive): crucial documents gathered from various sites, that deliver expert knowledge
 
 # Screenshots
@@ -189,7 +187,7 @@ Below is the standard Python plot:
 ![plots-python](docs/screenshots/various-plots-python.png)
 
 The same plot can represented in alternative ways for systems or remote connections, where Python plotting isn't available. 
-First the gnuplot-iostreams console output is presented, that mimics the energy input cycles, as well as the bettery charge from the above Python plot accordingly:
+First the gnuplot-iostreams console output is presented, that mimics the energy input cycles, as well as the battery charge from the above Python plot accordingly:
 
 ![plots-python](docs/screenshots/various-plots-gnuplot-iostreams.png)
 
