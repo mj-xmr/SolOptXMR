@@ -1,4 +1,4 @@
-# SolOptXMR
+﻿# SolOptXMR
 Solar Optimal mining of XMR.
 
 ![soloptxmr-logo](https://user-images.githubusercontent.com/63722585/163665392-cae163e6-a405-4692-8b05-b98480bc0911.svg)
@@ -114,7 +114,7 @@ In the above case, to schedule the displayed commands in one go, you'd simply ex
 sh /home/yoname/temp/solar/sol-cmds.sh
 ```
 
-It's adviced to perform the simulation and the subsequent scheduling each morning and before the sunrise, as only then the voltage measurement is unaffected by the charging, and the battery's state of charge is closest to the reality of the new day, rather than simply being assumed by the simulation ran at the previous day.   
+It's advised to perform the simulation and the subsequent scheduling each morning and before the sunrise, as only then the voltage measurement is unaffected by the charging, and the battery's state of charge is closest to the reality of the new day, rather than simply being assumed by the simulation ran at the previous day.   
 
 If you are confident enough to let the system execute (schedule) the commands without your supervision, then this is what you'd enter to your `crontab` to plan the day at 6:05 a.m., assuming that your `SolOptXMR` installation resides in your `home` directory and that you use OCR to automatically read the battery voltage or its State of Charge in %:
 
@@ -179,7 +179,7 @@ Below is the standard Python plot:
 ![plots-python](docs/screenshots/various-plots-python.png)
 
 The same plot can represented in alternative ways for systems or remote connections, where Python plotting isn't available. 
-First the gnuplot-iostreams console output is presented, that mimics the energy input cycles, as well as the bettery charge from the above Python plot accordingly:
+First the gnuplot-iostreams console output is presented, that mimics the energy input cycles, as well as the battery charge from the above Python plot accordingly:
 
 ![plots-python](docs/screenshots/various-plots-gnuplot-iostreams.png)
 
