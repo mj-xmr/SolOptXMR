@@ -25,7 +25,7 @@ To trigger this behavior, execute:
 ./soloptxmr --no-computers
 ``` 
 
-or: 
+or: -cn
 
 ```bash
 ./soloptxmr -cn
@@ -45,14 +45,8 @@ The reasons for doing this might be:
 To trigger this behavior, execute:
 
 ```bash
-./soloptxmr --ignore-computers host1,host2,host3
-``` 
-
-or: 
-
-```bash
-./soloptxmr -ci host1,host2,host3 
-``` 
+./soloptxmr --ignore-computers host1,host2,host3 # or: -ci host1,host2,host3
+```  
 
 ## Computer inclusion
 
@@ -64,13 +58,8 @@ The reasons for this may be very similar to the _exclusion_ case, but might also
 To trigger this behavior, execute:
 
 ```bash
-./soloptxmr --only-computers host1,host2
-``` 
+./soloptxmr --only-computers host1,host2 # or: -co host1,host2
 
-or: 
-
-```bash
-./soloptxmr -co host1,host2 
 ``` 
 
 ## Offline mode force
@@ -79,13 +68,7 @@ This option is useful to simulate connection failures.
 
 
 ```bash
-./soloptxmr --offline-force
-``` 
-
-or: 
-
-```bash
-./soloptxmr -of 
+./soloptxmr --offline-force # or: -of
 ``` 
 
 ## Offline mode try
@@ -98,13 +81,7 @@ Treats individual subsystems' connection problems as warnings and tries to move 
 To trigger this behavior, execute:
 
 ```bash
-./soloptxmr --offline-try
-``` 
-
-or: 
-
-```bash
-./soloptxmr -ot 
+./soloptxmr --offline-try # or: -ot
 ``` 
 
 ## Plot network difficulty only
@@ -112,12 +89,29 @@ Displays the current network difficulty only, without running any parts of the s
 This might help you in planning quickly the opportunistic scooping of coins during reduced network difficulty periods.
 
 ```bash
-./soloptxmr --net-diff
+./soloptxmr --net-diff # or: -n
 ``` 
 
-or: 
+## No Python plotting
+Disables Python plotting to spare some time, even if Python is available.
 
 ```bash
-./soloptxmr -n 
+./soloptxmr --no-plot # or: -np
 ``` 
+
+## No Gnuplot plotting
+Disables Gnuplot console plotting, as it consumes quite some vertical space. 
+The default setting in this application can be controlled via `config-volatile.json`.
+
+```bash
+./soloptxmr --no-gnuplot # or: -ng
+``` 
+
+## No Gnuplot plotting
+Disables the schedule console display, as it consumes quite some vertical space. 
+The default setting in this application can be controlled via `config-volatile.json`.
+
+```bash
+./soloptxmr --no-schedule # or: -ns
+```
 

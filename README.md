@@ -81,16 +81,24 @@ or equivalently:
 
 More examples can be found under [use cases documentation](docs/use-cases.md).
 
-### Simpler battery charge input via voltage and OCR
-Setting the battery's voltage directly, also via OCR, rather than the Ah or % charge is a feature currently being worked on. What's missing are measurements of batteries of various types, like in [Example 1](http://www.scubaengineer.com/documents/lead_acid_battery_charging_graphs.pdf)
+### Simple battery charge input via voltage and OCR
+Setting the battery's voltage directly, also via OCR, rather than the Ah or % charge is a feature currently being worked on. What's missing are measurements of batteries of various types, like in [Example 1](http://www.scubaengineer.com/documents/lead_acid_battery_charging_graphs.pdf).
 
 ```bash
 ./soloptxmr.py --battery-charge-v 12.3 # Set the voltage of your battery to be converted to its current charge
 ```
-or:
+
+or for OCR:
+
 ```bash
 ./soloptxmr.py --battery-charge-ocr    # Use image recognition to read the current battery voltage
 ```
+
+It is recommended to perform the voltage measurements only when the batteries aren't being charged (like: before the sunrise), as this delivers a more objective value. 
+It this is not the case, you may enter the current charging voltage, which will be higher than the discharging voltage, but you need to let the system know of the fact with the `--charge-status charging` option, or its shorter form: `-c c`. 
+Bear in mind, that the charging voltage will react on the actual alterations of the voltage of the input itself - clouds & Sun's position. 
+For this reason, it's hardly an objective measurement.
+
 
 ### OCR
 It's possible to automate the process of reading the battery voltage, or % of charge directly, after capturing a picture of an LCD display and passing the picture to an OCR module. [See here](docs/ocr.md) for a more detailed description.
