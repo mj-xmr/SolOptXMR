@@ -35,7 +35,7 @@ double BatterySimulation::iter_get_load(double inp, double out, double hours)
         //inp = 0;
     }
     const double balance = inp - out;
-    double change = balance * m_mulPowerToCapacity - dischargeA;
+    double change = hours * balance * m_mulPowerToCapacity - dischargeA;
     if (change > pars.MAX_DISCHARGE_AMP)
     {
         //if out > m_maxCapacityAmph: # A valid possibility
