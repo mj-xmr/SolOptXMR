@@ -28,14 +28,14 @@ BatterySimulation::BatterySimulation(const ConfigSol & confSol, const BatteryPar
 double BatterySimulation::iter_get_load(double inp, double out, double hours)
 {
     //initial_load = false;
-    const double dischargeA = hours * m_dischargePerHour * load;
+    const double dischargeAh = hours * m_dischargePerHour * load;
     if (inp < 0)
     {
         Assertions::Throw("input < 0", "BatterySimulation::iter_get_load");
         //inp = 0;
     }
     const double balance = inp - out;
-    double change = hours * balance * m_mulPowerToCapacity - dischargeA;
+    double change = hours * balance * m_mulPowerToCapacity - dischargeAh;
     if (change > pars.MAX_DISCHARGE_AMP)
     {
         //if out > m_maxCapacityAmph: # A valid possibility
