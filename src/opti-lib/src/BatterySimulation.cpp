@@ -35,12 +35,18 @@ double BatterySimulation::iter_get_load(double inp, double out, double hours)
         //inp = 0;
     }
     const double balance = inp - out;
-    double change = hours * balance * m_mulPowerToCapacity - dischargeAh;
-    if (change / hours > pars.MAX_DISCHARGE_AMP)
+    const double change = hours * balance * m_mulPowerToCapacity - dischargeAh;
+    const double changePerH = change / hours;
+    if ( - changePerH > pars.MAX_DISCHARGE_AMP)
     {
+        // We only care if negative balance is so high, that the batteries can't handle it.
         //if out > m_maxCapacityAmph: # A valid possibility
         ++num_overused;
         //change = pars.MAX_DISCHARGE_AMP;
+    }
+    //if (  changePerH > pars.MAX_CHARGING_AMP)
+    {
+      // TODO
     }
     //#print(change)
     load += change;
