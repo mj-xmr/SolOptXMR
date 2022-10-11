@@ -14,7 +14,7 @@ struct BatteryParams
     double GetMulPowerToCapacity(double systemVoltage) const;
     double MAX_CAPACITY_AMPH = 60;
     double MIN_LOAD_AMPH = MAX_CAPACITY_AMPH / 2; //# Assuming a lead-acid
-    double DISCHARGE_PER_HOUR_PERCENT = 0.5;
+    double DISCHARGE_PER_HOUR_PERCENT = 0.05;
 
     EnjoLib::Str Print() const;
 };

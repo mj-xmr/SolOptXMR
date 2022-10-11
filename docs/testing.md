@@ -6,6 +6,17 @@ The below testing results are achieved via the following testing executables:
 - `opti-system-min-test`
 - `opti-system-long-test`
 
+## Running the tests
+From within your build directory execute `ctest`, pointing to the approptiate test executable via a regex expression (`-R <EXPR>`) and prepend it with the `-V` option to display the test's output. For example:
+
+```bash
+og@ghetto:~/devel/github/SolOptXMR/build/default-static-release$
+ctest -V -R opti-system-min-test
+```
+
+In order to run all the tests, you'd just execute: `ctest` from the build directory. 
+However, currently all the tests are a part of the build step.
+
 
 ## Corner cases
 

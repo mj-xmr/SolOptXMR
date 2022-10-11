@@ -28,19 +28,25 @@ BatterySimulation::BatterySimulation(const ConfigSol & confSol, const BatteryPar
 double BatterySimulation::iter_get_load(double inp, double out, double hours)
 {
     //initial_load = false;
-    const double discharge = hours * m_dischargePerHour * load;
+    const double dischargeAh = hours * m_dischargePerHour * load;
     if (inp < 0)
     {
         Assertions::Throw("input < 0", "BatterySimulation::iter_get_load");
         //inp = 0;
     }
-    const double balance = inp - out - discharge;
-    double change = balance * m_mulPowerToCapacity;
-    if (change > pars.MAX_DISCHARGE_AMP)
+    const double balance = inp - out;
+    const double change = hours * balance * m_mulPowerToCapacity - dischargeAh;
+    const double changePerH = change / hours;
+    if ( - changePerH > pars.MAX_DISCHARGE_AMP)
     {
+        // We only care if negative balance is so high, that the batteries can't handle it.
         //if out > m_maxCapacityAmph: # A valid possibility
         ++num_overused;
         //change = pars.MAX_DISCHARGE_AMP;
+    }
+    //if (  changePerH > pars.MAX_CHARGING_AMP)
+    {
+      // TODO
     }
     //#print(change)
     load += change;
@@ -56,6 +62,13 @@ double BatterySimulation::iter_get_load(double inp, double out, double hours)
         //num_overvolted += 1 + diff * 2;
         num_overvolted += 1 + diff;
         //num_overvolted += GMat().Pow(1 + diff, 1.01);
+
+        // Warning: You may do this only AFTER the penalty was calculated.
+        // It will however impact the penalty in the NEXT iteration, which is very bad.
+        if (load > pars.MAX_CAPACITY_AMPH)
+        {
+            //load -= inp * m_mulPowerToCapacity;
+        }
     }
     if (load < pars.MIN_LOAD_AMPH)
     {
