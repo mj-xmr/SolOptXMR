@@ -173,6 +173,8 @@ class POW_Coin:
             print(f"Creating {path}")
             diff, blocked = self._request_headers_batcher(0, height, batch_size=batch_size)
             if blocked:
+                diff.to_pickle(path)
+                print(diff)
                 raise KeyboardInterrupt
             else:
                 diff.to_pickle(path)
