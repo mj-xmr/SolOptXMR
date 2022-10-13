@@ -26,7 +26,7 @@ public:
     };
 
 	SimResult Simulate(int i, int currHour, const EnjoLib::Matrix & dataMat,
-                        double bonusMul, bool isInitialLoad) const;
+                        double bonusMul, bool isInitialLoad, double hours=1) const;
 
 protected:
 

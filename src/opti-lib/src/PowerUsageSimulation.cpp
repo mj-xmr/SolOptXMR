@@ -12,7 +12,7 @@ PowerUsageSimulation::PowerUsageSimulation(const OptiEnProfitDataModel & dataMod
 {}
 
 PowerUsageSimulation::SimResult PowerUsageSimulation::Simulate(int i, int currHour, const EnjoLib::Matrix & dataMat,
-                                                             double bonusMul, bool isInitialLoad) const
+                                                             double bonusMul, bool isInitialLoad, double hours) const
 {
     SimResult res{};
     //const EnjoLib::Array<Computer> & comps = m_dataModel.GetComputers();
@@ -29,11 +29,11 @@ PowerUsageSimulation::SimResult PowerUsageSimulation::Simulate(int i, int currHo
         const double hashe = comp.GetHashRate(val) * bonusMul;
         if (ic < comp.minRunHours + 1) // Assuming, that the bonus will last at least for the number of computer's running hours
         {
-            res.sumHashes += hashe * (1 + bonusMulMA);
+            res.sumHashes += hashe * (1 + bonusMulMA) * hours * 3600; // [H] = [H/s] * [adim] * [h] * 3600 [s/h]
         }
         else
         {
-            res.sumHashes += hashe;
+            res.sumHashes += hashe * hours * 3600; // [H] = [H/s] * 3600 [s/h]
         }
         res.sumPowerUsage += comp.GetUsage(val);
     }

@@ -69,7 +69,7 @@ Solution OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool v
         //LOG << "i = " << i << ", val = " << inp[i] << Nl;
         //if (not battery.initial_load)
         //if (false)
-        const PowerUsageSimulation::SimResult & resLocal = powSim.Simulate(i, m_currHour, dataMat, bonusMul, battery.initial_load);
+        const PowerUsageSimulation::SimResult & resLocal = powSim.Simulate(i, m_currHour, dataMat, bonusMul, battery.initial_load); // TODO: currently the function assumes a hardcoded 1h time window, needs to be configurable
         simResult.Add(resLocal);
         battery.iter_get_load(powerProd, resLocal.sumPowerUsage);
         //const double pentalityUndervolted = load < 0 ? GMat().Fabs(load * load * load) : 0;
@@ -171,7 +171,7 @@ Solution OptiSubjectEnProfit::GetVerbose(const EnjoLib::Matrix & dataMat, bool v
                     const SolUtil sut;
                     ELO
                     const double maxHashes2display = maxHashes > 0 ? maxHashes : m_hashes.Max();
-                    LOG << "Hashes cumul. [Hh]: (max = " << sut.round(m_hashes.Max(), 1) << ")\n";
+                    LOG << "Hashes cumul. [H]: (max = " << sut.round(m_hashes.Max(), 1) << ")\n";
                     LOG << AsciiMisc().GenChars("▁", m_hashes.size()) << Nl;
                     LOG << StrColour::GenNorm(StrColour::Col::Magenta, AsciiPlot::Build()(Par::MAXIMUM, maxHashes2display).Finalize().Plot(m_hashes)) << Nl;
                     LOG << "Energy input  [W] : (max = " << sut.round(m_prod.Max(), 1) << ")\n";
