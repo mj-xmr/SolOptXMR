@@ -95,9 +95,11 @@ systemctl suspend
 
 The machine should halt and after a few seconds, by pressing the power button, you may test if it wakes up properly and reacts to further commands. If not, you will be forced to issue the `poweroff` command rather than the `suspend` command.
 This means, that the given rig may be only powered on, rather than woken up, so you may as well skip the further setup steps for this given machine.
-You will however have to 
+You will however have to alter the given rig's configuration to be able to be switchable with the poweroff command via the `computers.json` (TODO: Document there)  
 
 or
+
+
 
 ssh -n $HOST "systemctl suspend"
 
