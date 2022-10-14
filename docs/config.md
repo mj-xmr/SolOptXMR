@@ -42,6 +42,8 @@ Defines mining rigs.
 Currently the system doesn't work very well with the number of mining machines larger than 2.
 In case a single computer should be disabled, please set its `count` field to `0`.
 
+TODO: document the poweroff option (instead of sleep).
+
 ## Habits habits.json
 Allows you to declare your daily/weekly habits, that drain the solar power in a predictable way. 
 The syntax used there for scheduling is better explained by [this documentation](https://github.com/mariusbancila/croncpp#cron-expressions).
