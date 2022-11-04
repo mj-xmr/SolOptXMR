@@ -78,6 +78,8 @@ Below you can see the typical charge profiles of lead-acid batteries, where abov
 
 In case your MPPT controller does lead to shutdowns of your inverter anyway, a good solution is a light UPS, connected as one of the users of the inverter. 
 I've had very good experience with `APC SurgeArrest®`, model `BE325`, which consumes little instantaneous power during charging, so that the inverter can easily handle it.
+If you can install additional batteries between the solar panels and the inverter, they should help you reduce these shocks. 
+Make sure that the batteries are of the same type, so that they share the same charging profile, and of the same capacity (?).
 
 ## Cable sizes vs current
 It should be noted, that the low voltages typically associated with the DC, suffer from being unable to be "pushed" through narrow cables for even moderate distances. 
