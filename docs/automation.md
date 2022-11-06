@@ -33,11 +33,27 @@ TODO: STUB
 ## Passwordless SSH access
 For the controlling PC to be able to control the mining rigs, we need to generate keys and install them 
 
-ssh-keygen??
-ssh-install-id
+First, create your ssh id, if you haven't already done so, with:
+
+```bash
+ssh-keygen  # Choose passwordless key, at least for the production machine. 
+```
+
+Next, copy (or rather: install) your ID to each of the machines, that are meant to take part in the process with:
+(TODO: this can be easily automated by a Python sctript by scanning the `computers.json`)
+
+```bash
+ssh-copy-id $HOST
+```
+
+Now, test that the connection can be established passwordlessly by simply logging into that machine:
+
+```bash
+ssh $HOST
+exit
+```
 
 ## Putting computers to sleep
-TODO: STUB
 
 The task here is to allow a user to put a given mining rig to sleep or to power it off without the need of entering the sudo password.
 This is especially needed, as the commands will be scheduled to be ran in the future.
@@ -93,22 +109,50 @@ to:
 systemctl suspend
 ```
 
-The machine should halt and after a few seconds, by pressing the power button, you may test if it wakes up properly and reacts to further commands. If not, you will be forced to issue the `poweroff` command rather than the `suspend` command.
+The machine should halt and after a few seconds, by pressing the power button, you may test if it wakes up properly and reacts to further commands. If it doesn't respond after waking up, you will be forced to issue the `poweroff` command rather than the `suspend` command.
 This means, that the given rig may be only powered on, rather than woken up, so you may as well skip the further setup steps for this given machine.
-You will however have to alter the given rig's configuration to be able to be switchable with the poweroff command via the `computers.json` (TODO: Document there)  
+You will however have to alter the given rig's configuration to be able to be switchable with the poweroff command via the `computers.json`. The relevant configuration setting under each such computer is:  
 
-or
+```json
+"is_poweroff" : true
+```
 
+OTOH, if the machine does react after waking up, we may move on to testing the issuance of a remote, passwordless `suspend` command. 
+Bear in mind that all these steps will have to be repeated on the production machine, that is meant to control the whole process in a automated way in the future. 
+You may imagine a Mini-PC or any other SoC whose power consumption is low enough not to interfere with the balance too much.
 
+If all went fine, you may perform the final test of being able to put a machine to sleep or powering it off, please execute one of the below, according commands:
 
+```bash
+# Call this to suspend a machine remotely:
 ssh -n $HOST "systemctl suspend"
+# Or the below one, if you know that the machine doesn't wake up properly:
+ssh -n $HOST "systemctl poweroff"
+```
 
+## Wake on LAN (WOL)
 
+### WOL Intro
+WOL is a very important functionality, that will help you automate the process entirely. 
+In a nutshell, if all the prerequisites are met, it allows to wake up a computer, that was earlier put into the *suspended* mode, via a signal sent through Ethernet cable from the low powered controlling machine.
+One thing to keep in mind here is, that from my experience, the signal is best to be sent via a controller that's nearest to the suspended machine in terms of the network's topology.
+This means that even though you could setup everything correctly on the target machine, the WOL might still not work, if the signal is sent via already a second network switch along the way.
+Don't get discouraged by this and just move the contolling machine "closer" - under the same network switch.
+ 
+### WOL Howto
 
-## Wake on Lan
 TODO: STUB
 
 This is an excerpt from [Debian Wiki](https://wiki.debian.org/WakeOnLan)
 
 
-ONLY WOL from the closest computer behind the same switch!!!!
+## Install automation software
+
+Currently the program `at` is being used to schedule tasks on both the mining rigs, as well as the controlling computer.
+
+```bash
+sudo apt install at
+ssh $HOST # For each host
+sudo apt install at
+exit
+```

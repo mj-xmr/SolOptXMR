@@ -42,6 +42,12 @@ Defines mining rigs.
 Currently the system doesn't work very well with the number of mining machines larger than 2.
 In case a single computer should be disabled, please set its `count` field to `0`.
 
+If a given computer cannot be reliably suspended, as descriped in the [automation](automation.md), please enter the following line for the computer in question:
+
+```json
+"is_poweroff" : true
+```
+
 TODO: document the poweroff option (instead of sleep).
 
 ## Habits habits.json
