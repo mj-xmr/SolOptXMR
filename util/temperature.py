@@ -79,7 +79,7 @@ def looped(args):
             
             if is_overheated.update_is_changed(is_overheat(temp, args.max_temp_c)):
                 if is_overheated.get():
-                    print("Temp state changed to overheated")
+                    print("Temp state changed to overheated: {}°C > {}°C".format(temp, args.max_temp_c))
                     cool_clock = downclock()
                     is_cooling_down = True
                     is_cooled_state.update_is_changed(False)
@@ -88,7 +88,7 @@ def looped(args):
             if is_cooling_down:
                 if is_cooled_state.update_is_changed(is_cooled(temp, args.cooled_temp_c)):
                     if is_cooled_state.get():
-                        print("Temp back to normal. Restoring clock")
+                        print("Temp back to normal: {}°C. Restoring clock".format(temp))
                         restore_user_clock(cool_clock)
     
                         is_cooling_down = False
@@ -309,7 +309,7 @@ def main(args):
     if args.test:
         test()
 
-    print("Max temp =", args.max_temp_c, ", cooled temp =", args.cooled_temp_c)
+    print("Max temp =", args.max_temp_c, "°C, cooled temp =", args.cooled_temp_c, "°C")
 
     print_test_warning()
     if args.looped:
