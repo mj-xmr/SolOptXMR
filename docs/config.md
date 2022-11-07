@@ -39,8 +39,14 @@ Below are the parameters and example values:
 
 ## Computers computers.json
 Defines mining rigs. 
-Currently the system doesn't work very well with the number of mining machines larger than 2.
+Currently the system doesn't need to compute for a long time when the number of mining machines larger than 2. (TODO: It will be addressed in the near future, as it's not really rocket science to introduce a better search algorithm)
 In case a single computer should be disabled, please set its `count` field to `0`.
+
+If a given computer cannot be reliably suspended, as descriped in the [automation](automation.md), please enter the following line for the computer in question:
+
+```json
+"is_poweroff" : true
+```
 
 ## Habits habits.json
 Allows you to declare your daily/weekly habits, that drain the solar power in a predictable way. 

@@ -18,9 +18,9 @@ It will accommodate for issues such as:
 
 # Requirements
 - A POSIX system with a C++ compiler and Python3 interpreter. 
-- Less than 1 GB of RAM.
+- Between 500 MB and 1 GB of RAM.
 
-Supported Operating Systems and features:
+Supported Operating Systems:
 
 | OS  | Support   |
 | ------------- | -- | 
@@ -122,18 +122,12 @@ In the above case, to schedule the displayed commands in one go, you'd simply ex
 sh /home/yoname/temp/solar/sol-cmds.sh
 ```
 
-It's advised to perform the simulation and the subsequent scheduling each morning and before the sunrise, as only then the voltage measurement is unaffected by the charging, and the battery's state of charge is closest to the reality of the new day, rather than simply being assumed by the simulation ran at the previous day.   
+It's advised to perform the simulation and the subsequent scheduling each morning and before the sunrise, as only then the voltage measurement is unaffected by the charging process, and the battery's state of charge is closest to the reality of the new day, rather than simply being assumed by the simulation ran at the previous day. 
 
-If you are confident enough to let the system execute (schedule) the commands without your supervision, then this is what you'd enter to your `crontab` to plan the day at 6:05 a.m., assuming that your `SolOptXMR` installation resides in your `home` directory and that you use OCR to automatically read the battery voltage or its State of Charge in %:
+In order for these commands to have any effect, some deal of preparation is needed, that is described in the [automation docs](docs/automation.md).
+That section contains elaborated instructions on how to prepare both the mining nodes and a PC designated to control them.
 
-```bash
-crontab # The command that lets you edit the schedule
-5 6 * * *  cd /home/yoname/SolOptXMR && ./soloptxmr.py --battery-charge-ocr --np && /bin/sh /home/yoname/temp/solar/sol-cmds.sh
-```
-
-More information can be found in the [automation docs](docs/automation.md).
-
-Speaking of trust towards the system, the section [testing](docs/testing.md) presents the currently handled corner cases.
+As far as your trust towards the system is concerned, the section [testing](docs/testing.md) presents the currently handled, and automatically tested corner cases.
 
 ## Configuration
 After running the `./util/config.sh` script, you'll be presented with paths to configuration scripts, that have just been copied to your `~/.config` directory. 
