@@ -1,4 +1,4 @@
-# Automation
+﻿# Automation
 The automation of the system requires a couple of preparation steps. 
 They're documented here and proven to work under Debian systems, although more subtle solutions may be possible. 
 
@@ -15,7 +15,7 @@ The following terms will be introduced:
 
 - *Controlling computer*: The computer, which should ideally consume very little power (think of a Mini-PC or any SoC), as it should be running for most of the time - always when the AC inverter is switched on. It will be issuing commands via Ethernet cable to *Mining rigs / computers*. It will also host the `p2pool` software.
 - *Mining rig / computer*: Any computer, whose sole purpose from the perspective of `SolOptXMR`, is to mine and dissipate energy overproduction, if so required. The rig is able to react on a *controlling computer's* commands, issued via Ethernet cable.
-- *Node computer*: an optional part of the ifrastructure, for as long as you decide to attach your `p2pool` to an **external** Monero node, that you can trust. Otherwise, this has to be a computer, that runs 24/7 and is equipped with a relatively large (between 500GB and 1TB) SSD drive to be able to host the blockchain. An HDD won't work well with Monero's blockchain unfortunately, due to many random searches, that the node needs to perform over the blockchain. I use a low powered Mini-PC for this purpose, that is connected to the grid.
+- *Node computer*: an optional part of the infrastructure, for as long as you decide to attach your `p2pool` to an **external** Monero node, that you can trust. Otherwise, this has to be a computer, that runs 24/7 and is equipped with a relatively large (between 500GB and 1TB) SSD drive to be able to host the blockchain. An HDD won't work well with Monero's blockchain unfortunately, due to many random searches, that the node needs to perform over the blockchain. I use a low powered Mini-PC for this purpose, that is connected to the grid.
 
 ## System specifics
 
@@ -40,7 +40,7 @@ ssh-keygen  # Choose passwordless key, at least for the production machine.
 ```
 
 Next, copy (or rather: install) your ID to each of the machines, that are meant to take part in the mining process with:
-(TODO: this can be easily automated by a Python sctript by scanning the `computers.json`)
+(TODO: this can be easily automated by a Python script by scanning the `computers.json`)
 
 ```bash
 ssh-copy-id $HOST
@@ -103,7 +103,7 @@ to:
 ```
 
 
-- Veryfy if the update of the settings works by logging into the machine from the user, whose sudo rights we've altered (USR) and execute: 
+- Verify if the update of the settings works by logging into the machine from the user, whose sudo rights we've altered (USR) and execute: 
 
 ```
 systemctl suspend
@@ -153,9 +153,9 @@ WOL is a very important functionality, that will help you automate the process e
 In a nutshell, if all the prerequisites are met, it allows to wake up a computer, that was earlier put into the *suspended* mode, via a packet sent through Ethernet cable from the low powered controlling machine.
 One thing to keep in mind here is, that from my experience, the packet is best to be sent via a controller that's nearest to the suspended machine in terms of the network's topology, meaning under the same network switch.
 This means that even though you could setup everything correctly on the target machine, the WOL might still not work, if the packet is sent via already a second network switch along the way.
-Don't get discouraged by this and just move the contolling machine "closer" - under the same network switch.
+Don't get discouraged by this and just move the controlling machine "closer" - under the same network switch.
  
-### WOL Howto
+### WOL HowTo
 
 This is an excerpt from [Debian Wiki](https://wiki.debian.org/WakeOnLan)
 
@@ -245,8 +245,8 @@ If you'd like to run your own node, there's a relevant script for that too, mean
 
 ### Optional optimizations of XMRig
 
-At least for for most of Intel CPUs, it's very benefitial to enable the [MSR](https://en.wikipedia.org/wiki/Model-specific_register) module, in order to boost the hashes calculated for the same power input.
-This task is however cumbersome and varying across differnt CPUs that the full description should not be placed in this documentation in its fullest.
+At least for for most of Intel CPUs, it's very beneficial to enable the [MSR](https://en.wikipedia.org/wiki/Model-specific_register) module, in order to boost the hashes calculated for the same power input.
+This task is however cumbersome and varying across different CPUs that the full description should not be placed in this documentation in its fullest.
 However, the minimalistic setup, that only allows to use the MSR module from a `root` account would be the following:
 
 ```bash
@@ -294,7 +294,7 @@ sleep 60; cd /home/USR/SolOptXMR && ./util/run-xmrig.sh $(nproc) &
 
 before the `exit 0` line of course. You may freely choose the number of threads that you want to use by replacing the `$(nproc)` with a reasonable number.
 This will run the `xmrig` miner as `root`.
-In case that you've either made the effort to enable the MSR module for your user, not even no effort at all to enable the MSR module even for the `root`, then the safer altenrative to the above would be:
+In case that you've either made the effort to enable the MSR module for your user, not even no effort at all to enable the MSR module even for the `root`, then the safer alternative to the above would be:
 
 ```bash
 su - USR -c "sleep 60; cd /home/USR/SolOptXMR && ./util/run-xmrig.sh $(nproc)" &`
@@ -315,7 +315,7 @@ IMO, it's however better to preserve your hardware, rather than receiving a few 
 
 ### p2pool autostart
 
-As p2pool luckily doesn't require `root` priviledges, you may run it from your user, or even from a special user, if you so desire. 
+As p2pool luckily doesn't require `root` privileges, you may run it from your user, or even from a special user, if you so desire. 
 In this example we'll call this 2nd user `USR_P2POOL`, but it might remain the same `USR` as before.
 
 ```bash
@@ -328,7 +328,7 @@ and enter:
 su - USR_P2POOL -c "sleep 40; cd /home/USR/SolOptXMR && ./util/run-p2pool.sh NODE_IP WALLET_ADDR" &
 ```
 
-where the `NODE_IP` is the connection string for the Monero node, that has to be synched and running, while the `WALLET_ADDR` is the target address for payouts.
+where the `NODE_IP` is the connection string for the Monero node, that has to be synced and running, while the `WALLET_ADDR` is the target address for payouts.
 
 ### Monero daemon autostart
 
