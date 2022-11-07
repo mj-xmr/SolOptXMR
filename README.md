@@ -125,7 +125,7 @@ sh /home/yoname/temp/solar/sol-cmds.sh
 It's advised to perform the simulation and the subsequent scheduling each morning and before the sunrise, as only then the voltage measurement is unaffected by the charging process, and the battery's state of charge is closest to the reality of the new day, rather than simply being assumed by the simulation ran at the previous day. 
 
 In order for these commands to have any effect, some deal of preparation is needed, that is described in the [automation docs](docs/automation.md).
-That section contains elaborated instructions on how to prepare both the PC designated to control the mining nodes and so the mining nodes themselves.
+That section contains elaborated instructions on how to prepare both the mining nodes and a PC designated to control them.
 
 As far as your trust towards the system is concerned, the section [testing](docs/testing.md) presents the currently handled, and automatically tested corner cases.
 
