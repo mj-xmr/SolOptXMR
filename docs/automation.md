@@ -231,17 +231,19 @@ git checkout $(git describe --tags $(git rev-list --tags --max-count=1)) # Check
 ./util/build-xmrig.sh   # Build the mining software
 ```
 
-On the controlling computer, repeat the above steps, but instead of compiling `xmrig`, compile `p2pool` instead:
+On the *Controlling Computer*, repeat the above steps, but instead of compiling `xmrig`, compile `p2pool` instead:
 
 ```bash
 ./util/build-p2pool.sh  # Build the pool software 
 ```
 
-If you'd like to run your own node, there's a relevant script for that too, meant to be ran from within the *Node computer*:
+If you'd like to run your own node, there's a relevant script for that too, meant to be ran from within the *Node Computer*:
 
 ```bash
 ./util/build-monero.sh  # Build the monero daemon 
 ```
+
+In such case, it will be expected, that you run your `p2pool` from the *Node Computer*, rather than from the *Controlling Computer*, so you have to compile the pool here instead.
 
 ### Optional optimizations of XMRig
 
@@ -301,10 +303,10 @@ su - USR -c "sleep 60; cd /home/USR/SolOptXMR && ./util/run-xmrig.sh $(nproc)" &
 
 ### Temperature control (optional)
 
-The temperature might be monitored and controlled by throttling down the CPU frequency, by having this script ran as `root` or alternatively as a user, after allowing the user to modify the CPU frequency with: (TODO)
+The temperature might be monitored and controlled by throttling down the CPU frequency, by having this script ran as `root` or alternatively as a user, after allowing the user to modify the CPU frequency (TODO) with:
 
 ```bash
-sleep 5; cd /home/USR/SolOptXMR && ./util/run-temperature.py --max 70 --min 50 &
+sleep 5; cd /home/USR/SolOptXMR && ./util/temperature.py --max 70 --min 50 &
 ```
 
 Where `--max 70` would consider the 70°C as overheat, and `--min 50` - 50°C as the target temperature while cooling down.
