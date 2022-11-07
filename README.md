@@ -18,9 +18,9 @@ It will accommodate for issues such as:
 
 # Requirements
 - A POSIX system with a C++ compiler and Python3 interpreter. 
-- Less than 1 GB of RAM.
+- Between 500 MB and 1 GB of RAM.
 
-Supported Operating Systems and features:
+Supported Operating Systems:
 
 | OS  | Support   |
 | ------------- | -- | 

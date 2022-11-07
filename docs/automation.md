@@ -15,7 +15,7 @@ The following terms will be introduced:
 
 - *Controlling computer*: The computer, which should ideally consume very little power (think of a Mini-PC or any SoC), as it should be running for most of the time - always when the AC inverter is switched on. It will be issuing commands via Ethernet cable to *Mining rigs / computers*. It will also host the `p2pool` software.
 - *Mining rig / computer*: Any computer, whose sole purpose from the perspective of `SolOptXMR`, is to mine and dissipate energy overproduction, if so required. The rig is able to react on a *controlling computer's* commands, issued via Ethernet cable.
-- *Node computer*: an optional part of the ifrastructure, for as long as you decide to attach your `p2pool` to an **external** Monero node, that you can trust. Otherwise, this has to be a computer, that runs 24/7 and is equipped with a relatively large (between 500GB and 1TB) SSD drive to be able to host the blockchain. An HDD won't work well with Monero's blockchain unfortunately, due to many random searches, that the node needs to perform over the blockchain. I use a low powered Mini-PC for this purpose.
+- *Node computer*: an optional part of the ifrastructure, for as long as you decide to attach your `p2pool` to an **external** Monero node, that you can trust. Otherwise, this has to be a computer, that runs 24/7 and is equipped with a relatively large (between 500GB and 1TB) SSD drive to be able to host the blockchain. An HDD won't work well with Monero's blockchain unfortunately, due to many random searches, that the node needs to perform over the blockchain. I use a low powered Mini-PC for this purpose, that is connected to the grid.
 
 ## System specifics
 
@@ -245,10 +245,35 @@ If you'd like to run your own node, there's a relevant script for that too, mean
 
 ### Optional optimizations of XMRig
 
-At least for for most of Intel CPUs, it's very benefitial to enable the MSR module.
-This task is however so cumbersome that should not be placed in this documentation.
+At least for for most of Intel CPUs, it's very benefitial to enable the [MSR](https://en.wikipedia.org/wiki/Model-specific_register) module, in order to boost the hashes calculated for the same power input.
+This task is however cumbersome and varying across differnt CPUs that the full description should not be placed in this documentation in its fullest.
+However, the minimalistic setup, that only allows to use the MSR module from a `root` account would be the following:
 
-TODO: Document MSR and other. Perhaps links to other websites?
+```bash
+sudo apt install msr-tools
+sudo nano /etc/default/grub
+```
+
+Change the `GRUB_CMDLINE_LINUX` variable to following:
+```bash
+GRUB_CMDLINE_LINUX="msr.allow_writes=on"
+```
+
+```bash
+sudo reboot
+```
+
+Now allow the *XMRig* to do some fine-tuning:
+
+```bash
+cd SolOptXMR/build/xmrig
+sudo scripts/randomx_boost.sh
+```
+
+```bash
+sudo reboot
+```
+
 
 ### XMRig autostart
 
@@ -285,7 +310,7 @@ sleep 5; cd /home/USR/SolOptXMR && ./util/run-temperature.py --max 70 --min 50 &
 
 Where `--max 70` would consider the 70°C as overheat, and `--min 50` - 50°C as the target temperature while cooling down.
 
-Notice, that although this will protect your computer from overheating, it will mess up some calculations but only to the extent, that the end results will be different than expected, yet not totally erratic.
+Notice, that although this will protect your computer from overheating, it will mess up some calculations but only to the extent, that the end results will indeed be different than expected, yet not totally erratic.
 IMO, it's however better to preserve your hardware, rather than receiving a few picos more for having to settle with chips being molten down.
 
 ### p2pool autostart

@@ -5,7 +5,7 @@ Bear in mind, that I'm not an electrician and I can't take legal responsibility 
 ## Glossary
 - V - Volt (as an SI unit) or Voltage
 - DC - Direct Current: produced by the renewables. Usually describes systems sharing the common voltage of 12V, 24V or 36V. This is also the type of current stored within the batteries (lead-acid, LiFePo4, etc.).
-- AC - Alternating Current: The sinusoidal "household" current produced by the Inverter, accepting the DC as its input. The AC comes in 230V in the EU or 110V in Canada (TODO: Anywhere else?). The sinusoidal nature of this current allows it to generate sqrt3 (???) more power than the DC of the same voltage would.
+- AC - Alternating Current: The sinusoidal "household" current produced by the Inverter, accepting the DC as its input. The AC comes in 230V in the EU or 110V in Northern America but [varies greatly across the globe](https://en.wikipedia.org/wiki/Mains_electricity_by_country). The special thing about AC is that it can be transfered for longer distances. Bear in mind though, that any conversion to AC leads to losses, so use your DC whenever you can to avoid them.
 - SC - Short Circuiting (see below)
 
 ## Short Circuiting (SC)
@@ -154,5 +154,5 @@ Fingers crossed!
 
 # Appendix
 ## Online resources
-- [Cable sizes vs current](https://www.spwales.com/cable-size-current-rating-chart) - TODO: explain
+- [Cable sizes vs current](https://www.spwales.com/cable-size-current-rating-chart)
 - [Lead-Acid charging graphs](http://www.scubaengineer.com/documents/lead_acid_battery_charging_graphs.pdf)
