@@ -82,13 +82,13 @@ USR localhost =NOPASSWD: /usr/bin/systemctl suspend, /usr/bin/systemctl poweroff
 - Update freedesktop settings
 Find the following entries in the `/usr/share/polkit-1/actions/org.freedesktop.login1.policy` file:
 
-- id="org.freedesktop.login1.set-wall-message
-- id="org.freedesktop.login1.suspend
-- id="org.freedesktop.login1.power-off
+- `id="org.freedesktop.login1.set-wall-message`
+- `id="org.freedesktop.login1.suspend`
+- `id="org.freedesktop.login1.power-off`
 
 , as well as for the file `/usr/share/polkit-1/actions/org.freedesktop.systemd1.policy`:
 
-- id="org.freedesktop.systemd1.manage-units
+- `id="org.freedesktop.systemd1.manage-units`
 
 And for each one of them and change:
 
@@ -126,7 +126,7 @@ If all went fine, you may perform the final test of being able to put a machine 
 ```bash
 # Call this to suspend a machine remotely:
 ssh -n $HOST "systemctl suspend"
-# Or the below one, if you know that the machine doesn't wake up properly:
+# Alternatively the below one, if you know that the machine doesn't wake up properly:
 ssh -n $HOST "systemctl poweroff"
 ```
 
@@ -138,7 +138,7 @@ The list also contains requirements for other tools.
 
 ```bash
 # On the controlling machine:
-sudo apt install at ethtool git wakeonlan libuv1-dev libzmq3-dev libsodium-dev libpgm-dev libnorm-dev libgss-dev
+sudo apt install at ethtool git wakeonlan libuv1-dev libzmq3-dev libsodium-dev libpgm-dev libnorm-dev libgss-dev libcurlpp-dev
 
 # For each mining rig:
 ssh $HOST 
@@ -266,8 +266,7 @@ sudo reboot
 Now allow the *XMRig* to do some fine-tuning:
 
 ```bash
-cd SolOptXMR/build/xmrig
-sudo scripts/randomx_boost.sh
+sudo build/xmrig/scripts/randomx_boost.sh
 ```
 
 ```bash
