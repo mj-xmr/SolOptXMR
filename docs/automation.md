@@ -303,13 +303,25 @@ su - USR -c "sleep 60; cd /home/USR/SolOptXMR && ./util/run-xmrig.sh $(nproc)" &
 
 ### Temperature control (optional)
 
-The temperature might be monitored and controlled by throttling down the CPU frequency, by having this script ran as `root` or alternatively as a user, after allowing the user to modify the CPU frequency (TODO) with:
+The temperature might be monitored and controlled by throttling down the CPU frequency, by having this script ran as `root` or alternatively as a user, after allowing the user to modify the CPU frequency (TODO).
+The initial max CPU frequency may be limited to a given value in GHz, using the `util/cpu-freq.sh` script.
+In order to learn your CPU's limits, please execute the `util/cpu-freq-read.sh` script first.
+Assuming that the script's output is:
+
+```
+Min = 400 MHz
+Max = 4.90 GHz
+Curr = 2.60 GHz
+```
+
+like on my machine, to be conservative I may set the frequency to 1.6 GHz in my `/etc/rc.local` and right below it the overheat watchdog with:
 
 ```bash
+sleep 1; cd /home/USR/SolOptXMR && ./util/cpu-freq.sh 1.6
 sleep 5; cd /home/USR/SolOptXMR && ./util/temperature.py --max 70 --min 50 &
 ```
 
-Where `--max 70` would consider the 70°C as overheat, and `--min 50` - 50°C as the target temperature while cooling down.
+Where `--max 70` would consider the 70°C as overheat, and `--min 50` - 50°C as the target temperature while cooling down, before restoring the CPU frequency having been set originally.
 
 Notice, that although this will protect your computer from overheating, it will mess up some calculations but only to the extent, that the end results will indeed be different than expected, yet not totally erratic.
 IMO, it's however better to preserve your hardware, rather than receiving a few picos more for having to settle with chips being molten down.
