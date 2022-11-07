@@ -314,7 +314,7 @@ Max = 4.90 GHz
 Curr = 2.60 GHz
 ```
 
-like on my machine, to be conservative I may set the frequency to 1.6 GHz in my `/etc/rc.local` and right below it the overheat watchdog with:
+like on my machine, to be conservative I may set the maximal frequency to 1.6 GHz in my `/etc/rc.local` and right below it the overheat watchdog with:
 
 ```bash
 sleep 1; cd /home/USR/SolOptXMR && ./util/cpu-freq.sh 1.6
