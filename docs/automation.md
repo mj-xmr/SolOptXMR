@@ -27,7 +27,7 @@ If you are confident enough to let the system schedule execution of the commands
 
 ```bash
 crontab # The command that lets you edit the schedule
-5 6 * * *  cd /home/yoname/SolOptXMR && ./soloptxmr.py --battery-charge-ocr --np && /bin/sh /home/yoname/temp/solar/sol-cmds.sh
+5 6 * * *  cd /home/USR/SolOptXMR && ./soloptxmr.py --battery-charge-ocr --np && /bin/sh /home/USR/temp/solar/sol-cmds.sh
 ```
 
 ## Passwordless SSH access
@@ -142,7 +142,7 @@ sudo apt install at ethtool git wakeonlan libuv1-dev libzmq3-dev libsodium-dev l
 
 # For each mining rig:
 ssh $HOST 
-sudo apt install at ethtool git build-essential cmake libhwloc-dev libuv1-dev libssl-dev libreadline-dev
+sudo apt install at ethtool git build-essential cmake msr-tools libhwloc-dev libuv1-dev libssl-dev libreadline-dev
 exit
 ```
 
@@ -252,7 +252,6 @@ This task is however cumbersome and varying across different CPUs that the full 
 However, the minimalistic setup, that only allows to use the MSR module from a `root` account would be the following:
 
 ```bash
-sudo apt install msr-tools
 sudo nano /etc/default/grub
 ```
 
@@ -290,15 +289,17 @@ sudo nano /etc/rc.local && sudo chmod +x /etc/rc.local
 enter there:
 
 ```bash
-sleep 60; cd /home/USR/SolOptXMR && ./util/run-xmrig.sh $(nproc) &
+sleep 60; cd /home/USR/SolOptXMR && ./util/run-xmrig.sh P2POOL_IP $(nproc) &
 ```
 
-before the `exit 0` line of course. You may freely choose the number of threads that you want to use by replacing the `$(nproc)` with a reasonable number.
+before the `exit 0` line of course. 
+This will connect your XMRig installation to the P2Pool passed along as the first parameter.
+You may freely choose the number of threads that you want to use by replacing the `$(nproc)` with a reasonable number.
 This will run the `xmrig` miner as `root`.
 In case that you've either made the effort to enable the MSR module for your user, not even no effort at all to enable the MSR module even for the `root`, then the safer alternative to the above would be:
 
 ```bash
-su - USR -c "sleep 60; cd /home/USR/SolOptXMR && ./util/run-xmrig.sh $(nproc)" &`
+su - USR -c "sleep 60; cd /home/USR/SolOptXMR && ./util/run-xmrig.sh P2POOL_IP $(nproc)" &`
 ```
 
 ### Temperature control (optional)

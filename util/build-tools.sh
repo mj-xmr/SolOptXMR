@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 
-DEPS="ethtool wakeonlan git cmake libuv1-dev libzmq3-dev libsodium-dev libpgm-dev libnorm-dev libgss-dev libcurl4-gnutls-dev libhwloc-dev libuv1-dev libssl-dev libreadline-dev"
+DEPS="ethtool wakeonlan git cmake msr-tools libuv1-dev libzmq3-dev libsodium-dev libpgm-dev libnorm-dev libgss-dev libcurl4-gnutls-dev libhwloc-dev libuv1-dev libssl-dev libreadline-dev"
 
 echo "Installing the following dependencies:"
 echo "$DEPS"
