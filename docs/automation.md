@@ -15,7 +15,7 @@ The following terms will be introduced:
 
 - *Controlling computer*: The computer, which should ideally consume very little power (think of a Mini-PC or any SoC), as it should be running for most of the time - always when the AC inverter is switched on. It will be issuing commands via Ethernet cable to *Mining rigs / computers*. It will also host the `p2pool` software.
 - *Mining rig / computer*: Any computer, whose sole purpose from the perspective of `SolOptXMR`, is to mine and dissipate energy overproduction, if so required. The rig is able to react on a *controlling computer's* commands, issued via Ethernet cable.
-- *Node computer*: an optional part of the infrastructure, for as long as you decide to attach your `p2pool` to an **external** Monero node, that you can trust. Otherwise, this has to be a computer, that runs 24/7 and is equipped with a relatively large (between 500GB and 1TB) SSD drive to be able to host the blockchain. An HDD won't work well with Monero's blockchain unfortunately, due to many random searches, that the node needs to perform over the blockchain. I use a low powered Mini-PC for this purpose, that is connected to the grid.
+- *Node computer*: an optional part of the infrastructure, for as long as you decide to attach your `p2pool` to an **external** Monero node, that you can trust. Otherwise, this has to be a computer, that runs 24/7 and is equipped with a relatively large (between 500GB and 1TB) SSD drive to be able to host the blockchain. An HDD won't work well with Monero's blockchain unfortunately, due to many random searches, that the node needs to perform over the blockchain. I use a low powered Mini-PC for this purpose, that is connected to the grid. If you go with this option, then the `p2pool` will have to be executed from there.
 
 ## System specifics
 
@@ -339,10 +339,10 @@ sudo nano /etc/rc.local && sudo chmod +x /etc/rc.local
 and enter:
 
 ```bash
-su - USR_P2POOL -c "sleep 40; cd /home/USR/SolOptXMR && ./util/run-p2pool.sh NODE_IP WALLET_ADDR" &
+su - USR_P2POOL -c "sleep 40; cd /home/USR/SolOptXMR && ./util/run-p2pool.sh WALLET_ADDR NODE_IP" &
 ```
 
-where the `NODE_IP` is the connection string for the Monero node, that has to be synced and running, while the `WALLET_ADDR` is the target address for payouts.
+where the `NODE_IP` is the connection string for the Monero node, that has to be synced and running, while the `WALLET_ADDR` is the target address for payouts. If you leave the NODE_IP out, `localhost` is then assumed.
 
 ### Monero daemon autostart
 
