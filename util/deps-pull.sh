@@ -5,7 +5,7 @@ cd externals/tsqsim/
 cd ../..
 
 if [ "$(uname)" == "Darwin" ]; then
-	HOMEBREW_NO_AUTO_UPDATE=1 brew install rapidjson libffi osx-cpu-temp
+	HOMEBREW_NO_AUTO_UPDATE=1 brew install rapidjson libffi osx-cpu-temp hdf5
 	echo "Please enable the `at` scheduler manually:"
 	echo "https://unix.stackexchange.com/questions/478823/making-at-work-on-macos/478840#478840"
 elif [ "$(uname)" == "Linux" ]; then
