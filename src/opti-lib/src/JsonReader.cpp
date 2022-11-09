@@ -67,7 +67,7 @@ const rapidjson::Value & JsonValueWrapper::GetValueJson(const EnjoLib::Str & nam
     return m_obj[name.c_str()];
 }
 
-EnjoLib::Array<BatteryParams> JsonReader::ReadBatteries(bool verbose) const
+std::vector<BatteryParams> JsonReader::ReadBatteries(bool verbose) const
 {
     const CharManipulations cman;
     std::vector<BatteryParams> ret;
@@ -116,7 +116,7 @@ EnjoLib::Array<BatteryParams> JsonReader::ReadBatteries(bool verbose) const
     return ret;
 }
 
-EnjoLib::Array<Computer> JsonReader::ReadComputers(bool verbose) const
+std::vector<Computer> JsonReader::ReadComputers(bool verbose) const
 {
     const CharManipulations cman;
     std::vector<Computer> ret;
@@ -183,7 +183,7 @@ EnjoLib::Array<Computer> JsonReader::ReadComputers(bool verbose) const
     return ret;
 }
 
-EnjoLib::Array<Habit> JsonReader::ReadHabits(bool verbose) const
+std::vector<Habit> JsonReader::ReadHabits(bool verbose) const
 {
     const CharManipulations cman;
     std::vector<Habit> ret;
@@ -271,7 +271,7 @@ ConfigSol JsonReader::ReadConfigSol(bool verbose) const
     rapidjson::Document d;
     parseJsonOrThrow(jsonFile, m_verbose, d);
     JsonValueWrapper jwrap(d, idd);
-    
+
     /// TODO: This should be secured better, like the rest, but it's multilayered.
     ret.m_outDir     = d["paths"]["DIR_TMP"].GetString();
     return ret;
