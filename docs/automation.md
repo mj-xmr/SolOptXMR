@@ -15,7 +15,7 @@ The following terms will be introduced:
 
 - *Controlling computer*: The computer, which should ideally consume very little power (think of a Mini-PC or any SoC), as it should be running for most of the time - always when the AC inverter is switched on. It will be issuing commands via Ethernet cable to *Mining rigs / computers*. It will also host the `p2pool` software.
 - *Mining rig / computer*: Any computer, whose sole purpose from the perspective of `SolOptXMR`, is to mine and dissipate energy overproduction, if so required. The rig is able to react on a *controlling computer's* commands, issued via Ethernet cable.
-- *Node computer*: an optional part of the infrastructure, for as long as you decide to attach your `p2pool` to an **external** Monero node, that you can trust. Otherwise, this has to be a computer, that runs 24/7 and is equipped with a relatively large (between 500GB and 1TB) SSD drive to be able to host the blockchain. An HDD won't work well with Monero's blockchain unfortunately, due to many random searches, that the node needs to perform over the blockchain. I use a low powered Mini-PC for this purpose, that is connected to the grid.
+- *Node computer*: an optional part of the infrastructure, for as long as you decide to attach your `p2pool` to an **external** Monero node, that you can trust. Otherwise, this has to be a computer, that runs 24/7 and is equipped with a relatively large (between 500GB and 1TB) SSD drive to be able to host the blockchain. An HDD won't work well with Monero's blockchain unfortunately, due to many random searches, that the node needs to perform over the blockchain. I use a low powered Mini-PC for this purpose, that is connected to the grid. If you go with this option, then the `p2pool` will have to be executed from there.
 
 ## System specifics
 
@@ -27,7 +27,7 @@ If you are confident enough to let the system schedule execution of the commands
 
 ```bash
 crontab # The command that lets you edit the schedule
-5 6 * * *  cd /home/yoname/SolOptXMR && ./soloptxmr.py --battery-charge-ocr --np && /bin/sh /home/yoname/temp/solar/sol-cmds.sh
+5 6 * * *  cd /home/USR/SolOptXMR && ./soloptxmr.py --battery-charge-ocr --np && /bin/sh /home/USR/temp/solar/sol-cmds.sh
 ```
 
 ## Passwordless SSH access
@@ -82,13 +82,13 @@ USR localhost =NOPASSWD: /usr/bin/systemctl suspend, /usr/bin/systemctl poweroff
 - Update freedesktop settings
 Find the following entries in the `/usr/share/polkit-1/actions/org.freedesktop.login1.policy` file:
 
-- id="org.freedesktop.login1.set-wall-message
-- id="org.freedesktop.login1.suspend
-- id="org.freedesktop.login1.power-off
+- `id="org.freedesktop.login1.set-wall-message`
+- `id="org.freedesktop.login1.suspend`
+- `id="org.freedesktop.login1.power-off`
 
 , as well as for the file `/usr/share/polkit-1/actions/org.freedesktop.systemd1.policy`:
 
-- id="org.freedesktop.systemd1.manage-units
+- `id="org.freedesktop.systemd1.manage-units`
 
 And for each one of them and change:
 
@@ -126,7 +126,7 @@ If all went fine, you may perform the final test of being able to put a machine 
 ```bash
 # Call this to suspend a machine remotely:
 ssh -n $HOST "systemctl suspend"
-# Or the below one, if you know that the machine doesn't wake up properly:
+# Alternatively the below one, if you know that the machine doesn't wake up properly:
 ssh -n $HOST "systemctl poweroff"
 ```
 
@@ -138,11 +138,11 @@ The list also contains requirements for other tools.
 
 ```bash
 # On the controlling machine:
-sudo apt install at ethtool git wakeonlan libuv1-dev libzmq3-dev libsodium-dev libpgm-dev libnorm-dev libgss-dev
+sudo apt install at ethtool git wakeonlan libuv1-dev libzmq3-dev libsodium-dev libpgm-dev libnorm-dev libgss-dev libcurlpp-dev
 
 # For each mining rig:
 ssh $HOST 
-sudo apt install at ethtool git build-essential cmake libhwloc-dev libuv1-dev libssl-dev libreadline-dev
+sudo apt install at ethtool git build-essential cmake msr-tools libhwloc-dev libuv1-dev libssl-dev libreadline-dev
 exit
 ```
 
@@ -231,17 +231,19 @@ git checkout $(git describe --tags $(git rev-list --tags --max-count=1)) # Check
 ./util/build-xmrig.sh   # Build the mining software
 ```
 
-On the controlling computer, repeat the above steps, but instead of compiling `xmrig`, compile `p2pool` instead:
+On the *Controlling Computer*, repeat the above steps, but instead of compiling `xmrig`, compile `p2pool` instead:
 
 ```bash
 ./util/build-p2pool.sh  # Build the pool software 
 ```
 
-If you'd like to run your own node, there's a relevant script for that too, meant to be ran from within the *Node computer*:
+If you'd like to run your own node, there's a relevant script for that too, meant to be ran from within the *Node Computer*:
 
 ```bash
 ./util/build-monero.sh  # Build the monero daemon 
 ```
+
+In such case, it will be expected, that you run your `p2pool` from the *Node Computer*, rather than from the *Controlling Computer*, so you have to compile the pool here instead.
 
 ### Optional optimizations of XMRig
 
@@ -250,7 +252,6 @@ This task is however cumbersome and varying across different CPUs that the full 
 However, the minimalistic setup, that only allows to use the MSR module from a `root` account would be the following:
 
 ```bash
-sudo apt install msr-tools
 sudo nano /etc/default/grub
 ```
 
@@ -266,8 +267,7 @@ sudo reboot
 Now allow the *XMRig* to do some fine-tuning:
 
 ```bash
-cd SolOptXMR/build/xmrig
-sudo scripts/randomx_boost.sh
+sudo build/xmrig/scripts/randomx_boost.sh
 ```
 
 ```bash
@@ -289,26 +289,40 @@ sudo nano /etc/rc.local && sudo chmod +x /etc/rc.local
 enter there:
 
 ```bash
-sleep 60; cd /home/USR/SolOptXMR && ./util/run-xmrig.sh $(nproc) &
+sleep 60; cd /home/USR/SolOptXMR && ./util/run-xmrig.sh P2POOL_IP $(nproc) &
 ```
 
-before the `exit 0` line of course. You may freely choose the number of threads that you want to use by replacing the `$(nproc)` with a reasonable number.
+before the `exit 0` line of course. 
+This will connect your XMRig installation to the P2Pool passed along as the first parameter.
+You may freely choose the number of threads that you want to use by replacing the `$(nproc)` with a reasonable number.
 This will run the `xmrig` miner as `root`.
 In case that you've either made the effort to enable the MSR module for your user, not even no effort at all to enable the MSR module even for the `root`, then the safer alternative to the above would be:
 
 ```bash
-su - USR -c "sleep 60; cd /home/USR/SolOptXMR && ./util/run-xmrig.sh $(nproc)" &`
+su - USR -c "sleep 60; cd /home/USR/SolOptXMR && ./util/run-xmrig.sh P2POOL_IP $(nproc)" &`
 ```
 
 ### Temperature control (optional)
 
-The temperature might be monitored and controlled by throttling down the CPU frequency, by having this script ran as `root` or alternatively as a user, after allowing the user to modify the CPU frequency with: (TODO)
+The temperature might be monitored and controlled by throttling down the CPU frequency, by having this script ran as `root` or alternatively as a user, after allowing the user to modify the CPU frequency (TODO).
+The initial max CPU frequency may be limited to a given value in GHz, using the `util/cpu-freq.sh` script.
+In order to learn your CPU's limits, please execute the `util/cpu-freq-read.sh` script first.
+Assuming that the script's output is:
 
-```bash
-sleep 5; cd /home/USR/SolOptXMR && ./util/run-temperature.py --max 70 --min 50 &
+```
+Min = 400 MHz
+Max = 4.90 GHz
+Curr = 2.60 GHz
 ```
 
-Where `--max 70` would consider the 70°C as overheat, and `--min 50` - 50°C as the target temperature while cooling down.
+like on my machine, to be conservative I may set the maximal frequency to 1.6 GHz in my `/etc/rc.local` and right below it the overheat watchdog with:
+
+```bash
+sleep 1; cd /home/USR/SolOptXMR && ./util/cpu-freq.sh 1.6
+sleep 5; cd /home/USR/SolOptXMR && ./util/temperature.py --max 70 --min 50 &
+```
+
+Where `--max 70` would consider the 70°C as overheat, and `--min 50` - 50°C as the target temperature while cooling down, before restoring the CPU frequency having been set originally.
 
 Notice, that although this will protect your computer from overheating, it will mess up some calculations but only to the extent, that the end results will indeed be different than expected, yet not totally erratic.
 IMO, it's however better to preserve your hardware, rather than receiving a few picos more for having to settle with chips being molten down.
@@ -325,10 +339,10 @@ sudo nano /etc/rc.local && sudo chmod +x /etc/rc.local
 and enter:
 
 ```bash
-su - USR_P2POOL -c "sleep 40; cd /home/USR/SolOptXMR && ./util/run-p2pool.sh NODE_IP WALLET_ADDR" &
+su - USR_P2POOL -c "sleep 40; cd /home/USR/SolOptXMR && ./util/run-p2pool.sh WALLET_ADDR NODE_IP" &
 ```
 
-where the `NODE_IP` is the connection string for the Monero node, that has to be synced and running, while the `WALLET_ADDR` is the target address for payouts.
+where the `NODE_IP` is the connection string for the Monero node, that has to be synced and running, while the `WALLET_ADDR` is the target address for payouts. If you leave the NODE_IP out, `localhost` is then assumed.
 
 ### Monero daemon autostart
 
