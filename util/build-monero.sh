@@ -7,6 +7,7 @@ NPROC=2
 REPO=monero
 DIR=build
 TARGETS="daemon"
+AUTO_INSTALL_DEPS=false
 
 DEPS="build-essential cmake pkg-config libssl-dev libzmq3-dev libunbound-dev libsodium-dev libunwind8-dev liblzma-dev libreadline6-dev libexpat1-dev libpgm-dev libhidapi-dev libusb-1.0-0-dev libprotobuf-dev protobuf-compiler libudev-dev libboost-chrono-dev libboost-date-time-dev libboost-filesystem-dev libboost-locale-dev libboost-program-options-dev libboost-regex-dev libboost-serialization-dev libboost-system-dev libboost-thread-dev python3 ccache"
 
@@ -14,14 +15,23 @@ if [ ! -z $1 ]; then
 	NPROC=$1
 fi
 
+if [ ! -z $2 ]; then
+	AUTO_INSTALL_DEPS=true
+fi
+
 echo "The '$REPO' dependencies are the following:"
 echo "$DEPS"
 echo ""
-echo "Would you like to install them automatically? (Y/n)"
-read q
+if [ $AUTO_INSTALL_DEPS == true ]; then
+	q='Y'
+else
+	echo "Would you like to install them automatically? (Y/n)"
+	read q
+fi
 if [ $q == 'n' ]; then
 	echo "Skipping the installation of the dependencies."
 else
+	echo "installing dependencies of '$REPO'."
 	sudo apt update
 	sudo apt install $DEPS
 fi 
