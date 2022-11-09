@@ -92,7 +92,7 @@ void OptimizerEnProfit::RandomSearch()
 {
     const ConfigSol & conf = m_dataModel.GetConf();
     const int horizonHours = m_dataModel.GetHorizonHours();
-    const EnjoLib::Array<Computer> & comps = m_dataModel.GetComputers();
+    const std::vector<Computer> & comps = m_dataModel.GetComputers();
     const int numComputers = comps.size();
 
     const GMat gmat;
