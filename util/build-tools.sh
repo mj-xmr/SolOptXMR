@@ -10,4 +10,4 @@ sudo apt install $DEPS
 
 ./util/build-p2pool.sh
 ./util/build-xmrig.sh
-./util/build-monero.sh
+./util/build-monero.sh 2 1
