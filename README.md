@@ -9,7 +9,7 @@ Solar Optimal mining of XMR.
 The goal is to create open-source software that aids people mining Monero with excess solar power (as well as other supplementing renewables) in the most profitable way. 
 It will accommodate for issues such as:
 
-- Time of day
+- Time of day and month
 - Weather fluctuations
 - Amortizing the physical installation costs and optimally using the energy production
 - Opportunistic scooping of hashes during network difficulty reductions
@@ -17,7 +17,9 @@ It will accommodate for issues such as:
 - Avoiding overheating of the mining rig
 - Leaving enough power for your daily use, that you declare
 
-[Full description on Monero Community Crowdfunding System](https://ccs.getmonero.org/proposals/soloptxmr-mj-endor-2022.html)
+[Full project's description](docs/project-descr.md).
+
+[Full description on Monero Community Crowdfunding System](https://ccs.getmonero.org/proposals/soloptxmr-mj-endor-2022.html), relevant only for one of the authors now.
 
 # Requirements
 - A POSIX system with a C++ compiler and Python3 interpreter. 
@@ -161,6 +163,7 @@ Obviously it should be ran from the machine, where the schedule has been set.
 If you're unhappy with the result, you may use `./util/jobs-remove-all.sh` to clear the queue, or simply `atrm JOB_NUMBER` to remove individual jobs, where the `JOB_NUMBER` can be obtained via the `./util/jobs-query.sh` script.
 
 # Further documentation
+- [project's description](docs/project-descr.md): detailed description of the project and the motivation behind it.
 - [safety](docs/safety.md): how to handle electrical systems safely. Tell me, that you "read and understood it", and I can sleep fine.
 - [config](docs/config.md): how to configure your instance of the project
 - [use cases](docs/use-cases.md): lists various ways of interacting with the software
