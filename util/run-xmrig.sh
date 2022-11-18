@@ -17,5 +17,5 @@ if [ -z $POOL_PORT ]; then
 fi
 
 cd build/xmrig/build
-nice -n 19 ./xmrig --threads=$CORES --donate-level 40 -o $POOL_IP:$POOL_PORT
+nice -n 19 ./xmrig --threads=$CORES -o $POOL_IP:$POOL_PORT
 

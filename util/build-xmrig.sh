@@ -17,7 +17,6 @@ fi
 git clone --recursive https://github.com/$REPO/$REPO.git
 cd $REPO
 git checkout v${VER}
-git apply "$DIR_THIS/patches/xmrig-${VER}.patch" # Here be dragons!
 mkdir -p $DIR && cd $DIR
 cmake .. -G "CodeBlocks - Unix Makefiles"
 make -j$(nproc)
