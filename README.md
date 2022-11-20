@@ -259,3 +259,7 @@ Profitability = 450.72 %
 Saving figure to: build//fig-Endor.png
 ```
 
+## Star history
+
+[![Star History Chart](https://api.star-history.com/svg?repos=mj-xmr/SolOptXMR,mj-xmr/tsqsim&type=Date)](https://star-history.com/#mj-xmr/SolOptXMR&mj-xmr/tsqsim&Date)
+
