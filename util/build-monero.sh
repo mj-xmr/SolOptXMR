@@ -8,6 +8,7 @@ REPO=monero
 DIR=build
 TARGETS="daemon"
 AUTO_INSTALL_DEPS=false
+HASH_LATEST_RELEASE=66184f30859796f3c7c22f9497e41b15b5a4a7c9 # v0.18.1.2
 
 DEPS="build-essential cmake pkg-config libssl-dev libzmq3-dev libunbound-dev libsodium-dev libunwind8-dev liblzma-dev libreadline6-dev libexpat1-dev libpgm-dev libhidapi-dev libusb-1.0-0-dev libprotobuf-dev protobuf-compiler libudev-dev libboost-chrono-dev libboost-date-time-dev libboost-filesystem-dev libboost-locale-dev libboost-program-options-dev libboost-regex-dev libboost-serialization-dev libboost-system-dev libboost-thread-dev python3 ccache"
 
@@ -40,7 +41,8 @@ if [ ! -d $REPO ]; then
 	git clone --recursive https://github.com/monero-project/$REPO.git
 fi
 cd $REPO
-git checkout $(git describe --tags $(git rev-list --tags --max-count=1)) # Checkout the latest tag (master is risky)
+#git checkout $(git describe --tags $(git rev-list --tags --max-count=1)) # Checkout the latest tag (master is risky)
+git checkout $HASH_LATEST_RELEASE
 git submodule init && git submodule update --remote; git submodule sync && git submodule update
 mkdir -p $DIR && cd $DIR
 # Mix some ghetto tricks to minimize the build size:
