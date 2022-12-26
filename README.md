@@ -1,6 +1,8 @@
 ﻿# SolOptXMR
 Solar Optimal mining of XMR.
 
+[Fundraiser for 2023](https://github.com/mj-xmr/SolOptXMR/issues/147)
+
 ![soloptxmr-logo](https://user-images.githubusercontent.com/63722585/163665392-cae163e6-a405-4692-8b05-b98480bc0911.svg)
 
 
