@@ -7,6 +7,7 @@ import krakenex
 import sunrise_lib
 
 config = sunrise_lib.config
+config_volatile = sunrise_lib.config_volatile
 DATE_NOW = sunrise_lib.DATE_NOW
 DIR_TMP = sunrise_lib.DIR_TMP
 
@@ -18,16 +19,37 @@ class fiat(Enum):
     EUR = auto()
     USD = auto()
 
+def get_ticker():
+    ticker = config_volatile.crypto.TICKER
+    if ticker == None:
+        ticker = "XMR"
+        print("Defaulting to ticker:", ticker)
+    else:
+        print("Using ticker from config:", ticker)
+    return ticker
 
-class kraken:
+
+def get_fiat():
+    fiat = config_volatile.crypto.FIAT
+    if fiat == None:
+        fiat = "USD"
+        print("Defaulting to FIAT:", fiat)
+    else:
+        print("Using FIAT from config:", fiat)
+    return fiat
+
+
+class kraken():
     api = krakenex.API()
     k = KrakenAPI(api, retry=0.5, crl_sleep=1)
+    ticker = get_ticker()
+    fiat_name = get_fiat()
     pairs = {
         fiat.EUR: {
-            coin.XMR: "XXMRZEUR",
+            coin.XMR: ticker + fiat_name,
         },
         fiat.USD: {
-            coin.XMR: "XXMRZUSD",
+            coin.XMR: ticker + fiat_name,
         }
     }
 
@@ -59,7 +81,7 @@ class kraken:
 
 def test(year=DATE_NOW.year, month=DATE_NOW.month, day=DATE_NOW.day):
     import pandas as pd
-    fi = fiat.EUR
+    fi = fiat.USD
     co = coin.XMR
     try:
         a = kraken.get_price(co, fi)

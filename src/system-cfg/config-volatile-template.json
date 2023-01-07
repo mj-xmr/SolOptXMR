@@ -27,5 +27,12 @@
         "DIR_OCR_SCRIPT_PANEL": "externals/GasPumpOCR-mj/custom-scripts/panel-rectangles",
         "DIR_OCR_SCRIPT_GLOWING": "externals/GasPumpOCR-mj/custom-scripts/lcd-glowing",
         "DIR_OCR_SCRIPT_GAS_PUMP": "externals/GasPumpOCR-mj/custom-scripts/gas-pump-dark"
+    },
+    "crypto": {
+	"TICKER": "XXMR",
+	"FIAT": "ZUSD",
+	"ASSET_LIST": "https://api.kraken.com/0/public/Assets",
+	"ASSET_PAIRS": "https://api.kraken.com/0/public/AssetPairs"
     }
 }
+
