@@ -15,7 +15,7 @@ It will accommodate for issues such as:
 - Opportunistic scooping of hashes during network difficulty reductions
 - Avoiding depleting/overcharging batteries below/abowe a threshold, that would damage them
 - Avoiding overheating of the mining rig
-- Leaving enough power for your daily use
+- Leaving enough power for your daily use, that you declare
 
 [Full description on Monero Community Crowdfunding System](https://ccs.getmonero.org/proposals/soloptxmr-mj-endor-2022.html)
 
