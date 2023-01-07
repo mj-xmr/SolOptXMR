@@ -84,6 +84,10 @@ Contains various entries from across the project, which don't really deserve the
 | `paths` / `DIR_OCR_SCRIPT` | Script path for the OCR module. |
 | `paths` / `IMG_CAPTURE_PATH` | Path where the captured images shall be stored. |
 | `hosts` / `IMG_CAPTURE_HOST` | Host that capture images for OCR. |
+| `crypto` / `TICKER` | What crypto to mine. |
+| `crypto` / `FIAT` | In which FIAT currency to value it. |
+| `crypto` / `ASSET_LIST` | Where to fetch asset list from. |
+| `crypto` / `ASSET_PAIRS` | Where to fetch pair list from. |
 
 
 For OCR related entries, please have a look [here](ocr.md)
