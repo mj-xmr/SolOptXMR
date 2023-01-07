@@ -1,3 +1,5 @@
+# TODO: This module is currently unmaintained
+
 from kraken import coin, fiat, kraken
 from datetime import date, datetime, timedelta
 from typing import Tuple

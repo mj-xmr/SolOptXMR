@@ -32,7 +32,7 @@ def test(only_net_independent=False):
     if not only_net_independent:
         modules.append(generator) # TODO: Make network independent or implementa a fallback
         modules.append(weather_lib)
-        modules.append(profitability)
+        # modules.append(profitability) # TODO: Currently unmaintained
         modules.append(kraken)
         modules.append(geolocation)
     
@@ -40,6 +40,7 @@ def test(only_net_independent=False):
         module.test()
 
     print("All tests ended")
+    print("(except profitability)")
     
 if __name__ == "__main__":
     if len(sys.argv) > 1:
