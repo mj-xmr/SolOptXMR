@@ -92,7 +92,7 @@ The producer of the inverter that I bought, provides the following sheet, that q
 As you may conclude, we aren't really talking about long distances, that can be serviced at such low voltages of the DC current.
 A consequence of violating these limitations are:
 
-- an instability between the input MPPT controller and the batteries, leading to a slowdown of its reactions, hence instability
+- an instability between the input MPPT controller and the batteries, leading to a slowdown of its reactions, hence instability of the voltage reaching the inverter, that may cause its short, albeit complete resets
 - a loss of voltage available to the inverter w.r.t. what the current charge of the batteries might be, ultimately leading to a lower available Wattage, that the inverter can deliver to the end consumers
 - an overheat of the abused (narrow parts of) cables and possibly a fire event 
  
