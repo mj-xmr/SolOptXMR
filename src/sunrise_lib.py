@@ -191,7 +191,7 @@ def get_pv_system():
         pdc0 = config_system.inverter_max_input_dc
         if pdc0 == None:
             pdc0 = 40
-    system = pvlib.pvsystem.PVSystem(arrays=arrays, inverter_parameters=dict(pdc0=config_system.inverter_max_input_dc))
+    system = pvlib.pvsystem.PVSystem(arrays=arrays, inverter_parameters=dict(pdc0=pdc0))
     return system
 
 def test_physical():
