@@ -1,7 +1,7 @@
 # What
 The goal is to create open-source software that aids people mining Monero with excess solar power (as well as other supplementing renewables) in the most profitable way. It will accommodate for issues such as:
 
-- Time of day and month
+- Time of day and month of the year
 - Weather fluctuations
 - Amortizing the physical installation costs and optimally using the energy production
 - Opportunistic scooping of hashes during network difficulty reductions
