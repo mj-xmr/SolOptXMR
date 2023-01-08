@@ -188,7 +188,7 @@ def get_pv_system():
         array_one = pvlib.pvsystem.Array(pvlib.pvsystem.FixedMount(surface_tilt=array['surface_tilt'], surface_azimuth=array['surface_azimuth']), name=array['name'],
                    **array_kwargs)
         arrays.append(array_one)
-    system = pvlib.pvsystem.PVSystem(arrays=arrays, inverter_parameters=dict(pdc0=3))
+    system = pvlib.pvsystem.PVSystem(arrays=arrays, inverter_parameters=dict(pdc0=config_system.inverter_max_input_dc))
     return system
 
 def test_physical():

@@ -1,5 +1,6 @@
 {
 	"voltage" : 12,
+	"inverter_max_input_dc" : 40,
 	"generate" : true,
 	"buy" : false,
 	"sell" : false,

@@ -67,7 +67,7 @@ In order to model this act, you may schedule the usage of the inverter, just lik
 Next, you need to set the variable `"default_use_schedule" : false` of the Inverter to `true`.  
 
 ## System system.json
-Defines the voltage of the system (12, 24 or 48 V) used for conversions.
+Defines the voltage of the system (12, 24 or 48 V) used for conversions, as well as the inverter's maximum acceptable input direct current in Amperes.
 Other 3 options include the ability to independently: generate, buy and/or sell the electricity. 
 The combination of these options helps in deriving the optimal solution for your case, regarding the profitability of the operation.
 
