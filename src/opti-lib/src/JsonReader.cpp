@@ -26,10 +26,9 @@ static void parseJsonOrThrow(const Str & jsonFile, bool verbose, rapidjson::Docu
     }
 }
 
-static const rapidjson::Value & GetArrayJson(const EnjoLib::Str & name, bool verbose)
+static const rapidjson::Value & GetArrayJson(const EnjoLib::Str & name, bool verbose, rapidjson::Document & d)
 {
     const Str jsonFile = name + ".json";
-    rapidjson::Document d;
     if (verbose)
     {LOGL << "Reading array: " << name << Nl;}
     parseJsonOrThrow(jsonFile, verbose, d);
@@ -72,7 +71,8 @@ std::vector<BatteryParams> JsonReader::ReadBatteries(bool verbose) const
     const CharManipulations cman;
     std::vector<BatteryParams> ret;
     const Str idd = "batteries";
-    const rapidjson::Value& arr = GetArrayJson(idd, m_verbose);
+    rapidjson::Document d;
+    const rapidjson::Value& arr = GetArrayJson(idd, m_verbose, d);
     for (auto objIt = arr.Begin(); objIt != arr.End(); ++objIt)
     {
         BatteryParams batObj;
@@ -121,7 +121,8 @@ std::vector<Computer> JsonReader::ReadComputers(bool verbose) const
     const CharManipulations cman;
     std::vector<Computer> ret;
     const Str idd = "computers";
-    const rapidjson::Value& arr = GetArrayJson(idd, m_verbose);
+    rapidjson::Document d;
+    const rapidjson::Value& arr = GetArrayJson(idd, m_verbose, d);
     for (auto compIt = arr.Begin(); compIt != arr.End(); ++compIt)
     {
         Computer compObj;
@@ -188,7 +189,8 @@ std::vector<Habit> JsonReader::ReadHabits(bool verbose) const
     const CharManipulations cman;
     std::vector<Habit> ret;
     const Str idd = "habits";
-    const rapidjson::Value& arr = GetArrayJson(idd, m_verbose);
+    rapidjson::Document d;
+    const rapidjson::Value& arr = GetArrayJson(idd, m_verbose, d);
     for (auto itr = arr.Begin(); itr != arr.End(); ++itr)
     {
         Habit obj;

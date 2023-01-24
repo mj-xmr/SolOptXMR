@@ -138,6 +138,8 @@ def conv_speed_string_2_number(speed_str):
             return km_per_hour_2_meter_per_second(get_number_from_val_unit(speed_str))
     if 'm/s' in speed_str:
         return get_number_from_val_unit(speed_str)
+    if 'No wind' in speed_str: # TODO: Generalize once more cases arrive
+        return 0
 
     raise IOError("Unknown unit in " + str(speed_str))
 
@@ -202,6 +204,7 @@ def test_physical():
     assert conv_speed_string_2_number("36 kmh") == 10
     assert conv_speed_string_2_number("100000 mph") == 44704
     assert conv_speed_string_2_number("3 m/s") == 3
+    assert conv_speed_string_2_number("No wind") == 0
 
     assert get_wind_power(10, 100, 10, 100, 10) == 10
     assert get_wind_power(10, 100, 10, 100, 100) == 100
