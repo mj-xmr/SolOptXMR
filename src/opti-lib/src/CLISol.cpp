@@ -53,6 +53,7 @@ EnjoLib::Result<CLIResultSol> CLISol::GetConfigs(int argc, char ** argv) const
     const char * OPT_POWEROFF = "poweroff";
     const char * OPT_IGNORE_COMPUTERS = "ignore-computers";
     const char * OPT_ONLY_COMPUTERS = "only-computers";
+    const char * OPT_ETHERWAKE_INTERFACE = "etherwake-iface";
 
 
     EnjoLib::ProgramOptionsState popState;
@@ -73,6 +74,8 @@ EnjoLib::Result<CLIResultSol> CLISol::GetConfigs(int argc, char ** argv) const
     popState.AddStr(OPT_OUT_DIR,             ConfigSol::DESCR_OUT_DIR);
     popState.AddStr(OPT_IGNORE_COMPUTERS,    ConfigSol::DESCR_IGNORE_COMPUTERS);
     popState.AddStr(OPT_ONLY_COMPUTERS,      ConfigSol::DESCR_ONLY_COMPUTERS);
+    popState.AddStr(OPT_ETHERWAKE_INTERFACE, ConfigSol::DESCR_ETHERWAKE_INTERFACE);
+
      
     popState.AddBool(OPT_NO_PROGRESS_BAR,   ConfigSol::DESCR_NO_PROGRESS_BAR);
     popState.AddBool(OPT_NO_GNUPLOT,        ConfigSol::DESCR_NO_GNUPLOT);
@@ -129,6 +132,7 @@ EnjoLib::Result<CLIResultSol> CLISol::GetConfigs(int argc, char ** argv) const
     confSol.m_outDir        = pops.GetStrFromMap(OPT_OUT_DIR, confSol.m_outDir);
     confSol.m_ignoreComputers = pops.GetStrFromMap(OPT_IGNORE_COMPUTERS, confSol.m_ignoreComputers);
     confSol.m_onlyComputers   = pops.GetStrFromMap(OPT_ONLY_COMPUTERS, confSol.m_onlyComputers);
+    confSol.m_etherwakeIface  = pops.GetStrFromMap(OPT_ETHERWAKE_INTERFACE, confSol.m_etherwakeIface);
     
 
     confSol.POWEROFF  = pops.GetBoolFromMap(OPT_POWEROFF);

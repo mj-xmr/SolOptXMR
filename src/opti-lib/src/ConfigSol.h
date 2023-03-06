@@ -46,6 +46,8 @@ class ConfigSol : public ConfigBase
         
         EnjoLib::Str m_ignoreComputers = ""; constexpr static const char * DESCR_IGNORE_COMPUTERS  = "Ignore these computers (comma separated)";
         EnjoLib::Str m_onlyComputers = "";   constexpr static const char * DESCR_ONLY_COMPUTERS  = "Use only these computers (comma separated)";
+        EnjoLib::Str m_etherwakeIface = "";  constexpr static const char * DESCR_ETHERWAKE_INTERFACE  = "'etherwake' program's network interface";
+
 
 
     protected:
