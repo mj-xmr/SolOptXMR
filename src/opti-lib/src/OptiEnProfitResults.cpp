@@ -187,7 +187,11 @@ OptiEnProfitResults::CommandsInfos OptiEnProfitResults::PrintCommandsComp(const 
 
     const Str cmdsSSHbare = "ssh -o ConnectTimeout=" + cman.ToStr(SSH_TIMEOUT_S) + " -n " + comp.hostname + " ";
     const Str cmdsSSH = "echo \"" + cmdsSSHbare + "'hostname";
-    const Str cmdWOL = "wakeonlan " + comp.macAddr;
+    Str cmdWOL = "wakeonlan " + comp.macAddr;
+    if (conf.m_etherwakeIface.size())
+    {
+        cmdWOL = "etherwake -i " + conf.m_etherwakeIface + " " + comp.macAddr;
+    }
     //const Str cmdSuspendAt = "systemctl suspend\"           | at ";
     const Str cmdSysCtl = "; systemctl --no-wall ";
     const bool isPoweroff = conf.POWEROFF || comp.isPoweroff ;

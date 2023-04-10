@@ -55,6 +55,7 @@ def get_args():
     # parser.add_argument('-f', '--file-image-ocr',  default="", type=str, help="Image path to OCR (default: {})".format(""))
     parser.add_argument('-i', '--in-data',      default="", type=str, help="Input hashrate data (default: {})".format(""))
     parser.add_argument('-bd','--binaries-dir', default="", type=str, help="Override binaries dir (default: {})".format(""))
+    parser.add_argument('-e','--etherwake-iface', default="", type=str, help="'etherwake' program's interface (default: {})".format(""))
     # TODO: use 'auto' charge status as well, based on time of day and weather.
     parser.add_argument('-c', '--charge-status', default=DEFAULT_CHARGE_STATE, type=str, help="Charge status: charging(c)/discharging(d) for voltage input (default: {})".format(DEFAULT_CHARGE_STATE))
     parser.add_argument('-o', '--out-dir',  default=sunrise_lib.DIR_TMP, type=str, help="Output dir to exchange with tsqsim (default: {})".format(""))
@@ -165,6 +166,8 @@ class BatterySimulatorCpp(generator.BatterySimulator):
             cmd += " --ignore-computers {}".format(args.ignore_computers)
         if args.only_computers:
             cmd += " --only-computers {}".format(args.only_computers)
+        if args.etherwake_iface:
+            cmd += " --etherwake-iface {}".format(args.etherwake_iface)
         cmd += " --no-progress-bar" # Looks poorly under CI logging
         #cmd += " --system-type {}".format(config_system.type)
         #cmd += " --system-voltage {}".format(config_system.voltage)
