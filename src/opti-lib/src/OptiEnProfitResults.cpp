@@ -248,7 +248,7 @@ OptiEnProfitResults::CommandsInfos OptiEnProfitResults::PrintCommandsComp(const 
                     }
                     else
                     {
-                        ossCmd << hourPrev % 24 << cmdMinuteSuffix << " + " << GMat().Ceil(hourPrev / 24.0) << " days";
+                        ossCmd << hourPrev % 24 << cmdMinuteSuffix << " + " << GMat().Ceil(hourPrev / 24.0) << " days" << Nl;
                     }
                 }
 
