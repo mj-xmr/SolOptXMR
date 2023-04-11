@@ -166,8 +166,8 @@ class BatterySimulatorCpp(generator.BatterySimulator):
             cmd += " --ignore-computers {}".format(args.ignore_computers)
         if args.only_computers:
             cmd += " --only-computers {}".format(args.only_computers)
-        if args.etherwake_iface:
-            cmd += " --etherwake-iface {}".format(args.etherwake_iface)
+        if args.net_iface:
+            cmd += " --etherwake-iface {}".format(args.net_iface)
         cmd += " --no-progress-bar" # Looks poorly under CI logging
         #cmd += " --system-type {}".format(config_system.type)
         #cmd += " --system-voltage {}".format(config_system.voltage)
