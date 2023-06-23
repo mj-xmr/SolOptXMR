@@ -63,22 +63,22 @@ git checkout $(git describe --tags $(git rev-list --tags --max-count=1)) # Check
 ## Building & running
 ```bash
 ./ci-default          # Build and run the tests
-./soloptxmr.py        # Run the prediction with default parameters
-./soloptxmr.py --help # Print all the available options 
+./bin/python ./soloptxmr.py        # Run the prediction with default parameters
+./bin/python ./soloptxmr.py --help # Print all the available options 
 ```
 By default the script performs the predictions 3 days ahead from now, assuming the battery charge at its reasonable minimum, set by the `battery.json`.
 
 ### Fine configuration
 In order to alter the default behavior, the main script can be ran with the following example options:
 ```bash
-./soloptxmr.py \
+./bin/python ./soloptxmr.py \
 --days-horizon 5 \
 --battery-charge-percent 78 \
 --start-date 2022-02-20T20:22
 ```
 or equivalently:
 ```bash
-./soloptxmr.py \
+./bin/python ./soloptxmr.py \
 -d 5 \
 -p 78 \
 -s "2022-02-20 20:22"
@@ -90,13 +90,13 @@ More examples can be found under [use cases documentation](docs/use-cases.md).
 Setting the battery's voltage directly, also via OCR, rather than the Ah or % charge is a feature currently being worked on. What's missing are measurements of batteries of various types, like in [Example 1](http://www.scubaengineer.com/documents/lead_acid_battery_charging_graphs.pdf).
 
 ```bash
-./soloptxmr.py --battery-charge-v 12.3 # Set the voltage of your battery to be converted to its current charge
+./bin/python ./soloptxmr.py --battery-charge-v 12.3 # Set the voltage of your battery to be converted to its current charge
 ```
 
 or for OCR:
 
 ```bash
-./soloptxmr.py --battery-charge-ocr    # Use image recognition to read the current battery voltage
+./bin/python ./soloptxmr.py --battery-charge-ocr    # Use image recognition to read the current battery voltage
 ```
 
 It is recommended to perform the voltage measurements only when the batteries aren't being charged (like: before the sunrise), as this delivers a more objective value. 
@@ -109,7 +109,7 @@ For this reason, it's hardly an objective measurement.
 It's possible to automate the process of reading the battery voltage, or % of charge directly, after capturing a picture of an LCD display and passing the picture to an OCR module. [See here](docs/ocr.md) for a more detailed description.
 
 ## Automation
-Upon a successful execution of the `./soloptxmr.py` script, you will be presented with a set of scheduled commands for you to review.
+Upon a successful execution of the `./bin/python ./soloptxmr.py` script, you will be presented with a set of scheduled commands for you to review.
 If you're satisfied with the proposal, you may execute the commands (thus scheduling them) individually by copy-pasting them, or you may accept all of them in one go, by simply executing their file-stored version via `sh`.
 For example:
 
