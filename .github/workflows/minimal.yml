@@ -67,9 +67,13 @@ jobs:
     - name: build & install the unmanaged dependencies
       run: util/deps-build.sh
     - name: Configure your rig
-      run: util/config.sh
+      run: |
+        ${{env.PY_VENV}}
+        util/config.sh
     - name: build generic
-      run: ./util/ci.sh 1
+      run: |
+        ${{env.PY_VENV}}
+        ./util/ci.sh 1
     - uses: actions/upload-artifact@v3
       with:
         name: SolOptXMR-ubuntu-latest
