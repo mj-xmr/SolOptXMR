@@ -62,16 +62,18 @@ jobs:
       run: ${{env.APT_SET_CONF}}
     - name: install dependencies
       run: util/deps-pull.sh
-    - name: set Python virtual environment
-      run: ${{env.PY_VENV}}
     - name: build & install the unmanaged dependencies
       run: util/deps-build.sh
     - name: build & install the 3rd party tools
       run: util/build-tools.sh
     - name: Configure your rig
-      run: util/config.sh
+      run: |
+        ${{env.PY_VENV}}
+        util/config.sh
     - name: build generic
-      run: ./util/ci.sh 1
+      run: |
+        ${{env.PY_VENV}}
+        ./util/ci.sh 1
     - uses: actions/upload-artifact@v3
       with:
         name: SolOptXMR-ubuntu-latest
@@ -123,16 +125,20 @@ jobs:
       run: ${{env.APT_SET_CONF}}
     - name: install dependencies
       run: util/deps-pull.sh
-    - name: set Python virtual environment
-      run: ${{env.PY_VENV}}
     - name: build & install the unmanaged dependencies
       run: util/deps-build.sh
     - name: Configure your rig
-      run: util/config.sh
+      run: |
+        ${{env.PY_VENV}}
+        util/config.sh
     - name: build generic
-      run: ./util/ci.sh 1
+      run: |
+        ${{env.PY_VENV}}
+        ./util/ci.sh 1
     - name: Run production
-      run: python3 ./src/prod.py
+      run: |
+        ${{env.PY_VENV}}
+        python3 ./src/prod.py
     - uses: actions/upload-artifact@v3
       with:
         name: SolOptXMR-ubuntu-latest
