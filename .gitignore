@@ -34,6 +34,7 @@
 # Python
 *.pyc
 .venv/
+venv/
 
 # Build dirs
 build/

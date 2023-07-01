@@ -56,12 +56,14 @@ cd SolOptXMR		# Enter the cloned repo's dir
 git checkout $(git describe --tags $(git rev-list --tags --max-count=1)) # Checkout latest tag (master is risky)
 ./util/prep-env.sh	# Prepare the environment - downloads example data and creates useful symlinks 
 ./util/deps-pull.sh	# Download the maintaned dependencies
+source venv/bin/activate	# Activate the Python's virtual environment within this directory.
 ./util/deps-build.sh	# Build and install the unmanaged dependencies (uses sudo for installation)
 ./util/config.sh	# Configure your rig
 ```
 
 ## Building & running
 ```bash
+source venv/bin/activate   # Activate the Python's virtual environment within this directory.
 ./ci-default          # Build and run the tests
 ./soloptxmr.py        # Run the prediction with default parameters
 ./soloptxmr.py --help # Print all the available options 
