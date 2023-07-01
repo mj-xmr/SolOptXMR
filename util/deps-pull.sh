@@ -41,8 +41,8 @@ python_deps() {
 	fi
 }
 
-#tsqsim_deps
-#system_deps
+tsqsim_deps
+system_deps
 python_deps
 
 
