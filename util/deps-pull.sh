@@ -19,19 +19,15 @@ system_deps() {
 	fi
 }
 
-
-pip_reqs() {
-	python3 -m venv .
-	bin/python bin/pip install -r requirements.txt
-}
-
 python_deps() {
-	if pip_reqs ; then
+	python3 -m venv venv
+	source venv/bin/activate
+	if pip install -r requirements.txt ; then
 		echo "pip succeeded."
 	else
-		echo "pip failed. Trying a fallback."
-		bin/python bin/pip uninstall -r requirements.txt -y
-		bin/python bin/pip install pandas>=1.4.2 scipy>=1.2.0 numpy>=1.19.3 matplotlib \
+		echo "pip requirements failed. Trying a fallback."
+		pip uninstall -r requirements.txt -y
+		pip install pandas>=1.4.2 scipy>=1.2.0 numpy>=1.19.3 matplotlib \
 		pvlib pykrakenapi pyparsing pyrsistent python-dateutil \
 		python-json-config pytz requests six urllib3 \
 		beautifulsoup4 wget cairosvg Pillow>=9.1.1 geocoder \
@@ -45,8 +41,8 @@ python_deps() {
 	fi
 }
 
-tsqsim_deps
-system_deps
+#tsqsim_deps
+#system_deps
 python_deps
 
 

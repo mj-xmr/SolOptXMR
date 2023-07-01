@@ -14,6 +14,7 @@ env:
         echo "Acquire::Retries       \"3\";"   | sudo tee -a /etc/apt/apt.conf.d/80-custom
         echo "Acquire::http::Timeout \"120\";" | sudo tee -a /etc/apt/apt.conf.d/80-custom
         echo "Acquire::ftp::Timeout  \"120\";" | sudo tee -a /etc/apt/apt.conf.d/80-custom
+  PY_VENV: "source venv/bin/activate"
 
 jobs:
   build-ubuntu:
@@ -61,6 +62,8 @@ jobs:
       run: ${{env.APT_SET_CONF}}
     - name: install dependencies
       run: util/deps-pull.sh
+    - name: set Python virtual environment
+      run: ${{env.PY_VENV}}
     - name: build & install the unmanaged dependencies
       run: util/deps-build.sh
     - name: Configure your rig
@@ -118,6 +121,8 @@ jobs:
       run: ${{env.APT_SET_CONF}}
     - name: install dependencies
       run: util/deps-pull.sh
+    - name: set Python virtual environment
+      run: ${{env.PY_VENV}}
     - name: build & install the unmanaged dependencies
       run: util/deps-build.sh
     - name: Configure your rig
@@ -167,6 +172,8 @@ jobs:
       run: util/prep-env.sh
     - name: install dependencies
       run: util/deps-pull.sh
+    - name: set Python virtual environment
+      run: ${{env.PY_VENV}}
     - name: build & install the unmanaged dependencies
       run: util/deps-build.sh
     - name: build generic
@@ -211,6 +218,8 @@ jobs:
       run: util/prep-env.sh
     - name: install dependencies
       run: util/deps-pull.sh
+    - name: set Python virtual environment
+      run: ${{env.PY_VENV}}
     - name: build & install the unmanaged dependencies
       run: util/deps-build.sh
     - name: build generic
